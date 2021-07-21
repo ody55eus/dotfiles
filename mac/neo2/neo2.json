@@ -1,8 +1,8 @@
 {
-  "title": "Neo2",
+  "title": "Neo2 (by ody55eus)",
   "rules": [
     {
-      "description": "Neo2 mod 3 and 4 keys (Apple keyboard). Toggle mod4 by pressing both mod4 keys simultaneously.",
+      "description": "Neo2 mod 3 and 4 keys (modified for Apple).",
       "manipulators": [
         {
           "type": "basic",
@@ -135,6 +135,14 @@
               }
             }
           ],
+          "to_if_alone": [
+            {
+              "set_variable": {
+                "name": "neo2_mod_4",
+                "value": 2
+              }
+            }
+          ],
           "conditions": [
             {
               "type": "variable_unless",
@@ -166,6 +174,14 @@
               "set_variable": {
                 "name": "neo2_mod_4",
                 "value": 0
+              }
+            }
+          ],
+          "to_if_alone": [
+            {
+              "set_variable": {
+                "name": "neo2_mod_4",
+                "value": 2
               }
             }
           ],
