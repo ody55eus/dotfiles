@@ -196,6 +196,140 @@
       ]
     },
     {
+      "description": "Vim specific tricks (top).",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "8",
+            "modifiers": {
+              "optional": [
+                "shift",
+                "caps_lock",
+                "command",
+                "left_option"
+              ]
+            }
+          },
+          "to": [
+            {
+               "apple_vendor_top_case_key_code": "video_mirror"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "variable_unless",
+              "name": "neo2_mod_4",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "semicolon",
+            "modifiers": {
+              "optional": [
+                "shift",
+                "caps_lock",
+                "command",
+                "left_option"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "escape"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "variable_unless",
+              "name": "neo2_mod_4",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "a",
+            "modifiers": {
+              "optional": [
+                "shift",
+                "caps_lock",
+                "left_option"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "left_arrow", 
+              "modifiers": [
+                "left_command"
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "variable_unless",
+              "name": "neo2_mod_4",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "g",
+            "modifiers": {
+              "optional": [
+                "shift",
+                "caps_lock",
+                "left_option"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "right_arrow", 
+              "modifiers": [
+                "left_command"
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "variable_unless",
+              "name": "neo2_mod_4",
+              "value": 0
+			}
+		  ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [
+              {
+                "key_code": "left_shift"
+              },
+              {
+                "key_code": "grave_accent_and_tilde"
+              }
+            ],
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "to": [
+            {
+                "key_code": "escape"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "description": "Neo2 mod 3 and 4 keys (Windows keyboard). Toggle mod4 by pressing both mod4 keys simultaneously.",
       "manipulators": [
         {
@@ -1041,7 +1175,7 @@
           },
           "to": [
             {
-              "key_code": "comma"
+              "key_code": "escape"
             }
           ],
           "conditions": [
@@ -1093,7 +1227,7 @@
           },
           "to": [
             {
-              "key_code": "tab"
+               "apple_vendor_top_case_key_code": "video_mirror"
             }
           ],
           "conditions": [
