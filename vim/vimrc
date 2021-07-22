@@ -15,19 +15,55 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'Syntastic'
-Plugin 'https://github.com/tpope/vim-fugitive'
-Plugin 'https://github.com/dhabyx/riv.vim'
+Plugin 'tpope/vim-fugitive'
+Plugin 'dhabyx/riv.vim'
 Plugin 'morhetz/gruvbox'
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-surround'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'edkolev/tmuxline.vim'
+Plugin 'ap/vim-css-color'
+Plugin 'vim-python/python-syntax'
+Plugin 'vifm/vifm.vim'
+Plugin 'tpope/vim-markdown'
+Plugin 'dyng/ctrlsf.vim'
+Plugin 'junegunn/fzf'
+Plugin 'junegunn/fzf.vim'
+Plugin 'preservim/nerdtree'
 
-" Syntastic syntax checker
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+" function! GitBranch()
+"   return system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
+" endfunction
+
+" function! StatuslineGit()
+"   let l:branchname = GitBranch()
+"   return strlen(l:branchname) > 0?'  '.l:branchname.' ':''
+" endfunction
+
+" set statusline=%#PmenuSel#
+" set statusline+=%{StatuslineGit()} " Git Status
+" set statusline+=%#LineNr#
+" set statusline+=\ %f " Filename
+" set statusline+=\ %m " Modifiable [+/-]
+" set statusline+=%{FugitiveStatusline()} " Git Status
+" set statusline+=%= " Left/Right break
+" set statusline+=%-14.(%l,%c%V%)
+" set statusline+=\ %P
+" set statusline+=%<
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
 
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 1
+
+" Airline Statusbar
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
 
 
 " All of your Plugins must be added before the following line
@@ -54,7 +90,7 @@ set clipboard=unnamed
 " Enhance command-line completion
 set wildmenu
 " Allow cursor keys in insert mode
-set esckeys
+" set esckeys
 " Allow backspace in insert mode
 set backspace=indent,eol,start
 " Optimize for fast terminal connections
@@ -95,7 +131,7 @@ set cursorline
 " Highlight the end of 80 char lines
 set colorcolumn=80
 " Make tabs as wide as two spaces
-set tabstop=2
+set tabstop=4
 " Show “invisible” characters
 set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
 set list
@@ -143,6 +179,9 @@ noremap <leader>ss :call StripWhitespace()<CR>
 " Save a file as root (,W)
 noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
+" Remap ESC to exit insert more comfortable
+" noremap  <ESC>
+
 " Automatic commands
 if has("autocmd")
 	" Enable file type detection
@@ -153,3 +192,68 @@ if has("autocmd")
 	autocmd BufNewFile,BufRead *.md setlocal filetype=markdown
 endif
 
+
+let g:airline_powerline_fonts = 1
+
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
+" unicode symbols for airline (statusline)
+" let g:airline_left_sep = '»'
+" let g:airline_left_sep = '▶'
+" let g:airline_right_sep = '«'
+" let g:airline_right_sep = '◀'
+let g:airline_symbols.colnr = ' ㏇:'
+" let g:airline_symbols.colnr = ' ℅:'
+let g:airline_symbols.crypt = '🔒'
+" let g:airline_symbols.linenr = '☰'
+" let g:airline_symbols.linenr = ' ␊:'
+" let g:airline_symbols.linenr = ' ␤:'
+" let g:airline_symbols.linenr = '¶'
+" let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.maxlinenr = '㏑'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+"0let g:airline_symbols.paste = 'Þ'
+" let g:airline_symbols.paste = '∥'
+let g:airline_symbols.spell = 'Ꞩ'
+let g:airline_symbols.notexists = 'Ɇ'
+let g:airline_symbols.whitespace = 'Ξ'
+
+" powerline symbols
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+" let g:airline_symbols.colnr = ' :'
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ' :'
+let g:airline_symbols.maxlinenr = '☰ '
+let g:airline_symbols.dirty='⚡'
+
+" old vim-powerline symbols
+" let g:airline_left_sep = '⮀'
+" let g:airline_left_alt_sep = '⮁'
+" let g:airline_right_sep = '⮂'
+" let g:airline_right_alt_sep = '⮃'
+" let g:airline_symbols.branch = '⭠'
+" let g:airline_symbols.linenr = '⭡'
+
+" Remap Numpad (see https://vim.fandom.com/wiki/PuTTY_numeric_keypad_mappings)
+noremap <Esc>Oq 1
+noremap <Esc>Or 2
+noremap <Esc>Os 3
+noremap <Esc>Ot 4
+noremap <Esc>Ou 5
+noremap <Esc>Ov 6
+noremap <Esc>Ow 7
+noremap <Esc>Ox 8
+noremap <Esc>Oy 9
+noremap <Esc>Op 0
+noremap <Esc>On .
+noremap <Esc>OR *
+noremap <Esc>OQ /
+noremap <Esc>Ol +
+noremap <Esc>OS -
