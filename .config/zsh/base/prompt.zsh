@@ -32,12 +32,12 @@ zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:git:*' formats " %{$fg[blue]%}(%{$fg[red]%}%m%u%c%{$fg[yellow]%}%{$fg[magenta]%} %b%{$fg[blue]%})"
 
 # format our main prompt for hostname current folder, and permissions.
-PROMPT="%B%{$bg[blue]%}" # Background: Blue
-PROMPT+="%{$fg[gray]%}[%{$fg[cyan]%}%n" # [username
-PROMPT+="%{$fg[red]%}@%{$fg[white]%}%m%{$fg[gray]%}]" # @machine]
-PROMPT+="%{$fg[green]%}%c%{$reset_color%}%{$fg[blue]%}%{$reset_color%}" # Folder
+# PROMPT="%B%{$bg[blue]%}" # Background: Blue
+# PROMPT+="%{$fg[gray]%}[%{$fg[cyan]%}%n" # [username
+# PROMPT+="%{$fg[red]%}@%{$fg[white]%}%m%{$fg[gray]%}]" # @machine]
+# PROMPT+="%{$fg[green]%}%c%{$reset_color%}%{$fg[blue]%}%{$reset_color%}" # Folder
 # PROMPT="%{$fg[green]%}%n@%m %~ %{$reset_color%}%#> "
-PROMPT+="\$vcs_info_msg_0_  %(?:%{$fg_bold[green]%}$ :%{$fg_bold[red]%}$ %)" # Git
+# PROMPT+="\$vcs_info_msg_0_  %(?:%{$fg_bold[green]%}$ :%{$fg_bold[red]%}$ %)" # Git
 # TODO look into this for more colors
 # https://stevelosh.com/blog/2010/02/my-extravagant-zsh-prompt/
 # also ascii escape codes

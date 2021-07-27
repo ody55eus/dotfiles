@@ -1,0 +1,171 @@
+# You can edit this file by hand, but it's recommended not to do that.
+
+# Marks:
+'D
+	/home/jp/Documents
+	..
+1627082449
+'H
+	/home/jp/
+	..
+1627061387
+'b
+	/home/jp/bin/
+	..
+1627061387
+'d
+	/home/jp/Downloads
+	..
+1627082449
+'h
+	/home/jp/
+	..
+1627061387
+'n
+	/home/jp/cloud
+	..
+1627082449
+'r
+	/home/jp/repos
+	..
+1627082449
+
+# Bookmarks:
+
+# TUI:
+al
+q0
+v2
+ov
+m-1
+l2
+r2
+
+# Left window history (oldest to newest):
+d/home/jp/repos
+	gh
+1
+d/home/jp/repos/gh
+	appeditor
+1
+d/home/jp/repos/gh/appeditor
+	build
+1
+d/home/jp/repos/gh/appeditor/build
+	as-resources.h
+8
+d/usr/share/desktop-base
+	lines-theme
+8
+d/usr/share/desktop-base/lines-theme
+	grub
+1
+d/usr/share/desktop-base/lines-theme/grub
+	grub-4x3.png
+1
+d/home/jp/.config
+	pulse
+12
+d/home/jp/.oh-my-zsh/plugins
+	adb
+1
+d/home/jp/.oh-my-zsh/plugins/adb
+	README.md
+1
+d/home/jp/.oh-my-zsh/plugins
+	aliases
+4
+d/home/jp
+	Downloads
+3
+d/home/jp/Downloads
+	..
+0
+d/home/jp
+	dotfiles
+10
+d/home/jp/dotfiles
+	bash
+1
+d/home/jp/dotfiles/bash
+	..
+0
+d/home/jp/dotfiles
+	mac
+2
+d/home/jp/dotfiles/mac
+	neo2
+1
+d/home/jp/dotfiles/mac/neo2
+	..
+0
+d/home/jp/dotfiles/mac
+	..
+0
+d/home/jp/dotfiles
+	zsh
+4
+d/home/jp/dotfiles/zsh
+	..
+0
+d/home/jp/dotfiles
+	vim
+3
+d/home/jp/dotfiles/vim
+	..
+0
+d/home/jp/dotfiles
+	vim
+3
+d
+
+# Right window history (oldest to newest):
+D/
+	..
+0
+D/home
+	jp
+1
+D/home/jp
+	Music
+4
+D/usr/share/desktop-base
+	active-theme
+1
+D/home/jp/.oh-my-zsh/plugins
+	adb
+1
+D/home/jp
+	Music
+4
+D
+
+# Command line history (oldest to newest):
+:help preview
+:colorscheme gruvbox
+:colorscheme Default
+:reg
+:q
+
+# Search history (oldest to newest):
+
+# Prompt history (oldest to newest):
+
+# Local filter history (oldest to newest):
+
+# Registers:
+
+# Directory stack (oldest to newest):
+
+# Trash content:
+
+# State:
+f
+i1
+[.1
+[F
+F
+I1
+].1
+]F
+s0

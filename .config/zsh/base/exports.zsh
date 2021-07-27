@@ -1,11 +1,19 @@
 #!/bin/sh
-HISTFILE="$XDG_DATA_HOME"/zsh/history
+HISTFILE="$ZDOTDIR".zshhistory
 HISTSIZE=1000000
-SAVEHIST=1000000
+SAVEHIST=500000
+
 export PATH="$HOME/.local/bin":$PATH
-export MANPAGER='vim +Man!'
 export MANWIDTH=999
-export EDITOR='vim';
+
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+  export MANPAGER='less -M'
+else
+  export EDITOR='nvim'
+  export MANPAGER='vim +Man!'
+fi
 
 # Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
 export PYTHONIOENCODING='UTF-8';
@@ -27,22 +35,4 @@ xset r rate 350 40
 
 # eval "$(fnm env)"
 # eval "$(zoxide init zsh)"
-
-export PATH
-eval $(/opt/homebrew/bin/brew shellenv)
-
-# Conda Setup
-__conda_setup="$('/Users/jp/miniforge3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/jp/miniforge3/etc/profile.d/conda.sh" ]; then
-        . "/Users/jp/miniforge3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/jp/miniforge3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-
-
 eval "`pip completion --zsh`"

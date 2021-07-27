@@ -5,7 +5,6 @@ set background=dark
 " Set colorscheme
 " silent! colorscheme solarized
 
-autocmd vimenter * ++nested colorscheme gruvbox
 
 filetype off " required
 
@@ -31,29 +30,13 @@ Plugin 'dyng/ctrlsf.vim'
 Plugin 'junegunn/fzf'
 Plugin 'junegunn/fzf.vim'
 Plugin 'preservim/nerdtree'
+Plugin 'vim-scripts/vim-lastplace'
+Plugin 'ycm-core/YouCompleteMe'
 
-" function! GitBranch()
-"   return system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
-" endfunction
+" All of your Plugins must be added before the following line
+call vundle#end()
 
-" function! StatuslineGit()
-"   let l:branchname = GitBranch()
-"   return strlen(l:branchname) > 0?'  '.l:branchname.' ':''
-" endfunction
-
-" set statusline=%#PmenuSel#
-" set statusline+=%{StatuslineGit()} " Git Status
-" set statusline+=%#LineNr#
-" set statusline+=\ %f " Filename
-" set statusline+=\ %m " Modifiable [+/-]
-" set statusline+=%{FugitiveStatusline()} " Git Status
-" set statusline+=%= " Left/Right break
-" set statusline+=%-14.(%l,%c%V%)
-" set statusline+=\ %P
-" set statusline+=%<
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
+autocmd vimenter * ++nested colorscheme gruvbox
 
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_loc_list = 1
@@ -62,14 +45,9 @@ let g:syntastic_check_on_wq = 1
 
 " Airline Statusbar
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
+" let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 
-
-" All of your Plugins must be added before the following line
-call vundle#end()
-
-filetype plugin indent on
 
 " Filebrowser (netrw) style
 let g:netrw_browse_spwit=4
@@ -77,6 +55,8 @@ let g:netrw_altv=1
 let g:netrw_liststyle=3
 let g:netrw_list_hide=netrw_gitignore#Hide()
 
+" Make vim into an IDE (activate indentation)
+filetype plugin indent on
 " Enable syntax highlighting
 syntax enable
 
@@ -130,7 +110,7 @@ syntax on
 set cursorline
 " Highlight the end of 80 char lines
 set colorcolumn=80
-" Make tabs as wide as two spaces
+" Make tabs as wide as four spaces
 set tabstop=4
 " Show “invisible” characters
 set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_

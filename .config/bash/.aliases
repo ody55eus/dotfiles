@@ -12,9 +12,8 @@ alias -- -="cd -"
 alias d="cd ~/Documents"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
-alias p="cd ~/repositories"
-alias r="cd /Volumes/MacExt/repositories"
-alias n="cd /Volumes/MacExt/nextcloud"
+alias r="cd ~/repos"
+alias cl="cd ~/cloud"
 alias g="git"
 
 # Detect which `ls` flavor is in use
