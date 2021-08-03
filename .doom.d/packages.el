@@ -49,5 +49,13 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
-(package! evil-tutor)
-(package! org-roam)
+(package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings)
+(package! org-roam)             ; Extended org-mode for Zettelkasten principle
+(package! org-bullets)          ; Display nice bullets in org-mode
+(package! org-pdfview)          ; Allows to annotate pdf in org-mode
+(package! pdf-tools)            ; Additional pdf tools
+(package! rainbow-mode)         ; Converts #0000FF into colored background.
+(package! emojify)              ; Convert ;-) into emoji's
+(package! dashboard)            ; Display a dashboard when starting Emacs
+(package! dmenu)                ; Dmenu Plugin
+(package! tldr)                 ; Too long; Didn't read (short man pages)
