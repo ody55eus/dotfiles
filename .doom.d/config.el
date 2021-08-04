@@ -32,7 +32,7 @@
 ;; (setq doom-font (font-spec :family "Mononoki Nerd Font" :size 15)
 ;;      doom-variable-pitch-font (font-spec :family "Mononoki Nerd Font" :size 15))
 
-(setq doom-theme 'doom-gruvbox)
+(setq doom-theme 'doom-solarized-dark-high-contrast)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -40,26 +40,22 @@
   (setq org-directory "~/org/"
         org-agenda-files '("~/org/agenda.org")
         org-ellipsis " ▼ "
-        org-log-done 'time
-        org-journal-dir "~/Org/journal/"
-        org-journal-date-format "%B %d, %Y (%A) "
-        org-journal-file-format "%Y-%m-%d.org"
         org-default-notes-file (concat org-directory "/notes.org")
-        org-log-done-with-time t
-        org-log-done 'note
+        org-log-done-with-time t           ; Add timestamp to finished todos
+        ;; org-log-done 'note              ; Add notes to finished todos (optional)
         org-todo-keywords '((type "EPIC(e)" "PROJ(p)" "TODO(t)" "STRT(s)"
                                       "WAIT(w)" "HOLD(h)" "IDEA(i)" "|"
                                       "DONE(d)" "KILL(k)" "CANCELLED(c)"))
         org-todo-keyword-faces '(
-                                 ("EPIC" . (:foreground "purple" :weight "bold"))
-                                 ("PROJ" . "green")
+                                 ("EPIC" . (:foreground "DodgerBlue" :weight "bold"))
+                                 ("PROJ" . "DarkGreen")
                                  ("TODO" . org-warning)
                                  ("STRT" . "yellow")
-                                 ("WAIT" . (:foreground "yellow" :weight "italic"))
-                                 ("HOLD" . (:foreground "yellow" :underline))
-                                 ("IDEA" . (:background "white" :foreground "blue"))
+                                 ("WAIT" . (:foreground "yellow4" :weight "italic"))
+                                 ("HOLD" . (:foreground "red4"))
+                                 ("IDEA" . (:foreground "BlueViolet"))
                                  ("KILL" . "red")
-                                 ("CANCELLED" . (:foreground "red" :weight "bold"))
+                                 ("CANCELLED" . (:foreground "red3" :weight "bold"))
                                 )
         org-capture-templates '(
                                 ("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
@@ -72,17 +68,20 @@
         )
   (require 'org-bullets)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))) ; Enable org-mode bullets
+  (add-hook 'org-mode-hook (lambda () (org-roam-setup))) ; Enable org-roam
+  (add-hook 'org-mode-hook (lambda () (mixed-pitch-mode))) ; Enable mixed fonts (fixed/variable)
   (setq org-roam-directory (file-truename "~/org")      ; Set org-roam directory
         org-roam-v2-ack t)                              ; Disable Warning for org-roam v2
-  (org-roam-setup)                                      ; Setup Org-Roam
+  (require 'org-alert)
+  (org-mode)
   )
 
 (custom-set-faces
-  '(org-level-1 ((t (:inherit outline-1 :height 1.2))))
-  '(org-level-2 ((t (:inherit outline-2 :height 1.0))))
-  '(org-level-3 ((t (:inherit outline-3 :height 1.0))))
-  '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
-  '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
+   '(org-level-1 ((t (:inherit outline-1 :height 1.2))))
+   '(org-level-2 ((t (:inherit outline-2 :height 1.1))))
+   '(org-level-3 ((t (:inherit outline-3 :height 1.0))))
+   '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
+   '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
   )
 
 
@@ -119,25 +118,25 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
-(use-package dashboard
-  :init      ;; tweak dashboard config before loading it
-  (setq dashboard-set-heading-icons t)
-  (setq dashboard-set-file-icons t)
-  (setq dashboard-banner-logo-title "Emacs Is More Than A Text Editor!")
-  ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
-  (setq dashboard-startup-banner "~/.config/doom/doom-emacs-dash.png")  ;; use custom image as banner
-  (setq dashboard-center-content nil) ;; set to 't' for centered content
-  (setq dashboard-items '((recents . 5)
-                          (agenda . 5 )
-                          (bookmarks . 5)
-                          (projects . 5)
-                          (registers . 5)))
-  :config
-  (dashboard-setup-startup-hook)
-  (dashboard-modify-heading-icons '((recents . "file-text")
-			      (bookmarks . "book"))))
+;; (use-package dashboard
+;;   :init      ;; tweak dashboard config before loading it
+;;   (setq dashboard-set-heading-icons t)
+;;   (setq dashboard-set-file-icons t)
+;;   (setq dashboard-banner-logo-title "Emacs Is More Than A Text Editor!")
+;;   ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+;;   ;;(setq dashboard-startup-banner "~/.config/doom/doom-emacs-dash.png")  ;; use custom image as banner
+;;   (setq dashboard-center-content nil) ;; set to 't' for centered content
+;;   (setq dashboard-items '((recents . 5)
+;;                           (agenda . 5 )
+;;                           (bookmarks . 5)
+;;                           (projects . 5)
+;;                           (registers . 5)))
+;;   :config
+;;   (dashboard-setup-startup-hook)
+;;   (dashboard-modify-heading-icons '((recents . "file-text")
+;;                                     (bookmarks . "book"))))
+;; (setq doom-fallback-buffer "*dashboard*")
 
-(setq doom-fallback-buffer "*dashboard*")
 (map! :leader
       (:prefix ("d" . "dired")
        :desc "Open dired" "d" #'dired
@@ -184,4 +183,50 @@
                               ("mkv" . "mpv")
                               ("mp4" . "mpv")))
 
-(pdf-tools-install)  ;; Activating pdf-tools
+(rainbow-mode)       ; Activate rainbow mode for colored #0000FF.
+(pdf-tools-install)  ; Activating pdf-tools
+;;(server-start)       ; Activate server mode in emacs
+
+;; Adding my private GitLab Server to known forge gitlab servers
+(after! forge
+  (add-to-list 'forge-alist '("gitlab.ody5.de" "gitlab.ody5.de/api/v4" "gitlab.ody5.de" forge-gitlab-repository))
+)
+
+;; Set the font face based on platform
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (set-face-attribute 'default nil
+                       :font "Source Code Pro"
+                       :weight 'regular
+                       :height 130))
+  ('darwin (set-face-attribute 'default nil :font "Fira Mono" :height 170)))
+
+;; Set the fixed pitch face
+(set-face-attribute 'fixed-pitch nil
+                    :font "Source Code Pro"
+                    :weight 'regular
+                    :height 130)
+
+;; Set the variable pitch face
+(set-face-attribute 'variable-pitch nil
+                    ;; :font "Cantarell"
+                    :font "Ubuntu"
+                    :height 155
+                    :weight 'light)
+
+
+
+;; Make sure org-indent face is available
+(require 'org-indent)
+
+;; Ensure that anything that should be fixed-pitch in Org files appears that way
+(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
+(set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+(set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
