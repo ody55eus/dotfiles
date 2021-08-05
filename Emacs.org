@@ -1,0 +1,1096 @@
+#+TITLE: Doom Emacs Configuration
+
+* About Me
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq user-full-name "Jonathan Pieper")
+(setq user-mail-address "ody55eus@mailbox.org")
+
+#+end_src
+
+* Basic Configuration
+** Other Doom Emacs Configuration Files (init / packages)
+*** Initialization (init.el)
+**** Docstring
+
+#+begin_src emacs-lisp :tangle ./.doom.d/init.el
+;;; init.el -*- lexical-binding: t; -*-
+
+;; This file controls what Doom modules are enabled and what order they load
+;; in. Remember to run 'doom sync' after modifying it!
+
+;; NOTE Press 'SPC h d h' (or 'C-h d h' for non-vim users) to access Doom's
+;;      documentation. There you'll find a "Module Index" link where you'll find
+;;      a comprehensive list of Doom's modules and what flags they support.
+
+;; NOTE Move your cursor over a module's name (or its flags) and press 'K' (or
+;;      'C-c c k' for non-vim users) to view its documentation. This works on
+;;      flags as well (those symbols that start with a plus).
+;;
+;;      Alternatively, press 'gd' (or 'C-c c d') on a module to browse its
+;;      directory (for easy access to its source code).
+#+end_src
+
+**** Enable Features
+
+Just comment/uncomment some lines to disable/enable features.
+
+#+begin_src emacs-lisp :tangle ./.doom.d/init.el
+
+(doom! :input
+       ;;chinese
+       ;;japanese
+       ;;layout            ; auie,ctsrnm is the superior home row
+
+       :completion
+       company           ; the ultimate code completion backend
+       ;;helm              ; the *other* search engine for love and life
+       ;;ido               ; the other *other* search engine...
+       ivy               ; a search engine for love and life
+       ;;vertico           ; the search engine of the future
+
+       :ui
+       ;;deft              ; notational velocity for Emacs
+       doom              ; what makes DOOM look the way it does
+       doom-dashboard    ; a nifty splash screen for Emacs
+       doom-quit         ; DOOM quit-message prompts when you quit Emacs
+       (emoji +unicode)  ; 🙂
+       hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
+       ;;hydra
+       indent-guides     ; highlighted indent columns
+       ;;ligatures         ; ligatures and symbols to make your code pretty again
+       ;;minimap           ; show a map of the code on the side
+       modeline          ; snazzy, Atom-inspired modeline, plus API
+       ;;nav-flash         ; blink cursor line after big motions
+       ;;neotree           ; a project drawer, like NERDTree for vim
+       ophints           ; highlight the region an operation acts on
+       (popup +defaults)   ; tame sudden yet inevitable temporary windows
+       ;;tabs              ; a tab bar for Emacs
+       treemacs          ; a project drawer, like neotree but cooler
+       unicode           ; extended unicode support for various languages
+       vc-gutter         ; vcs diff in the fringe
+       vi-tilde-fringe   ; fringe tildes to mark beyond EOB
+       ;;window-select     ; visually switch windows
+       workspaces        ; tab emulation, persistence & separate workspaces
+       zen               ; distraction-free coding or writing
+
+       :editor
+       (evil +everywhere); come to the dark side, we have cookies
+       file-templates    ; auto-snippets for empty files
+       fold              ; (nigh) universal code folding
+       ;;(format +onsave)  ; automated prettiness
+       ;;god               ; run Emacs commands without modifier keys
+       ;;lispy             ; vim for lisp, for people who don't like vim
+       ;;multiple-cursors  ; editing in many places at once
+       ;;objed             ; text object editing for the innocent
+       ;;parinfer          ; turn lisp into python, sort of
+       ;;rotate-text       ; cycle region at point between text candidates
+       snippets            ; my elves. They type so I don't have to
+       ;;word-wrap         ; soft wrapping with language-aware indent
+
+       :emacs
+       (dired +icons)    ; making dired pretty [functional]
+       electric          ; smarter, keyword-based electric-indent
+       (ibuffer +icons)  ; interactive buffer management
+       undo              ; persistent, smarter undo for your inevitable mistakes
+       vc                ; version-control and Emacs, sitting in a tree
+
+       :term
+       eshell            ; the elisp shell that works everywhere
+       ;;shell             ; simple shell REPL for Emacs
+       ;;term              ; basic terminal emulator for Emacs
+       vterm             ; the best terminal emulation in Emacs
+
+       :checkers
+       syntax              ; tasing you for every semicolon you forget
+       ;;(spell +flyspell) ; tasing you for misspelling mispelling
+       grammar           ; tasing grammar mistake every you make
+
+       :tools
+       ;;ansible
+       ;;debugger          ; FIXME stepping through code, to help you add bugs
+       ;;direnv
+       ;;docker
+       ;;editorconfig      ; let someone else argue about tabs vs spaces
+       ;;ein               ; tame Jupyter notebooks with emacs
+       (eval +overlay)     ; run code, run (also, repls)
+       ;;gist              ; interacting with github gists
+       lookup              ; navigate your code and its documentation
+       ;;lsp               ; M-x vscode
+       magit             ; a git porcelain for Emacs
+       ;;make              ; run make tasks from Emacs
+       ;;pass              ; password manager for nerds
+       pdf               ; pdf enhancements
+       ;;prodigy           ; FIXME managing external services & code builders
+       ;;rgb               ; creating color strings
+       ;;taskrunner        ; taskrunner for all your projects
+       ;;terraform         ; infrastructure as code
+       tmux              ; an API for interacting with tmux
+       ;;upload            ; map local to remote projects via ssh/ftp
+
+       :os
+       (:if IS-MAC macos)  ; improve compatibility with macOS
+       ;;tty               ; improve the terminal Emacs experience
+
+       :lang
+       ;;agda              ; types of types of types of types...
+       ;;beancount         ; mind the GAAP
+       ;;cc                ; C > C++ == 1
+       ;;clojure           ; java with a lisp
+       ;;common-lisp       ; if you've seen one lisp, you've seen them all
+       ;;coq               ; proofs-as-programs
+       ;;crystal           ; ruby at the speed of c
+       ;;csharp            ; unity, .NET, and mono shenanigans
+       data              ; config/data formats
+       ;;(dart +flutter)   ; paint ui and not much else
+       ;;elixir            ; erlang done right
+       ;;elm               ; care for a cup of TEA?
+       emacs-lisp        ; drown in parentheses
+       ;;erlang            ; an elegant language for a more civilized age
+       ;;ess               ; emacs speaks statistics
+       ;;factor
+       ;;faust             ; dsp, but you get to keep your soul
+       ;;fsharp            ; ML stands for Microsoft's Language
+       ;;fstar             ; (dependent) types and (monadic) effects and Z3
+       ;;gdscript          ; the language you waited for
+       ;;(go +lsp)         ; the hipster dialect
+       ;;(haskell +dante)  ; a language that's lazier than I am
+       ;;hy                ; readability of scheme w/ speed of python
+       ;;idris             ; a language you can depend on
+       json              ; At least it ain't XML
+       ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
+       javascript        ; all(hope(abandon(ye(who(enter(here))))))
+       ;;julia             ; a better, faster MATLAB
+       ;;kotlin            ; a better, slicker Java(Script)
+       latex             ; writing papers in Emacs has never been so fun
+       ;;lean              ; for folks with too much to prove
+       ;;ledger            ; be audit you can be
+       ;;lua               ; one-based indices? one-based indices
+       markdown          ; writing docs for people to ignore
+       nim               ; python + lisp at the speed of c
+       ;;nix               ; I hereby declare "nix geht mehr!"
+       ;;ocaml             ; an objective camel
+       org               ; organize your plain life in plain text
+       ;;php               ; perl's insecure younger brother
+       ;;plantuml          ; diagrams for confusing people more
+       ;;purescript        ; javascript, but functional
+       python            ; beautiful is better than ugly
+       qt                ; the 'cutest' gui framework ever
+       ;;racket            ; a DSL for DSLs
+       ;;raku              ; the artist formerly known as perl6
+       ;;rest              ; Emacs as a REST client
+       rst               ; ReST in peace
+       (ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
+       rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
+       ;;scala             ; java, but good
+       ;;(scheme +guile)   ; a fully conniving family of lisps
+       sh                ; she sells {ba,z,fi}sh shells on the C xor
+       ;;sml
+       ;;solidity          ; do you need a blockchain? No.
+       ;;swift             ; who asked for emoji variables?
+       ;;terra             ; Earth and Moon in alignment for performance.
+       web               ; the tubes
+       yaml              ; JSON, but readable
+       ;;zig               ; C, but simpler
+
+       :email
+       ;;(mu4e +org +gmail)
+       ;;notmuch
+       ;;(wanderlust +gmail)
+
+       :app
+       ;;calendar
+       emms                ; Web Browser
+       ;;everywhere        ; *leave* Emacs!? You must be joking
+       ;;irc               ; how neckbeards socialize
+       (rss +org)        ; emacs as an RSS reader
+       ;;twitter           ; twitter client https://twitter.com/vnought
+
+       :config
+       literate
+       (default +bindings +smartparens))
+#+end_src
+*** Doom Emacs Package Installation (packages.el)
+**** Docstring
+
+#+begin_src emacs-lisp :tangle ./.doom.d/packages.el
+;; -*- no-byte-compile: t; -*-
+;;; $DOOMDIR/packages.el
+
+;; To install a package with Doom you must declare them here and run 'doom sync'
+;; on the command line, then restart Emacs for the changes to take effect -- or
+;; use 'M-x doom/reload'.
+
+
+;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
+;(package! some-package)
+
+;; To install a package directly from a remote git repo, you must specify a
+;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
+;; https://github.com/raxod502/straight.el#the-recipe-format
+;(package! another-package
+;  :recipe (:host github :repo "username/repo"))
+
+;; If the package you are trying to install does not contain a PACKAGENAME.el
+;; file, or is located in a subdirectory of the repo, you'll need to specify
+;; `:files' in the `:recipe':
+;(package! this-package
+;  :recipe (:host github :repo "username/repo"
+;           :files ("some-file.el" "src/lisp/*.el")))
+
+;; If you'd like to disable a package included with Doom, you can do so here
+;; with the `:disable' property:
+;(package! builtin-package :disable t)
+
+;; You can override the recipe of a built in package without having to specify
+;; all the properties for `:recipe'. These will inherit the rest of its recipe
+;; from Doom or MELPA/ELPA/Emacsmirror:
+;(package! builtin-package :recipe (:nonrecursive t))
+;(package! builtin-package-2 :recipe (:repo "myfork/package"))
+
+;; Specify a `:branch' to install a package from a particular branch or tag.
+;; This is required for some packages whose default branch isn't 'master' (which
+;; our package manager can't deal with; see raxod502/straight.el#279)
+;(package! builtin-package :recipe (:branch "develop"))
+
+;; Use `:pin' to specify a particular commit to install.
+;(package! builtin-package :pin "1a2b3c4d5e")
+
+
+;; Doom's packages are pinned to a specific commit and updated from release to
+;; release. The `unpin!' macro allows you to unpin single packages...
+;(unpin! pinned-package)
+;; ...or multiple packages
+;(unpin! pinned-package another-pinned-package)
+;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
+;(unpin! t)
+#+end_src
+
+**** Load Packages
+
+#+begin_src emacs-lisp :tangle ./.doom.d/packages.el
+
+(package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
+(package! org-roam)             ; Extended org-mode for Zettelkasten principle.
+(package! org-bullets)          ; Display nice bullets in org-mode (deprecated).
+(package! org-alert)            ; Enable org-mode notifications.
+(package! org-tree-slide)       ; Enable org-mode presentations.
+;;(package! org-superstar)        ; Alternative for org-bullets.
+(package! org-pdfview)          ; Allows to annotate pdf in org-mode.
+(package! pdf-tools)            ; Additional pdf tools.
+(package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
+(package! emojify)              ; Convert ☺ into emoji's.
+(package! dmenu)                ; Dmenu Plugin.
+(package! tldr)                 ; Too long; Didn't read (short man pages).
+(package! forge)                ; Additional git features (linking issues from github etc.)
+(package! counsel)
+(package! eshell-git-prompt)
+;;(package! dashboard)            ; Display a dashboard when starting Emacs.
+
+;; Language Server
+(package! lsp-mode)
+(package! lsp-ui)
+(package! lsp-treemacs)
+(package! lsp-ivy)
+(package! dap-mode)             ; Debugging Functions
+(package! company-box)          ; Auto-Completion
+
+#+end_src
+
+** Improve Startup Performance
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
+
+(defun jp/display-startup-time ()
+  (message "Emacs loaded in %s with %d garbage collections."
+           (format "%.2f seconds"
+                   (float-time
+                    (time-subtract after-init-time before-init-time)))
+           gcs-done))
+
+(add-hook 'emacs-startup-hook #'jp/display-startup-time)
+
+#+end_src
+
+** UI Configuration
+*** Keybindings (=:leader= ~SPC-<Key>~)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(map! :leader
+      (:prefix-map ("b" . "buffer")
+       :desc "Counsel switch buffer" :n "j" #'counsel-switch-buffer
+       :desc "Counsel switch buffer other window" :n "I" #'counsel-switch-buffer-other-window)
+      ;; (:prefix-map ("c" . "code"))
+      ;; (:prefix-map ("d" . "dired"))
+      ;; (:prefix-map ("f" . "file"))
+      ;; (:prefix-map ("g" . "git"))
+      ;; (:prefix-map ("h" . "help"))
+      ;; (:prefix-map ("i" . "emoji"))
+      ;; (:prefix-map ("m" . "org manage")
+      ;;  (:prefix ("a" . "attatch"))
+      ;;  (:prefix ("b" . "table"))
+      ;;  (:prefix ("c" . "clock"))
+      ;;  (:prefix ("d" . "date"))
+      ;;  )
+      ;; (:prefix-map ("o" . "open"))
+      ;; (:prefix-map ("p" . "projectile"))
+      ;; (:prefix-map ("q" . "quit"))
+      ;; (:prefix-map ("s" . "search"))
+      ;; (:prefix-map ("t" . "toogle"))
+      ;; (:prefix-map ("w" . "window"))
+      ;; (:prefix-map ("TAB" . "workspace"))
+      (:prefix-map ("n" . "notes")
+       (:prefix ("r" . "roam")
+       :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
+       :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
+       :desc "Capture new org-mode Node" :n "n" #'org-roam-capture
+       :desc "Find org-roam Node" :n "f" #'org-roam-node-find
+       :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
+       :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point)
+       )
+      )
+
+#+end_src
+
+*** Keybindings (=CTRL= ~C-<Key>~)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(map! (:prefix-map ("C-w" . "window")
+       :desc "evil-window-left" :n "<left>" #'evil-window-left
+       :desc "evil-window-right" :n "<right>" #'evil-window-right
+       :desc "evil-window-up" :n "<up>" #'evil-window-up
+       :desc "evil-window-down" :n "<down>" #'evil-window-down
+       )
+ )
+#+end_src
+
+*** Color Theme
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq doom-theme 'doom-solarized-dark-high-contrast)
+
+#+end_src
+
+*** Font Face Configuration
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; Set the font face based on platform
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (set-face-attribute 'default nil
+                       :font "Source Code Pro"
+                       :weight 'regular
+                       :height 140))
+  ('darwin (set-face-attribute 'default nil :font "Fira Mono" :height 170)))
+
+;; Set the fixed pitch face
+(set-face-attribute 'fixed-pitch nil
+                    :font "Source Code Pro"
+                    :weight 'regular
+                    :height 140)
+
+;; Set the variable pitch face
+(set-face-attribute 'variable-pitch nil
+                    ;; :font "Cantarell"
+                    :font "Ubuntu"
+                    :height 185
+                    :weight 'regular)
+
+#+end_src
+
+*** Basic Emacs UI Enhancements
+**** Line Numbers
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq display-line-numbers-type 'relative)
+
+;; Disable Line Numbers for specific modes
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+                shell-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+#+end_src
+
+**** Visible Bell
+
+Disable the computer =beep= and activate a visual feedback instead.
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; Set up the visible bell
+(setq visible-bell t)
+
+#+end_src
+
+**** Enable Menu Bar
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(menu-bar-mode 1)
+
+#+end_src
+
+*** Additional Packages
+**** Rainbow Mode
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(rainbow-mode)
+#+end_src
+
+**** PDF Tools
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(pdf-tools-install)
+#+end_src
+
+* Org Mode
+** Org Configuration
+*** Directories and Files
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-directory "~/org/"
+      org-agenda-files '("~/org/Agenda.org"
+                         "~/org/Tasks.org"
+                         "~/org/Habits.org"
+                         "~/org/Journal.org")
+      org-default-notes-file (concat org-directory "/Notes.org"))
+
+#+end_src
+
+*** Org Roam (Zettelkasten)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-roam-directory (file-truename "~/org/roam")   ; Set org-roam directory
+      org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
+
+(add-hook 'org-mode-hook (lambda () (org-roam-setup))) ; Enable org-roam
+
+#+end_src
+
+** UI Configuration
+*** Visual Feedback
+**** Ellipsis symbol (folding)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-ellipsis " ▼ ")
+
+#+end_src
+**** Visual Eenhancements
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(defun jp/org-mode-setup ()
+  (org-indent-mode)
+  (mixed-pitch-mode 1)
+  (visual-line-mode 1))
+
+(add-hook 'org-mode-hook #'jp/org-mode-setup)
+
+;;(add-hook 'org-mode-hook (lambda () (mixed-pitch-mode))) ; Enable mixed fonts (fixed/variable)
+
+#+end_src
+
+**** Hiding Emphasis Marker
+
+Hiding some emphasis marker (* / = )  when using them to /highlight/ *text*.
+Set this value to ~nil~ to display them again.
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
+
+#+end_src
+**** Visual Fill Column (add spaces and center text)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(defun jp/org-visual-fill-column ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(add-hook 'org-mode-hook #'jp/org-visual-fill-column)
+
+#+end_src
+
+**** Org Bullets
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))) ; Enable org-mode bullets
+
+#+end_src
+
+**** Font Configuration
+***** Headings
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; setting org headlines
+(custom-set-faces
+   '(org-level-1 ((t (:inherit outline-1 :height 1.2))))
+   '(org-level-2 ((t (:inherit outline-2 :height 1.1))))
+   '(org-level-3 ((t (:inherit outline-3 :height 1.0))))
+   '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
+   '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
+  )
+
+  #+end_src
+
+***** Setting Text Fonts for Mixed Fixed Pitch
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; Make sure org-indent face is available
+(require 'org-indent)
+
+;; Ensure that anything that should be fixed-pitch in Org files appears that way
+(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
+(set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+(set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
+
+#+end_src
+
+*** Tasks Appearance
+**** Color and weight of keywords
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-todo-keyword-faces '(
+                         ("EPIC" . (:foreground "DodgerBlue" :weight "bold"))
+                         ("PROJ" . "DarkGreen")
+                         ("TODO" . org-warning)
+                         ("STRT" . "yellow")
+                         ("WAIT" . (:foreground "yellow4" :weight "italic"))
+                         ("HOLD" . (:foreground "red4"))
+                         ("IDEA" . (:foreground "BlueViolet"))
+                         ("KILL" . "red")
+                         ("CANCELLED" . (:foreground "red3" :weight "bold"))
+                         )
+      )
+
+#+end_src
+
+** Workflow Configuration
+*** Task Keywords
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-todo-keywords '(
+                          (type "EPIC(e)" "PROJ(p)" "TODO(t)" "STRT(s)"
+                                "WAIT(w)" "HOLD(h)" "IDEA(i)" "|"
+                                "DONE(d)" "KILL(k)" "CANCELLED(c)")
+                          (sequence "BACKLOG(b)" "PLAN(p)" "ACTIVE(a)"
+                                    "REVIEW(r)" "WAIT(w@/!)" "HOLD(h)" "|"
+                                    "COMPLETED(c)" "CANC(k@)")
+                        )
+      )
+
+#+end_src
+
+*** TODO Capture Templates for new Tasks
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-capture-templates '(
+                              ("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
+                               "* TODO %?\n %i\n %a")
+                              ("e" "Epic" entry (file+headline "~/org/epic.org" "Epic")
+                               "* EPIC %?\n %i\n %a")
+                              ("j" "Journal Entries")
+                              ("jj" "Journal" entry
+                               (file+olp+datetree "~/org/Journal.org")
+                               "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
+                               ;; ,(jp/read-file-as-string "~/Notes/Templates/Daily.org")
+                               :clock-in :clock-resume
+                               :empty-lines 1)
+                              ("jm" "Meeting" entry
+                               (file+olp+datetree "~/org/Journal.org")
+                               "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
+                               :clock-in :clock-resume
+                               :empty-lines 1)
+                              )
+      )
+
+#+end_src
+
+*** TODO Custom Agenda View
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-agenda-custom-commands
+     '(("d" "Dashboard"
+       ((agenda "" ((org-deadline-warning-days 7)))
+        (todo "BACKLOG"
+          ((org-agenda-overriding-header "Backlog Tasks")))
+        (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
+
+      ("t" "All Todo Tasks"
+       ((todo "TODO"
+          ((org-agenda-overriding-header "Todo Tasks")))))
+
+      ("W" "Work Tasks" tags-todo "+work-email")
+
+      ;; Low-effort next actions
+      ("e" tags-todo "+TODO=\"EPIC\"+Effort<15&+Effort>0"
+       ((org-agenda-overriding-header "Low Effort Tasks")
+        (org-agenda-max-todos 20)
+        (org-agenda-files org-agenda-files)))
+
+      ("w" "Workflow Status"
+       ((todo "WAIT"
+              ((org-agenda-overriding-header "Waiting on External")
+               (org-agenda-files org-agenda-files)))
+        (todo "REVIEW"
+              ((org-agenda-overriding-header "In Review")
+               (org-agenda-files org-agenda-files)))
+        (todo "PLAN"
+              ((org-agenda-overriding-header "In Planning")
+               (org-agenda-todo-list-sublevels nil)
+               (org-agenda-files org-agenda-files)))
+        (todo "BACKLOG"
+              ((org-agenda-overriding-header "Project Backlog")
+               (org-agenda-todo-list-sublevels nil)
+               (org-agenda-files org-agenda-files)))
+        (todo "READY"
+              ((org-agenda-overriding-header "Ready for Work")
+               (org-agenda-files org-agenda-files)))
+        (todo "ACTIVE"
+              ((org-agenda-overriding-header "Active Projects")
+               (org-agenda-files org-agenda-files)))
+        (todo "COMPLETED"
+              ((org-agenda-overriding-header "Completed Projects")
+               (org-agenda-files org-agenda-files)))
+        (todo "CANC"
+              ((org-agenda-overriding-header "Cancelled Projects")
+               (org-agenda-files org-agenda-files)))))))
+
+#+end_src
+
+*** Task Tags
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-tag-alist
+      '((:startgroup)
+         ; Put mutually exclusive tags here
+         (:endgroup)
+         ("@errand" . ?E)
+         ("@home" . ?H)
+         ("@work" . ?W)
+         ("agenda" . ?a)
+         ("planning" . ?p)
+         ("publish" . ?P)
+         ("batch" . ?b)
+         ("note" . ?n)
+         ("idea" . ?i)))
+
+#+end_src
+
+*** Refile Targets
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+    (setq org-refile-targets
+      '(("Archive.org" :maxlevel . 1)
+        ("Tasks.org" :maxlevel . 1)))
+
+#+end_src
+
+*** Enable Auto-Save after Refile
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+    ;; Save Org buffers after refiling!
+    (advice-add 'org-refile :after 'org-save-all-org-buffers)
+
+#+end_src
+
+** Additional Org Packages
+*** Org Alert
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(require 'org-alert)
+#+end_src
+
+*** Org Tempo
+
+Auto Completion for Code Blocks in org mode!
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(with-eval-after-load 'org
+  ;; This is needed as of Org 9.2
+  (require 'org-tempo)
+
+  (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
+  (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("go" . "src go"))
+  (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+  (add-to-list 'org-structure-template-alist '("json" . "src json")))
+
+#+end_src
+
+* TODO Additional Packages
+** Dired (File Manager)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(map! :leader
+      (:prefix ("d" . "dired")
+       :desc "Open dired" "d" #'dired
+       :desc "Dired jump to current" "j" #'dired-jump)
+      (:after dired
+       (:map dired-mode-map
+        :desc "Peep-dired image previews" "d p" #'peep-dired
+        :desc "Dired view file" "d v" #'dired-view-file)))
+
+;; Make 'h' and 'l' go back and forward in dired. Much faster to navigate the directory structure!
+(evil-define-key 'normal dired-mode-map
+  (kbd "M-RET") 'dired-display-file
+  (kbd "h") 'dired-up-directory
+  (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
+  (kbd "m") 'dired-mark
+  (kbd "t") 'dired-toggle-marks
+  (kbd "u") 'dired-unmark
+  (kbd "C") 'dired-do-copy
+  (kbd "D") 'dired-do-delete
+  (kbd "J") 'dired-goto-file
+  (kbd "M") 'dired-chmod
+  (kbd "O") 'dired-chown
+  (kbd "P") 'dired-do-print
+  (kbd "R") 'dired-rename
+  (kbd "T") 'dired-do-touch
+  (kbd "Y") 'dired-copy-filenamecopy-filename-as-kill ; copies filename to kill ring.
+  (kbd "+") 'dired-create-directory
+  (kbd "-") 'dired-up-directory
+  (kbd "% l") 'dired-downcase
+  (kbd "% u") 'dired-upcase
+  (kbd "; d") 'epa-dired-do-decrypt
+  (kbd "; e") 'epa-dired-do-encrypt)
+;; If peep-dired is enabled, you will get image previews as you go up/down with 'j' and 'k'
+(evil-define-key 'normal peep-dired-mode-map
+  (kbd "j") 'peep-dired-next-file
+  (kbd "k") 'peep-dired-prev-file)
+(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
+;; Get file icons in dired
+(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+;; With dired-open plugin, you can launch external programs for certain extensions
+;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
+(setq dired-open-extensions '(("gif" . "sxiv")
+                              ("jpg" . "sxiv")
+                              ("png" . "sxiv")
+                              ("mkv" . "mpv")
+                              ("mp4" . "mpv")))
+#+end_src
+
+** Languages (IDE using Language Server)
+
+NOTE: Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
+
+*** IDE Features with lsp-mode
+**** lsp-mode
+
+[[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] enables IDE-like functionality for many different programming languages via "language servers" that speak the [[https://microsoft.github.io/language-server-protocol/][Language Server Protocol]].  Before trying to set up =lsp-mode= for a particular language, check out the [[https://emacs-lsp.github.io/lsp-mode/page/languages/][documentation for your language]] so that you can learn which language servers are available and how to install them.
+
+The =lsp-keymap-prefix= setting enables you to define a prefix for where =lsp-mode='s default keybindings will be added.  I *highly recommend* using the prefix to find out what you can do with =lsp-mode= in a buffer.
+
+The =which-key= integration adds helpful descriptions of the various keys so you should be able to learn a lot just by pressing =C-c l= in a =lsp-mode= buffer and trying different things that you find there.
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+  (defun jp/lsp-mode-setup ()
+    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+    (lsp-headerline-breadcrumb-mode))
+
+  (use-package lsp-mode
+    :ensure nil
+    :commands (lsp lsp-deferred)
+    :hook (lsp-mode . jp/lsp-mode-setup)
+    :init
+    (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+    :config
+    (lsp-enable-which-key-integration t))
+
+#+end_src
+
+**** lsp-ui
+
+[[https://emacs-lsp.github.io/lsp-ui/][lsp-ui]] is a set of UI enhancements built on top of =lsp-mode= which make Emacs feel even more like an IDE.  Check out the screenshots on the =lsp-ui= homepage (linked at the beginning of this paragraph) to see examples of what it can do.
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+  (use-package lsp-ui
+    :hook (lsp-mode . lsp-ui-mode)
+    :custom
+    (lsp-ui-doc-position 'bottom))
+
+#+end_src
+
+**** lsp-treemacs
+
+[[https://github.com/emacs-lsp/lsp-treemacs][lsp-treemacs]] provides nice tree views for different aspects of your code like symbols in a file, references of a symbol, or diagnostic messages (errors and warnings) that are found in your code.
+
+Try these commands with =M-x=:
+
+- =lsp-treemacs-symbols= - Show a tree view of the symbols in the current file
+- =lsp-treemacs-references= - Show a tree view for the references of the symbol under the cursor
+- =lsp-treemacs-error-list= - Show a tree view for the diagnostic messages in the project
+
+This package is built on the [[https://github.com/Alexander-Miller/treemacs][treemacs]] package which might be of some interest to you if you like to have a file browser at the left side of your screen in your editor.
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+  (use-package lsp-treemacs
+    :after lsp)
+
+#+end_src
+
+**** lsp-ivy
+
+[[https://github.com/emacs-lsp/lsp-ivy][lsp-ivy]] integrates Ivy with =lsp-mode= to make it easy to search for things by name in your code.  When you run these commands, a prompt will appear in the minibuffer allowing you to type part of the name of a symbol in your code.  Results will be populated in the minibuffer so that you can find what you're looking for and jump to that location in the code upon selecting the result.
+
+Try these commands with =M-x=:
+
+- =lsp-ivy-workspace-symbol= - Search for a symbol name in the current project workspace
+- =lsp-ivy-global-workspace-symbol= - Search for a symbol name in all active project workspaces
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+  (use-package lsp-ivy
+    :after lsp)
+
+#+end_src
+
+*** Debugging with dap-mode
+
+[[https://emacs-lsp.github.io/dap-mode/][dap-mode]] is an excellent package for bringing rich debugging capabilities to Emacs via the [[https://microsoft.github.io/debug-adapter-protocol/][Debug Adapter Protocol]].  You should check out the [[https://emacs-lsp.github.io/dap-mode/page/configuration/][configuration docs]] to learn how to configure the debugger for your language.  Also make sure to check out the documentation for the debug adapter to see what configuration parameters are available to use for your debug templates!
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(use-package dap-mode
+  ;; Uncomment the config below if you want all UI panes to be hidden by default!
+  ;; :custom
+  ;; (lsp-enable-dap-auto-configure nil)
+  ;; :config
+  ;; (dap-ui-mode 1)
+  :commands dap-debug
+  :config
+  ;; Set up Node debugging
+  (require 'dap-node)
+  (dap-node-setup) ;; Automatically installs Node debug adapter if needed
+
+  ;; Bind `C-c l d` to `dap-hydra` for easy access
+  (general-define-key
+   :keymaps 'lsp-mode-map
+   :prefix lsp-keymap-prefix
+   "d" '(dap-hydra t :wk "debugger")))
+
+#+end_src
+
+*** Python
+
+We use =lsp-mode= and =dap-mode= to provide a more complete development environment for Python in Emacs.  Check out [[https://emacs-lsp.github.io/lsp-mode/page/lsp-pyls/][the =pyls= configuration]] in the =lsp-mode= documentation for more details.
+
+Make sure you have the =pyls= language server installed before trying =lsp-mode=!
+
+#+begin_src sh :tangle no
+
+pip install --user "python-lsp-server"
+
+#+end_src
+
+There are a number of other language servers for Python so if you find that =pyls= doesn't work for you, consult the =lsp-mode= [[https://emacs-lsp.github.io/lsp-mode/page/languages/][language configuration documentation]] to try the others!
+
+#+begin_src emacs-lisp
+
+(use-package python-mode
+  :ensure t
+  :hook (python-mode . lsp-deferred)
+  :custom
+  ;; NOTE: Set these if Python 3 is called "python3" on your system!
+  ;; (python-shell-interpreter "python3")
+  ;; (dap-python-executable "python3")
+  (dap-python-debugger 'debugpy)
+  :config
+  (require 'dap-python))
+
+#+end_src
+
+You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =pyvenv-activate= command should configure Emacs to cause =lsp-mode= and =dap-mode= to use the virtual environment when they are loaded, just select the path to your virtual environment before loading your project.
+
+#+begin_src emacs-lisp
+
+(use-package pyvenv
+  :after python-mode
+  :config
+  (pyvenv-mode 1))
+
+#+end_src
+
+*** TODO TypeScript (deactivated)
+
+This is a basic configuration for the TypeScript language so that =.ts= files activate =typescript-mode= when opened.  We're also adding a hook to =typescript-mode-hook= to call =lsp-deferred= so that we activate =lsp-mode= to get LSP features every time we edit TypeScript code.
+
+#+begin_src emacs-lisp
+
+(use-package typescript-mode
+  :mode "\\.ts\\'"
+  :hook (typescript-mode . lsp-deferred)
+  :config
+  (setq typescript-indent-level 2))
+
+#+end_src
+
+*Important note!*  For =lsp-mode= to work with TypeScript (and JavaScript) you will need to install a language server on your machine.  If you have Node.js installed, the easiest way to do that is by running the following command:
+
+#+begin_src shell :tangle no
+
+npm install -g typescript-language-server typescript
+
+#+end_src
+
+This will install the [[https://github.com/theia-ide/typescript-language-server][typescript-language-server]] and the TypeScript compiler package.
+
+*** Company Mode (Autocompletion)
+
+[[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
+
+We also use [[https://github.com/sebastiencs/company-box][company-box]] to further enhance the look of the completions with icons and better overall presentation.
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+         ("<tab>" . company-complete-selection))
+  (:map lsp-mode-map
+   ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
+
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+
+#+end_src
+
+** Projectile
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; NOTE: Set this to the folder where you keep your Git repos!
+(when (file-directory-p "~/Projects/Code")
+  (setq projectile-project-search-path '("~/Projects/Code")))
+(setq projectile-switch-project-action #'projectile-dired)
+
+(setq projectile-completion-system 'ivy)
+
+(counsel-projectile-mode)
+
+#+end_src
+
+** TODO Magit
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; Optional Magit Configuration
+
+#+end_src
+
+** Eshell
+
+NOTE: Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
+
+[[https://www.gnu.org/software/emacs/manual/html_mono/eshell.html#Contributors-to-Eshell][Eshell]] is Emacs' own shell implementation written in Emacs Lisp.  It provides you with a cross-platform implementation (even on Windows!) of the common GNU utilities you would find on Linux and macOS (=ls=, =rm=, =mv=, =grep=, etc).  It also allows you to call Emacs Lisp functions directly from the shell and you can even set up aliases (like aliasing =vim= to =find-file=).  Eshell is also an Emacs Lisp REPL which allows you to evaluate full expressions at the shell.
+
+The downsides to Eshell are that it can be harder to configure than other packages due to the particularity of where you need to set some options for them to go into effect, the lack of shell completions (by default) for some useful things like Git commands, and that REPL programs sometimes don't work as well.  However, many of these limitations can be dealt with by good configuration and installing external packages, so don't let that discourage you from trying it!
+
+*Useful key bindings:*
+
+- =C-c C-p= / =C-c C-n= - go back and forward in the buffer's prompts (also =[[= and =]]= with evil-mode)
+- =M-p= / =M-n= - go back and forward in the input history
+- =C-c C-u= - delete the current input string backwards up to the cursor
+- =counsel-esh-history= - A searchable history of commands typed into Eshell
+
+We will be covering Eshell more in future videos highlighting other things you can do with it.
+
+For more thoughts on Eshell, check out these articles by Pierre Neidhardt:
+- https://ambrevar.xyz/emacs-eshell/index.html
+- https://ambrevar.xyz/emacs-eshell-versus-shell/index.html
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+  (defun jp/configure-eshell ()
+    ;; Save command history when commands are entered
+    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+    ;; Truncate buffer for performance
+    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+    ;; Bind some useful keys for evil-mode
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+    (evil-normalize-keymaps)
+
+    (setq eshell-history-size         10000
+          eshell-buffer-maximum-lines 10000
+          eshell-hist-ignoredups t
+          eshell-scroll-to-bottom-on-input t))
+
+  (use-package eshell-git-prompt
+    :after eshell)
+
+  (use-package eshell
+    :hook (eshell-first-time-mode . jp/configure-eshell)
+    :config
+
+    (with-eval-after-load 'esh-opt
+      (setq eshell-destroy-buffer-when-process-dies t)
+      (setq eshell-visual-commands '("htop" "zsh" "vim")))
+
+    (eshell-git-prompt-use-theme 'powerline))
+
+
+#+end_src
+** TODO Highlight Todos
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq hl-todo-keyword-faces
+      '(("TODO"   . "#999900")
+        ("FIXME"  . "#990000")
+        ("NOTE"   . "#009999")
+        ("DEBUG"  . "#A020F0")
+        ("GOTCHA" . "#FF4500")
+        ("STUB"   . "#1E90FF")))
+
+(hl-todo-mode)          ; Enable highlight todos
+
+#+end_src

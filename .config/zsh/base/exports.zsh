@@ -1,5 +1,5 @@
 #!/bin/sh
-HISTFILE="$ZDOTDIR".zshhistory
+HISTFILE="$ZDOTDIR"/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=500000
 
