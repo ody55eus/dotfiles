@@ -62,7 +62,8 @@
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
-(package! counsel)              ;
+(package! counsel)
+(package! eshell-git-prompt)
 ;;(package! dashboard)            ; Display a dashboard when starting Emacs.
 
 ;; Language Server
@@ -71,3 +72,4 @@
 (package! lsp-treemacs)
 (package! lsp-ivy)
 (package! dap-mode)             ; Debugging Functions
+(package! company-box)          ; Auto-Completion

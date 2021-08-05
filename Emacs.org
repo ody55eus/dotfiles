@@ -284,7 +284,8 @@ Just comment/uncomment some lines to disable/enable features.
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
-(package! counsel)              ;
+(package! counsel)
+(package! eshell-git-prompt)
 ;;(package! dashboard)            ; Display a dashboard when starting Emacs.
 
 ;; Language Server
@@ -293,6 +294,7 @@ Just comment/uncomment some lines to disable/enable features.
 (package! lsp-treemacs)
 (package! lsp-ivy)
 (package! dap-mode)             ; Debugging Functions
+(package! company-box)          ; Auto-Completion
 
 #+end_src
 
@@ -323,25 +325,25 @@ Just comment/uncomment some lines to disable/enable features.
       (:prefix-map ("b" . "buffer")
        :desc "Counsel switch buffer" :n "j" #'counsel-switch-buffer
        :desc "Counsel switch buffer other window" :n "I" #'counsel-switch-buffer-other-window)
-      (:prefix-map ("c" . "code"))
-      (:prefix-map ("d" . "dired"))
-      (:prefix-map ("f" . "file"))
-      (:prefix-map ("g" . "git"))
-      (:prefix-map ("h" . "help"))
-      (:prefix-map ("i" . "emoji"))
-      (:prefix-map ("m" . "org manage")
-       (:prefix ("a" . "attatch"))
-       (:prefix ("b" . "table"))
-       (:prefix ("c" . "clock"))
-       (:prefix ("d" . "date"))
-       )
-      (:prefix-map ("o" . "open"))
-      (:prefix-map ("p" . "projectile"))
-      (:prefix-map ("q" . "quit"))
-      (:prefix-map ("s" . "search"))
-      (:prefix-map ("t" . "toogle"))
-      (:prefix-map ("w" . "window"))
-      (:prefix-map ("TAB" . "workspace"))
+      ;; (:prefix-map ("c" . "code"))
+      ;; (:prefix-map ("d" . "dired"))
+      ;; (:prefix-map ("f" . "file"))
+      ;; (:prefix-map ("g" . "git"))
+      ;; (:prefix-map ("h" . "help"))
+      ;; (:prefix-map ("i" . "emoji"))
+      ;; (:prefix-map ("m" . "org manage")
+      ;;  (:prefix ("a" . "attatch"))
+      ;;  (:prefix ("b" . "table"))
+      ;;  (:prefix ("c" . "clock"))
+      ;;  (:prefix ("d" . "date"))
+      ;;  )
+      ;; (:prefix-map ("o" . "open"))
+      ;; (:prefix-map ("p" . "projectile"))
+      ;; (:prefix-map ("q" . "quit"))
+      ;; (:prefix-map ("s" . "search"))
+      ;; (:prefix-map ("t" . "toogle"))
+      ;; (:prefix-map ("w" . "window"))
+      ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
        (:prefix ("r" . "roam")
        :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
@@ -408,7 +410,16 @@ Just comment/uncomment some lines to disable/enable features.
 **** Line Numbers
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
 (setq display-line-numbers-type 'relative)
+
+;; Disable Line Numbers for specific modes
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+                shell-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
 #+end_src
 
 **** Visible Bell
@@ -469,17 +480,31 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 #+end_src
 
-*** UI Configuration
-**** Visual Feedback
-***** Ellipsis symbol (folding)
+** UI Configuration
+*** Visual Feedback
+**** Ellipsis symbol (folding)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq org-ellipsis " ▼ ")
 
 #+end_src
+**** Visual Eenhancements
 
-***** Hiding Emphasis Marker
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(defun jp/org-mode-setup ()
+  (org-indent-mode)
+  (mixed-pitch-mode 1)
+  (visual-line-mode 1))
+
+(add-hook 'org-mode-hook #'jp/org-mode-setup)
+
+;;(add-hook 'org-mode-hook (lambda () (mixed-pitch-mode))) ; Enable mixed fonts (fixed/variable)
+
+#+end_src
+
+**** Hiding Emphasis Marker
 
 Hiding some emphasis marker (* / = )  when using them to /highlight/ *text*.
 Set this value to ~nil~ to display them again.
@@ -489,7 +514,7 @@ Set this value to ~nil~ to display them again.
 (setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
 
 #+end_src
-***** Visual Fill Column (add spaces and center text)
+**** Visual Fill Column (add spaces and center text)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -502,7 +527,7 @@ Set this value to ~nil~ to display them again.
 
 #+end_src
 
-***** Org Bullets
+**** Org Bullets
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -511,8 +536,8 @@ Set this value to ~nil~ to display them again.
 
 #+end_src
 
-***** Font Configuration
-****** Headings
+**** Font Configuration
+***** Headings
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -527,7 +552,7 @@ Set this value to ~nil~ to display them again.
 
   #+end_src
 
-****** Mixed Fixed Pitch
+***** Setting Text Fonts for Mixed Fixed Pitch
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -546,12 +571,10 @@ Set this value to ~nil~ to display them again.
 (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
 
-(add-hook 'org-mode-hook (lambda () (mixed-pitch-mode))) ; Enable mixed fonts (fixed/variable)
-
 #+end_src
 
-**** Tasks Appearance
-***** Color and weight of keywords
+*** Tasks Appearance
+**** Color and weight of keywords
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -570,8 +593,8 @@ Set this value to ~nil~ to display them again.
 
 #+end_src
 
-*** Workflow Configuration
-**** Task Keywords
+** Workflow Configuration
+*** Task Keywords
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -587,7 +610,7 @@ Set this value to ~nil~ to display them again.
 
 #+end_src
 
-**** TODO Capture Templates for new Tasks
+*** TODO Capture Templates for new Tasks
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -613,7 +636,7 @@ Set this value to ~nil~ to display them again.
 
 #+end_src
 
-**** TODO Custom Agenda View
+*** TODO Custom Agenda View
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -666,7 +689,7 @@ Set this value to ~nil~ to display them again.
 
 #+end_src
 
-**** Task Tags
+*** Task Tags
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -686,7 +709,7 @@ Set this value to ~nil~ to display them again.
 
 #+end_src
 
-**** Refile Targets
+*** Refile Targets
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -696,7 +719,7 @@ Set this value to ~nil~ to display them again.
 
 #+end_src
 
-**** Enable Auto-Save after Refile
+*** Enable Auto-Save after Refile
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -718,17 +741,18 @@ Auto Completion for Code Blocks in org mode!
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-;; This is needed as of Org 9.2
-(require 'org-tempo)
+(with-eval-after-load 'org
+  ;; This is needed as of Org 9.2
+  (require 'org-tempo)
 
-(add-to-list 'org-structure-template-alist '("sh" . "src sh"))
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
-(add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
-(add-to-list 'org-structure-template-alist '("go" . "src go"))
-(add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
-(add-to-list 'org-structure-template-alist '("json" . "src json"))
+  (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
+  (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("go" . "src go"))
+  (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+  (add-to-list 'org-structure-template-alist '("json" . "src json")))
 
 #+end_src
 
@@ -787,10 +811,9 @@ Auto Completion for Code Blocks in org mode!
 
 ** Languages (IDE using Language Server)
 
-Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
+NOTE: Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
 
 *** IDE Features with lsp-mode
-
 **** lsp-mode
 
 [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] enables IDE-like functionality for many different programming languages via "language servers" that speak the [[https://microsoft.github.io/language-server-protocol/][Language Server Protocol]].  Before trying to set up =lsp-mode= for a particular language, check out the [[https://emacs-lsp.github.io/lsp-mode/page/languages/][documentation for your language]] so that you can learn which language servers are available and how to install them.
@@ -870,23 +893,23 @@ Try these commands with =M-x=:
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-  (use-package dap-mode
-    ;; Uncomment the config below if you want all UI panes to be hidden by default!
-    ;; :custom
-    ;; (lsp-enable-dap-auto-configure nil)
-    ;; :config
-    ;; (dap-ui-mode 1)
-    :commands dap-debug
-    :config
-    ;; Set up Node debugging
-    (require 'dap-node)
-    (dap-node-setup) ;; Automatically installs Node debug adapter if needed
+(use-package dap-mode
+  ;; Uncomment the config below if you want all UI panes to be hidden by default!
+  ;; :custom
+  ;; (lsp-enable-dap-auto-configure nil)
+  ;; :config
+  ;; (dap-ui-mode 1)
+  :commands dap-debug
+  :config
+  ;; Set up Node debugging
+  (require 'dap-node)
+  (dap-node-setup) ;; Automatically installs Node debug adapter if needed
 
-    ;; Bind `C-c l d` to `dap-hydra` for easy access
-    (general-define-key
-      :keymaps 'lsp-mode-map
-      :prefix lsp-keymap-prefix
-      "d" '(dap-hydra t :wk "debugger")))
+  ;; Bind `C-c l d` to `dap-hydra` for easy access
+  (general-define-key
+   :keymaps 'lsp-mode-map
+   :prefix lsp-keymap-prefix
+   "d" '(dap-hydra t :wk "debugger")))
 
 #+end_src
 
@@ -906,17 +929,16 @@ There are a number of other language servers for Python so if you find that =pyl
 
 #+begin_src emacs-lisp
 
-  (use-package python-mode
-    :ensure t
-    :hook (python-mode . lsp-deferred)
-    :custom
-    ;; NOTE: Set these if Python 3 is called "python3" on your system!
-    ;; (python-shell-interpreter "python3")
-    ;; (dap-python-executable "python3")
-    (dap-python-debugger 'debugpy)
-    :config
-    (require 'dap-python))
-
+(use-package python-mode
+  :ensure t
+  :hook (python-mode . lsp-deferred)
+  :custom
+  ;; NOTE: Set these if Python 3 is called "python3" on your system!
+  ;; (python-shell-interpreter "python3")
+  ;; (dap-python-executable "python3")
+  (dap-python-debugger 'debugpy)
+  :config
+  (require 'dap-python))
 
 #+end_src
 
@@ -924,23 +946,24 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
 
 #+begin_src emacs-lisp
 
-  (use-package pyvenv
-    :after python-mode
-    :config
-    (pyvenv-mode 1))
+(use-package pyvenv
+  :after python-mode
+  :config
+  (pyvenv-mode 1))
 
 #+end_src
+
 *** TODO TypeScript (deactivated)
 
 This is a basic configuration for the TypeScript language so that =.ts= files activate =typescript-mode= when opened.  We're also adding a hook to =typescript-mode-hook= to call =lsp-deferred= so that we activate =lsp-mode= to get LSP features every time we edit TypeScript code.
 
 #+begin_src emacs-lisp
 
-  (use-package typescript-mode
-    :mode "\\.ts\\'"
-    :hook (typescript-mode . lsp-deferred)
-    :config
-    (setq typescript-indent-level 2))
+(use-package typescript-mode
+  :mode "\\.ts\\'"
+  :hook (typescript-mode . lsp-deferred)
+  :config
+  (setq typescript-indent-level 2))
 
 #+end_src
 
@@ -953,3 +976,121 @@ npm install -g typescript-language-server typescript
 #+end_src
 
 This will install the [[https://github.com/theia-ide/typescript-language-server][typescript-language-server]] and the TypeScript compiler package.
+
+*** Company Mode (Autocompletion)
+
+[[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
+
+We also use [[https://github.com/sebastiencs/company-box][company-box]] to further enhance the look of the completions with icons and better overall presentation.
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+         ("<tab>" . company-complete-selection))
+  (:map lsp-mode-map
+   ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
+
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+
+#+end_src
+
+** Projectile
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; NOTE: Set this to the folder where you keep your Git repos!
+(when (file-directory-p "~/Projects/Code")
+  (setq projectile-project-search-path '("~/Projects/Code")))
+(setq projectile-switch-project-action #'projectile-dired)
+
+(setq projectile-completion-system 'ivy)
+
+(counsel-projectile-mode)
+
+#+end_src
+
+** TODO Magit
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; Optional Magit Configuration
+
+#+end_src
+
+** Eshell
+
+NOTE: Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
+
+[[https://www.gnu.org/software/emacs/manual/html_mono/eshell.html#Contributors-to-Eshell][Eshell]] is Emacs' own shell implementation written in Emacs Lisp.  It provides you with a cross-platform implementation (even on Windows!) of the common GNU utilities you would find on Linux and macOS (=ls=, =rm=, =mv=, =grep=, etc).  It also allows you to call Emacs Lisp functions directly from the shell and you can even set up aliases (like aliasing =vim= to =find-file=).  Eshell is also an Emacs Lisp REPL which allows you to evaluate full expressions at the shell.
+
+The downsides to Eshell are that it can be harder to configure than other packages due to the particularity of where you need to set some options for them to go into effect, the lack of shell completions (by default) for some useful things like Git commands, and that REPL programs sometimes don't work as well.  However, many of these limitations can be dealt with by good configuration and installing external packages, so don't let that discourage you from trying it!
+
+*Useful key bindings:*
+
+- =C-c C-p= / =C-c C-n= - go back and forward in the buffer's prompts (also =[[= and =]]= with evil-mode)
+- =M-p= / =M-n= - go back and forward in the input history
+- =C-c C-u= - delete the current input string backwards up to the cursor
+- =counsel-esh-history= - A searchable history of commands typed into Eshell
+
+We will be covering Eshell more in future videos highlighting other things you can do with it.
+
+For more thoughts on Eshell, check out these articles by Pierre Neidhardt:
+- https://ambrevar.xyz/emacs-eshell/index.html
+- https://ambrevar.xyz/emacs-eshell-versus-shell/index.html
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+  (defun jp/configure-eshell ()
+    ;; Save command history when commands are entered
+    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+    ;; Truncate buffer for performance
+    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+    ;; Bind some useful keys for evil-mode
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+    (evil-normalize-keymaps)
+
+    (setq eshell-history-size         10000
+          eshell-buffer-maximum-lines 10000
+          eshell-hist-ignoredups t
+          eshell-scroll-to-bottom-on-input t))
+
+  (use-package eshell-git-prompt
+    :after eshell)
+
+  (use-package eshell
+    :hook (eshell-first-time-mode . jp/configure-eshell)
+    :config
+
+    (with-eval-after-load 'esh-opt
+      (setq eshell-destroy-buffer-when-process-dies t)
+      (setq eshell-visual-commands '("htop" "zsh" "vim")))
+
+    (eshell-git-prompt-use-theme 'powerline))
+
+
+#+end_src
+** TODO Highlight Todos
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq hl-todo-keyword-faces
+      '(("TODO"   . "#999900")
+        ("FIXME"  . "#990000")
+        ("NOTE"   . "#009999")
+        ("DEBUG"  . "#A020F0")
+        ("GOTCHA" . "#FF4500")
+        ("STUB"   . "#1E90FF")))
+
+(hl-todo-mode)          ; Enable highlight todos
+
+#+end_src

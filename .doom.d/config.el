@@ -17,25 +17,25 @@
       (:prefix-map ("b" . "buffer")
        :desc "Counsel switch buffer" :n "j" #'counsel-switch-buffer
        :desc "Counsel switch buffer other window" :n "I" #'counsel-switch-buffer-other-window)
-      (:prefix-map ("c" . "code"))
-      (:prefix-map ("d" . "dired"))
-      (:prefix-map ("f" . "file"))
-      (:prefix-map ("g" . "git"))
-      (:prefix-map ("h" . "help"))
-      (:prefix-map ("i" . "emoji"))
-      (:prefix-map ("m" . "org manage")
-       (:prefix ("a" . "attatch"))
-       (:prefix ("b" . "table"))
-       (:prefix ("c" . "clock"))
-       (:prefix ("d" . "date"))
-       )
-      (:prefix-map ("o" . "open"))
-      (:prefix-map ("p" . "projectile"))
-      (:prefix-map ("q" . "quit"))
-      (:prefix-map ("s" . "search"))
-      (:prefix-map ("t" . "toogle"))
-      (:prefix-map ("w" . "window"))
-      (:prefix-map ("TAB" . "workspace"))
+      ;; (:prefix-map ("c" . "code"))
+      ;; (:prefix-map ("d" . "dired"))
+      ;; (:prefix-map ("f" . "file"))
+      ;; (:prefix-map ("g" . "git"))
+      ;; (:prefix-map ("h" . "help"))
+      ;; (:prefix-map ("i" . "emoji"))
+      ;; (:prefix-map ("m" . "org manage")
+      ;;  (:prefix ("a" . "attatch"))
+      ;;  (:prefix ("b" . "table"))
+      ;;  (:prefix ("c" . "clock"))
+      ;;  (:prefix ("d" . "date"))
+      ;;  )
+      ;; (:prefix-map ("o" . "open"))
+      ;; (:prefix-map ("p" . "projectile"))
+      ;; (:prefix-map ("q" . "quit"))
+      ;; (:prefix-map ("s" . "search"))
+      ;; (:prefix-map ("t" . "toogle"))
+      ;; (:prefix-map ("w" . "window"))
+      ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
        (:prefix ("r" . "roam")
        :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
@@ -81,6 +81,13 @@
 
 (setq display-line-numbers-type 'relative)
 
+;; Disable Line Numbers for specific modes
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+                shell-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
 ;; Set up the visible bell
 (setq visible-bell t)
 
@@ -103,6 +110,15 @@
 (add-hook 'org-mode-hook (lambda () (org-roam-setup))) ; Enable org-roam
 
 (setq org-ellipsis " ▼ ")
+
+(defun jp/org-mode-setup ()
+  (org-indent-mode)
+  (mixed-pitch-mode 1)
+  (visual-line-mode 1))
+
+(add-hook 'org-mode-hook #'jp/org-mode-setup)
+
+;;(add-hook 'org-mode-hook (lambda () (mixed-pitch-mode))) ; Enable mixed fonts (fixed/variable)
 
 (setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
 
@@ -139,8 +155,6 @@
 (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
 (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
-
-(add-hook 'org-mode-hook (lambda () (mixed-pitch-mode))) ; Enable mixed fonts (fixed/variable)
 
 (setq org-todo-keyword-faces '(
                          ("EPIC" . (:foreground "DodgerBlue" :weight "bold"))
@@ -255,17 +269,18 @@
 
 (require 'org-alert)
 
-;; This is needed as of Org 9.2
-(require 'org-tempo)
+(with-eval-after-load 'org
+  ;; This is needed as of Org 9.2
+  (require 'org-tempo)
 
-(add-to-list 'org-structure-template-alist '("sh" . "src sh"))
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
-(add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
-(add-to-list 'org-structure-template-alist '("go" . "src go"))
-(add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
-(add-to-list 'org-structure-template-alist '("json" . "src json"))
+  (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
+  (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("go" . "src go"))
+  (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+  (add-to-list 'org-structure-template-alist '("json" . "src json")))
 
 (map! :leader
       (:prefix ("d" . "dired")
@@ -338,20 +353,85 @@
   (use-package lsp-ivy
     :after lsp)
 
-  (use-package dap-mode
-    ;; Uncomment the config below if you want all UI panes to be hidden by default!
-    ;; :custom
-    ;; (lsp-enable-dap-auto-configure nil)
-    ;; :config
-    ;; (dap-ui-mode 1)
-    :commands dap-debug
-    :config
-    ;; Set up Node debugging
-    (require 'dap-node)
-    (dap-node-setup) ;; Automatically installs Node debug adapter if needed
+(use-package dap-mode
+  ;; Uncomment the config below if you want all UI panes to be hidden by default!
+  ;; :custom
+  ;; (lsp-enable-dap-auto-configure nil)
+  ;; :config
+  ;; (dap-ui-mode 1)
+  :commands dap-debug
+  :config
+  ;; Set up Node debugging
+  (require 'dap-node)
+  (dap-node-setup) ;; Automatically installs Node debug adapter if needed
 
-    ;; Bind `C-c l d` to `dap-hydra` for easy access
-    (general-define-key
-      :keymaps 'lsp-mode-map
-      :prefix lsp-keymap-prefix
-      "d" '(dap-hydra t :wk "debugger")))
+  ;; Bind `C-c l d` to `dap-hydra` for easy access
+  (general-define-key
+   :keymaps 'lsp-mode-map
+   :prefix lsp-keymap-prefix
+   "d" '(dap-hydra t :wk "debugger")))
+
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+         ("<tab>" . company-complete-selection))
+  (:map lsp-mode-map
+   ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
+
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+
+;; NOTE: Set this to the folder where you keep your Git repos!
+(when (file-directory-p "~/Projects/Code")
+  (setq projectile-project-search-path '("~/Projects/Code")))
+(setq projectile-switch-project-action #'projectile-dired)
+
+(setq projectile-completion-system 'ivy)
+
+(counsel-projectile-mode)
+
+;; Optional Magit Configuration
+
+  (defun jp/configure-eshell ()
+    ;; Save command history when commands are entered
+    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+    ;; Truncate buffer for performance
+    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+    ;; Bind some useful keys for evil-mode
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+    (evil-normalize-keymaps)
+
+    (setq eshell-history-size         10000
+          eshell-buffer-maximum-lines 10000
+          eshell-hist-ignoredups t
+          eshell-scroll-to-bottom-on-input t))
+
+  (use-package eshell-git-prompt
+    :after eshell)
+
+  (use-package eshell
+    :hook (eshell-first-time-mode . jp/configure-eshell)
+    :config
+
+    (with-eval-after-load 'esh-opt
+      (setq eshell-destroy-buffer-when-process-dies t)
+      (setq eshell-visual-commands '("htop" "zsh" "vim")))
+
+    (eshell-git-prompt-use-theme 'powerline))
+
+(setq hl-todo-keyword-faces
+      '(("TODO"   . "#999900")
+        ("FIXME"  . "#990000")
+        ("NOTE"   . "#009999")
+        ("DEBUG"  . "#A020F0")
+        ("GOTCHA" . "#FF4500")
+        ("STUB"   . "#1E90FF")))
+
+(hl-todo-mode)          ; Enable highlight todos
