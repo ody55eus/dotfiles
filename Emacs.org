@@ -293,9 +293,11 @@ Just comment/uncomment some lines to disable/enable features.
 (package! lsp-ui)
 (package! lsp-treemacs)
 (package! lsp-ivy)
+(package! lsp-pyright)          ; Python language server
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
 
+(package! command-log-mode)
 #+end_src
 
 ** Improve Startup Performance
@@ -324,7 +326,9 @@ Just comment/uncomment some lines to disable/enable features.
 (map! :leader
       (:prefix-map ("b" . "buffer")
        :desc "Counsel switch buffer" :n "j" #'counsel-switch-buffer
-       :desc "Counsel switch buffer other window" :n "I" #'counsel-switch-buffer-other-window)
+       :desc "Counsel switch buffer other window" :n "I" #'counsel-switch-buffer-other-window
+       :desc "List bookmarks" "L" #'list-bookmarks
+       :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
       ;; (:prefix-map ("d" . "dired"))
       ;; (:prefix-map ("f" . "file"))
@@ -341,7 +345,11 @@ Just comment/uncomment some lines to disable/enable features.
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
       ;; (:prefix-map ("s" . "search"))
-      ;; (:prefix-map ("t" . "toogle"))
+      (:prefix ("t" . "toogle")
+       :desc "Toggle line highlight in frame" "h" #'hl-line-mode
+       :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
+       :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
+       )
       ;; (:prefix-map ("w" . "window"))
       ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
@@ -352,6 +360,45 @@ Just comment/uncomment some lines to disable/enable features.
        :desc "Find org-roam Node" :n "f" #'org-roam-node-find
        :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
        :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point)
+       )
+      )
+
+#+end_src
+
+**** Evaluate Elisp Expressions (~SPC-e~)
+
+Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
+
+Changing some keybindings from their defaults to better fit with Doom Emacs, and to avoid conflicts with my window managers which sometimes use the control key in their keybindings.  By default, Doom Emacs does not use 'SPC e' for anything, so I choose to use the format 'SPC e' plus 'key' for these (I also use 'SPC e' for 'eww' keybindings).
+
+| COMMAND         | DESCRIPTION                                    | KEYBINDING |
+|-----------------+------------------------------------------------+------------|
+| eval-buffer     | /Evaluate elisp in buffer/                       | SPC e b    |
+| eval-defun      | /Evaluate the defun containing or after point/   | SPC e d    |
+| eval-expression | /Evaluate an elisp expression/                   | SPC e e    |
+| eval-last-sexp  | /Evaluate elisp expression before point/         | SPC e l    |
+| eval-region     | /Evaluate elisp in region/                       | SPC e r    |
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(map! :leader
+      (:prefix ("e". "evaluate/EWW")
+       :desc "Evaluate elisp in buffer" :n "b" #'eval-buffer
+       :desc "Evaluate defun" :n "d" #'eval-defun
+       :desc "Evaluate elisp expression" :n "e" #'eval-expression
+       :desc "Evaluate last sexpression" :n "l" #'eval-last-sexp
+       :desc "Evaluate elisp in region" :n "r" #'eval-region))
+
+#+end_src
+
+**** Command Log (maybe other logs) (~SPC-l~)
+
+#+begin_src emacs-lisp
+
+(map! :leader
+      (:prefix-map ("l" . "log")
+       :desc "Command Log Mode" :n "c" #'global-command-log-mode
+       :desc "CLM Buffer" :n "b" #'clm/toggle-command-log-buffer
        )
       )
 
@@ -389,20 +436,26 @@ Just comment/uncomment some lines to disable/enable features.
                        :font "Source Code Pro"
                        :weight 'regular
                        :height 140))
-  ('darwin (set-face-attribute 'default nil :font "Fira Mono" :height 170)))
+  ('darwin (set-face-attribute 'default nil :font "Liberation Mono for Powerline" :height 140)))
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil
-                    :font "Source Code Pro"
-                    :weight 'regular
-                    :height 140)
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (set-face-attribute 'fixed-pitch nil
+                       :font "Source Code Pro"
+                       :weight 'regular
+                       :height 140))
+  ('darwin (set-face-attribute 'fixed-pitch nil :font "Liberation Mono for Powerline" :height 140)))
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil
-                    ;; :font "Cantarell"
-                    :font "Ubuntu"
-                    :height 185
-                    :weight 'regular)
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (set-face-attribute 'variable-pitch nil
+                       ;; :font "Cantarell"
+                       :font "Ubuntu"
+                       :height 185
+                       :weight 'regular))
+  ('darwin (set-face-attribute 'variable-pitch nil :font "Hiragino Sans" :height 150)))
 
 #+end_src
 
@@ -491,7 +544,7 @@ Disable the computer =beep= and activate a visual feedback instead.
 #+end_src
 **** Visual Eenhancements
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+Begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (defun jp/org-mode-setup ()
   (org-indent-mode)
@@ -759,6 +812,27 @@ Auto Completion for Code Blocks in org mode!
 * TODO Additional Packages
 ** Dired (File Manager)
 
+Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
+
+*** Keybindings To Open Dired
+| COMMAND    | DESCRIPTION                        | KEYBINDING |
+|------------+------------------------------------+------------|
+| dired      | /Open dired file manager/            | SPC d d    |
+| dired-jump | /Jump to current directory in dired/ | SPC d j    |
+
+*** Keybindings Within Dired
+| COMMAND             | DESCRIPTION                                 | KEYBINDING |
+|---------------------+---------------------------------------------+------------|
+| dired-view-file     | /View file in dired/                          | SPC d v    |
+| dired-up-directory  | /Go up in directory tree/                     | h          |
+| dired-find-file     | /Go down in directory tree (or open if file)/ | l          |
+| dired-next-line     | Move down to next line                      | j          |
+| dired-previous-line | Move up to previous line                    | k          |
+| dired-mark          | Mark file at point                          | m          |
+| dired-unmark        | Unmark file at point                        | u          |
+
+*** Keybinding Configuration
+
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
@@ -915,36 +989,32 @@ Try these commands with =M-x=:
 
 *** Python
 
-We use =lsp-mode= and =dap-mode= to provide a more complete development environment for Python in Emacs.  Check out [[https://emacs-lsp.github.io/lsp-mode/page/lsp-pyls/][the =pyls= configuration]] in the =lsp-mode= documentation for more details.
+We use =lsp-mode= and =dap-mode= to provide a more complete development environment for Python in Emacs.  Check out the [[https://emacs-lsp.github.io/lsp-pyright][documentation of =lsp-pyright= ]]in the =lsp-mode= documentation for more details.
 
-Make sure you have the =pyls= language server installed before trying =lsp-mode=!
-
-#+begin_src sh :tangle no
-
-pip install --user "python-lsp-server"
-
-#+end_src
+Make sure you have the =lsp-pyright= language server installed before trying =lsp-mode=!
 
 There are a number of other language servers for Python so if you find that =pyls= doesn't work for you, consult the =lsp-mode= [[https://emacs-lsp.github.io/lsp-mode/page/languages/][language configuration documentation]] to try the others!
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(use-package python-mode
-  :ensure t
-  :hook (python-mode . lsp-deferred)
-  :custom
-  ;; NOTE: Set these if Python 3 is called "python3" on your system!
-  ;; (python-shell-interpreter "python3")
-  ;; (dap-python-executable "python3")
-  (dap-python-debugger 'debugpy)
-  :config
-  (require 'dap-python))
+(defun jp/python-mode-hook()
+  (require 'lsp-pyright)
+  (require 'dap-python)
+  (lsp-deferred))
+
+(add-hook 'python-mode-hook #'jp/python-mode-hook)
+
+;; NOTE: Set these if Python 3 is called "python3" on your system!
+(setq python-shell-interpreter "python3")
+(setq dap-python-executable "python3")
+(setq dap-python-debugger 'debugpy)
+
 
 #+end_src
 
 You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =pyvenv-activate= command should configure Emacs to cause =lsp-mode= and =dap-mode= to use the virtual environment when they are loaded, just select the path to your virtual environment before loading your project.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (use-package pyvenv
   :after python-mode
@@ -1006,21 +1076,13 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 ;; NOTE: Set this to the folder where you keep your Git repos!
-(when (file-directory-p "~/Projects/Code")
-  (setq projectile-project-search-path '("~/Projects/Code")))
+(when (file-directory-p "~/Projects")
+  (setq projectile-project-search-path '("~/Projects")))
 (setq projectile-switch-project-action #'projectile-dired)
 
 (setq projectile-completion-system 'ivy)
 
 (counsel-projectile-mode)
-
-#+end_src
-
-** TODO Magit
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-;; Optional Magit Configuration
 
 #+end_src
 
@@ -1079,6 +1141,14 @@ For more thoughts on Eshell, check out these articles by Pierre Neidhardt:
 
 
 #+end_src
+** TODO Magit
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; Optional Magit Configuration
+
+#+end_src
+
 ** TODO Highlight Todos
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
