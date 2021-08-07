@@ -47,11 +47,11 @@ Just comment/uncomment some lines to disable/enable features.
        company           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
-       ivy               ; a search engine for love and life
-       ;;vertico           ; the search engine of the future
+       ;;ivy               ; a search engine for love and life
+       vertico           ; the search engine of the future
 
        :ui
-       ;;deft              ; notational velocity for Emacs
+       deft              ; notational velocity for Emacs
        doom              ; what makes DOOM look the way it does
        doom-dashboard    ; a nifty splash screen for Emacs
        doom-quit         ; DOOM quit-message prompts when you quit Emacs
@@ -66,7 +66,7 @@ Just comment/uncomment some lines to disable/enable features.
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
-       ;;tabs              ; a tab bar for Emacs
+       tabs              ; a tab bar for Emacs
        treemacs          ; a project drawer, like neotree but cooler
        unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
@@ -104,7 +104,7 @@ Just comment/uncomment some lines to disable/enable features.
 
        :checkers
        syntax              ; tasing you for every semicolon you forget
-       ;;(spell +flyspell) ; tasing you for misspelling mispelling
+       (spell +flyspell) ; tasing you for misspelling mispelling
        grammar           ; tasing grammar mistake every you make
 
        :tools
@@ -287,10 +287,12 @@ Just comment/uncomment some lines to disable/enable features.
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
-(package! counsel)
 (package! eshell-git-prompt)
 ;;(package! dashboard)            ; Display a dashboard when starting Emacs.
 (package! deft)                 ; Search for file contents
+(package! consult)
+
+;;(package! synosaurus)           ; Thesaurus synonyms
 
 ;; Language Server
 (package! lsp-mode)
@@ -329,7 +331,7 @@ Just comment/uncomment some lines to disable/enable features.
 
 (map! :leader
       (:prefix-map ("b" . "buffer")
-       :desc "Counsel switch buffer" :n "j" #'counsel-switch-buffer
+       :desc "Consult buffer" :n "j" #'consult-buffer
        :desc "Counsel switch buffer other window" :n "I" #'counsel-switch-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
        :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
@@ -528,7 +530,7 @@ Disable the computer =beep= and activate a visual feedback instead.
 **** Rainbow Mode
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(rainbow-mode)
+(add-hook 'org-mode-hook (rainbow-mode))
 #+end_src
 
 **** PDF Tools
@@ -544,11 +546,12 @@ Disable the computer =beep= and activate a visual feedback instead.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq org-directory "~/org/"
-      org-agenda-files '("~/org/Agenda.org"
-                         "~/org/Tasks.org"
-                         "~/org/Habits.org"
-                         "~/org/Journal.org")
-      org-default-notes-file (concat org-directory "/Notes.org"))
+      org-agenda-files '((concat org-directory "/Agenda.org")
+                         (concat org-directory "/Tasks.org")
+                         (concat org-directory "/Habits.org")
+                         (concat org-directory "/Journal.org"))
+      org-default-notes-file (concat org-directory "/Notes.org")
+      org-clock-sound "~/sounds/ding.wav")
 
 #+end_src
 
@@ -854,24 +857,34 @@ Auto Completion for Code Blocks in org mode!
 
 Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
 
-*** Keybindings To Open Dired
+*** Dired Configuration
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
+;; Get file icons in dired
+(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+
+
+;; With dired-open plugin, you can launch external programs for certain extensions
+;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
+(setq dired-open-extensions '(("gif" . "sxiv")
+                              ("jpg" . "sxiv")
+                              ("png" . "sxiv")
+                              ("mkv" . "mpv")
+                              ("mp4" . "mpv")))
+
+#+end_src
+
+*** Keybindings for Dired
+**** Keybindings To Open Dired (Description)
+
 | COMMAND    | DESCRIPTION                        | KEYBINDING |
 |------------+------------------------------------+------------|
 | dired      | /Open dired file manager/            | SPC d d    |
 | dired-jump | /Jump to current directory in dired/ | SPC d j    |
 
-*** Keybindings Within Dired
-| COMMAND             | DESCRIPTION                                 | KEYBINDING |
-|---------------------+---------------------------------------------+------------|
-| dired-view-file     | /View file in dired/                          | SPC d v    |
-| dired-up-directory  | /Go up in directory tree/                     | h          |
-| dired-find-file     | /Go down in directory tree (or open if file)/ | l          |
-| dired-next-line     | Move down to next line                      | j          |
-| dired-previous-line | Move up to previous line                    | k          |
-| dired-mark          | Mark file at point                          | m          |
-| dired-unmark        | Unmark file at point                        | u          |
-
-*** Keybinding Configuration
+**** Keybinding Configuration (~SPC-<Key>~)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -884,16 +897,43 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
         :desc "Peep-dired image previews" "d p" #'peep-dired
         :desc "Dired view file" "d v" #'dired-view-file)))
 
+#+end_src
+
+**** Keybindings Within Dired (Description)
+
+| COMMAND             | DESCRIPTION                                 | KEYBINDING |
+|---------------------+---------------------------------------------+------------|
+| dired-view-file     | /View file in dired/                          | SPC d v    |
+| dired-up-directory  | /Go up in directory tree/                     | h          |
+| dired-find-file     | /Go down in directory tree (or open if file)/ | l          |
+| dired-next-line     | Move down to next line                      | j          |
+| dired-previous-line | Move up to previous line                    | k          |
+| dired-mark          | Mark file at point                          | m          |
+| dired-unmark        | Unmark file at point                        | u          |
+
+**** Dired-Mode-Mapping
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(defun jp/dired-hide-dotfiles()
+    (setq dired-omit-files
+          (rx (or (seq bol (? ".") "#")
+                  (seq bol "." eol)
+                  (seq bol ".." eol)
+                  )))
+    )
+
 ;; Make 'h' and 'l' go back and forward in dired. Much faster to navigate the directory structure!
 (evil-define-key 'normal dired-mode-map
   (kbd "M-RET") 'dired-display-file
   (kbd "h") 'dired-up-directory
-  (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
+;;  (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
   (kbd "m") 'dired-mark
   (kbd "t") 'dired-toggle-marks
   (kbd "u") 'dired-unmark
   (kbd "C") 'dired-do-copy
   (kbd "D") 'dired-do-delete
+;;  (kbd "H") #'jp/dired-hide-dotfiles
   (kbd "J") 'dired-goto-file
   (kbd "M") 'dired-chmod
   (kbd "O") 'dired-chown
@@ -907,25 +947,18 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
   (kbd "% u") 'dired-upcase
   (kbd "; d") 'epa-dired-do-decrypt
   (kbd "; e") 'epa-dired-do-encrypt)
+
+
 ;; If peep-dired is enabled, you will get image previews as you go up/down with 'j' and 'k'
 (evil-define-key 'normal peep-dired-mode-map
   (kbd "j") 'peep-dired-next-file
   (kbd "k") 'peep-dired-prev-file)
-(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
-;; Get file icons in dired
-(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-;; With dired-open plugin, you can launch external programs for certain extensions
-;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
-(setq dired-open-extensions '(("gif" . "sxiv")
-                              ("jpg" . "sxiv")
-                              ("png" . "sxiv")
-                              ("mkv" . "mpv")
-                              ("mp4" . "mpv")))
+
 #+end_src
 
 ** Languages (IDE using Language Server)
 
-NOTE: Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
+Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
 
 *** IDE Features with lsp-mode
 **** lsp-mode
@@ -1116,13 +1149,11 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 ;; NOTE: Set this to the folder where you keep your Git repos!
-(when (file-directory-p "~/Projects")
-  (setq projectile-project-search-path '("~/Projects")))
+(when (file-directory-p "~/Projects/Code")
+  (setq projectile-project-search-path '("~/Projects/Code")))
 (setq projectile-switch-project-action #'projectile-dired)
 
-(setq projectile-completion-system 'ivy)
-
-(counsel-projectile-mode)
+(setq projectile-completion-system 'vertico)
 
 #+end_src
 

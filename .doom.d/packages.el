@@ -49,6 +49,7 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+;;(package! dashboard)            ; Configurable dashboard when starting Emacs.
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
 (package! org-roam)             ; Extended org-mode for Zettelkasten principle.
 (package! org-bullets)          ; Display nice bullets in org-mode (deprecated).
@@ -56,20 +57,29 @@
 (package! org-tree-slide)       ; Enable org-mode presentations.
 ;;(package! org-superstar)        ; Alternative for org-bullets.
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
+(package! org-download)
+(package! org-journal)
+(package! org-roam-bibtex)
 (package! pdf-tools)            ; Additional pdf tools.
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
-(package! counsel)
 (package! eshell-git-prompt)
 ;;(package! dashboard)            ; Display a dashboard when starting Emacs.
+(package! deft)                 ; Search for file contents
+(package! consult)
+
+;;(package! synosaurus)           ; Thesaurus synonyms
 
 ;; Language Server
 (package! lsp-mode)
 (package! lsp-ui)
 (package! lsp-treemacs)
 (package! lsp-ivy)
+(package! lsp-pyright)          ; Python language server
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
+
+(package! command-log-mode)

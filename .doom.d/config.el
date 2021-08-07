@@ -15,8 +15,10 @@
 
 (map! :leader
       (:prefix-map ("b" . "buffer")
-       :desc "Counsel switch buffer" :n "j" #'counsel-switch-buffer
-       :desc "Counsel switch buffer other window" :n "I" #'counsel-switch-buffer-other-window)
+       :desc "Consult buffer" :n "j" #'consult-buffer
+       :desc "Counsel switch buffer other window" :n "I" #'counsel-switch-buffer-other-window
+       :desc "List bookmarks" "L" #'list-bookmarks
+       :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
       ;; (:prefix-map ("d" . "dired"))
       ;; (:prefix-map ("f" . "file"))
@@ -33,7 +35,11 @@
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
       ;; (:prefix-map ("s" . "search"))
-      ;; (:prefix-map ("t" . "toogle"))
+      (:prefix ("t" . "toogle")
+       :desc "Toggle line highlight in frame" "h" #'hl-line-mode
+       :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
+       :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
+       )
       ;; (:prefix-map ("w" . "window"))
       ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
@@ -46,6 +52,14 @@
        :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point)
        )
       )
+
+(map! :leader
+      (:prefix ("e". "evaluate/EWW")
+       :desc "Evaluate elisp in buffer" :n "b" #'eval-buffer
+       :desc "Evaluate defun" :n "d" #'eval-defun
+       :desc "Evaluate elisp expression" :n "e" #'eval-expression
+       :desc "Evaluate last sexpression" :n "l" #'eval-last-sexp
+       :desc "Evaluate elisp in region" :n "r" #'eval-region))
 
 (map! (:prefix-map ("C-w" . "window")
        :desc "evil-window-left" :n "<left>" #'evil-window-left
@@ -64,20 +78,26 @@
                        :font "Source Code Pro"
                        :weight 'regular
                        :height 140))
-  ('darwin (set-face-attribute 'default nil :font "Fira Mono" :height 170)))
+  ('darwin (set-face-attribute 'default nil :font "Liberation Mono for Powerline" :height 140)))
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil
-                    :font "Source Code Pro"
-                    :weight 'regular
-                    :height 140)
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (set-face-attribute 'fixed-pitch nil
+                       :font "Source Code Pro"
+                       :weight 'regular
+                       :height 140))
+  ('darwin (set-face-attribute 'fixed-pitch nil :font "Liberation Mono for Powerline" :height 140)))
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil
-                    ;; :font "Cantarell"
-                    :font "Ubuntu"
-                    :height 185
-                    :weight 'regular)
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (set-face-attribute 'variable-pitch nil
+                       ;; :font "Cantarell"
+                       :font "Ubuntu"
+                       :height 185
+                       :weight 'regular))
+  ('darwin (set-face-attribute 'variable-pitch nil :font "Hiragino Sans" :height 150)))
 
 (setq display-line-numbers-type 'relative)
 
@@ -93,18 +113,42 @@
 
 (menu-bar-mode 1)
 
-(rainbow-mode)
+(defun jp/set-frame-size-according-to-resolution ()
+  (interactive)
+  (if window-system
+  (progn
+    ;; use 120 char wide window for largeish displays
+    ;; and smaller 80 column windows for smaller displays
+    ;; pick whatever numbers make sense for you
+    (if (> (x-display-pixel-width) 1280)
+           (add-to-list 'default-frame-alist (cons 'width 177))
+           (add-to-list 'default-frame-alist (cons 'width 100)))
+    ;; for the height, subtract a couple hundred pixels
+    ;; from the screen height (for panels, menubars and
+    ;; whatnot), then divide by the height of a char to
+    ;; get the height we want
+    (add-to-list 'default-frame-alist
+         (cons 'height (/ (- (x-display-pixel-height) 120)
+                             (frame-char-height)))))))
+
+(jp/set-frame-size-according-to-resolution)
+
+(add-hook 'org-mode-hook (rainbow-mode))
 
 (pdf-tools-install)
 
 (setq org-directory "~/org/"
-      org-agenda-files '("~/org/Agenda.org"
-                         "~/org/Tasks.org"
-                         "~/org/Habits.org"
-                         "~/org/Journal.org")
-      org-default-notes-file (concat org-directory "/Notes.org"))
+      org-agenda-files '((concat org-directory "/Agenda.org")
+                         (concat org-directory "/Tasks.org")
+                         (concat org-directory "/Habits.org")
+                         (concat org-directory "/Journal.org"))
+      org-default-notes-file (concat org-directory "/Notes.org")
+      org-clock-sound "~/sounds/ding.wav")
+
+(require 'org-roam-protocol)    ; Enable org roam protocol for links (org-roam://...)
 
 (setq org-roam-directory (file-truename "~/org/roam")   ; Set org-roam directory
+      org-roam-dailies-directory (file-truename "~/org/roam/dailies")
       org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
 
 (add-hook 'org-mode-hook (lambda () (org-roam-setup))) ; Enable org-roam
@@ -199,6 +243,12 @@
                               )
       )
 
+(setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         "* %?"
+         :if-new (file+head "%<%Y-%m-%d>.org"
+                            "#+title: %<%Y-%m-%d>\n"))))
+
 (setq org-agenda-custom-commands
      '(("d" "Dashboard"
        ((agenda "" ((org-deadline-warning-days 7)))
@@ -282,6 +332,19 @@
   (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
   (add-to-list 'org-structure-template-alist '("json" . "src json")))
 
+(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
+;; Get file icons in dired
+(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+
+
+;; With dired-open plugin, you can launch external programs for certain extensions
+;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
+(setq dired-open-extensions '(("gif" . "sxiv")
+                              ("jpg" . "sxiv")
+                              ("png" . "sxiv")
+                              ("mkv" . "mpv")
+                              ("mp4" . "mpv")))
+
 (map! :leader
       (:prefix ("d" . "dired")
        :desc "Open dired" "d" #'dired
@@ -291,16 +354,25 @@
         :desc "Peep-dired image previews" "d p" #'peep-dired
         :desc "Dired view file" "d v" #'dired-view-file)))
 
+(defun jp/dired-hide-dotfiles()
+    (setq dired-omit-files
+          (rx (or (seq bol (? ".") "#")
+                  (seq bol "." eol)
+                  (seq bol ".." eol)
+                  )))
+    )
+
 ;; Make 'h' and 'l' go back and forward in dired. Much faster to navigate the directory structure!
 (evil-define-key 'normal dired-mode-map
   (kbd "M-RET") 'dired-display-file
   (kbd "h") 'dired-up-directory
-  (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
+;;  (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
   (kbd "m") 'dired-mark
   (kbd "t") 'dired-toggle-marks
   (kbd "u") 'dired-unmark
   (kbd "C") 'dired-do-copy
   (kbd "D") 'dired-do-delete
+;;  (kbd "H") #'jp/dired-hide-dotfiles
   (kbd "J") 'dired-goto-file
   (kbd "M") 'dired-chmod
   (kbd "O") 'dired-chown
@@ -314,20 +386,12 @@
   (kbd "% u") 'dired-upcase
   (kbd "; d") 'epa-dired-do-decrypt
   (kbd "; e") 'epa-dired-do-encrypt)
+
+
 ;; If peep-dired is enabled, you will get image previews as you go up/down with 'j' and 'k'
 (evil-define-key 'normal peep-dired-mode-map
   (kbd "j") 'peep-dired-next-file
   (kbd "k") 'peep-dired-prev-file)
-(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
-;; Get file icons in dired
-(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-;; With dired-open plugin, you can launch external programs for certain extensions
-;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
-(setq dired-open-extensions '(("gif" . "sxiv")
-                              ("jpg" . "sxiv")
-                              ("png" . "sxiv")
-                              ("mkv" . "mpv")
-                              ("mp4" . "mpv")))
 
   (defun jp/lsp-mode-setup ()
     (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
@@ -371,6 +435,23 @@
    :prefix lsp-keymap-prefix
    "d" '(dap-hydra t :wk "debugger")))
 
+(defun jp/python-mode-hook()
+  (require 'lsp-pyright)
+  (require 'dap-python)
+  (lsp-deferred))
+
+(add-hook 'python-mode-hook #'jp/python-mode-hook)
+
+;; NOTE: Set these if Python 3 is called "python3" on your system!
+(setq python-shell-interpreter "python3")
+(setq dap-python-executable "python3")
+(setq dap-python-debugger 'debugpy)
+
+(use-package pyvenv
+  :after python-mode
+  :config
+  (pyvenv-mode 1))
+
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
@@ -390,11 +471,7 @@
   (setq projectile-project-search-path '("~/Projects/Code")))
 (setq projectile-switch-project-action #'projectile-dired)
 
-(setq projectile-completion-system 'ivy)
-
-(counsel-projectile-mode)
-
-;; Optional Magit Configuration
+(setq projectile-completion-system 'vertico)
 
   (defun jp/configure-eshell ()
     ;; Save command history when commands are entered
@@ -425,6 +502,8 @@
       (setq eshell-visual-commands '("htop" "zsh" "vim")))
 
     (eshell-git-prompt-use-theme 'powerline))
+
+;; Optional Magit Configuration
 
 (setq hl-todo-keyword-faces
       '(("TODO"   . "#999900")
