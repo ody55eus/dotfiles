@@ -113,6 +113,26 @@
 
 (menu-bar-mode 1)
 
+(defun jp/set-frame-size-according-to-resolution ()
+  (interactive)
+  (if window-system
+  (progn
+    ;; use 120 char wide window for largeish displays
+    ;; and smaller 80 column windows for smaller displays
+    ;; pick whatever numbers make sense for you
+    (if (> (x-display-pixel-width) 1280)
+           (add-to-list 'default-frame-alist (cons 'width 177))
+           (add-to-list 'default-frame-alist (cons 'width 100)))
+    ;; for the height, subtract a couple hundred pixels
+    ;; from the screen height (for panels, menubars and
+    ;; whatnot), then divide by the height of a char to
+    ;; get the height we want
+    (add-to-list 'default-frame-alist
+         (cons 'height (/ (- (x-display-pixel-height) 120)
+                             (frame-char-height)))))))
+
+(jp/set-frame-size-according-to-resolution)
+
 (add-hook 'org-mode-hook (rainbow-mode))
 
 (pdf-tools-install)
@@ -125,7 +145,10 @@
       org-default-notes-file (concat org-directory "/Notes.org")
       org-clock-sound "~/sounds/ding.wav")
 
+(require 'org-roam-protocol)    ; Enable org roam protocol for links (org-roam://...)
+
 (setq org-roam-directory (file-truename "~/org/roam")   ; Set org-roam directory
+      org-roam-dailies-directory (file-truename "~/org/roam/dailies")
       org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
 
 (add-hook 'org-mode-hook (lambda () (org-roam-setup))) ; Enable org-roam
@@ -219,6 +242,12 @@
                                :empty-lines 1)
                               )
       )
+
+(setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         "* %?"
+         :if-new (file+head "%<%Y-%m-%d>.org"
+                            "#+title: %<%Y-%m-%d>\n"))))
 
 (setq org-agenda-custom-commands
      '(("d" "Dashboard"

@@ -271,7 +271,6 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+begin_src emacs-lisp :tangle ./.doom.d/packages.el
 
-;;(package! dashboard)            ; Configurable dashboard when starting Emacs.
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
 (package! org-roam)             ; Extended org-mode for Zettelkasten principle.
 (package! org-bullets)          ; Display nice bullets in org-mode (deprecated).
@@ -279,6 +278,9 @@ Just comment/uncomment some lines to disable/enable features.
 (package! org-tree-slide)       ; Enable org-mode presentations.
 ;;(package! org-superstar)        ; Alternative for org-bullets.
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
+(package! org-download)
+(package! org-journal)
+(package! org-roam-bibtex)
 (package! pdf-tools)            ; Additional pdf tools.
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
@@ -286,6 +288,8 @@ Just comment/uncomment some lines to disable/enable features.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
+;;(package! dashboard)            ; Display a dashboard when starting Emacs.
+(package! deft)                 ; Search for file contents
 (package! consult)
 
 ;;(package! synosaurus)           ; Thesaurus synonyms
@@ -496,6 +500,32 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 #+end_src
 
+**** Resize Startup Window
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(defun jp/set-frame-size-according-to-resolution ()
+  (interactive)
+  (if window-system
+  (progn
+    ;; use 120 char wide window for largeish displays
+    ;; and smaller 80 column windows for smaller displays
+    ;; pick whatever numbers make sense for you
+    (if (> (x-display-pixel-width) 1280)
+           (add-to-list 'default-frame-alist (cons 'width 177))
+           (add-to-list 'default-frame-alist (cons 'width 100)))
+    ;; for the height, subtract a couple hundred pixels
+    ;; from the screen height (for panels, menubars and
+    ;; whatnot), then divide by the height of a char to
+    ;; get the height we want
+    (add-to-list 'default-frame-alist
+         (cons 'height (/ (- (x-display-pixel-height) 120)
+                             (frame-char-height)))))))
+
+(jp/set-frame-size-according-to-resolution)
+
+#+end_src
+
 *** Additional Packages
 **** Rainbow Mode
 
@@ -529,10 +559,14 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
+(require 'org-roam-protocol)    ; Enable org roam protocol for links (org-roam://...)
+
 (setq org-roam-directory (file-truename "~/org/roam")   ; Set org-roam directory
+      org-roam-dailies-directory (file-truename "~/org/roam/dailies")
       org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
 
 (add-hook 'org-mode-hook (lambda () (org-roam-setup))) ; Enable org-roam
+
 
 #+end_src
 
@@ -689,6 +723,12 @@ Set this value to ~nil~ to display them again.
                                :empty-lines 1)
                               )
       )
+
+(setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         "* %?"
+         :if-new (file+head "%<%Y-%m-%d>.org"
+                            "#+title: %<%Y-%m-%d>\n"))))
 
 #+end_src
 
