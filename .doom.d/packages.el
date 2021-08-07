@@ -49,6 +49,7 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+;;(package! dashboard)            ; Configurable dashboard when starting Emacs.
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
 (package! org-roam)             ; Extended org-mode for Zettelkasten principle.
 (package! org-bullets)          ; Display nice bullets in org-mode (deprecated).
@@ -62,14 +63,18 @@
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
-(package! counsel)
 (package! eshell-git-prompt)
-;;(package! dashboard)            ; Display a dashboard when starting Emacs.
+(package! consult)
+
+;;(package! synosaurus)           ; Thesaurus synonyms
 
 ;; Language Server
 (package! lsp-mode)
 (package! lsp-ui)
 (package! lsp-treemacs)
 (package! lsp-ivy)
+(package! lsp-pyright)          ; Python language server
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
+
+(package! command-log-mode)
