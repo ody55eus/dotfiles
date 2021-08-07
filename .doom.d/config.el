@@ -138,10 +138,10 @@
 (pdf-tools-install)
 
 (setq org-directory "~/org/"
-      org-agenda-files '((concat org-directory "/Agenda.org")
-                         (concat org-directory "/Tasks.org")
-                         (concat org-directory "/Habits.org")
-                         (concat org-directory "/Journal.org"))
+      org-agenda-files '("~/org/Agenda.org"
+                         "~/org/Tasks.org"
+                         "~/org/Habits.org"
+                         "~/org/Journal.org")
       org-default-notes-file (concat org-directory "/Notes.org")
       org-clock-sound "~/sounds/ding.wav")
 
