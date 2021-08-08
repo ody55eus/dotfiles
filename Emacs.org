@@ -332,7 +332,7 @@ Just comment/uncomment some lines to disable/enable features.
 (map! :leader
       (:prefix-map ("b" . "buffer")
        :desc "Consult buffer" :n "j" #'consult-buffer
-       :desc "Counsel switch buffer other window" :n "I" #'counsel-switch-buffer-other-window
+       :desc "Consult buffer other window" :n "J" #'consult-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
        :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
@@ -545,6 +545,7 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
+(setq org-roam-v2-ack t)
 (setq org-directory "~/org/"
       org-agenda-files '("~/org/Agenda.org"
                          "~/org/Tasks.org"
@@ -561,11 +562,10 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 (require 'org-roam-protocol)    ; Enable org roam protocol for links (org-roam://...)
 
-(setq org-roam-directory (file-truename "~/org/roam")   ; Set org-roam directory
-      org-roam-dailies-directory (file-truename "~/org/roam/dailies")
+(setq org-roam-directory (file-truename "~/Zettelkasten")   ; Set org-roam directory
+      org-roam-dailies-directory (file-truename "~/Zettelkasten")
       org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
 
-(add-hook 'org-mode-hook (lambda () (org-roam-setup))) ; Enable org-roam
 
 
 #+end_src
@@ -585,12 +585,11 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 (defun jp/org-mode-setup ()
   (org-indent-mode)
-  (mixed-pitch-mode 1)
+  (mixed-pitch-mode 1) ; Enable different Fonts
+(org-roam-setup) ; Enable org-roam
   (visual-line-mode 1))
 
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
-
-;;(add-hook 'org-mode-hook (lambda () (mixed-pitch-mode))) ; Enable mixed fonts (fixed/variable)
 
 #+end_src
 
@@ -821,6 +820,22 @@ Set this value to ~nil~ to display them again.
 
     ;; Save Org buffers after refiling!
     (advice-add 'org-refile :after 'org-save-all-org-buffers)
+
+#+end_src
+*** Enable Org Habits
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(add-to-list 'org-modules 'org-habit)
+(setq org-agenda-custom-commands
+      '(("h" "Daily habits"
+         ((agenda ""))
+         ((org-agenda-show-log t)
+          (org-agenda-ndays 7)
+          (org-agenda-log-mode-items '(state))
+          (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
+        ;; other commands here
+        ))
 
 #+end_src
 
