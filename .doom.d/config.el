@@ -137,7 +137,7 @@
 
 (pdf-tools-install)
 
-(setq org-roam-v2-ack t)
+(setq org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
 (setq org-directory "~/org/"
       org-agenda-files '("~/org/Agenda.org"
                          "~/org/Tasks.org"
@@ -252,13 +252,14 @@
        ((agenda "" ((org-deadline-warning-days 7)))
         (todo "BACKLOG"
           ((org-agenda-overriding-header "Backlog Tasks")))
-        (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
+        (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))
+        (todo "EPIC" ((org-agenda-overriding-header "Active Epics")))))
 
       ("t" "All Todo Tasks"
        ((todo "TODO"
           ((org-agenda-overriding-header "Todo Tasks")))))
 
-      ("W" "Work Tasks" tags-todo "+work-email")
+      ("W" "Work Tasks" tags-todo "+work")
 
       ;; Low-effort next actions
       ("e" tags-todo "+TODO=\"EPIC\"+Effort<15&+Effort>0"
