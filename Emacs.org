@@ -327,6 +327,7 @@ Just comment/uncomment some lines to disable/enable features.
 ** UI Configuration
 *** Keybindings (=:leader= ~SPC-<Key>~)
 
+:SPOILER-CONF:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
@@ -352,6 +353,8 @@ Just comment/uncomment some lines to disable/enable features.
       ;; (:prefix-map ("q" . "quit"))
       ;; (:prefix-map ("s" . "search"))
       (:prefix ("t" . "toogle")
+       :desc "Toggle Cmd Log Buffer" "b" #'clm/toggle-command-log-buffer
+       :desc "Toggle " "c" #'global-command-log-mode
        :desc "Toggle line highlight in frame" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
@@ -360,16 +363,17 @@ Just comment/uncomment some lines to disable/enable features.
       ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
        (:prefix ("r" . "roam")
-       :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
-       :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
-       :desc "Capture new org-mode Node" :n "n" #'org-roam-capture
+       :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point)
+       :desc "New Daily Node (today)" :n "d" #'org-roam-dailies-capture-today
        :desc "Find org-roam Node" :n "f" #'org-roam-node-find
        :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
-       :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point)
+       :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
+       :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
        )
       )
 
 #+end_src
+:END:
 
 **** Evaluate Elisp Expressions (~SPC-e~)
 
@@ -397,16 +401,14 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 
 #+end_src
 
-**** Command Log (maybe other logs) (~SPC-l~)
+**** TODO Lookup (~SPC-l~)
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(map! :leader
-      (:prefix-map ("l" . "log")
-       :desc "Command Log Mode" :n "c" #'global-command-log-mode
-       :desc "CLM Buffer" :n "b" #'clm/toggle-command-log-buffer
-       )
-      )
+;; (map! :leader
+;;       (:prefix-map ("l" . "lookup")
+;;        )
+;;       )
 
 #+end_src
 
@@ -563,7 +565,7 @@ Disable the computer =beep= and activate a visual feedback instead.
 (require 'org-roam-protocol)    ; Enable org roam protocol for links (org-roam://...)
 
 (setq org-roam-directory (file-truename "~/Zettelkasten")   ; Set org-roam directory
-      org-roam-dailies-directory (file-truename "~/Zettelkasten")
+      org-roam-dailies-directory (file-truename "~/Zettelkasten/daily")
       org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
 
 

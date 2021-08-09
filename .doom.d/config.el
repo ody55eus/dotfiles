@@ -36,6 +36,8 @@
       ;; (:prefix-map ("q" . "quit"))
       ;; (:prefix-map ("s" . "search"))
       (:prefix ("t" . "toogle")
+       :desc "Toggle Cmd Log Buffer" "b" #'clm/toggle-command-log-buffer
+       :desc "Toggle " "c" #'global-command-log-mode
        :desc "Toggle line highlight in frame" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
@@ -44,12 +46,12 @@
       ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
        (:prefix ("r" . "roam")
-       :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
-       :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
-       :desc "Capture new org-mode Node" :n "n" #'org-roam-capture
+       :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point)
+       :desc "New Daily Node (today)" :n "d" #'org-roam-dailies-capture-today
        :desc "Find org-roam Node" :n "f" #'org-roam-node-find
        :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
-       :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point)
+       :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
+       :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
        )
       )
 
@@ -60,6 +62,11 @@
        :desc "Evaluate elisp expression" :n "e" #'eval-expression
        :desc "Evaluate last sexpression" :n "l" #'eval-last-sexp
        :desc "Evaluate elisp in region" :n "r" #'eval-region))
+
+;; (map! :leader
+;;       (:prefix-map ("l" . "lookup")
+;;        )
+;;       )
 
 (map! (:prefix-map ("C-w" . "window")
        :desc "evil-window-left" :n "<left>" #'evil-window-left
@@ -149,7 +156,7 @@
 (require 'org-roam-protocol)    ; Enable org roam protocol for links (org-roam://...)
 
 (setq org-roam-directory (file-truename "~/Zettelkasten")   ; Set org-roam directory
-      org-roam-dailies-directory (file-truename "~/Zettelkasten")
+      org-roam-dailies-directory (file-truename "~/Zettelkasten/daily")
       org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
 
 (setq org-ellipsis " ▼ ")
