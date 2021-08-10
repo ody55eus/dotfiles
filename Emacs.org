@@ -363,7 +363,7 @@ Just comment/uncomment some lines to disable/enable features.
       ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
        (:prefix ("r" . "roam")
-       :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point)
+       :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
        :desc "New Daily Node (today)" :n "d" #'org-roam-dailies-capture-today
        :desc "Find org-roam Node" :n "f" #'org-roam-node-find
        :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
@@ -371,7 +371,7 @@ Just comment/uncomment some lines to disable/enable features.
        :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
        )
       )
-
+)
 #+end_src
 :END:
 
@@ -562,13 +562,13 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(require 'org-roam-protocol)    ; Enable org roam protocol for links (org-roam://...)
+(require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
+(require 'org-roam-protocol)
 
-(setq org-roam-directory (file-truename "~/Zettelkasten")   ; Set org-roam directory
-      org-roam-dailies-directory (file-truename "~/Zettelkasten/daily")
-      org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
-
-
+(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
+      org-roam-dailies-directory (file-truename "~/ZK/daily")
+      org-roam-completion-everywhere t
+      org-roam-completion-system 'default)
 
 #+end_src
 
@@ -588,7 +588,7 @@ Disable the computer =beep= and activate a visual feedback instead.
 (defun jp/org-mode-setup ()
   (org-indent-mode)
   (mixed-pitch-mode 1) ; Enable different Fonts
-(org-roam-setup) ; Enable org-roam
+  (org-roam-setup) ; Enable org-roam
   (visual-line-mode 1))
 
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
@@ -834,7 +834,7 @@ Set this value to ~nil~ to display them again.
       '(("h" "Daily habits"
          ((agenda ""))
          ((org-agenda-show-log t)
-          (org-agenda-ndays 7)
+          (org-agenda-ndays 14)
           (org-agenda-log-mode-items '(state))
           (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
         ;; other commands here

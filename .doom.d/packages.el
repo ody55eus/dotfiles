@@ -59,6 +59,7 @@
 (package! org-download)
 (package! org-journal)
 (package! org-roam-bibtex)
+;;(package! org-protocol)         ; To accept org-roam://org-notes***** links
 (package! pdf-tools)            ; Additional pdf tools.
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.

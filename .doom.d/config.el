@@ -46,7 +46,7 @@
       ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
        (:prefix ("r" . "roam")
-       :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point)
+       :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
        :desc "New Daily Node (today)" :n "d" #'org-roam-dailies-capture-today
        :desc "Find org-roam Node" :n "f" #'org-roam-node-find
        :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
@@ -54,6 +54,7 @@
        :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
        )
       )
+)
 
 (map! :leader
       (:prefix ("e". "evaluate/EWW")
@@ -153,18 +154,20 @@
       org-default-notes-file (concat org-directory "/Notes.org")
       org-clock-sound "~/sounds/ding.wav")
 
-(require 'org-roam-protocol)    ; Enable org roam protocol for links (org-roam://...)
+(require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
+(require 'org-roam-protocol)
 
-(setq org-roam-directory (file-truename "~/Zettelkasten")   ; Set org-roam directory
-      org-roam-dailies-directory (file-truename "~/Zettelkasten/daily")
-      org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
+(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
+      org-roam-dailies-directory (file-truename "~/ZK/daily")
+      org-roam-completion-everywhere t
+      org-roam-completion-system 'default)
 
 (setq org-ellipsis " ▼ ")
 
 (defun jp/org-mode-setup ()
   (org-indent-mode)
   (mixed-pitch-mode 1) ; Enable different Fonts
-(org-roam-setup) ; Enable org-roam
+  (org-roam-setup) ; Enable org-roam
   (visual-line-mode 1))
 
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
@@ -328,7 +331,7 @@
       '(("h" "Daily habits"
          ((agenda ""))
          ((org-agenda-show-log t)
-          (org-agenda-ndays 7)
+          (org-agenda-ndays 14)
           (org-agenda-log-mode-items '(state))
           (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
         ;; other commands here
