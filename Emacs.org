@@ -429,7 +429,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(setq doom-theme 'doom-solarized-dark-high-contrast)
+(setq doom-theme 'doom-dark+)
 
 #+end_src
 
@@ -538,7 +538,11 @@ Disable the computer =beep= and activate a visual feedback instead.
 **** PDF Tools
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
 (pdf-tools-install)
+
+(setq pdf-view-display-size 'fit-width)
+
 #+end_src
 
 * Org Mode

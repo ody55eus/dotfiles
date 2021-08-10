@@ -77,7 +77,7 @@
        )
  )
 
-(setq doom-theme 'doom-solarized-dark-high-contrast)
+(setq doom-theme 'doom-dark+)
 
 ;; Set the font face based on platform
 (pcase system-type
@@ -144,6 +144,8 @@
 (add-hook 'org-mode-hook (rainbow-mode))
 
 (pdf-tools-install)
+
+(setq pdf-view-display-size 'fit-width)
 
 (setq org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
 (setq org-directory "~/org/"
