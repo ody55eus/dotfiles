@@ -15,8 +15,8 @@
 
 (map! :leader
       (:prefix-map ("b" . "buffer")
-       :desc "Counsel switch buffer" :n "j" #'counsel-switch-buffer
-       :desc "Counsel switch buffer other window" :n "I" #'counsel-switch-buffer-other-window
+       :desc "Consult buffer" :n "j" #'consult-buffer
+       :desc "Consult buffer other window" :n "J" #'consult-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
        :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
@@ -497,11 +497,10 @@
   :hook (company-mode . company-box-mode))
 
 ;; NOTE: Set this to the folder where you keep your Git repos!
-(when (file-directory-p "~/Projects")
-  (setq projectile-project-search-path '("~/Projects")))
+(when (file-directory-p "~/Projects/Code")
+  (setq projectile-project-search-path '("~/Projects/Code")))
 (setq projectile-switch-project-action #'projectile-dired)
 
-(counsel-projectile-mode)
 (setq projectile-completion-system 'vertico)
 
   (defun jp/configure-eshell ()
