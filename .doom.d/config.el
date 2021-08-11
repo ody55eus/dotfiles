@@ -36,6 +36,8 @@
       ;; (:prefix-map ("q" . "quit"))
       ;; (:prefix-map ("s" . "search"))
       (:prefix ("t" . "toogle")
+       :desc "Toggle Cmd Log Buffer" "b" #'clm/toggle-command-log-buffer
+       :desc "Toggle " "c" #'global-command-log-mode
        :desc "Toggle line highlight in frame" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
@@ -44,14 +46,28 @@
       ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
        (:prefix ("r" . "roam")
-       :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
-       :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
-       :desc "Capture new org-mode Node" :n "n" #'org-roam-capture
+       :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
+       :desc "New Daily Node (today)" :n "d" #'org-roam-dailies-capture-today
        :desc "Find org-roam Node" :n "f" #'org-roam-node-find
        :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
-       :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point)
+       :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
+       :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
        )
       )
+)
+
+(map! :leader
+      (:prefix ("e". "evaluate/EWW")
+       :desc "Evaluate elisp in buffer" :n "b" #'eval-buffer
+       :desc "Evaluate defun" :n "d" #'eval-defun
+       :desc "Evaluate elisp expression" :n "e" #'eval-expression
+       :desc "Evaluate last sexpression" :n "l" #'eval-last-sexp
+       :desc "Evaluate elisp in region" :n "r" #'eval-region))
+
+;; (map! :leader
+;;       (:prefix-map ("l" . "lookup")
+;;        )
+;;       )
 
 (map! :leader
       (:prefix ("e". "evaluate/EWW")
@@ -69,7 +85,7 @@
        )
  )
 
-(setq doom-theme 'doom-solarized-dark-high-contrast)
+(setq doom-theme 'doom-dark+)
 
 ;; Set the font face based on platform
 (pcase system-type
@@ -94,7 +110,7 @@
   ((or 'gnu/linux 'windows-nt 'cygwin)
    (set-face-attribute 'variable-pitch nil
                        ;; :font "Cantarell"
-                       :font "EB Garamond"
+                       :font "Ubuntu"
                        :height 185
                        :weight 'regular))
   ('darwin (set-face-attribute 'variable-pitch nil :font "Hiragino Sans" :height 150)))
@@ -113,32 +129,58 @@
 
 (menu-bar-mode 1)
 
-(rainbow-mode)
+(defun jp/set-frame-size-according-to-resolution ()
+  (interactive)
+  (if window-system
+  (progn
+    ;; use 120 char wide window for largeish displays
+    ;; and smaller 80 column windows for smaller displays
+    ;; pick whatever numbers make sense for you
+    (if (> (x-display-pixel-width) 1280)
+           (add-to-list 'default-frame-alist (cons 'width 177))
+           (add-to-list 'default-frame-alist (cons 'width 100)))
+    ;; for the height, subtract a couple hundred pixels
+    ;; from the screen height (for panels, menubars and
+    ;; whatnot), then divide by the height of a char to
+    ;; get the height we want
+    (add-to-list 'default-frame-alist
+         (cons 'height (/ (- (x-display-pixel-height) 120)
+                             (frame-char-height)))))))
+
+(jp/set-frame-size-according-to-resolution)
+
+(add-hook 'org-mode-hook (rainbow-mode))
 
 (pdf-tools-install)
 
+(setq pdf-view-display-size 'fit-width)
+
+(setq org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
 (setq org-directory "~/org/"
       org-agenda-files '("~/org/Agenda.org"
                          "~/org/Tasks.org"
                          "~/org/Habits.org"
                          "~/org/Journal.org")
-      org-default-notes-file (concat org-directory "/Notes.org"))
+      org-default-notes-file (concat org-directory "/Notes.org")
+      org-clock-sound "~/sounds/ding.wav")
 
-(setq org-roam-directory (file-truename "~/org/roam")   ; Set org-roam directory
-      org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
+(require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
+(require 'org-roam-protocol)
 
-(add-hook 'org-mode-hook (lambda () (org-roam-setup))) ; Enable org-roam
+(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
+      org-roam-dailies-directory (file-truename "~/ZK/daily")
+      org-roam-completion-everywhere t
+      org-roam-completion-system 'default)
 
 (setq org-ellipsis " ▼ ")
 
 (defun jp/org-mode-setup ()
   (org-indent-mode)
-  (mixed-pitch-mode 1)
+  (mixed-pitch-mode 1) ; Enable different Fonts
+  (org-roam-setup) ; Enable org-roam
   (visual-line-mode 1))
 
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
-
-;;(add-hook 'org-mode-hook (lambda () (mixed-pitch-mode))) ; Enable mixed fonts (fixed/variable)
 
 (setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
 
@@ -219,18 +261,25 @@
                               )
       )
 
+(setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         "* %?"
+         :if-new (file+head "%<%Y-%m-%d>.org"
+                            "#+title: %<%Y-%m-%d>\n"))))
+
 (setq org-agenda-custom-commands
      '(("d" "Dashboard"
        ((agenda "" ((org-deadline-warning-days 7)))
         (todo "BACKLOG"
           ((org-agenda-overriding-header "Backlog Tasks")))
-        (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
+        (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))
+        (todo "EPIC" ((org-agenda-overriding-header "Active Epics")))))
 
       ("t" "All Todo Tasks"
        ((todo "TODO"
           ((org-agenda-overriding-header "Todo Tasks")))))
 
-      ("W" "Work Tasks" tags-todo "+work-email")
+      ("W" "Work Tasks" tags-todo "+work")
 
       ;; Low-effort next actions
       ("e" tags-todo "+TODO=\"EPIC\"+Effort<15&+Effort>0"
@@ -287,6 +336,17 @@
     ;; Save Org buffers after refiling!
     (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
+(add-to-list 'org-modules 'org-habit)
+(setq org-agenda-custom-commands
+      '(("h" "Daily habits"
+         ((agenda ""))
+         ((org-agenda-show-log t)
+          (org-agenda-ndays 14)
+          (org-agenda-log-mode-items '(state))
+          (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
+        ;; other commands here
+        ))
+
 (require 'org-alert)
 
 (with-eval-after-load 'org
@@ -302,6 +362,19 @@
   (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
   (add-to-list 'org-structure-template-alist '("json" . "src json")))
 
+(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
+;; Get file icons in dired
+(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+
+
+;; With dired-open plugin, you can launch external programs for certain extensions
+;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
+(setq dired-open-extensions '(("gif" . "sxiv")
+                              ("jpg" . "sxiv")
+                              ("png" . "sxiv")
+                              ("mkv" . "mpv")
+                              ("mp4" . "mpv")))
+
 (map! :leader
       (:prefix ("d" . "dired")
        :desc "Open dired" "d" #'dired
@@ -311,16 +384,25 @@
         :desc "Peep-dired image previews" "d p" #'peep-dired
         :desc "Dired view file" "d v" #'dired-view-file)))
 
+(defun jp/dired-hide-dotfiles()
+    (setq dired-omit-files
+          (rx (or (seq bol (? ".") "#")
+                  (seq bol "." eol)
+                  (seq bol ".." eol)
+                  )))
+    )
+
 ;; Make 'h' and 'l' go back and forward in dired. Much faster to navigate the directory structure!
 (evil-define-key 'normal dired-mode-map
   (kbd "M-RET") 'dired-display-file
   (kbd "h") 'dired-up-directory
-  (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
+;;  (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
   (kbd "m") 'dired-mark
   (kbd "t") 'dired-toggle-marks
   (kbd "u") 'dired-unmark
   (kbd "C") 'dired-do-copy
   (kbd "D") 'dired-do-delete
+;;  (kbd "H") #'jp/dired-hide-dotfiles
   (kbd "J") 'dired-goto-file
   (kbd "M") 'dired-chmod
   (kbd "O") 'dired-chown
@@ -334,20 +416,12 @@
   (kbd "% u") 'dired-upcase
   (kbd "; d") 'epa-dired-do-decrypt
   (kbd "; e") 'epa-dired-do-encrypt)
+
+
 ;; If peep-dired is enabled, you will get image previews as you go up/down with 'j' and 'k'
 (evil-define-key 'normal peep-dired-mode-map
   (kbd "j") 'peep-dired-next-file
   (kbd "k") 'peep-dired-prev-file)
-(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
-;; Get file icons in dired
-(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-;; With dired-open plugin, you can launch external programs for certain extensions
-;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
-(setq dired-open-extensions '(("gif" . "sxiv")
-                              ("jpg" . "sxiv")
-                              ("png" . "sxiv")
-                              ("mkv" . "mpv")
-                              ("mp4" . "mpv")))
 
   (defun jp/lsp-mode-setup ()
     (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
@@ -427,9 +501,8 @@
   (setq projectile-project-search-path '("~/Projects")))
 (setq projectile-switch-project-action #'projectile-dired)
 
-(setq projectile-completion-system 'ivy)
-
 (counsel-projectile-mode)
+(setq projectile-completion-system 'vertico)
 
   (defun jp/configure-eshell ()
     ;; Save command history when commands are entered
