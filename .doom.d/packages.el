@@ -60,6 +60,7 @@
 (package! org-journal)
 (package! org-roam-bibtex)
 (package! pdf-tools)            ; Additional pdf tools.
+(package! nov)                  ; View epub files.
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
 (package! dmenu)                ; Dmenu Plugin.

@@ -69,14 +69,6 @@
 ;;        )
 ;;       )
 
-(map! :leader
-      (:prefix ("e". "evaluate/EWW")
-       :desc "Evaluate elisp in buffer" :n "b" #'eval-buffer
-       :desc "Evaluate defun" :n "d" #'eval-defun
-       :desc "Evaluate elisp expression" :n "e" #'eval-expression
-       :desc "Evaluate last sexpression" :n "l" #'eval-last-sexp
-       :desc "Evaluate elisp in region" :n "r" #'eval-region))
-
 (map! (:prefix-map ("C-w" . "window")
        :desc "evil-window-left" :n "<left>" #'evil-window-left
        :desc "evil-window-right" :n "<right>" #'evil-window-right
@@ -153,9 +145,25 @@
 
 (pdf-tools-install)
 
+;; Fit PDF in screen width
 (setq pdf-view-display-size 'fit-width)
 
-(setq org-roam-v2-ack t)                                ; Disable Warning for org-roam v2
+;; Show PDF in current Theme Colors
+(add-hook 'pdf-view-mode-hook (lambda() (pdf-view-themed-minor-mode)))
+
+;; Cut off unwritten borders of PDF.
+(add-hook 'pdf-view-mode-hook (lambda() (pdf-view-auto-slice-minor-mode)))
+
+;; Open .epub with nov.el package
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+
+;; Set custom font for epub
+(defun my-nov-font-setup ()
+  (face-remap-add-relative 'variable-pitch :family "Ubuntu"
+                                           :height 1.0))
+(add-hook 'nov-mode-hook 'my-nov-font-setup)
+
+(setq org-roam-v2-ack t); Disable Warning for org-roam v2
 (setq org-directory "~/org/"
       org-agenda-files '("~/org/Agenda.org"
                          "~/org/Tasks.org"
@@ -242,30 +250,83 @@
       )
 
 (setq org-capture-templates '(
-                              ("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
+                              ("t" "Todo" entry (file+headline "~/org/Tasks.org" "Tasks")
                                "* TODO %?\n %i\n %a")
-                              ("e" "Epic" entry (file+headline "~/org/epic.org" "Epic")
+                              ("e" "Epic" entry (file+headline "~/org/Tasks.org" "Epic")
                                "* EPIC %?\n %i\n %a")
-                              ("j" "Journal Entries")
-                              ("jj" "Journal" entry
-                               (file+olp+datetree "~/org/Journal.org")
-                               "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
+                              ("s" "Create Org Scripts")
+                              ("ss" "shell" file
+                               (file+headline "~/org/scripts/${name}.org")
+                               "\n* Shell Script:\n\n#+begin_src sh :tangle ./${name}.sh\n\n%?\n\n#+end_src"
+                               :clock-in :clock-resume
+                               :empty-lines 1)
+                              ("l" "Logbook Entries")
+                              ("ls" "Software" entry
+                               (file+olp+datetree "~/org/Logbook.org")
+                               "\n* %<%I:%M %p> - Software :Software:\n\n%?\n\n"
                                ;; ,(jp/read-file-as-string "~/Notes/Templates/Daily.org")
                                :clock-in :clock-resume
                                :empty-lines 1)
-                              ("jm" "Meeting" entry
-                               (file+olp+datetree "~/org/Journal.org")
+                              ("lh" "Hardware" entry
+                               (file+olp+datetree "~/org/Logbook.org")
+                               "\n* %<%I:%M %p> - Hardware :Hardware:\n\n%?\n\n"
+                               :clock-in :clock-resume
+                               :empty-lines 1)
+                              ("lc" "Configuration" entry
+                               (file+olp+datetree "~/org/Logbook.org")
+                               "\n* %<%I:%M %p> - Configuration :Configuration:\n\n%?\n\n"
+                               :clock-in :clock-resume
+                               :empty-lines 1)
+                              ("m" "Meeting" entry
+                               (file+olp+datetree "~/org/Meetings.org")
                                "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
                                :clock-in :clock-resume
                                :empty-lines 1)
                               )
       )
 
+(setq org-roam-capture-templates
+      '(("d" "default" plain
+         "%?"
+         :if-new (file+head
+          "%<%Y%m%d%H%M%S>-${slug}.org"
+          "#+title: ${title}\n")
+         :kill-buffer t
+         :unnarrowed t)
+        ("l" "literature note" plain
+         "* Metadata\n- Author: %\0\n- Title: ${title}\n- Year: %\1\n\n* Notes\n%?\n"
+         :if-new (file+head
+          "Literature/%^{Author}-${slug}.org"
+          "#+title: %\0 - ${title} %^{Year}")
+         :unnarrowed t
+         )))
+
 (setq org-roam-dailies-capture-templates
       '(("d" "default" entry
          "* %?"
-         :if-new (file+head "%<%Y-%m-%d>.org"
-                            "#+title: %<%Y-%m-%d>\n"))))
+         :if-new (file+head
+          "%<%Y-%m-%d>.org"
+          "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"))
+        ("t" "Task" entry
+         "* TODO %?\n  %U\n  %a\n  %i"
+         :if-new (file+head+olp
+          "%<%Y-%m-%d>.org"
+          "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
+          ("Tasks"))
+         )
+        ("j" "Journal entry" entry
+         "* %<%I:%M %p> - Journal  :journal:\n\n%?\n\n"
+         :if-new (file+head+olp
+          "%<%Y-%m>.org"
+          "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
+          ("Log"))
+         )
+        ("m" "meeting" entry
+         "* %<%I:%M %p> - %^{Meeting Title}  :meetings:\n\n%?\n\n"
+         :if-new (file+head+olp
+         "%<%Y-%m-%d>.org"
+         "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
+         ("Log")))))
 
 (setq org-agenda-custom-commands
      '(("d" "Dashboard"
