@@ -71,5 +71,8 @@
 (package! lsp-ui)
 (package! lsp-treemacs)
 (package! lsp-ivy)
+(package! lsp-pyright)          ; Python language server
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
+
+(package! command-log-mode)

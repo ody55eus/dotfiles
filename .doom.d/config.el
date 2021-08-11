@@ -16,7 +16,9 @@
 (map! :leader
       (:prefix-map ("b" . "buffer")
        :desc "Counsel switch buffer" :n "j" #'counsel-switch-buffer
-       :desc "Counsel switch buffer other window" :n "I" #'counsel-switch-buffer-other-window)
+       :desc "Counsel switch buffer other window" :n "I" #'counsel-switch-buffer-other-window
+       :desc "List bookmarks" "L" #'list-bookmarks
+       :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
       ;; (:prefix-map ("d" . "dired"))
       ;; (:prefix-map ("f" . "file"))
@@ -33,7 +35,11 @@
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
       ;; (:prefix-map ("s" . "search"))
-      ;; (:prefix-map ("t" . "toogle"))
+      (:prefix ("t" . "toogle")
+       :desc "Toggle line highlight in frame" "h" #'hl-line-mode
+       :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
+       :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
+       )
       ;; (:prefix-map ("w" . "window"))
       ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
@@ -46,6 +52,14 @@
        :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point)
        )
       )
+
+(map! :leader
+      (:prefix ("e". "evaluate/EWW")
+       :desc "Evaluate elisp in buffer" :n "b" #'eval-buffer
+       :desc "Evaluate defun" :n "d" #'eval-defun
+       :desc "Evaluate elisp expression" :n "e" #'eval-expression
+       :desc "Evaluate last sexpression" :n "l" #'eval-last-sexp
+       :desc "Evaluate elisp in region" :n "r" #'eval-region))
 
 (map! (:prefix-map ("C-w" . "window")
        :desc "evil-window-left" :n "<left>" #'evil-window-left
@@ -64,20 +78,26 @@
                        :font "Source Code Pro"
                        :weight 'regular
                        :height 140))
-  ('darwin (set-face-attribute 'default nil :font "Fira Mono" :height 170)))
+  ('darwin (set-face-attribute 'default nil :font "Liberation Mono for Powerline" :height 140)))
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil
-                    :font "Source Code Pro"
-                    :weight 'regular
-                    :height 140)
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (set-face-attribute 'fixed-pitch nil
+                       :font "Source Code Pro"
+                       :weight 'regular
+                       :height 140))
+  ('darwin (set-face-attribute 'fixed-pitch nil :font "Liberation Mono for Powerline" :height 140)))
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil
-                    ;; :font "Cantarell"
-                    :font "Ubuntu"
-                    :height 185
-                    :weight 'regular)
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (set-face-attribute 'variable-pitch nil
+                       ;; :font "Cantarell"
+                       :font "EB Garamond"
+                       :height 185
+                       :weight 'regular))
+  ('darwin (set-face-attribute 'variable-pitch nil :font "Hiragino Sans" :height 150)))
 
 (setq display-line-numbers-type 'relative)
 
@@ -371,6 +391,23 @@
    :prefix lsp-keymap-prefix
    "d" '(dap-hydra t :wk "debugger")))
 
+(defun jp/python-mode-hook()
+  (require 'lsp-pyright)
+  (require 'dap-python)
+  (lsp-deferred))
+
+(add-hook 'python-mode-hook #'jp/python-mode-hook)
+
+;; NOTE: Set these if Python 3 is called "python3" on your system!
+(setq python-shell-interpreter "python3")
+(setq dap-python-executable "python3")
+(setq dap-python-debugger 'debugpy)
+
+(use-package pyvenv
+  :after python-mode
+  :config
+  (pyvenv-mode 1))
+
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
@@ -386,15 +423,13 @@
   :hook (company-mode . company-box-mode))
 
 ;; NOTE: Set this to the folder where you keep your Git repos!
-(when (file-directory-p "~/Projects/Code")
-  (setq projectile-project-search-path '("~/Projects/Code")))
+(when (file-directory-p "~/Projects")
+  (setq projectile-project-search-path '("~/Projects")))
 (setq projectile-switch-project-action #'projectile-dired)
 
 (setq projectile-completion-system 'ivy)
 
 (counsel-projectile-mode)
-
-;; Optional Magit Configuration
 
   (defun jp/configure-eshell ()
     ;; Save command history when commands are entered
@@ -425,6 +460,8 @@
       (setq eshell-visual-commands '("htop" "zsh" "vim")))
 
     (eshell-git-prompt-use-theme 'powerline))
+
+;; Optional Magit Configuration
 
 (setq hl-todo-keyword-faces
       '(("TODO"   . "#999900")
