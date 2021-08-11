@@ -249,11 +249,13 @@
                         )
       )
 
-(setq org-capture-templates '(
-                              ("t" "Todo" entry (file+headline "~/org/Tasks.org" "Tasks")
+(setq org-capture-templates '(("t" "Task Entries")
+                              ("tt" "Todo Task" entry (file+headline "~/org/Tasks.org" "Tasks")
                                "* TODO %?\n %i\n %a")
-                              ("e" "Epic" entry (file+headline "~/org/Tasks.org" "Epic")
+                              ("te" "Epic Task" entry (file+headline "~/org/Tasks.org" "Epic")
                                "* EPIC %?\n %i\n %a")
+                              ("ti" "New Idea" entry (file+headline "~/org/Tasks.org" "Ideas")
+                               "* IDEA %?\n %i\n %a")
                               ("s" "Create Org Scripts")
                               ("ss" "shell" file
                                (file+headline "~/org/scripts/${name}.org")
@@ -287,17 +289,34 @@
 
 (setq org-roam-capture-templates
       '(("d" "default" plain
-         "%?"
+         "*%a\n%?"
          :if-new (file+head
           "%<%Y%m%d%H%M%S>-${slug}.org"
           "#+title: ${title}\n")
          :kill-buffer t
          :unnarrowed t)
-        ("l" "literature note" plain
-         "* Metadata\n- Author: %\0\n- Title: ${title}\n- Year: %\1\n\n* Notes\n%?\n"
+        ("p" "PC" plain
+         "* %a\n\n%?\n"
          :if-new (file+head
-          "Literature/%^{Author}-${slug}.org"
-          "#+title: %\0 - ${title} %^{Year}")
+          "PC/%<%Y%m%d%H%M%S>-${slug}.org"
+          "#+title: ${title}\n")
+         :clock-in :clock-resume
+         :unnarrowed t
+         )
+        ("c" "Coding note" plain
+         "* %a\n\n%?\n"
+         :if-new (file+head
+          "Coding/%<%Y%m%d%H%M%S>-${slug}.org"
+          "#+title: ${title}\n")
+         :clock-in :clock-resume
+         :unnarrowed t
+         )
+        ("l" "literature note" plain
+         "* Links\n- %a\n* Notes\n%?\n"
+         :if-new (file+head
+          "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+          "#+title: ${title}\n")
+         :clock-in :clock-resume
          :unnarrowed t
          )))
 
@@ -315,16 +334,16 @@
           ("Tasks"))
          )
         ("j" "Journal entry" entry
-         "* %<%I:%M %p> - Journal  :journal:\n\n%?\n\n"
+         "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
          :if-new (file+head+olp
-          "%<%Y-%m>.org"
+          "%<%Y-%B>.org"
           "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
           ("Log"))
          )
         ("m" "meeting" entry
-         "* %<%I:%M %p> - %^{Meeting Title}  :meetings:\n\n%?\n\n"
+         "* ~%<%H:%M>~ - %^{Meeting Title} :meetings:\n\n%?\n\n"
          :if-new (file+head+olp
-         "%<%Y-%m-%d>.org"
+         "%<%Y-%B>.org"
          "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
          ("Log")))))
 
