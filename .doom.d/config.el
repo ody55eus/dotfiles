@@ -42,19 +42,24 @@
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        )
-      ;; (:prefix-map ("w" . "window"))
+      (:prefix ("w" . "window")
+       :desc "evil-window-left" :n "<left>" #'evil-window-left
+       :desc "evil-window-right" :n "<right>" #'evil-window-right
+       :desc "evil-window-up" :n "<up>" #'evil-window-up
+       :desc "evil-window-down" :n "<down>" #'evil-window-down
+       )
       ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
        (:prefix ("r" . "roam")
-       :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
-       :desc "New Daily Node (today)" :n "d" #'org-roam-dailies-capture-today
-       :desc "Find org-roam Node" :n "f" #'org-roam-node-find
-       :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
-       :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
-       :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
+        :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
+        :desc "New Daily Node (today)" :n "d" #'org-roam-dailies-capture-today
+        :desc "Find org-roam Node" :n "f" #'org-roam-node-find
+        :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
+        :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
+        :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
+        )
        )
       )
-)
 
 (map! :leader
       (:prefix ("e". "evaluate/EWW")
@@ -291,31 +296,31 @@
       '(("d" "default" plain
          "*%a\n%?"
          :if-new (file+head
-          "%<%Y%m%d%H%M%S>-${slug}.org"
-          "#+title: ${title}\n")
+                  "%<%Y%m%d%H%M%S>-${slug}.org"
+                  "#+title: ${title}\n")
          :kill-buffer t
          :unnarrowed t)
         ("p" "PC" plain
          "* %a\n\n%?\n"
          :if-new (file+head
-          "PC/%<%Y%m%d%H%M%S>-${slug}.org"
-          "#+title: ${title}\n")
+                  "PC/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "#+title: ${title}\n")
          :clock-in :clock-resume
          :unnarrowed t
          )
         ("c" "Coding note" plain
          "* %a\n\n%?\n"
          :if-new (file+head
-          "Coding/%<%Y%m%d%H%M%S>-${slug}.org"
-          "#+title: ${title}\n")
+                  "Coding/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "#+title: ${title}\n")
          :clock-in :clock-resume
          :unnarrowed t
          )
         ("l" "literature note" plain
          "* Links\n- %a\n* Notes\n%?\n"
          :if-new (file+head
-          "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-          "#+title: ${title}\n")
+                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "#+title: ${title}\n")
          :clock-in :clock-resume
          :unnarrowed t
          )))
@@ -324,28 +329,28 @@
       '(("d" "default" entry
          "* %?"
          :if-new (file+head
-          "%<%Y-%m-%d>.org"
-          "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"))
+                  "%<%Y-%m-%d>.org"
+                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"))
         ("t" "Task" entry
          "* TODO %?\n  %U\n  %a\n  %i"
          :if-new (file+head+olp
-          "%<%Y-%m-%d>.org"
-          "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
-          ("Tasks"))
+                  "%<%Y-%m-%d>.org"
+                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
+                  ("Tasks"))
          )
         ("j" "Journal entry" entry
          "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
          :if-new (file+head+olp
-          "%<%Y-%B>.org"
-          "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
-          ("Log"))
+                  "%<%Y-%B>.org"
+                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
+                  ("Log"))
          )
         ("m" "meeting" entry
          "* ~%<%H:%M>~ - %^{Meeting Title} :meetings:\n\n%?\n\n"
          :if-new (file+head+olp
-         "%<%Y-%B>.org"
-         "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
-         ("Log")))))
+                  "%<%Y-%B>.org"
+                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
+                  ("Log")))))
 
 (setq org-agenda-custom-commands
      '(("d" "Dashboard"

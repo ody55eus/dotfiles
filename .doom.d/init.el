@@ -145,6 +145,7 @@
        (latex             ; writing papers in Emacs has never been so fun
         +latexmk                    ; what else would you use?
         +cdlatex                    ; quick maths symbols
+        +lsp                        ; language server
         +fold)                      ; fold the clutter away nicities
        ;;lean              ; for folks with too much to prove
        ;;ledger            ; be audit you can be
@@ -168,7 +169,9 @@
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        (python            ; beautiful is better than ugly
-        +lsp +pyright)
+        +lsp               ; language server protocol
+        +pyright           ;
+        +conda)            ; Anaconda environment / package manager
        qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6

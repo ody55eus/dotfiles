@@ -59,6 +59,7 @@
 (package! org-download)
 (package! org-journal)
 (package! org-roam-bibtex)
+(package! ox-twbs)
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
