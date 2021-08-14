@@ -35,7 +35,7 @@ Plugin 'vim-airline/vim-airline-themes'
 " Syntax Highlighting / Code Completion
 Plugin 'Syntastic'
 Plugin 'vim-python/python-syntax'
-Plugin 'ycm-core/YouCompleteMe'
+" Plugin 'ycm-core/YouCompleteMe'
 Plugin 'tell-k/vim-autopep8'
 " New Commands
 Plugin 'tpope/vim-commentary'
