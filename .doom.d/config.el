@@ -13,6 +13,8 @@
 
 (add-hook 'emacs-startup-hook #'jp/display-startup-time)
 
+(server-start)  ; Start Emacs as Server!
+
 (map! :leader
       (:prefix-map ("b" . "buffer")
        :desc "Consult buffer" :n "j" #'consult-buffer
@@ -179,6 +181,7 @@
 
 (require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
 (require 'org-roam-protocol)
+(require 'org-protocol-capture-html)
 
 (setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
       org-roam-dailies-directory (file-truename "~/ZK/daily")
@@ -254,7 +257,9 @@
                         )
       )
 
-(setq org-capture-templates '(("t" "Task Entries")
+(setq org-capture-templates '(("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
+                               "* %?\n %x\n %i\n %a")
+                              ("t" "Task Entries")
                               ("tt" "Todo Task" entry (file+headline "~/org/Tasks.org" "Tasks")
                                "* TODO %?\n %i\n %a")
                               ("te" "Epic Task" entry (file+headline "~/org/Tasks.org" "Epic")
@@ -294,14 +299,14 @@
 
 (setq org-roam-capture-templates
       '(("d" "default" plain
-         "*%a\n%?"
+         "* %?\n%a"
          :if-new (file+head
                   "%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
          :kill-buffer t
          :unnarrowed t)
         ("p" "PC" plain
-         "* %a\n\n%?\n"
+         "* %?\n\n%a\n"
          :if-new (file+head
                   "PC/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
@@ -334,7 +339,7 @@
         ("t" "Task" entry
          "* TODO %?\n  %U\n  %a\n  %i"
          :if-new (file+head+olp
-                  "%<%Y-%m-%d>.org"
+                  "%<%Y-%B>.org"
                   "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
                   ("Tasks"))
          )
@@ -353,58 +358,66 @@
                   ("Log")))))
 
 (setq org-agenda-custom-commands
-     '(("d" "Dashboard"
-       ((agenda "" ((org-deadline-warning-days 7)))
-        (todo "BACKLOG"
-          ((org-agenda-overriding-header "Backlog Tasks")))
-        (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))
-        (todo "EPIC" ((org-agenda-overriding-header "Active Epics")))))
+      '(("d" "Dashboard"
+         ((agenda "" ((org-deadline-warning-days 20)))
+          (todo "BACKLOG"
+                ((org-agenda-overriding-header "Backlog Tasks")))
+          (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))
+          (todo "EPIC" ((org-agenda-overriding-header "Active Epics")))))
 
-      ("t" "All Todo Tasks"
-       ((todo "TODO"
-          ((org-agenda-overriding-header "Todo Tasks")))))
+        ("T" "All Todo Tasks"
+         ((todo "TODO"
+                ((org-agenda-overriding-header "Todo Tasks")))))
 
-      ("W" "Work Tasks" tags-todo "+work")
+        ("W" "Work Tasks" tags-todo "+work")
 
-      ;; Low-effort next actions
-      ("e" tags-todo "+TODO=\"EPIC\"+Effort<15&+Effort>0"
-       ((org-agenda-overriding-header "Low Effort Tasks")
-        (org-agenda-max-todos 20)
-        (org-agenda-files org-agenda-files)))
+        ;; Low-effort next actions
+        ("E" tags-todo "+TODO=\"EPIC\"+Effort<15&+Effort>0"
+         ((org-agenda-overriding-header "Low Effort Tasks")
+          (org-agenda-max-todos 20)
+          (org-agenda-files org-agenda-files)))
 
-      ("w" "Workflow Status"
-       ((todo "WAIT"
-              ((org-agenda-overriding-header "Waiting on External")
-               (org-agenda-files org-agenda-files)))
-        (todo "REVIEW"
-              ((org-agenda-overriding-header "In Review")
-               (org-agenda-files org-agenda-files)))
-        (todo "PLAN"
-              ((org-agenda-overriding-header "In Planning")
-               (org-agenda-todo-list-sublevels nil)
-               (org-agenda-files org-agenda-files)))
-        (todo "BACKLOG"
-              ((org-agenda-overriding-header "Project Backlog")
-               (org-agenda-todo-list-sublevels nil)
-               (org-agenda-files org-agenda-files)))
-        (todo "READY"
-              ((org-agenda-overriding-header "Ready for Work")
-               (org-agenda-files org-agenda-files)))
-        (todo "ACTIVE"
-              ((org-agenda-overriding-header "Active Projects")
-               (org-agenda-files org-agenda-files)))
-        (todo "COMPLETED"
-              ((org-agenda-overriding-header "Completed Projects")
-               (org-agenda-files org-agenda-files)))
-        (todo "CANC"
-              ((org-agenda-overriding-header "Cancelled Projects")
-               (org-agenda-files org-agenda-files)))))))
+        ("w" "Workflow Status"
+         ((todo "WAIT"
+                ((org-agenda-overriding-header "Waiting on External")
+                 (org-agenda-files org-agenda-files)))
+          (todo "REVIEW"
+                ((org-agenda-overriding-header "In Review")
+                 (org-agenda-files org-agenda-files)))
+          (todo "PLAN"
+                ((org-agenda-overriding-header "In Planning")
+                 (org-agenda-todo-list-sublevels nil)
+                 (org-agenda-files org-agenda-files)))
+          (todo "BACKLOG"
+                ((org-agenda-overriding-header "Project Backlog")
+                 (org-agenda-todo-list-sublevels nil)
+                 (org-agenda-files org-agenda-files)))
+          (todo "READY"
+                ((org-agenda-overriding-header "Ready for Work")
+                 (org-agenda-files org-agenda-files)))
+          (todo "ACTIVE"
+                ((org-agenda-overriding-header "Active Projects")
+                 (org-agenda-files org-agenda-files)))
+          (todo "COMPLETED"
+                ((org-agenda-overriding-header "Completed Projects")
+                 (org-agenda-files org-agenda-files)))
+          (todo "CANC"
+                ((org-agenda-overriding-header "Cancelled Projects")
+                 (org-agenda-files org-agenda-files)))))
+        ("h" "Daily habits"
+         ((agenda ""))
+         ((org-agenda-show-log t)
+          (org-agenda-ndays 14)
+          (org-agenda-log-mode-items '(state))
+          (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
+        ;; other commands here
+        ))
 
 (setq org-tag-alist
       '((:startgroup)
          ; Put mutually exclusive tags here
          (:endgroup)
-         ("@errand" . ?E)
+         ("@sys" . ?S)
          ("@home" . ?H)
          ("@work" . ?W)
          ("agenda" . ?a)
@@ -414,6 +427,8 @@
          ("note" . ?n)
          ("idea" . ?i)))
 
+(setq org-lowest-priority ?E) ;; Priorities A to E
+
     (setq org-refile-targets
       '(("Archive.org" :maxlevel . 1)
         ("Tasks.org" :maxlevel . 1)))
@@ -422,15 +437,6 @@
     (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
 (add-to-list 'org-modules 'org-habit)
-(setq org-agenda-custom-commands
-      '(("h" "Daily habits"
-         ((agenda ""))
-         ((org-agenda-show-log t)
-          (org-agenda-ndays 14)
-          (org-agenda-log-mode-items '(state))
-          (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
-        ;; other commands here
-        ))
 
 (require 'org-alert)
 

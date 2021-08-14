@@ -303,7 +303,14 @@ Just comment/uncomment some lines to disable/enable features.
 (package! org-download)
 (package! org-journal)
 (package! org-roam-bibtex)
+(package! org-protocol-capture-html
+  :recipe (:host github
+           :repo "alphapapa/org-protocol-capture-html"
+           :files ("org-protocol-capture-html.el")))
 (package! ox-twbs)
+(package! org-special-block-extras
+  :recipe (:host github
+           :repo "alhassy/org-special-block-extras"))
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
@@ -316,6 +323,13 @@ Just comment/uncomment some lines to disable/enable features.
 (package! deft)                 ; Search for file contents
 (package! consult)
 
+;; SVG Tag Mode (not working with doom Emacs yet!)
+;; converts TODO / DONE etc.into small images.
+;; (package! svg-tag-mode
+;;   :recipe (:host github
+;;            :repo "rougier/svg-tag-mode"
+;;            :files ("svg-tag-mode.el")))
+
 ;;(package! synosaurus)           ; Thesaurus synonyms
 
 ;; Language Server
@@ -324,13 +338,20 @@ Just comment/uncomment some lines to disable/enable features.
 (package! lsp-treemacs)
 (package! lsp-ivy)
 (package! lsp-pyright)          ; Python language server
+(package! lsp-latex)
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
 
+; Packages to share my keybindings when streaming
 (package! command-log-mode)
+;; (package! keycast
+;;   :recipe (:host github
+;;            :repo "tarsius/keycast"))
+
 #+end_src
 
-** Improve Startup Performance
+** Emacs Startup
+*** Improve Startup Performance
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -348,10 +369,18 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+end_src
 
+*** Start Emacs as Server!
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(server-start)  ; Start Emacs as Server!
+
+#+end_src
+
 ** UI Configuration
 *** Keybindings (=:leader= ~SPC-<Key>~)
+**** Basic Keybindings
 
-:SPOILER-CONF:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
@@ -403,11 +432,12 @@ Just comment/uncomment some lines to disable/enable features.
       )
 
 #+end_src
-:END:
 
 **** Evaluate Elisp Expressions (~SPC-e~)
 
+:SOURCE:
 Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
+:END:
 
 Changing some keybindings from their defaults to better fit with Doom Emacs, and to avoid conflicts with my window managers which sometimes use the control key in their keybindings.  By default, Doom Emacs does not use ~SPC-e~ for anything, so I choose to use the format ~SPC-e~ plus ~key~ for these (I also use ~SPC-e~ for ~eww~ keybindings).
 
@@ -595,6 +625,192 @@ Disable the computer =beep= and activate a visual feedback instead.
                                            :height 1.0))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 #+end_src
+**** WAIT SVG Tag Mode
+
+Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mode/issues/10][Issue on Github→]] for further information.
+
+***** Example 1
+#+begin_src emacs-lisp
+
+(require 'svg-tag-mode)
+
+(defface svg-tag-note-face
+  '((t :foreground "black" :background "white" :box "black"
+       :family "Roboto Mono" :weight light :height 140))
+  "Face for note tag" :group nil)
+
+(defface svg-tag-keyboard-face
+  '((t :foreground "#333333" :background "#f9f9f9" :box "#333333"
+       :family "Roboto Mono" :weight light :height 140))
+  "Face for keyboard bindings tag" :group nil)
+
+(defface svg-tag-org-face
+  '((t :foreground "#333333" :background "#fffff0" :box "#333333"
+       :family "Roboto Mono" :weight light :height 140))
+  "Face for keyboard bindings tag" :group nil)
+
+(setq svg-tag-todo
+  (svg-tag-make "TODO" nil 1 1 2))
+
+(setq svg-tag-note
+  (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 2))
+
+(defun svg-tag-round (text)
+  (svg-tag-make (substring text 1 -1) 'svg-tag-note-face 1 1 12))
+
+(defun svg-tag-quasi-round (text)
+  (svg-tag-make (substring text 1 -1) 'svg-tag-note-face 1 1 8))
+
+(defun svg-tag-keyboard (text)
+  (svg-tag-make (substring text 1 -1) 'svg-tag-keyboard-face 1 1 2))
+
+(defun svg-tag-org (text)
+  (svg-tag-make (substring text 1 -1) 'svg-tag-org-face 1 1 2))
+
+(setq svg-tag-tags
+      '(("@[0-9a-zA-Z]+:"                   . svg-tag-org)
+        (":TODO:"                           . svg-tag-todo)
+        (":NOTE:"                           . svg-tag-note)
+        ("\([0-9a-zA-Z]\)"                  . svg-tag-round)
+        ("\([0-9a-zA-Z][0-9a-zA-Z]\)"       . svg-tag-quasi-round)
+        ("|[0-9a-zA-Z- ⇥></%⌘^→←↑↓]+?|"    . svg-tag-keyboard)))
+
+(svg-tag-mode 1)
+
+;; More examples:
+;; --------------
+;;
+;;  Save ................. |C-x||C-s|  Help ............... |C-h|
+;;  Save as .............. |C-x||C-w|  Cancel ............. |C-g|
+;;  Open a new file ...... |C-x||C-f|  Undo ............... |C-z|
+;;  Open recent .......... |C-x||C-r|  Close buffer ....... |C-x||k|
+;;  Browse directory ......|C-x||d|    Quit ............... |C-x||C-c|
+;;
+;; ------------------------------------------------------------------------
+;; (1)(2)(3)(4)(5)(Z)(W)(12)(99)
+;; ------------------------------------------------------------------------
+
+#+end_src
+***** Example 2
+#+begin_src emacs-lisp
+;; :tangle ./.doom.d/config.el
+
+(require 'svg-tag-mode)
+
+(defface svg-tag-org-face
+  '((t :foreground "#333333" :background "white"
+       :box (:line-width 1 :color "black" :style nil)
+       :family "Roboto Mono" :weight regular :height 140))
+  "Default face for svg tag" :group nil)
+
+(defface svg-tag-note-face
+  '((t :foreground "#333333" :background "#FFFFFF"
+       :box (:line-width 1 :color "#333333" :style nil)
+       :family "Roboto Mono" :weight regular :height 140))
+  "Default face for svg tag" :group nil)
+
+(defface svg-tag-todo-face
+  '((t :foreground "#ffffff" :background "#FFAB91"
+       :box (:line-width 1 :color "#FFAB91" :style nil)
+       :family "Roboto Mono" :weight regular :height 140))
+  "Face for TODO  svg tag" :group nil)
+
+(defface svg-tag-next-face
+  '((t :foreground "white" :background "#673AB7"
+       :box (:line-width 1 :color "#673AB7" :style nil)
+       :family "Roboto Mono" :weight regular :height 140))
+  "Face for NEXT svg tag" :group nil)
+
+(defface svg-tag-done-face
+  '((t :foreground "white" :background "#B0BEC5"
+       :box (:line-width 1 :color "#B0BEC5" :style nil)
+       :family "Roboto Mono" :weight regular :height 140))
+  "Face for DONE  svg tag" :group nil)
+
+(defface svg-tag-org-tag-face
+  '((t :foreground "#ffffff" :background "#FFAB91"
+       :box (:line-width 1 :color "#FFAB91" :style nil)
+       :family "Roboto Mono" :weight regular :height 140))
+  "Face for TODO  svg tag" :group nil)
+
+(defface svg-tag-date-active-face
+  '((t :foreground "white" :background "#673AB7"
+       :box (:line-width 1 :color "#673AB7" :style nil)
+       :family "Roboto Mono" :weight regular :height 140))
+  "Face for active date svg tag" :group nil)
+
+(defface svg-tag-time-active-face
+  '((t :foreground "#673AB7" :background "#ffffff"
+       :box (:line-width 1 :color "#673AB7" :style nil)
+       :family "Roboto Mono" :weight light :height 140))
+  "Face for active time svg tag" :group nil)
+
+(defface svg-tag-date-inactive-face
+  '((t :foreground "#ffffff" :background "#B0BEC5"
+       :box (:line-width 1 :color "#B0BEC5" :style nil)
+       :family "Roboto Mono" :weight regular :height 140))
+  "Face for inactive date svg tag" :group nil)
+
+(defface svg-tag-time-inactive-face
+  '((t :foreground "#B0BEC5" :background "#ffffff"
+       :box (:line-width 2 :color "#B0BEC5" :style nil)
+       :family "Roboto Mono" :weight light :height 140))
+  "Face for inactive time svg tag" :group nil)
+
+(setq svg-tag-org-todo (svg-tag-make "TODO" 'svg-tag-todo-face 1 1 2))
+(setq svg-tag-org-done (svg-tag-make "DONE" 'svg-tag-done-face 1 1 2))
+(setq svg-tag-org-hold (svg-tag-make "HOLD" 'svg-tag-org-face 1 1 2))
+(setq svg-tag-org-next (svg-tag-make "NEXT" 'svg-tag-next-face 1 1 2))
+(setq svg-tag-org-note-tag (svg-tag-make "NOTE" 'svg-tag-note-face 1 1 2))
+(setq svg-tag-org-canceled-tag (svg-tag-make "CANCELED" 'svg-tag-note-face 1 1 2))
+
+(defun svg-tag-make-org-tag (text)
+  (svg-tag-make (substring text 1 -1) 'svg-tag-org-tag-face 1 1 2))
+(defun svg-tag-make-org-priority (text)
+  (svg-tag-make (substring text 2 -1) 'svg-tag-org-face 1 0 2))
+
+(defun svg-tag-make-org-date-active (text)
+  (svg-tag-make (substring text 1 -1) 'svg-tag-date-active-face 0 0 0))
+(defun svg-tag-make-org-time-active (text)
+  (svg-tag-make (substring text 0 -1) 'svg-tag-time-active-face 1 0 0))
+(defun svg-tag-make-org-range-active (text)
+  (svg-tag-make (substring text 0 -1) 'svg-tag-time-active-face 0 0 0))
+
+(defun svg-tag-make-org-date-inactive (text)
+  (svg-tag-make (substring text 1 -1) 'svg-tag-date-inactive-face 0 0 0))
+(defun svg-tag-make-org-time-inactive (text)
+  (svg-tag-make (substring text 0 -1) 'svg-tag-time-inactive-face 1 0 0))
+(defun svg-tag-make-org-range-inactive (text)
+  (svg-tag-make (substring text 0 -1) 'svg-tag-time-inactive-face 0 0 0))
+
+
+(defconst date-re "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}")
+(defconst time-re "[0-9]\\{2\\}:[0-9]\\{2\\}")
+(defconst day-re "[A-Za-z]\\{3\\}")
+
+(setq svg-tag-tags
+      `(("@[0-9a-zA-Z]+:"                   . svg-tag-make-org-tag)
+        ("@NOTE:"                           . svg-tag-org-note-tag)
+        ("@CANCELED:"                       . svg-tag-org-canceled-tag)
+        ("\\[#[ABC]\\]"                     . svg-tag-make-org-priority)
+        (" TODO "                           . svg-tag-org-todo)
+        (" DONE "                           . svg-tag-org-done)
+        (" NEXT "                           . svg-tag-org-next)
+        (" HOLD "                           . svg-tag-org-hold)
+
+        (,(concat "<" date-re  "[ >]")             . svg-tag-make-org-date-active)
+        (,(concat "<" date-re " " day-re "[ >]")   . svg-tag-make-org-date-active)
+        (,(concat time-re ">")                     . svg-tag-make-org-time-active)
+        (,(concat time-re "-" time-re ">")         . svg-tag-make-org-range-active)
+
+        (,(concat "\\[" date-re  "[] ]")           . svg-tag-make-org-date-inactive)
+        (,(concat "\\[" date-re " " day-re "[] ]") . svg-tag-make-org-date-inactive)
+        (,(concat time-re "\\]")                   . svg-tag-make-org-time-inactive)
+        (,(concat time-re "-" time-re "\\]")       . svg-tag-make-org-range-inactive)))
+
+(svg-tag-mode)
+
+#+end_src
 
 * Org Mode
 ** Org Configuration
@@ -619,6 +835,7 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 (require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
 (require 'org-roam-protocol)
+(require 'org-protocol-capture-html)
 
 (setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
       org-roam-dailies-directory (file-truename "~/ZK/daily")
@@ -757,16 +974,21 @@ Set this value to ~nil~ to display them again.
 
 #+end_src
 
-*** Capture Templates for new Tasks
+*** Capture Template
 
-- [[https://orgmode.org/manual/Template-elements.html#Template-elements][Org-Mode Template Elements]]
-- [[https://www.orgroam.com/manual.html#The-Templating-System][Org-Roam Templating System]]
+- [[https://orgmode.org/manual/Template-elements.html#Template-elements][Org-Mode Template Elements→]]
+- [[https://www.orgroam.com/manual.html#The-Templating-System][Org-Roam Templating System→]]
 
-**** Org Capture Templates
-
+**** TODO Org Capture Templates
+- Add some templates to ...
+  + Capture Tasks
+  + Coding Shell Scripts
+  + Implement org-protocol
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(setq org-capture-templates '(("t" "Task Entries")
+(setq org-capture-templates '(("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
+                               "* %?\n %x\n %i\n %a")
+                              ("t" "Task Entries")
                               ("tt" "Todo Task" entry (file+headline "~/org/Tasks.org" "Tasks")
                                "* TODO %?\n %i\n %a")
                               ("te" "Epic Task" entry (file+headline "~/org/Tasks.org" "Epic")
@@ -806,20 +1028,21 @@ Set this value to ~nil~ to display them again.
 
 #+end_src
 
-**** Org Roam Capture Templates
+**** TODO Org Roam Capture Templates
+- Add some custom permanent notes templates.
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq org-roam-capture-templates
       '(("d" "default" plain
-         "*%a\n%?"
+         "* %?\n%a"
          :if-new (file+head
                   "%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
          :kill-buffer t
          :unnarrowed t)
         ("p" "PC" plain
-         "* %a\n\n%?\n"
+         "* %?\n\n%a\n"
          :if-new (file+head
                   "PC/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
@@ -845,7 +1068,8 @@ Set this value to ~nil~ to display them again.
 
 #+end_src
 
-**** Org Roam Dailies Capture Templates
+**** TODO Org Roam Dailies Capture Templates
+- [ ] Add some custom floating notes templates.
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -858,7 +1082,7 @@ Set this value to ~nil~ to display them again.
         ("t" "Task" entry
          "* TODO %?\n  %U\n  %a\n  %i"
          :if-new (file+head+olp
-                  "%<%Y-%m-%d>.org"
+                  "%<%Y-%B>.org"
                   "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
                   ("Tasks"))
          )
@@ -883,52 +1107,60 @@ Set this value to ~nil~ to display them again.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq org-agenda-custom-commands
-     '(("d" "Dashboard"
-       ((agenda "" ((org-deadline-warning-days 7)))
-        (todo "BACKLOG"
-          ((org-agenda-overriding-header "Backlog Tasks")))
-        (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))
-        (todo "EPIC" ((org-agenda-overriding-header "Active Epics")))))
+      '(("d" "Dashboard"
+         ((agenda "" ((org-deadline-warning-days 20)))
+          (todo "BACKLOG"
+                ((org-agenda-overriding-header "Backlog Tasks")))
+          (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))
+          (todo "EPIC" ((org-agenda-overriding-header "Active Epics")))))
 
-      ("t" "All Todo Tasks"
-       ((todo "TODO"
-          ((org-agenda-overriding-header "Todo Tasks")))))
+        ("T" "All Todo Tasks"
+         ((todo "TODO"
+                ((org-agenda-overriding-header "Todo Tasks")))))
 
-      ("W" "Work Tasks" tags-todo "+work")
+        ("W" "Work Tasks" tags-todo "+work")
 
-      ;; Low-effort next actions
-      ("e" tags-todo "+TODO=\"EPIC\"+Effort<15&+Effort>0"
-       ((org-agenda-overriding-header "Low Effort Tasks")
-        (org-agenda-max-todos 20)
-        (org-agenda-files org-agenda-files)))
+        ;; Low-effort next actions
+        ("E" tags-todo "+TODO=\"EPIC\"+Effort<15&+Effort>0"
+         ((org-agenda-overriding-header "Low Effort Tasks")
+          (org-agenda-max-todos 20)
+          (org-agenda-files org-agenda-files)))
 
-      ("w" "Workflow Status"
-       ((todo "WAIT"
-              ((org-agenda-overriding-header "Waiting on External")
-               (org-agenda-files org-agenda-files)))
-        (todo "REVIEW"
-              ((org-agenda-overriding-header "In Review")
-               (org-agenda-files org-agenda-files)))
-        (todo "PLAN"
-              ((org-agenda-overriding-header "In Planning")
-               (org-agenda-todo-list-sublevels nil)
-               (org-agenda-files org-agenda-files)))
-        (todo "BACKLOG"
-              ((org-agenda-overriding-header "Project Backlog")
-               (org-agenda-todo-list-sublevels nil)
-               (org-agenda-files org-agenda-files)))
-        (todo "READY"
-              ((org-agenda-overriding-header "Ready for Work")
-               (org-agenda-files org-agenda-files)))
-        (todo "ACTIVE"
-              ((org-agenda-overriding-header "Active Projects")
-               (org-agenda-files org-agenda-files)))
-        (todo "COMPLETED"
-              ((org-agenda-overriding-header "Completed Projects")
-               (org-agenda-files org-agenda-files)))
-        (todo "CANC"
-              ((org-agenda-overriding-header "Cancelled Projects")
-               (org-agenda-files org-agenda-files)))))))
+        ("w" "Workflow Status"
+         ((todo "WAIT"
+                ((org-agenda-overriding-header "Waiting on External")
+                 (org-agenda-files org-agenda-files)))
+          (todo "REVIEW"
+                ((org-agenda-overriding-header "In Review")
+                 (org-agenda-files org-agenda-files)))
+          (todo "PLAN"
+                ((org-agenda-overriding-header "In Planning")
+                 (org-agenda-todo-list-sublevels nil)
+                 (org-agenda-files org-agenda-files)))
+          (todo "BACKLOG"
+                ((org-agenda-overriding-header "Project Backlog")
+                 (org-agenda-todo-list-sublevels nil)
+                 (org-agenda-files org-agenda-files)))
+          (todo "READY"
+                ((org-agenda-overriding-header "Ready for Work")
+                 (org-agenda-files org-agenda-files)))
+          (todo "ACTIVE"
+                ((org-agenda-overriding-header "Active Projects")
+                 (org-agenda-files org-agenda-files)))
+          (todo "COMPLETED"
+                ((org-agenda-overriding-header "Completed Projects")
+                 (org-agenda-files org-agenda-files)))
+          (todo "CANC"
+                ((org-agenda-overriding-header "Cancelled Projects")
+                 (org-agenda-files org-agenda-files)))))
+        ("h" "Daily habits"
+         ((agenda ""))
+         ((org-agenda-show-log t)
+          (org-agenda-ndays 14)
+          (org-agenda-log-mode-items '(state))
+          (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
+        ;; other commands here
+        ))
 
 #+end_src
 
@@ -940,7 +1172,7 @@ Set this value to ~nil~ to display them again.
       '((:startgroup)
          ; Put mutually exclusive tags here
          (:endgroup)
-         ("@errand" . ?E)
+         ("@sys" . ?S)
          ("@home" . ?H)
          ("@work" . ?W)
          ("agenda" . ?a)
@@ -949,6 +1181,14 @@ Set this value to ~nil~ to display them again.
          ("batch" . ?b)
          ("note" . ?n)
          ("idea" . ?i)))
+
+#+end_src
+
+*** Task Priorities
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-lowest-priority ?E) ;; Priorities A to E
 
 #+end_src
 
@@ -976,15 +1216,6 @@ Set this value to ~nil~ to display them again.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (add-to-list 'org-modules 'org-habit)
-(setq org-agenda-custom-commands
-      '(("h" "Daily habits"
-         ((agenda ""))
-         ((org-agenda-show-log t)
-          (org-agenda-ndays 14)
-          (org-agenda-log-mode-items '(state))
-          (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
-        ;; other commands here
-        ))
 
 #+end_src
 
@@ -998,6 +1229,23 @@ Set this value to ~nil~ to display them again.
 *** Org Tempo
 
 Auto Completion for Code Blocks in org mode!
+:SOURCE:
+Description by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
+:END:
+Org-tempo is a package that allows for '<s' followed by TAB to expand to a begin_src tag.  Other expansions available include:
+
+| Typing the below + TAB | Expands to ...                          |
+|------------------------+-----------------------------------------|
+| <a                     | '#+BEGIN_EXPORT ascii' … '#+END_EXPORT  |
+| <c                     | '#+BEGIN_CENTER' … '#+END_CENTER'       |
+| <C                     | '#+BEGIN_COMMENT' … '#+END_COMMENT'     |
+| <e                     | '#+BEGIN_EXAMPLE' … '#+END_EXAMPLE'     |
+| <E                     | '#+BEGIN_EXPORT' … '#+END_EXPORT'       |
+| <h                     | '#+BEGIN_EXPORT html' … '#+END_EXPORT'  |
+| <l                     | '#+BEGIN_EXPORT latex' … '#+END_EXPORT' |
+| <q                     | '#+BEGIN_QUOTE' … '#+END_QUOTE'         |
+| <s                     | '#+BEGIN_SRC' … '#+END_SRC'             |
+| <v                     | '#+BEGIN_VERSE' … '#+END_VERSE'         |
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -1016,10 +1264,21 @@ Auto Completion for Code Blocks in org mode!
 
 #+end_src
 
+*** HOLD Org Special Block Extras
+
+Templating System to export org documents into LaTeX, HTML, etc. with individual templates.
+See [[https://github.com/alhassy/org-special-block-extras][Github Repo→]] for further information.
+
+#+begin_src emacs-lisp
+(add-hook #'org-mode-hook #'org-special-block-extras-mode)
+#+end_src
+
 * TODO Additional Packages
 ** Dired (File Manager)
 
+:SOURCE:
 Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
+:END:
 
 *** Dired Configuration
 
@@ -1122,7 +1381,9 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 ** Languages (IDE using Language Server)
 
+:SOURCE:
 Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
+:END:
 
 *** IDE Features with lsp-mode
 **** lsp-mode
@@ -1323,7 +1584,9 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 ** Eshell
 
-NOTE: Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
+:SOURCE:
+Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
+:END:
 
 [[https://www.gnu.org/software/emacs/manual/html_mono/eshell.html#Contributors-to-Eshell][Eshell]] is Emacs' own shell implementation written in Emacs Lisp.  It provides you with a cross-platform implementation (even on Windows!) of the common GNU utilities you would find on Linux and macOS (=ls=, =rm=, =mv=, =grep=, etc).  It also allows you to call Emacs Lisp functions directly from the shell and you can even set up aliases (like aliasing =vim= to =find-file=).  Eshell is also an Emacs Lisp REPL which allows you to evaluate full expressions at the shell.
 
@@ -1384,7 +1647,7 @@ For more thoughts on Eshell, check out these articles by Pierre Neidhardt:
 
 #+end_src
 
-** TODO Highlight Todos
+** Highlight Todos
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 

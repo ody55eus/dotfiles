@@ -59,7 +59,14 @@
 (package! org-download)
 (package! org-journal)
 (package! org-roam-bibtex)
+(package! org-protocol-capture-html
+  :recipe (:host github
+           :repo "alphapapa/org-protocol-capture-html"
+           :files ("org-protocol-capture-html.el")))
 (package! ox-twbs)
+(package! org-special-block-extras
+  :recipe (:host github
+           :repo "alhassy/org-special-block-extras"))
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
@@ -72,6 +79,13 @@
 (package! deft)                 ; Search for file contents
 (package! consult)
 
+;; SVG Tag Mode (not working with doom Emacs yet!)
+;; converts TODO / DONE etc.into small images.
+;; (package! svg-tag-mode
+;;   :recipe (:host github
+;;            :repo "rougier/svg-tag-mode"
+;;            :files ("svg-tag-mode.el")))
+
 ;;(package! synosaurus)           ; Thesaurus synonyms
 
 ;; Language Server
@@ -80,7 +94,12 @@
 (package! lsp-treemacs)
 (package! lsp-ivy)
 (package! lsp-pyright)          ; Python language server
+(package! lsp-latex)
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
 
+; Packages to share my keybindings when streaming
 (package! command-log-mode)
+;; (package! keycast
+;;   :recipe (:host github
+;;            :repo "tarsius/keycast"))
