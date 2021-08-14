@@ -3,16 +3,26 @@ HISTFILE="$ZDOTDIR"/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=500000
 
-export PATH="$HOME/.local/bin":$PATH
 export MANWIDTH=999
+export PATH="$HOME/.local/bin":$PATH
+export PATH="$HOME/.bin":$PATH
+export PATH="$HOME/.emacs.d/bin":$PATH
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-  export MANPAGER='less -M'
-else
   export EDITOR='nvim'
-  export MANPAGER='vim +Man!'
+  ### "nvim" as manpager
+  export MANPAGER="nvim -c 'set ft=man' -"
+
+  ### "less" as manpager
+  # export MANPAGER='less -M'
+else
+  export EDITOR="emacsclient -t -a 'nvim'"                 # $EDITOR use Emacs in terminal
+  export VISUAL="emacsclient -c -a emacs"              # $VISUAL use Emacs in GUI mode
+  ### "nvim" as manpager
+  export MANPAGER="nvim -c 'set ft=man' -"
+  # Emacs to view man pages
+  # export MANPAGER="emacsclient -nw -e \"(let ((Man-notify-method 'bully)) (man \\\"\$1\\\")\"'"
 fi
 
 # Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
