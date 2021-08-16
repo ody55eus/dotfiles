@@ -150,6 +150,18 @@
 
 (add-hook 'org-mode-hook (rainbow-mode))
 
+(setq hl-todo-keyword-faces
+      '(("TODO"   . "#cc0")
+        ("FIXME"  . "#990000")
+        ("NOTE"   . "#009999")
+        ("REVIEW"   . "#990099")
+        ("DEBUG"  . "#A020F0")
+        ("HACK"   . "#f60")
+        ("GOTCHA" . "#FF4500")
+        ("STUB"   . "#1E90FF")))
+
+(hl-todo-mode)          ; Enable highlight todos
+
 (pdf-tools-install)
 
 ;; Fit PDF in screen width
@@ -194,6 +206,7 @@
   (org-indent-mode)
   (mixed-pitch-mode 1) ; Enable different Fonts
   (org-roam-setup) ; Enable org-roam
+  (setq org-image-actual-width nil) ; Set optional images
   (visual-line-mode 1))
 
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
@@ -235,30 +248,38 @@
 (set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
 
 (setq org-todo-keyword-faces '(
-                         ("EPIC" . (:foreground "DodgerBlue" :weight "bold"))
-                         ("PROJ" . "DarkGreen")
-                         ("TODO" . org-warning)
-                         ("STRT" . "yellow")
-                         ("WAIT" . (:foreground "yellow4" :weight "italic"))
-                         ("HOLD" . (:foreground "red4"))
-                         ("IDEA" . (:foreground "BlueViolet"))
-                         ("KILL" . "red")
-                         ("CANCELLED" . (:foreground "red3" :weight "bold"))
-                         )
+                               ("PROJ" . "DarkGreen")
+                               ("EPIC" . (:foreground "DodgerBlue" :weight bold))
+                               ("TODO" . org-warning)
+                               ("IDEA" . (:foreground "BlueViolet"))
+                               ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
+                               ("PLAN" . (:foreground "DarkMagenta" :weight bold :underline t))
+                               ("ACTIVE" . (:foreground "" :weight bold :underline t))
+                               ("REVIEW" . (:foreground "" :weight bold :underline t))
+                               ("WAIT" . (:foreground "yellow4" :weight light :slant italic))
+                               ("HOLD" . (:foreground "red4"))
+                               ("KILL" . "red")
+                               ("CANCELLED" . (:foreground "red3" :weight bold :strike-through t))
+                               )
       )
 
 (setq org-todo-keywords '(
-                          (type "EPIC(e)" "PROJ(p)" "TODO(t)" "STRT(s)"
-                                "WAIT(w)" "HOLD(h)" "IDEA(i)" "|"
-                                "DONE(d)" "KILL(k)" "CANCELLED(c)")
-                          (sequence "BACKLOG(b)" "PLAN(p)" "ACTIVE(a)"
-                                    "REVIEW(r)" "WAIT(w@/!)" "HOLD(h)" "|"
-                                    "COMPLETED(c)" "CANC(k@)")
+                          (sequence "PROJ(p)" "EPIC(e)" "TODO(t)"
+                                "IDEA(i)" "|"
+                                "DONE(d)")
+                          (sequence "BACKLOG(b)" "PLAN(P)" "ACTIVE(a)"
+                                    "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
+                                    "COMPLETED(c)" "KILL(k)" "CANCELLED(C)" "STOPPED(s@)")
                         )
       )
 
 (setq org-capture-templates '(("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
                                "* %?\n %x\n %i\n %a")
+                              ("a" "Agenda")
+                              ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
+                               "* TODO %?\n %i\n %a")
+                              ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
+                               "* TODO %?\n %i\n %a")
                               ("t" "Task Entries")
                               ("tt" "Todo Task" entry (file+headline "~/org/Tasks.org" "Tasks")
                                "* TODO %?\n %i\n %a")
@@ -294,6 +315,9 @@
                                "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
                                :clock-in :clock-resume
                                :empty-lines 1)
+                              ("w" "Web site" entry
+                               (file "")
+                               "* %a :website:\n\n%U %?\n\n%:initial")
                               )
       )
 
@@ -303,8 +327,31 @@
          :if-new (file+head
                   "%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
-         :kill-buffer t
          :unnarrowed t)
+        ("c" "Coding" plain
+         "* %?\n\n%x\n"
+         :if-new (file+head
+                  "Coding/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "#+title: ${title}\n")
+         :clock-in :clock-resume
+         :unnarrowed t
+         )
+        ("e" "Person" plain
+         "* %?\n\n%a\n"
+         :if-new (file+head
+                  "People/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "#+title: ${title}\n")
+         :clock-in :clock-resume
+         :unnarrowed t
+         )
+        ("l" "Literature" plain
+         "* Links\n- %a\n* Notes\n%?\n"
+         :if-new (file+head
+                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "#+title: ${title}\n")
+         :clock-in :clock-resume
+         :unnarrowed t
+         )
         ("p" "PC" plain
          "* %?\n\n%a\n"
          :if-new (file+head
@@ -313,42 +360,31 @@
          :clock-in :clock-resume
          :unnarrowed t
          )
-        ("c" "Coding note" plain
-         "* %a\n\n%?\n"
-         :if-new (file+head
-                  "Coding/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
-         :clock-in :clock-resume
-         :unnarrowed t
-         )
-        ("l" "literature note" plain
-         "* Links\n- %a\n* Notes\n%?\n"
-         :if-new (file+head
-                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
-         :clock-in :clock-resume
-         :unnarrowed t
-         )))
+        )
+      )
 
 (setq org-roam-dailies-capture-templates
       '(("d" "default" entry
          "* %?"
          :if-new (file+head
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"))
+                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+         :kill-buffer t)
         ("t" "Task" entry
          "* TODO %?\n  %U\n  %a\n  %i"
          :if-new (file+head+olp
                   "%<%Y-%B>.org"
                   "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
-                  ("Tasks"))
+                  ("Tasks")
+         :kill-buffer t)
          )
         ("j" "Journal entry" entry
          "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
          :if-new (file+head+olp
                   "%<%Y-%B>.org"
                   "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
-                  ("Log"))
+                  ("Log")
+         :kill-buffer t)
          )
         ("m" "meeting" entry
          "* ~%<%H:%M>~ - %^{Meeting Title} :meetings:\n\n%?\n\n"
@@ -452,6 +488,23 @@
   (add-to-list 'org-structure-template-alist '("go" . "src go"))
   (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
   (add-to-list 'org-structure-template-alist '("json" . "src json")))
+
+(defun jp/presentation-setup()
+  ;;(setq text-scale-mode-amount 3)
+  ;;(text-scale-mode 1)
+  (org-display-inline-images)
+  (org-tree-slide-activate-message "Presentation started!")
+  (org-tree-slide-deactivate-message "Presentation finished!")
+  (org-tree-slide-header t)
+  (org-tree-slide-breadcrumbs " // ")
+  )
+
+(defun jp/presentation-end()
+  ;;(text-scale-mode 0)
+  )
+
+(add-hook #'org-tree-slide-play #'jp/presentation-setup)
+(add-hook #'org-tree-slide-stop #'jp/presentation-end)
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired
@@ -625,13 +678,3 @@
     (eshell-git-prompt-use-theme 'powerline))
 
 ;; Optional Magit Configuration
-
-(setq hl-todo-keyword-faces
-      '(("TODO"   . "#999900")
-        ("FIXME"  . "#990000")
-        ("NOTE"   . "#009999")
-        ("DEBUG"  . "#A020F0")
-        ("GOTCHA" . "#FF4500")
-        ("STUB"   . "#1E90FF")))
-
-(hl-todo-mode)          ; Enable highlight todos

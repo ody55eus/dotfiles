@@ -1,4 +1,23 @@
 #+TITLE: Doom Emacs Configuration
+#+STARTUP: content
+
+* Table of Contents :TOC:
+- [[#about-me][About Me]]
+- [[#basic-configuration][Basic Configuration]]
+  - [[#other-doom-emacs-configuration-files-init--packages][Other Doom Emacs Configuration Files (init / packages)]]
+  - [[#emacs-startup][Emacs Startup]]
+  - [[#ui-configuration][UI Configuration]]
+- [[#org-mode][Org Mode]]
+  - [[#org-configuration][Org Configuration]]
+  - [[#ui-configuration-1][UI Configuration]]
+  - [[#workflow-configuration][Workflow Configuration]]
+  - [[#additional-org-packages][Additional Org Packages]]
+- [[#additional-packages][Additional Packages]]
+  - [[#dired-file-manager][Dired (File Manager)]]
+  - [[#languages-ide-using-language-server][Languages (IDE using Language Server)]]
+  - [[#projectile][Projectile]]
+  - [[#eshell][Eshell]]
+  - [[#hold-magit][HOLD Magit]]
 
 * About Me
 
@@ -59,10 +78,10 @@ Just comment/uncomment some lines to disable/enable features.
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        ;;hydra
        indent-guides     ; highlighted indent columns
-       ;;ligatures         ; ligatures and symbols to make your code pretty again
+       ligatures         ; ligatures and symbols to make your code pretty again
        ;;minimap           ; show a map of the code on the side
        modeline          ; snazzy, Atom-inspired modeline, plus API
-       ;;nav-flash         ; blink cursor line after big motions
+       nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
@@ -71,7 +90,7 @@ Just comment/uncomment some lines to disable/enable features.
        unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
-       ;;window-select     ; visually switch windows
+       window-select     ; visually switch windows
        workspaces        ; tab emulation, persistence & separate workspaces
        zen               ; distraction-free coding or writing
 
@@ -109,7 +128,7 @@ Just comment/uncomment some lines to disable/enable features.
 
        :tools
        ;;ansible
-       ;;debugger          ; FIXME stepping through code, to help you add bugs
+       debugger          ; FIXME stepping through code, to help you add bugs
        ;;direnv
        docker
        ;;editorconfig      ; let someone else argue about tabs vs spaces
@@ -158,7 +177,7 @@ Just comment/uncomment some lines to disable/enable features.
        ;;fstar             ; (dependent) types and (monadic) effects and Z3
        ;;gdscript          ; the language you waited for
        ;;(go +lsp)         ; the hipster dialect
-       ;;(haskell +dante)  ; a language that's lazier than I am
+       (haskell +dante)  ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ; a language you can depend on
        json              ; At least it ain't XML
@@ -172,7 +191,7 @@ Just comment/uncomment some lines to disable/enable features.
         +lsp                        ; language server
         +fold)                      ; fold the clutter away nicities
        ;;lean              ; for folks with too much to prove
-       ;;ledger            ; be audit you can be
+       ledger            ; be audit you can be
        ;;lua               ; one-based indices? one-based indices
        markdown          ; writing docs for people to ignore
        nim               ; python + lisp at the speed of c
@@ -189,7 +208,7 @@ Just comment/uncomment some lines to disable/enable features.
         ;;+pomodoro                 ; be fruitful with the tomato technique
         +present                    ; using org-mode for presentations
         +roam2)                     ; wander around notes
-       ;;php               ; perl's insecure younger brother
+       php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        (python            ; beautiful is better than ugly
@@ -215,15 +234,15 @@ Just comment/uncomment some lines to disable/enable features.
        ;;zig               ; C, but simpler
 
        :email
-       ;;(mu4e +org +gmail)
+       (mu4e +org +gmail)
        ;;notmuch
        ;;(wanderlust +gmail)
 
        :app
-       ;;calendar
+       calendar
        emms                ; Web Browser
-       ;;everywhere        ; *leave* Emacs!? You must be joking
-       ;;irc               ; how neckbeards socialize
+       everywhere        ; *leave* Emacs!? You must be joking
+       irc               ; how neckbeards socialize
        (rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 
@@ -443,11 +462,11 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 
 | COMMAND         | DESCRIPTION                                    | KEYBINDING |
 |-----------------+------------------------------------------------+------------|
-| eval-buffer     | /Evaluate elisp in buffer/                       | SPC e b    |
-| eval-defun      | /Evaluate the defun containing or after point/   | SPC e d    |
-| eval-expression | /Evaluate an elisp expression/                   | SPC e e    |
-| eval-last-sexp  | /Evaluate elisp expression before point/         | SPC e l    |
-| eval-region     | /Evaluate elisp in region/                       | SPC e r    |
+| eval-buffer     | /Evaluate elisp in buffer/                     | SPC e b    |
+| eval-defun      | /Evaluate the defun containing or after point/ | SPC e d    |
+| eval-expression | /Evaluate an elisp expression/                 | SPC e e    |
+| eval-last-sexp  | /Evaluate elisp expression before point/       | SPC e l    |
+| eval-region     | /Evaluate elisp in region/                     | SPC e r    |
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -595,6 +614,24 @@ Disable the computer =beep= and activate a visual feedback instead.
 (add-hook 'org-mode-hook (rainbow-mode))
 #+end_src
 
+**** Highlight Todos
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq hl-todo-keyword-faces
+      '(("TODO"   . "#cc0")
+        ("FIXME"  . "#990000")
+        ("NOTE"   . "#009999")
+        ("REVIEW"   . "#990099")
+        ("DEBUG"  . "#A020F0")
+        ("HACK"   . "#f60")
+        ("GOTCHA" . "#FF4500")
+        ("STUB"   . "#1E90FF")))
+
+(hl-todo-mode)          ; Enable highlight todos
+
+#+end_src
+
 **** PDF Tools
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -625,11 +662,13 @@ Disable the computer =beep= and activate a visual feedback instead.
                                            :height 1.0))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 #+end_src
+
 **** WAIT SVG Tag Mode
 
 Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mode/issues/10][Issue on Github→]] for further information.
 
 ***** Example 1
+
 #+begin_src emacs-lisp
 
 (require 'svg-tag-mode)
@@ -691,7 +730,9 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
 ;; ------------------------------------------------------------------------
 
 #+end_src
+
 ***** Example 2
+
 #+begin_src emacs-lisp
 ;; :tangle ./.doom.d/config.el
 
@@ -853,6 +894,7 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
 (setq org-ellipsis " ▼ ")
 
 #+end_src
+
 **** Visual Eenhancements
 
 #+Begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -861,6 +903,7 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
   (org-indent-mode)
   (mixed-pitch-mode 1) ; Enable different Fonts
   (org-roam-setup) ; Enable org-roam
+  (setq org-image-actual-width nil) ; Set optional images
   (visual-line-mode 1))
 
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
@@ -901,7 +944,7 @@ Set this value to ~nil~ to display them again.
 #+end_src
 
 **** Font Configuration
-***** Headings
+***** Text Size Org Headlines
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -943,38 +986,75 @@ Set this value to ~nil~ to display them again.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq org-todo-keyword-faces '(
-                         ("EPIC" . (:foreground "DodgerBlue" :weight "bold"))
-                         ("PROJ" . "DarkGreen")
-                         ("TODO" . org-warning)
-                         ("STRT" . "yellow")
-                         ("WAIT" . (:foreground "yellow4" :weight "italic"))
-                         ("HOLD" . (:foreground "red4"))
-                         ("IDEA" . (:foreground "BlueViolet"))
-                         ("KILL" . "red")
-                         ("CANCELLED" . (:foreground "red3" :weight "bold"))
-                         )
+                               ("PROJ" . "DarkGreen")
+                               ("EPIC" . (:foreground "DodgerBlue" :weight bold))
+                               ("TODO" . org-warning)
+                               ("IDEA" . (:foreground "BlueViolet"))
+                               ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
+                               ("PLAN" . (:foreground "DarkMagenta" :weight bold :underline t))
+                               ("ACTIVE" . (:foreground "" :weight bold :underline t))
+                               ("REVIEW" . (:foreground "" :weight bold :underline t))
+                               ("WAIT" . (:foreground "yellow4" :weight light :slant italic))
+                               ("HOLD" . (:foreground "red4"))
+                               ("KILL" . "red")
+                               ("CANCELLED" . (:foreground "red3" :weight bold :strike-through t))
+                               )
       )
 
 #+end_src
 
 ** Workflow Configuration
 *** Task Keywords
+The Task Keywords are noted with their keybindings in parentheses.
+
+|-----------------+-------------------------------------|
+| Special Symbols | Meaning                             |
+|-----------------+-------------------------------------|
+| =@=               | Append Note when set to this State. |
+| =!=               | Add Timestamp to Logbook.           |
+|-----------------+-------------------------------------|
+
+|---------+----------------------------------------------------------------------------------|
+| Seq 1   | Description                                                                      |
+|---------+----------------------------------------------------------------------------------|
+| ~PROJ(p)~ | Bigger ongoing Projects.                                                         |
+| ~EPIC(e)~ | Epic Tasks: A specific problem with a pre-defined reachable goal.                |
+| ~TODO(t)~ | Single tasks to accomplish in reasonable time (/Hint/: Set effort to range tasks). |
+| ~IDEA(i)~ | Small ideas that could grow into something beautiful.                            |
+|---------+----------------------------------------------------------------------------------|
+| ~DONE(d)~ | Finished Tasks                                                                   |
+|---------+----------------------------------------------------------------------------------|
+
+|--------------+------------------------------------------------------------------------|
+| Seq 2        | Description                                                            |
+|--------------+------------------------------------------------------------------------|
+| ~BACKLOG(b)~   | Tasks that are on the back of my head, if nothing else holds priority. |
+| ~PLAN(p)~      | Planning Phase                                                         |
+| ~ACTIVE(a)~    | Active Tasks                                                           |
+| ~REVIEW(r)~    |                                                                        |
+| ~WAIT(w@/!)~   | Waiting on external influences (*Explain and Log this*).                 |
+| ~HOLD(h)~      | Holding back until my time is free again.                              |
+|--------------+------------------------------------------------------------------------|
+| ~COMPLETED(c)~ |                                                                        |
+| ~KILL(k)~      |                                                                        |
+| ~STOPPED(s@)~  | Stopped a task. *Explain this*.                                          |
+|--------------+------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq org-todo-keywords '(
-                          (type "EPIC(e)" "PROJ(p)" "TODO(t)" "STRT(s)"
-                                "WAIT(w)" "HOLD(h)" "IDEA(i)" "|"
-                                "DONE(d)" "KILL(k)" "CANCELLED(c)")
-                          (sequence "BACKLOG(b)" "PLAN(p)" "ACTIVE(a)"
-                                    "REVIEW(r)" "WAIT(w@/!)" "HOLD(h)" "|"
-                                    "COMPLETED(c)" "CANC(k@)")
+                          (sequence "PROJ(p)" "EPIC(e)" "TODO(t)"
+                                "IDEA(i)" "|"
+                                "DONE(d)")
+                          (sequence "BACKLOG(b)" "PLAN(P)" "ACTIVE(a)"
+                                    "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
+                                    "COMPLETED(c)" "KILL(k)" "CANCELLED(C)" "STOPPED(s@)")
                         )
       )
 
 #+end_src
 
-*** Capture Template
+*** TODO Capture Templates
 
 - [[https://orgmode.org/manual/Template-elements.html#Template-elements][Org-Mode Template Elements→]]
 - [[https://www.orgroam.com/manual.html#The-Templating-System][Org-Roam Templating System→]]
@@ -988,6 +1068,11 @@ Set this value to ~nil~ to display them again.
 
 (setq org-capture-templates '(("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
                                "* %?\n %x\n %i\n %a")
+                              ("a" "Agenda")
+                              ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
+                               "* TODO %?\n %i\n %a")
+                              ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
+                               "* TODO %?\n %i\n %a")
                               ("t" "Task Entries")
                               ("tt" "Todo Task" entry (file+headline "~/org/Tasks.org" "Tasks")
                                "* TODO %?\n %i\n %a")
@@ -1023,6 +1108,9 @@ Set this value to ~nil~ to display them again.
                                "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
                                :clock-in :clock-resume
                                :empty-lines 1)
+                              ("w" "Web site" entry
+                               (file "")
+                               "* %a :website:\n\n%U %?\n\n%:initial")
                               )
       )
 
@@ -1039,8 +1127,31 @@ Set this value to ~nil~ to display them again.
          :if-new (file+head
                   "%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
-         :kill-buffer t
          :unnarrowed t)
+        ("c" "Coding" plain
+         "* %?\n\n%x\n"
+         :if-new (file+head
+                  "Coding/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "#+title: ${title}\n")
+         :clock-in :clock-resume
+         :unnarrowed t
+         )
+        ("e" "Person" plain
+         "* %?\n\n%a\n"
+         :if-new (file+head
+                  "People/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "#+title: ${title}\n")
+         :clock-in :clock-resume
+         :unnarrowed t
+         )
+        ("l" "Literature" plain
+         "* Links\n- %a\n* Notes\n%?\n"
+         :if-new (file+head
+                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "#+title: ${title}\n")
+         :clock-in :clock-resume
+         :unnarrowed t
+         )
         ("p" "PC" plain
          "* %?\n\n%a\n"
          :if-new (file+head
@@ -1049,27 +1160,14 @@ Set this value to ~nil~ to display them again.
          :clock-in :clock-resume
          :unnarrowed t
          )
-        ("c" "Coding note" plain
-         "* %a\n\n%?\n"
-         :if-new (file+head
-                  "Coding/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
-         :clock-in :clock-resume
-         :unnarrowed t
-         )
-        ("l" "literature note" plain
-         "* Links\n- %a\n* Notes\n%?\n"
-         :if-new (file+head
-                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
-         :clock-in :clock-resume
-         :unnarrowed t
-         )))
+        )
+      )
 
 #+end_src
 
 **** TODO Org Roam Dailies Capture Templates
-- [ ] Add some custom floating notes templates.
+- Add some custom floating notes templates.
+- Add org protocol templates
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -1078,20 +1176,23 @@ Set this value to ~nil~ to display them again.
          "* %?"
          :if-new (file+head
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"))
+                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+         :kill-buffer t)
         ("t" "Task" entry
          "* TODO %?\n  %U\n  %a\n  %i"
          :if-new (file+head+olp
                   "%<%Y-%B>.org"
                   "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
-                  ("Tasks"))
+                  ("Tasks")
+         :kill-buffer t)
          )
         ("j" "Journal entry" entry
          "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
          :if-new (file+head+olp
                   "%<%Y-%B>.org"
                   "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
-                  ("Log"))
+                  ("Log")
+         :kill-buffer t)
          )
         ("m" "meeting" entry
          "* ~%<%H:%M>~ - %^{Meeting Title} :meetings:\n\n%?\n\n"
@@ -1273,6 +1374,35 @@ See [[https://github.com/alhassy/org-special-block-extras][Github Repo→]] for 
 (add-hook #'org-mode-hook #'org-special-block-extras-mode)
 #+end_src
 
+*** Org Tree Slide (Presentations)
+Make sure the package =org-tree-slide= is loaded (put this into your =packages.el=):
+
+#+begin_src emacs-lisp
+(package! org-tree-slide)
+#+end_src
+
+This Configuration runs on start end finish of presentations:
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(defun jp/presentation-setup()
+  ;;(setq text-scale-mode-amount 3)
+  ;;(text-scale-mode 1)
+  (org-display-inline-images)
+  (org-tree-slide-activate-message "Presentation started!")
+  (org-tree-slide-deactivate-message "Presentation finished!")
+  (org-tree-slide-header t)
+  (org-tree-slide-breadcrumbs " // ")
+  )
+
+(defun jp/presentation-end()
+  ;;(text-scale-mode 0)
+  )
+
+(add-hook #'org-tree-slide-play #'jp/presentation-setup)
+(add-hook #'org-tree-slide-stop #'jp/presentation-end)
+
+#+end_src
+
 * TODO Additional Packages
 ** Dired (File Manager)
 
@@ -1302,8 +1432,8 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 *** Keybindings for Dired
 **** Keybindings To Open Dired (Description)
 
-| COMMAND    | DESCRIPTION                        | KEYBINDING |
-|------------+------------------------------------+------------|
+| COMMAND    | DESCRIPTION                          | KEYBINDING |
+|------------+--------------------------------------+------------|
 | dired      | /Open dired file manager/            | SPC d d    |
 | dired-jump | /Jump to current directory in dired/ | SPC d j    |
 
@@ -1324,15 +1454,15 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 **** Keybindings Within Dired (Description)
 
-| COMMAND             | DESCRIPTION                                 | KEYBINDING |
-|---------------------+---------------------------------------------+------------|
+| COMMAND             | DESCRIPTION                                   | KEYBINDING |
+|---------------------+-----------------------------------------------+------------|
 | dired-view-file     | /View file in dired/                          | SPC d v    |
 | dired-up-directory  | /Go up in directory tree/                     | h          |
 | dired-find-file     | /Go down in directory tree (or open if file)/ | l          |
-| dired-next-line     | Move down to next line                      | j          |
-| dired-previous-line | Move up to previous line                    | k          |
-| dired-mark          | Mark file at point                          | m          |
-| dired-unmark        | Unmark file at point                        | u          |
+| dired-next-line     | Move down to next line                        | j          |
+| dired-previous-line | Move up to previous line                      | k          |
+| dired-mark          | Mark file at point                            | m          |
+| dired-unmark        | Unmark file at point                          | u          |
 
 **** Dired-Mode-Mapping
 
@@ -1639,7 +1769,7 @@ For more thoughts on Eshell, check out these articles by Pierre Neidhardt:
 
 
 #+end_src
-** TODO Magit
+** HOLD Magit
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -1647,18 +1777,3 @@ For more thoughts on Eshell, check out these articles by Pierre Neidhardt:
 
 #+end_src
 
-** Highlight Todos
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq hl-todo-keyword-faces
-      '(("TODO"   . "#999900")
-        ("FIXME"  . "#990000")
-        ("NOTE"   . "#009999")
-        ("DEBUG"  . "#A020F0")
-        ("GOTCHA" . "#FF4500")
-        ("STUB"   . "#1E90FF")))
-
-(hl-todo-mode)          ; Enable highlight todos
-
-#+end_src
