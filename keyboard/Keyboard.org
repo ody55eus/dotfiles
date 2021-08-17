@@ -1,0 +1,6 @@
+#+TITLE: Keyboard Configuration
+
+* Neo Layout On OS X
+#+begin_src sh
+git clone https://github.com/jgosmann/neo2-layout-osx.git
+#+end_src

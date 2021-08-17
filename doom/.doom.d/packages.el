@@ -98,6 +98,7 @@
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
 
+(package! mu4e-alert)           ; E-Mail Alerts
 ; Packages to share my keybindings when streaming
 (package! command-log-mode)
 ;; (package! keycast
