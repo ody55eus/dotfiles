@@ -69,6 +69,10 @@
            :repo "alhassy/org-special-block-extras"))
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
+(package! emacs-bitwarden       ; Password Manager
+  :recipe (:host github
+           :repo "seanfarley/emacs-bitwarden"
+           :files ("bitwarden.el")))
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
 (package! dmenu)                ; Dmenu Plugin.

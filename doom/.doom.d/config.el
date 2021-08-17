@@ -191,6 +191,8 @@
       org-default-notes-file (concat org-directory "/Notes.org")
       org-clock-sound "~/sounds/ding.wav")
 
+(setq auth-sources '((:source "~/.authinfo.gpg")))
+
 (require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
 (require 'org-roam-protocol)
 (require 'org-protocol-capture-html)
@@ -511,6 +513,13 @@
 (add-hook #'org-tree-slide-play #'jp/presentation-setup)
 (add-hook #'org-tree-slide-stop #'jp/presentation-end)
 
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((R . t)
+   (python . t)
+   (LaTeX . t)
+   (emacs-lisp . t)))
+
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired
 (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
@@ -684,129 +693,139 @@
 
 ;; Optional Magit Configuration
 
-    ;; Load org-mode integration
-    (require 'org-mu4e)
+;; Load org-mode integration
+;;(require 'mu4e-org)
 
-    ;; Refresh mail using isync every 10 minutes
-    (setq mu4e-update-interval (* 10 60))
-    (setq mu4e-get-mail-command "mbsync -a")
-    (setq mu4e-maildir "~/Mail")
+(after! mu4e
+  ;; Refresh mail using isync every 10 minutes
+  (setq mu4e-update-interval (* 10 60))
+  (setq mu4e-get-mail-command "mbsync -a")
+  (setq mu4e-maildir "~/Mail")
 
-    ;; Use Ivy for mu4e completions (maildir folders, etc)
-    (setq mu4e-completing-read-function #'ivy-completing-read)
+  ;; Use Ivy for mu4e completions (maildir folders, etc)
+  ;;(setq mu4e-completing-read-function #'ivy-completing-read)
 
-    ;; Make sure that moving a message (like to Trash) causes the
-    ;; message to get a new file name.  This helps to avoid the
-    ;; dreaded "UID is N beyond highest assigned" error.
-    ;; See this link for more info: https://stackoverflow.com/a/43461973
-    (setq mu4e-change-filenames-when-moving t)
+  ;; Make sure that moving a message (like to Trash) causes the
+  ;; message to get a new file name.  This helps to avoid the
+  ;; dreaded "UID is N beyond highest assigned" error.
+  ;; See this link for more info: https://stackoverflow.com/a/43461973
+  (setq mu4e-change-filenames-when-moving t)
 
-    ;; Set up contexts for email accounts
-    (setq mu4e-contexts
-          `(,(make-mu4e-context
-              :name "Mailbox"
-              :match-func (lambda (msg) (when msg
-                                          (string-prefix-p "/Mailbox" (mu4e-message-field msg :maildir))))
-              :vars '(
-                      (user-full-name . "Jonathan Pieper")
-                      (user-mail-address . "jpieper@mailbox.org")
-                      (mu4e-sent-folder . "/Mailbox/Sent")
-                      (mu4e-trash-folder . "/Mailbox/Trash")
-                      (mu4e-drafts-folder . "/Mailbox/Drafts")
-                      (mu4e-refile-folder . "/Mailbox/Archives")
-                      (mu4e-sent-messages-behavior . sent)
-                      ))
-            ,(make-mu4e-context
-              :name "Personal"
-              :match-func (lambda (msg) (when msg
-                                          (string-prefix-p "/Personal" (mu4e-message-field msg :maildir))))
-              :vars '(
-                      (mu4e-sent-folder . "/Personal/Sent")
-                      (mu4e-trash-folder . "/Personal/Deleted")
-                      (mu4e-refile-folder . "/Personal/Archive")
-                      ))
-            ))
-    (setq mu4e-context-policy 'pick-first)
+  ;; Set up contexts for email accounts
+  (setq mu4e-contexts
+        `(,(make-mu4e-context
+            :name "Mailbox"
+            :match-func (lambda (msg) (when msg
+                                        (string-prefix-p "/Mailbox" (mu4e-message-field msg :maildir))))
+            :vars '(
+                    (user-full-name . "Jonathan Pieper")
+                    (user-mail-address . "jpieper@mailbox.org")
+                    (mu4e-sent-folder . "/Mailbox/Sent")
+                    (mu4e-trash-folder . "/Mailbox/Trash")
+                    (mu4e-drafts-folder . "/Mailbox/Drafts")
+                    (mu4e-refile-folder . "/Mailbox/Archives")
+                    (mu4e-sent-messages-behavior . sent)
+                    ))
+          ,(make-mu4e-context
+            :name "Personal"
+            :match-func (lambda (msg) (when msg
+                                        (string-prefix-p "/Personal" (mu4e-message-field msg :maildir))))
+            :vars '(
+                    (mu4e-sent-folder . "/Personal/Sent")
+                    (mu4e-trash-folder . "/Personal/Deleted")
+                    (mu4e-refile-folder . "/Personal/Archive")
+                    ))
+          ))
+  (setq mu4e-context-policy 'pick-first)
 
-    ;; Prevent mu4e from permanently deleting trashed items
-    ;; This snippet was taken from the following article:
-    ;; http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
-    (defun remove-nth-element (nth list)
-      (if (zerop nth) (cdr list)
-        (let ((last (nthcdr (1- nth) list)))
-          (setcdr last (cddr last))
-          list)))
-    (setq mu4e-marks (remove-nth-element 5 mu4e-marks))
-    (add-to-list 'mu4e-marks
-                 '(trash
-                   :char ("d" . "▼")
-                   :prompt "dtrash"
-                   :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
-                   :action (lambda (docid msg target)
-                             (mu4e~proc-move docid
-                                             (mu4e~mark-check-target target) "-N"))))
+  ;; Prevent mu4e from permanently deleting trashed items
+  ;; This snippet was taken from the following article:
+  ;; http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
+  (defun remove-nth-element (nth list)
+    (if (zerop nth) (cdr list)
+      (let ((last (nthcdr (1- nth) list)))
+        (setcdr last (cddr last))
+        list)))
 
-    ;; Display options
-    (setq mu4e-view-show-images t)
-    (setq mu4e-view-show-addresses 't)
+  ;; Display options
+  (setq mu4e-view-show-images t)
+  (setq mu4e-view-show-addresses 't)
 
-    ;; Composing mail
-    (setq mu4e-compose-dont-reply-to-self t)
+  ;; Composing mail
+  (setq mu4e-compose-dont-reply-to-self t)
 
-    ;; Use mu4e for sending e-mail
-    (setq mail-user-agent 'mu4e-user-agent
-          message-send-mail-function 'smtpmail-send-it
-          smtpmail-smtp-server "smtp.mailbox.org"
-          smtpmail-smtp-service 465
-          smtpmail-stream-type  'ssl)
+  ;; Use mu4e for sending e-mail
+  (setq mail-user-agent 'mu4e-user-agent
+        message-send-mail-function 'smtpmail-send-it
+        smtpmail-smtp-server "smtp.mailbox.org"
+        smtpmail-smtp-service 465
+        smtpmail-stream-type  'ssl)
 
-    ;; Signing messages (use mml-secure-sign-pgpmime)
-    (setq mml-secure-openpgp-signers '("2361DFC839413E7A84B2152B01B6FB927AAEC59B"))
+  ;; Signing messages (use mml-secure-sign-pgpmime)
+  (setq mml-secure-openpgp-signers '("2361DFC839413E7A84B2152B01B6FB927AAEC59B"))
 
-    ;; (See the documentation for `mu4e-sent-messages-behavior' if you have
-    ;; additional non-Gmail addresses and want assign them different
-    ;; behavior.)
+  ;; (See the documentation for `mu4e-sent-messages-behavior' if you have
+  ;; additional non-Gmail addresses and want assign them different
+  ;; behavior.)
 
-    ;; setup some handy shortcuts
-    ;; you can quickly switch to your Inbox -- press ``ji''
-    ;; then, when you want archive some messages, move them to
-    ;; the 'All Mail' folder by pressing ``ma''.
-    (setq mu4e-maildir-shortcuts
-          '(("/Mailbox/INBOX"       . ?i)
-            ("/Mailbox/Lists/*"     . ?l)
-            ("/Mailbox/Sent Mail"   . ?s)
-            ("/Mailbox/Trash"       . ?t)))
+  ;; setup some handy shortcuts
+  ;; you can quickly switch to your Inbox -- press ``ji''
+  ;; then, when you want archive some messages, move them to
+  ;; the 'All Mail' folder by pressing ``ma''.
+  (setq mu4e-maildir-shortcuts
+        '(("/Mailbox/INBOX"       . ?i)
+          ("/Mailbox/INBOX/*"     . ?l)
+          ("/Mailbox/Sent"        . ?s)
+          ("/Mailbox/Trash"       . ?t)))
 
-    (add-to-list 'mu4e-bookmarks
-                 (make-mu4e-bookmark
-                  :name "All Inboxes"
-                  :query "maildir:/Mailbox/INBOX OR maildir:/Personal/Inbox"
-                  :key ?i))
+  (add-to-list 'mu4e-bookmarks
+               (make-mu4e-bookmark
+                :name "All Inboxes"
+                :query "maildir:/Mailbox/INBOX OR maildir:/Personal/Inbox"
+                :key ?i))
 
-    ;; don't keep message buffers around
-    (setq message-kill-buffer-on-exit t)
+  ;; don't keep message buffers around
+  (setq message-kill-buffer-on-exit t)
 
-    (setq jp/mu4e-inbox-query
-          "(maildir:/Personal/Inbox OR maildir:/Mailbox/INBOX) AND flag:unread")
+  (setq jp/mu4e-inbox-query
+        "(maildir:/Personal/Inbox OR maildir:/Mailbox/INBOX) AND flag:unread")
 
-    (defun jp/go-to-inbox ()
-      (interactive)
-      (mu4e-headers-search jp/mu4e-inbox-query))
+  (defun jp/go-to-inbox ()
+    (interactive)
+    (mu4e-headers-search jp/mu4e-inbox-query))
 
-    ;; (jp/leader-key-def
-    ;;   "m"  '(:ignore t :which-key "mail")
-    ;;   "mm" 'mu4e
-    ;;   "mc" 'mu4e-compose-new
-    ;;   "mi" 'dw/go-to-inbox
-    ;;   "ms" 'mu4e-update-mail-and-index)
+  (setq mu4e-marks (remove-nth-element 5 mu4e-marks))
+  (add-to-list 'mu4e-marks
+               '(trash
+                 :char ("d" . "▼")
+                 :prompt "dtrash"
+                 :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
+                 :action (lambda (docid msg target)
+                           (mu4e~proc-move docid
+                                           (mu4e~mark-check-target target) "-N"))))
 
-(defun jp/mu4e-alert-hook ()
-;; Show unread emails from all inboxes
-    (setq mu4e-alert-interesting-mail-query jp/mu4e-inbox-query)
+  ;; Show unread emails from all inboxes
+  (setq mu4e-alert-interesting-mail-query jp/mu4e-inbox-query)
 
-    ;; Show notifications for mails already notified
-    (setq mu4e-alert-notify-repeated-mails nil)
+  ;; Show notifications for mails already notified
+  (setq mu4e-alert-notify-repeated-mails nil)
 
-    (mu4e-alert-enable-notifications))
+  (mu4e-alert-enable-notifications))
 
-(add-hook 'mu4e-hook 'jp/mu4e-alert-hook)
+(defun jp/lookup-password (&rest keys)
+  (let ((result (apply #'auth-source-search keys)))
+    (if result
+        (funcall (plist-get (car result) :secret))
+      nil)))
+
+(defun jp/enable-bitwarden ()
+  (interactive)
+  (setq bitwarden-automatic-unlock
+        (let* ((auth-sources '("~/.authinfo.gpg"))
+               (matches (auth-source-search :user "jpieper@mailbox.org"
+                                            :host "bw.ody5.de"
+                                            :require '(:secret)
+                                            :max 1))
+               (entry (nth 0 matches)))
+          (plist-get entry :secret)))
+  (bitwarden-auth-source-enable))

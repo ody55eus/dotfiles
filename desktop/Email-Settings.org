@@ -1,3 +1,15 @@
+#+TITLE: Mail
+
+:SOURCE:
+Adapted from [[https://github.com/daviwil/dotfiles.git][daviwil/dotfiles]].
+:END:
+
+* Mail Synchronization
+
+Configuration docs: https://manpages.debian.org/unstable/isync/mbsync.1.en.html
+
+#+begin_src conf :tangle .mbsyncrc
+
 IMAPAccount mailbox
 Host imap.mailbox.org
 Port 993
@@ -29,3 +41,5 @@ CopyArrivalDate yes
 Sync All
 Create Slave
 SyncState *
+
+#+end_src
