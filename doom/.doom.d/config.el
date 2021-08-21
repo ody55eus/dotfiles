@@ -585,7 +585,6 @@
     (lsp-headerline-breadcrumb-mode))
 
   (use-package lsp-mode
-    :ensure nil
     :commands (lsp lsp-deferred)
     :hook (lsp-mode . jp/lsp-mode-setup)
     :init
@@ -693,7 +692,7 @@
 ;; Optional Magit Configuration
 
 ;; Tell Emacs where to find mu4e (only necessary if manual compiled)
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
 
 ;; Load org-mode integration
 ;;(require 'mu4e-org)
@@ -796,7 +795,6 @@
     (interactive)
     (mu4e-headers-search jp/mu4e-inbox-query)
 
-
     (setq mu4e-marks (remove-nth-element 5 mu4e-marks))
     (add-to-list 'mu4e-marks
                  '(trash
@@ -815,7 +813,7 @@
     ;; Show notifications for mails already notified
     (setq mu4e-alert-notify-repeated-mails nil)
 
-    (mu4e-alert-enable-notifications))
+    (mu4e-alert-enable-notifications)))
 
 (defun jp/lookup-password (&rest keys)
   (let ((result (apply #'auth-source-search keys)))
