@@ -692,6 +692,9 @@
 
 ;; Optional Magit Configuration
 
+;; Tell Emacs where to find mu4e (only necessary if manual compiled)
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+
 ;; Load org-mode integration
 ;;(require 'mu4e-org)
 
@@ -791,25 +794,28 @@
 
   (defun jp/go-to-inbox ()
     (interactive)
-    (mu4e-headers-search jp/mu4e-inbox-query))
+    (mu4e-headers-search jp/mu4e-inbox-query)
 
-  (setq mu4e-marks (remove-nth-element 5 mu4e-marks))
-  (add-to-list 'mu4e-marks
-               '(trash
-                 :char ("d" . "▼")
-                 :prompt "dtrash"
-                 :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
-                 :action (lambda (docid msg target)
-                           (mu4e~proc-move docid
-                                           (mu4e~mark-check-target target) "-N"))))
 
-  ;; Show unread emails from all inboxes
-  (setq mu4e-alert-interesting-mail-query jp/mu4e-inbox-query)
+    (setq mu4e-marks (remove-nth-element 5 mu4e-marks))
+    (add-to-list 'mu4e-marks
+                 '(trash
+                   :char ("d" . "▼")
+                   :prompt "dtrash"
+                   :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
+                   :action (lambda (docid msg target)
+                             (mu4e~proc-move docid
+                                             (mu4e~mark-check-target target) "-N"))))
 
-  ;; Show notifications for mails already notified
-  (setq mu4e-alert-notify-repeated-mails nil)
+    ;; Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]]
+    ;; to show notifications when e-mail comes in.
+    ;; Show unread emails from all inboxes
+    (setq mu4e-alert-interesting-mail-query jp/mu4e-inbox-query)
 
-  (mu4e-alert-enable-notifications))
+    ;; Show notifications for mails already notified
+    (setq mu4e-alert-notify-repeated-mails nil)
+
+    (mu4e-alert-enable-notifications))
 
 (defun jp/lookup-password (&rest keys)
   (let ((result (apply #'auth-source-search keys)))
