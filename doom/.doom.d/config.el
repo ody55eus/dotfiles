@@ -692,7 +692,7 @@
 ;; Optional Magit Configuration
 
 ;; Tell Emacs where to find mu4e (only necessary if manual compiled)
-(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 
 ;; Load org-mode integration
 ;;(require 'mu4e-org)
