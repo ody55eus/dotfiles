@@ -330,13 +330,13 @@
 
 (setq org-roam-capture-templates
       '(("d" "default" plain
-         "* %?\n%a"
+         "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
          :unnarrowed t)
         ("c" "Coding" plain
-         "* %?\n\n%x\n"
+         "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "Coding/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
@@ -344,7 +344,7 @@
          :unnarrowed t
          )
         ("e" "Person" plain
-         "* %?\n\n%a\n"
+         "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "People/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
@@ -352,7 +352,7 @@
          :unnarrowed t
          )
         ("l" "Literature" plain
-         "* Links\n- %a\n* Notes\n%?\n"
+         "%?\n\nSee also %a.\n* Links\n- %x\n* Notes\n"
          :if-new (file+head
                   "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
@@ -360,11 +360,10 @@
          :unnarrowed t
          )
         ("p" "PC" plain
-         "* %?\n\n%a\n"
+         "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "PC/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
-         :clock-in :clock-resume
+                  "#+title: ${title}\n#+date: %U")
          :unnarrowed t
          )
         )
