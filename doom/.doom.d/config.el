@@ -266,8 +266,7 @@
       )
 
 (setq org-todo-keywords '(
-                          (sequence "PROJ(p)" "EPIC(e)" "TODO(t)"
-                                "IDEA(i)" "|"
+                          (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
                                 "DONE(d)")
                           (sequence "BACKLOG(b)" "PLAN(P)" "ACTIVE(a)"
                                     "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
@@ -276,57 +275,63 @@
       )
 
 (setq org-capture-templates '(("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
-                               "* %?\n %x\n %i\n %a")
-                              ("a" "Agenda")
-                              ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
-                               "* TODO %?\n %i\n %a")
-                              ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
-                               "* TODO %?\n %i\n %a")
-                              ("m" "Email Workflow")
+                               "* %?\n %x\n %i\n %a")))
+
+(add-to-list 'org-capture-templates '(("a" "Agenda")
+                                     ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
+                                      "* TODO %?\n %i\n %a")
+                                     ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
+                                      "* TODO %?\n %i\n %a")) t)
+
+(add-to-list 'org-capture-templates '(("m" "Email Workflow")
                               ("mf" "Follow Up" entry (file+olp "~/org/Mail.org" "Follow Up")
                                "* TODO %a")
                               ("mr" "Read Later" entry (file+olp "~/org/Mail.org" "Read Later")
-                               "* TODO %a")
-                              ("t" "Task Entries")
+                               "* TODO %a")) t)
+
+(add-to-list 'org-capture-templates '(("t" "Task Entries")
                               ("tt" "Todo Task" entry (file+headline "~/org/Tasks.org" "Tasks")
                                "* TODO %?\n %i\n %a")
                               ("te" "Epic Task" entry (file+headline "~/org/Tasks.org" "Epic")
                                "* EPIC %?\n %i\n %a")
                               ("ti" "New Idea" entry (file+headline "~/org/Tasks.org" "Ideas")
-                               "* IDEA %?\n %i\n %a")
-                              ("s" "Create Org Scripts")
+                               "* IDEA %?\n %i\n %a")) t)
+
+(add-to-list 'org-capture-templates '(("s" "Create Org Scripts")
                               ("ss" "shell" file
                                (file+headline "~/org/scripts/${name}.org")
                                "\n* Shell Script:\n\n#+begin_src sh :tangle ./${name}.sh\n\n%?\n\n#+end_src"
                                :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("l" "Logbook Entries")
-                              ("ls" "Software" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %<%I:%M %p> - Software :Software:\n\n%?\n\n"
-                               ;; ,(jp/read-file-as-string "~/Notes/Templates/Daily.org")
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("lh" "Hardware" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %<%I:%M %p> - Hardware :Hardware:\n\n%?\n\n"
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("lc" "Configuration" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %<%I:%M %p> - Configuration :Configuration:\n\n%?\n\n"
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("m" "Meeting" entry
-                               (file+olp+datetree "~/org/Meetings.org")
-                               "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("w" "Web site" entry
-                               (file "")
-                               "* %a :website:\n\n%U %?\n\n%:initial")
-                              )
-      )
+                               :empty-lines 1)) t)
+
+(add-to-list 'org-capture-templates '(("l" "Logbook Entries")
+                                      ("ls" "Software" entry
+                                       (file+olp+datetree "~/org/Logbook.org")
+                                       "\n* %<%I:%M %p> - Software :Software:\n\n%?\n\n"
+                                       ;; ,(jp/read-file-as-string "~/Notes/Templates/Daily.org")
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)
+                                      ("lh" "Hardware" entry
+                                       (file+olp+datetree "~/org/Logbook.org")
+                                       "\n* %<%I:%M %p> - Hardware :Hardware:\n\n%?\n\n"
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)
+                                      ("lc" "Configuration" entry
+                                       (file+olp+datetree "~/org/Logbook.org")
+                                       "\n* %<%I:%M %p> - Configuration :Configuration:\n\n%?\n\n"
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)) t)
+
+(add-to-list 'org-capture-templates '(("m" "Meeting" entry
+                                       (file+olp+datetree "~/org/Meetings.org")
+                                       "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)) t)
+
+(add-to-list 'org-capture-templates '(("w" "Web site" entry
+                                       (file "")
+                                       "* %a :website:\n\n%U %?\n\n%:initial")
+                                      :empty-lines 1) t)
 
 (setq org-roam-capture-templates
       '(("d" "default" plain

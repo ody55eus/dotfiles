@@ -1023,25 +1023,26 @@ The Task Keywords are noted with their keybindings in parentheses.
 |-----------------+-------------------------------------|
 
 |---------+----------------------------------------------------------------------------------|
-| Seq 1   | Description                                                                      |
+| Seq 1   | Description                                                            @tasks    |
 |---------+----------------------------------------------------------------------------------|
 | ~PROJ(p)~ | Bigger ongoing Projects.                                                         |
 | ~EPIC(e)~ | Epic Tasks: A specific problem with a pre-defined reachable goal.                |
 | ~TODO(t)~ | Single tasks to accomplish in reasonable time (/Hint/: Set effort to range tasks). |
-| ~IDEA(i)~ | Small ideas that could grow into something beautiful.                            |
+| ~IDEA(i)~ | Small ideas that could grow into something beautiful. (optional)                 |
 |---------+----------------------------------------------------------------------------------|
 | ~DONE(d)~ | Finished Tasks                                                                   |
 |---------+----------------------------------------------------------------------------------|
 
 |--------------+------------------------------------------------------------------------|
-| Seq 2        | Description                                                            |
+| Seq 2        | Description                                                   @backlog |
 |--------------+------------------------------------------------------------------------|
 | ~BACKLOG(b)~   | Tasks that are on the back of my head, if nothing else holds priority. |
-| ~PLAN(p)~      | Planning Phase                                                         |
-| ~ACTIVE(a)~    | Active Tasks                                                           |
-| ~REVIEW(r)~    |                                                                        |
-| ~WAIT(w@/!)~   | Waiting on external influences (*Explain and Log this*).                 |
-| ~HOLD(h)~      | Holding back until my time is free again.                              |
+|--------------+------------------------------------------------------------------------|
+| ~PLAN(p)~      | Planning Phase                                                (#Max=5) |
+| ~ACTIVE(a)~    | Active Tasks                                                  (#Max=5) |
+| ~REVIEW(r)~    | .                                                             (#Max=5) |
+| ~WAIT(w@/!)~   | Waiting on external influences (*Explain and Log this*).        (#Max=∞) |
+| ~HOLD(h)~      | Holding back until my time is free again.                     (#Max=∞) |
 |--------------+------------------------------------------------------------------------|
 | ~COMPLETED(c)~ |                                                                        |
 | ~KILL(k)~      |                                                                        |
@@ -1051,8 +1052,7 @@ The Task Keywords are noted with their keybindings in parentheses.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq org-todo-keywords '(
-                          (sequence "PROJ(p)" "EPIC(e)" "TODO(t)"
-                                "IDEA(i)" "|"
+                          (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
                                 "DONE(d)")
                           (sequence "BACKLOG(b)" "PLAN(P)" "ACTIVE(a)"
                                     "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
@@ -1068,65 +1068,89 @@ The Task Keywords are noted with their keybindings in parentheses.
 - [[https://www.orgroam.com/manual.html#The-Templating-System][Org-Roam Templating System→]]
 
 **** TODO Org Capture Templates
-- Add some templates to ...
-  + Capture Tasks
-  + Coding Shell Scripts
-  + Implement org-protocol
+***** Fleeting Notes
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq org-capture-templates '(("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
-                               "* %?\n %x\n %i\n %a")
-                              ("a" "Agenda")
-                              ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
-                               "* TODO %?\n %i\n %a")
-                              ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
-                               "* TODO %?\n %i\n %a")
-                              ("m" "Email Workflow")
+                               "* %?\n %x\n %i\n %a")))
+
+#+end_src
+
+***** Agenda - Templates
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(add-to-list 'org-capture-templates '(("a" "Agenda")
+                                     ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
+                                      "* TODO %?\n %i\n %a")
+                                     ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
+                                      "* TODO %?\n %i\n %a")) t)
+#+end_src
+
+***** Email - Templates
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(add-to-list 'org-capture-templates '(("m" "Email Workflow")
                               ("mf" "Follow Up" entry (file+olp "~/org/Mail.org" "Follow Up")
                                "* TODO %a")
                               ("mr" "Read Later" entry (file+olp "~/org/Mail.org" "Read Later")
-                               "* TODO %a")
-                              ("t" "Task Entries")
+                               "* TODO %a")) t)
+#+end_src
+
+***** Tasks - Templates
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(add-to-list 'org-capture-templates '(("t" "Task Entries")
                               ("tt" "Todo Task" entry (file+headline "~/org/Tasks.org" "Tasks")
                                "* TODO %?\n %i\n %a")
                               ("te" "Epic Task" entry (file+headline "~/org/Tasks.org" "Epic")
                                "* EPIC %?\n %i\n %a")
                               ("ti" "New Idea" entry (file+headline "~/org/Tasks.org" "Ideas")
-                               "* IDEA %?\n %i\n %a")
-                              ("s" "Create Org Scripts")
+                               "* IDEA %?\n %i\n %a")) t)
+#+end_src
+
+***** Shell Scripts - Templates
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(add-to-list 'org-capture-templates '(("s" "Create Org Scripts")
                               ("ss" "shell" file
                                (file+headline "~/org/scripts/${name}.org")
                                "\n* Shell Script:\n\n#+begin_src sh :tangle ./${name}.sh\n\n%?\n\n#+end_src"
                                :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("l" "Logbook Entries")
-                              ("ls" "Software" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %<%I:%M %p> - Software :Software:\n\n%?\n\n"
-                               ;; ,(jp/read-file-as-string "~/Notes/Templates/Daily.org")
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("lh" "Hardware" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %<%I:%M %p> - Hardware :Hardware:\n\n%?\n\n"
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("lc" "Configuration" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %<%I:%M %p> - Configuration :Configuration:\n\n%?\n\n"
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("m" "Meeting" entry
-                               (file+olp+datetree "~/org/Meetings.org")
-                               "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("w" "Web site" entry
-                               (file "")
-                               "* %a :website:\n\n%U %?\n\n%:initial")
-                              )
-      )
+                               :empty-lines 1)) t)
+#+end_src
 
+***** Logbook - Templates
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(add-to-list 'org-capture-templates '(("l" "Logbook Entries")
+                                      ("ls" "Software" entry
+                                       (file+olp+datetree "~/org/Logbook.org")
+                                       "\n* %<%I:%M %p> - Software :Software:\n\n%?\n\n"
+                                       ;; ,(jp/read-file-as-string "~/Notes/Templates/Daily.org")
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)
+                                      ("lh" "Hardware" entry
+                                       (file+olp+datetree "~/org/Logbook.org")
+                                       "\n* %<%I:%M %p> - Hardware :Hardware:\n\n%?\n\n"
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)
+                                      ("lc" "Configuration" entry
+                                       (file+olp+datetree "~/org/Logbook.org")
+                                       "\n* %<%I:%M %p> - Configuration :Configuration:\n\n%?\n\n"
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)) t)
+#+end_src
+
+***** Meeting - Templates
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(add-to-list 'org-capture-templates '(("m" "Meeting" entry
+                                       (file+olp+datetree "~/org/Meetings.org")
+                                       "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)) t)
+#+end_src
+
+***** Website (org-protocol) - Templates
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(add-to-list 'org-capture-templates '(("w" "Web site" entry
+                                       (file "")
+                                       "* %a :website:\n\n%U %?\n\n%:initial")
+                                      :empty-lines 1) t)
 #+end_src
 
 **** TODO Org Roam Capture Templates
@@ -1427,8 +1451,6 @@ This Configuration runs on start end finish of presentations:
    (emacs-lisp . t)))
 
 #+end_src
-
-#+RESULTS:
 
 * TODO Additional Packages
 ** Dired (File Manager)
