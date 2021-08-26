@@ -16,7 +16,7 @@
 (server-start)  ; Start Emacs as Server!
 
 (map! :leader
-      (:prefix-map ("b" . "buffer")
+      (:prefix ("b" . "buffer")
        :desc "Consult buffer" :n "j" #'consult-buffer
        :desc "Consult buffer other window" :n "J" #'consult-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
@@ -54,7 +54,7 @@
       (:prefix-map ("n" . "notes")
        (:prefix ("r" . "roam")
         :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
-        :desc "New Daily Node (today)" :n "d" #'org-roam-dailies-capture-today
+        :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
         :desc "Find org-roam Node" :n "f" #'org-roam-node-find
         :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
         :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
@@ -165,13 +165,13 @@
 (pdf-tools-install)
 
 ;; Fit PDF in screen width
-(setq pdf-view-display-size 'fit-width)
+;; (setq pdf-view-display-size 'fit-width)
 
 ;; Show PDF in current Theme Colors
-(add-hook 'pdf-view-mode-hook (lambda() (pdf-view-themed-minor-mode)))
+;; (add-hook 'pdf-view-mode-hook (lambda() (pdf-view-themed-minor-mode)))
 
 ;; Cut off unwritten borders of PDF.
-(add-hook 'pdf-view-mode-hook (lambda() (pdf-view-auto-slice-minor-mode)))
+;; (add-hook 'pdf-view-mode-hook (lambda() (pdf-view-auto-slice-minor-mode)))
 
 ;; Open .epub with nov.el package
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
@@ -216,7 +216,7 @@
 (setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
 
 (defun jp/org-visual-fill-column ()
-  (setq visual-fill-column-width 100
+  (setq visual-fill-column-width 120
         visual-fill-column-center-text t)
   (visual-fill-column-mode 1))
 
@@ -324,7 +324,7 @@
 
 (add-to-list 'org-capture-templates '(("m" "Meeting" entry
                                        (file+olp+datetree "~/org/Meetings.org")
-                                       "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
+                                       "* %<%H:%M> - %a :meetings:\n\n%?\n\n"
                                        :clock-in :clock-resume
                                        :empty-lines 1)) t)
 
@@ -492,6 +492,7 @@
   (require 'org-tempo)
 
   (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
+  (add-to-list 'org-structure-template-alist '("uml" . "src plantuml :file uml.png"))
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
   (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
@@ -517,11 +518,22 @@
 (add-hook #'org-tree-slide-play #'jp/presentation-setup)
 (add-hook #'org-tree-slide-stop #'jp/presentation-end)
 
+;; Enable PlantUML Diagrams
+(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+;; Jar Configuration
+(setq org-plantuml-jar-path "/home/jp/.emacs.d/.local/etc/plantuml.jar")
+(setq plantuml-default-exec-mode 'jar)
+
+;; Sample executable configuration
+;;(setq plantuml-executable-path "/path/to/your/copy/of/plantuml.bin")
+;;(setq plantuml-default-exec-mode 'executable)
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((R . t)
    (python . t)
    (LaTeX . t)
+   (plantuml . t)
    (emacs-lisp . t)))
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)

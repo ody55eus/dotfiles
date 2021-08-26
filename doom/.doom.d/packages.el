@@ -67,8 +67,12 @@
 (package! org-special-block-extras
   :recipe (:host github
            :repo "alhassy/org-special-block-extras"))
+;; (package! ob-napkin)            ; PlantUML in Org Babel
+;; (package! plantuml-mode)        ; PlantUML Diagrams
+
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
+
 (package! emacs-bitwarden       ; Password Manager
   :recipe (:host github
            :repo "seanfarley/emacs-bitwarden"
