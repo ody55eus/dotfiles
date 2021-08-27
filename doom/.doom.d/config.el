@@ -16,7 +16,7 @@
 (server-start)  ; Start Emacs as Server!
 
 (map! :leader
-      (:prefix-map ("b" . "buffer")
+      (:prefix ("b" . "buffer")
        :desc "Consult buffer" :n "j" #'consult-buffer
        :desc "Consult buffer other window" :n "J" #'consult-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
@@ -54,7 +54,7 @@
       (:prefix-map ("n" . "notes")
        (:prefix ("r" . "roam")
         :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
-        :desc "New Daily Node (today)" :n "d" #'org-roam-dailies-capture-today
+        :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
         :desc "Find org-roam Node" :n "f" #'org-roam-node-find
         :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
         :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
@@ -165,13 +165,13 @@
 (pdf-tools-install)
 
 ;; Fit PDF in screen width
-(setq pdf-view-display-size 'fit-width)
+;; (setq pdf-view-display-size 'fit-width)
 
 ;; Show PDF in current Theme Colors
-(add-hook 'pdf-view-mode-hook (lambda() (pdf-view-themed-minor-mode)))
+;; (add-hook 'pdf-view-mode-hook (lambda() (pdf-view-themed-minor-mode)))
 
 ;; Cut off unwritten borders of PDF.
-(add-hook 'pdf-view-mode-hook (lambda() (pdf-view-auto-slice-minor-mode)))
+;; (add-hook 'pdf-view-mode-hook (lambda() (pdf-view-auto-slice-minor-mode)))
 
 ;; Open .epub with nov.el package
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
@@ -216,7 +216,7 @@
 (setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
 
 (defun jp/org-visual-fill-column ()
-  (setq visual-fill-column-width 100
+  (setq visual-fill-column-width 120
         visual-fill-column-center-text t)
   (visual-fill-column-mode 1))
 
@@ -266,8 +266,7 @@
       )
 
 (setq org-todo-keywords '(
-                          (sequence "PROJ(p)" "EPIC(e)" "TODO(t)"
-                                "IDEA(i)" "|"
+                          (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
                                 "DONE(d)")
                           (sequence "BACKLOG(b)" "PLAN(P)" "ACTIVE(a)"
                                     "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
@@ -276,67 +275,73 @@
       )
 
 (setq org-capture-templates '(("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
-                               "* %?\n %x\n %i\n %a")
-                              ("a" "Agenda")
-                              ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
-                               "* TODO %?\n %i\n %a")
-                              ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
-                               "* TODO %?\n %i\n %a")
-                              ("m" "Email Workflow")
+                               "* %?\n %x\n %i\n %a")))
+
+(add-to-list 'org-capture-templates '(("a" "Agenda")
+                                     ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
+                                      "* TODO %?\n %i\n %a")
+                                     ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
+                                      "* TODO %?\n %i\n %a")) t)
+
+(add-to-list 'org-capture-templates '(("m" "Email Workflow")
                               ("mf" "Follow Up" entry (file+olp "~/org/Mail.org" "Follow Up")
                                "* TODO %a")
                               ("mr" "Read Later" entry (file+olp "~/org/Mail.org" "Read Later")
-                               "* TODO %a")
-                              ("t" "Task Entries")
+                               "* TODO %a")) t)
+
+(add-to-list 'org-capture-templates '(("t" "Task Entries")
                               ("tt" "Todo Task" entry (file+headline "~/org/Tasks.org" "Tasks")
                                "* TODO %?\n %i\n %a")
                               ("te" "Epic Task" entry (file+headline "~/org/Tasks.org" "Epic")
                                "* EPIC %?\n %i\n %a")
                               ("ti" "New Idea" entry (file+headline "~/org/Tasks.org" "Ideas")
-                               "* IDEA %?\n %i\n %a")
-                              ("s" "Create Org Scripts")
+                               "* IDEA %?\n %i\n %a")) t)
+
+(add-to-list 'org-capture-templates '(("s" "Create Org Scripts")
                               ("ss" "shell" file
                                (file+headline "~/org/scripts/${name}.org")
                                "\n* Shell Script:\n\n#+begin_src sh :tangle ./${name}.sh\n\n%?\n\n#+end_src"
                                :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("l" "Logbook Entries")
-                              ("ls" "Software" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %<%I:%M %p> - Software :Software:\n\n%?\n\n"
-                               ;; ,(jp/read-file-as-string "~/Notes/Templates/Daily.org")
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("lh" "Hardware" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %<%I:%M %p> - Hardware :Hardware:\n\n%?\n\n"
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("lc" "Configuration" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %<%I:%M %p> - Configuration :Configuration:\n\n%?\n\n"
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("m" "Meeting" entry
-                               (file+olp+datetree "~/org/Meetings.org")
-                               "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("w" "Web site" entry
-                               (file "")
-                               "* %a :website:\n\n%U %?\n\n%:initial")
-                              )
-      )
+                               :empty-lines 1)) t)
+
+(add-to-list 'org-capture-templates '(("l" "Logbook Entries")
+                                      ("ls" "Software" entry
+                                       (file+olp+datetree "~/org/Logbook.org")
+                                       "\n* %<%I:%M %p> - Software :Software:\n\n%?\n\n"
+                                       ;; ,(jp/read-file-as-string "~/Notes/Templates/Daily.org")
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)
+                                      ("lh" "Hardware" entry
+                                       (file+olp+datetree "~/org/Logbook.org")
+                                       "\n* %<%I:%M %p> - Hardware :Hardware:\n\n%?\n\n"
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)
+                                      ("lc" "Configuration" entry
+                                       (file+olp+datetree "~/org/Logbook.org")
+                                       "\n* %<%I:%M %p> - Configuration :Configuration:\n\n%?\n\n"
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)) t)
+
+(add-to-list 'org-capture-templates '(("m" "Meeting" entry
+                                       (file+olp+datetree "~/org/Meetings.org")
+                                       "* %<%H:%M> - %a :meetings:\n\n%?\n\n"
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)) t)
+
+(add-to-list 'org-capture-templates '(("w" "Web site" entry
+                                       (file "")
+                                       "* %a :website:\n\n%U %?\n\n%:initial")
+                                      :empty-lines 1) t)
 
 (setq org-roam-capture-templates
       '(("d" "default" plain
-         "* %?\n%a"
+         "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
          :unnarrowed t)
         ("c" "Coding" plain
-         "* %?\n\n%x\n"
+         "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "Coding/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
@@ -344,7 +349,7 @@
          :unnarrowed t
          )
         ("e" "Person" plain
-         "* %?\n\n%a\n"
+         "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "People/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
@@ -352,7 +357,7 @@
          :unnarrowed t
          )
         ("l" "Literature" plain
-         "* Links\n- %a\n* Notes\n%?\n"
+         "%?\n\nSee also %a.\n* Links\n- %x\n* Notes\n"
          :if-new (file+head
                   "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
@@ -360,11 +365,10 @@
          :unnarrowed t
          )
         ("p" "PC" plain
-         "* %?\n\n%a\n"
+         "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "PC/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
-         :clock-in :clock-resume
+                  "#+title: ${title}\n#+date: %U")
          :unnarrowed t
          )
         )
@@ -488,6 +492,7 @@
   (require 'org-tempo)
 
   (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
+  (add-to-list 'org-structure-template-alist '("uml" . "src plantuml :file uml.png"))
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
   (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
@@ -513,11 +518,22 @@
 (add-hook #'org-tree-slide-play #'jp/presentation-setup)
 (add-hook #'org-tree-slide-stop #'jp/presentation-end)
 
+;; Enable PlantUML Diagrams
+(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+;; Jar Configuration
+(setq org-plantuml-jar-path "/home/jp/.emacs.d/.local/etc/plantuml.jar")
+(setq plantuml-default-exec-mode 'jar)
+
+;; Sample executable configuration
+;;(setq plantuml-executable-path "/path/to/your/copy/of/plantuml.bin")
+;;(setq plantuml-default-exec-mode 'executable)
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((R . t)
    (python . t)
    (LaTeX . t)
+   (plantuml . t)
    (emacs-lisp . t)))
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
@@ -586,7 +602,6 @@
     (lsp-headerline-breadcrumb-mode))
 
   (use-package lsp-mode
-    :ensure nil
     :commands (lsp lsp-deferred)
     :hook (lsp-mode . jp/lsp-mode-setup)
     :init
@@ -693,6 +708,9 @@
 
 ;; Optional Magit Configuration
 
+;; Tell Emacs where to find mu4e (only necessary if manual compiled)
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+
 ;; Load org-mode integration
 ;;(require 'mu4e-org)
 
@@ -792,25 +810,27 @@
 
   (defun jp/go-to-inbox ()
     (interactive)
-    (mu4e-headers-search jp/mu4e-inbox-query))
+    (mu4e-headers-search jp/mu4e-inbox-query)
 
-  (setq mu4e-marks (remove-nth-element 5 mu4e-marks))
-  (add-to-list 'mu4e-marks
-               '(trash
-                 :char ("d" . "▼")
-                 :prompt "dtrash"
-                 :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
-                 :action (lambda (docid msg target)
-                           (mu4e~proc-move docid
-                                           (mu4e~mark-check-target target) "-N"))))
+    (setq mu4e-marks (remove-nth-element 5 mu4e-marks))
+    (add-to-list 'mu4e-marks
+                 '(trash
+                   :char ("d" . "▼")
+                   :prompt "dtrash"
+                   :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
+                   :action (lambda (docid msg target)
+                             (mu4e~proc-move docid
+                                             (mu4e~mark-check-target target) "-N"))))
 
-  ;; Show unread emails from all inboxes
-  (setq mu4e-alert-interesting-mail-query jp/mu4e-inbox-query)
+    ;; Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]]
+    ;; to show notifications when e-mail comes in.
+    ;; Show unread emails from all inboxes
+    (setq mu4e-alert-interesting-mail-query jp/mu4e-inbox-query)
 
-  ;; Show notifications for mails already notified
-  (setq mu4e-alert-notify-repeated-mails nil)
+    ;; Show notifications for mails already notified
+    (setq mu4e-alert-notify-repeated-mails nil)
 
-  (mu4e-alert-enable-notifications))
+    (mu4e-alert-enable-notifications)))
 
 (defun jp/lookup-password (&rest keys)
   (let ((result (apply #'auth-source-search keys)))
