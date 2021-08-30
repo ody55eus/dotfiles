@@ -93,7 +93,7 @@
                        :font "Source Code Pro"
                        :weight 'regular
                        :height 140))
-  ('darwin (set-face-attribute 'default nil :font "Liberation Mono for Powerline" :height 140)))
+  ('darwin (set-face-attribute 'default nil :font "Source Code Pro for Powerline" :height 140)))
 
 ;; Set the fixed pitch face
 (pcase system-type
@@ -102,7 +102,7 @@
                        :font "Source Code Pro"
                        :weight 'regular
                        :height 140))
-  ('darwin (set-face-attribute 'fixed-pitch nil :font "Liberation Mono for Powerline" :height 140)))
+  ('darwin (set-face-attribute 'fixed-pitch nil :font "Source Code Pro for Powerline" :height 140)))
 
 ;; Set the variable pitch face
 (pcase system-type
@@ -112,7 +112,7 @@
                        :font "Roboto"
                        :height 185
                        :weight 'light))
-  ('darwin (set-face-attribute 'variable-pitch nil :font "Hiragino Sans" :height 150)))
+  ('darwin (set-face-attribute 'variable-pitch nil :font "Verdana" :height 150)))
 
 (setq display-line-numbers-type 'relative)
 
