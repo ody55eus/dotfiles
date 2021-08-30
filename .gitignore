@@ -1,0 +1,6 @@
+.DS_Store
+/vim/.vim/bundle/*
+/sh/.config/zsh/.zsh_history
+/sh/.config/zsh/.zsh_sessions
+/sh/.config/zsh/.zcompdump-*
+/keyboard/.config/karabiner/automatic_backups/
