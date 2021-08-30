@@ -17,8 +17,8 @@
 
 (map! :leader
       (:prefix ("b" . "buffer")
-       :desc "Consult buffer" :n "j" #'consult-buffer
-       :desc "Consult buffer other window" :n "J" #'consult-buffer-other-window
+       :desc "Counsel buffer" :n "j" #'counsel-switch-buffer
+       :desc "Counsel buffer other window" :n "J" #'counsel-switch-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
        :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
@@ -39,7 +39,7 @@
       ;; (:prefix-map ("s" . "search"))
       (:prefix ("t" . "toogle")
        :desc "Toggle Cmd Log Buffer" "b" #'clm/toggle-command-log-buffer
-       :desc "Toggle " "c" #'global-command-log-mode
+       :desc "Toggle Global Cmd Log" "c" #'global-command-log-mode
        :desc "Toggle line highlight in frame" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
@@ -50,7 +50,6 @@
        :desc "evil-window-up" :n "<up>" #'evil-window-up
        :desc "evil-window-down" :n "<down>" #'evil-window-down
        )
-      ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
        (:prefix ("r" . "roam")
         :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
@@ -61,6 +60,7 @@
         :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
         )
        )
+      ;; (:prefix-map ("TAB" . "workspace"))
       )
 
 (map! :leader
@@ -109,9 +109,9 @@
   ((or 'gnu/linux 'windows-nt 'cygwin)
    (set-face-attribute 'variable-pitch nil
                        ;; :font "Cantarell"
-                       :font "Ubuntu"
+                       :font "Roboto"
                        :height 185
-                       :weight 'regular))
+                       :weight 'light))
   ('darwin (set-face-attribute 'variable-pitch nil :font "Hiragino Sans" :height 150)))
 
 (setq display-line-numbers-type 'relative)
@@ -178,7 +178,7 @@
 
 ;; Set custom font for epub
 (defun my-nov-font-setup ()
-  (face-remap-add-relative 'variable-pitch :family "Ubuntu"
+  (face-remap-add-relative 'variable-pitch :family "Roboto"
                                            :height 1.0))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 
@@ -187,7 +187,7 @@
       org-agenda-files '("~/org/Agenda.org"
                          "~/org/Tasks.org"
                          "~/org/Habits.org"
-                         "~/org/Journal.org")
+                         "~/org/Emails.org")
       org-default-notes-file (concat org-directory "/Notes.org")
       org-clock-sound "~/sounds/ding.wav")
 
@@ -322,7 +322,7 @@
                                        :clock-in :clock-resume
                                        :empty-lines 1)) t)
 
-(add-to-list 'org-capture-templates '(("m" "Meeting" entry
+(add-to-list 'org-capture-templates '(("M" "Meeting" entry
                                        (file+olp+datetree "~/org/Meetings.org")
                                        "* %<%H:%M> - %a :meetings:\n\n%?\n\n"
                                        :clock-in :clock-resume
@@ -331,6 +331,14 @@
 (add-to-list 'org-capture-templates '(("w" "Web site" entry
                                        (file "")
                                        "* %a :website:\n\n%U %?\n\n%:initial")
+                                      :empty-lines 1) t)
+
+(add-to-list 'org-capture-templates '(("r" "References" plain
+                                       "%?\n\n* Citations\n%x"
+                                       :if-new (file+head
+                                                "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                "#+title: ${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
+                                       :unnarrowed t)
                                       :empty-lines 1) t)
 
 (setq org-roam-capture-templates
@@ -374,35 +382,47 @@
         )
       )
 
+(setq org-roam-capture-ref-templates '(
+                                       ("r" "Reference" plain
+                                        "%?\n\n* Citations\n%x"
+                                        :if-new (file+head
+                                                 "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                 "#+title: ${title}\n#+date: %U\n")
+                                        :unnarrowed t
+                                        )
+                                       )
+      )
+
 (setq org-roam-dailies-capture-templates
       '(("d" "default" entry
          "* %?"
          :if-new (file+head
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
-         :kill-buffer t)
-        ("t" "Task" entry
-         "* TODO %?\n  %U\n  %a\n  %i"
-         :if-new (file+head+olp
-                  "%<%Y-%B>.org"
-                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
-                  ("Tasks")
-         :kill-buffer t)
+                  "#+title: %<%Y-%m-%d>\n\n[[roam:%<%Y-%B>]]\n\n"
+                  :kill-buffer t)
          )
         ("j" "Journal entry" entry
          "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
          :if-new (file+head+olp
+                  "%<%Y-%m-%d>.org"
+                  "#+title: %<%Y-%m-%d>\n\n"
+                  ("Journal")
+                  :kill-buffer t)
+         )
+        ("l" "Log" entry
+         "* %?\n  %U\n  %a\n  %i"
+         :if-new (file+head+olp
                   "%<%Y-%B>.org"
-                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
+                  "#+title: %<%Y-%m-%d>\n\n[[roam:%<%Y-%B>]]\n\n"
                   ("Log")
-         :kill-buffer t)
+                  :kill-buffer t)
          )
         ("m" "meeting" entry
          "* ~%<%H:%M>~ - %^{Meeting Title} :meetings:\n\n%?\n\n"
          :if-new (file+head+olp
-                  "%<%Y-%B>.org"
-                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
-                  ("Log")))))
+                  "%<%Y-%m-%d>.org"
+                  "#+title: %<%Y-%m-%d>\n\n[[roam:%<%Y-%B>]]\n\n"
+                  ("Meetings")))))
 
 (setq org-agenda-custom-commands
       '(("d" "Dashboard"
@@ -476,9 +496,11 @@
 
 (setq org-lowest-priority ?E) ;; Priorities A to E
 
-    (setq org-refile-targets
+(setq org-refile-targets
       '(("Archive.org" :maxlevel . 1)
         ("Tasks.org" :maxlevel . 1)))
+
+(setq org-archive-location ".archive/%s::")
 
     ;; Save Org buffers after refiling!
     (advice-add 'org-refile :after 'org-save-all-org-buffers)
@@ -521,7 +543,7 @@
 ;; Enable PlantUML Diagrams
 (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
 ;; Jar Configuration
-(setq org-plantuml-jar-path "/home/jp/.emacs.d/.local/etc/plantuml.jar")
+(setq org-plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
 (setq plantuml-default-exec-mode 'jar)
 
 ;; Sample executable configuration
@@ -535,6 +557,26 @@
    (LaTeX . t)
    (plantuml . t)
    (emacs-lisp . t)))
+
+(use-package! org-roam-bibtex
+  :after org-roam
+  :config
+  (require 'org-ref)) ; optional: if Org Ref is not loaded anywhere else, load it here
+
+;; Helm Autocompletion
+;;(autoload 'helm-bibtex "helm-bibtex" "" t)
+
+;; Ivy Autocompletion
+(autoload 'ivy-bibtex "ivy-bibtex" "" t)
+;; ivy-bibtex requires ivy's `ivy--regex-ignore-order` regex builder, which
+;; ignores the order of regexp tokens when searching for matching candidates.
+;; Add something like this to your init file:
+(setq ivy-re-builders-alist
+      '((ivy-bibtex . ivy--regex-ignore-order)
+        (t . ivy--regex-plus)))
+
+(setq bibtex-completion-bibliography '((concat (getenv "HOME") "/ZK/Literature/Library.bib")))
+(setq bibtex-completion-library-path '((concat (getenv "HOME") "/ZK/Literature/.attach")))
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired
@@ -550,9 +592,9 @@
                               ("mp4" . "mpv")))
 
 (map! :leader
-      (:prefix ("d" . "dired")
-       :desc "Open dired" "d" #'dired
-       :desc "Dired jump to current" "j" #'dired-jump)
+      ;; (:prefix ("d" . "dired")
+      ;;  :desc "Open dired" "d" #'dired
+      ;;  :desc "Dired jump to current" "j" #'dired-jump)
       (:after dired
        (:map dired-mode-map
         :desc "Peep-dired image previews" "d p" #'peep-dired
@@ -578,10 +620,10 @@
   (kbd "D") 'dired-do-delete
 ;;  (kbd "H") #'jp/dired-hide-dotfiles
   (kbd "J") 'dired-goto-file
-  (kbd "M") 'dired-chmod
-  (kbd "O") 'dired-chown
+  (kbd "M") 'dired-do-chmod
+  (kbd "O") 'dired-do-chown
   (kbd "P") 'dired-do-print
-  (kbd "R") 'dired-rename
+  (kbd "R") 'dired-do-rename
   (kbd "T") 'dired-do-touch
   (kbd "Y") 'dired-copy-filenamecopy-filename-as-kill ; copies filename to kill ring.
   (kbd "+") 'dired-create-directory

@@ -65,11 +65,16 @@ Just comment/uncomment some lines to disable/enable features.
        ;;layout            ; auie,ctsrnm is the superior home row
 
        :completion
-       company           ; the ultimate code completion backend
+       (company
+        ;+childframe
+        )           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
-       ;;ivy               ; a search engine for love and life
-       vertico           ; the search engine of the future
+       (ivy
+        +fuzzy
+        ;;+childframe         ; display in a floating window
+        +icons)               ; a search engine for love and life
+       (vertico +icons)           ; the search engine of the future
 
        :ui
        deft              ; notational velocity for Emacs
@@ -205,6 +210,7 @@ Just comment/uncomment some lines to disable/enable features.
         ;;+hugo                     ; use Emacs for hugo blogging
         +noter                      ; enhanced PDF notetaking
         +jupyter                    ; ipython/jupyter support for babel
+        +ipython                    ; ipython for babel
         +pandoc                     ; export-with-pandoc support
         +gnuplot                    ; who doesn't like pretty pictures
         ;;+pomodoro                 ; be fruitful with the tomato technique
@@ -249,10 +255,12 @@ Just comment/uncomment some lines to disable/enable features.
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config
-       literate
+       ;;literate
        (default +bindings +smartparens))
 
 #+end_src
+
+#+RESULTS:
 
 *** Doom Emacs Package Installation (packages.el)
 **** Docstring
@@ -323,18 +331,26 @@ Just comment/uncomment some lines to disable/enable features.
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
 (package! org-download)
 (package! org-journal)
-(package! org-roam-bibtex)
+(package! org-roam-bibtex
+    :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(unpin! org-roam)
+(unpin! bibtex-completion helm-bibtex ivy-bibtex)
+
 (package! org-protocol-capture-html
   :recipe (:host github
            :repo "alphapapa/org-protocol-capture-html"
            :files ("org-protocol-capture-html.el")))
-(package! ox-twbs)
 (package! org-special-block-extras
   :recipe (:host github
            :repo "alhassy/org-special-block-extras"))
 ;; (package! ob-napkin)            ; PlantUML in Org Babel
 ;; (package! plantuml-mode)        ; PlantUML Diagrams
 
+; Org Exports
+(package! ox-twbs)      ; HTML Twitter Bootstrap
+(package! ox-rst)       ; ReStructured Text (ReST, RST)
+
+; Support for other File Types
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 
@@ -342,6 +358,8 @@ Just comment/uncomment some lines to disable/enable features.
   :recipe (:host github
            :repo "seanfarley/emacs-bitwarden"
            :files ("bitwarden.el")))
+
+; Visual/Functional Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
 (package! dmenu)                ; Dmenu Plugin.
@@ -415,8 +433,8 @@ Just comment/uncomment some lines to disable/enable features.
 
 (map! :leader
       (:prefix ("b" . "buffer")
-       :desc "Consult buffer" :n "j" #'consult-buffer
-       :desc "Consult buffer other window" :n "J" #'consult-buffer-other-window
+       :desc "Counsel buffer" :n "j" #'counsel-switch-buffer
+       :desc "Counsel buffer other window" :n "J" #'counsel-switch-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
        :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
@@ -437,7 +455,7 @@ Just comment/uncomment some lines to disable/enable features.
       ;; (:prefix-map ("s" . "search"))
       (:prefix ("t" . "toogle")
        :desc "Toggle Cmd Log Buffer" "b" #'clm/toggle-command-log-buffer
-       :desc "Toggle " "c" #'global-command-log-mode
+       :desc "Toggle Global Cmd Log" "c" #'global-command-log-mode
        :desc "Toggle line highlight in frame" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
@@ -448,7 +466,6 @@ Just comment/uncomment some lines to disable/enable features.
        :desc "evil-window-up" :n "<up>" #'evil-window-up
        :desc "evil-window-down" :n "<down>" #'evil-window-down
        )
-      ;; (:prefix-map ("TAB" . "workspace"))
       (:prefix-map ("n" . "notes")
        (:prefix ("r" . "roam")
         :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
@@ -459,6 +476,7 @@ Just comment/uncomment some lines to disable/enable features.
         :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
         )
        )
+      ;; (:prefix-map ("TAB" . "workspace"))
       )
 
 #+end_src
@@ -513,6 +531,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
        :desc "evil-window-down" :n "<down>" #'evil-window-down
        )
  )
+
 #+end_src
 
 *** Color Theme
@@ -550,9 +569,9 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
   ((or 'gnu/linux 'windows-nt 'cygwin)
    (set-face-attribute 'variable-pitch nil
                        ;; :font "Cantarell"
-                       :font "Ubuntu"
+                       :font "Roboto"
                        :height 185
-                       :weight 'regular))
+                       :weight 'light))
   ('darwin (set-face-attribute 'variable-pitch nil :font "Hiragino Sans" :height 150)))
 
 #+end_src
@@ -669,7 +688,7 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 ;; Set custom font for epub
 (defun my-nov-font-setup ()
-  (face-remap-add-relative 'variable-pitch :family "Ubuntu"
+  (face-remap-add-relative 'variable-pitch :family "Roboto"
                                            :height 1.0))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 #+end_src
@@ -875,7 +894,7 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
       org-agenda-files '("~/org/Agenda.org"
                          "~/org/Tasks.org"
                          "~/org/Habits.org"
-                         "~/org/Journal.org")
+                         "~/org/Emails.org")
       org-default-notes-file (concat org-directory "/Notes.org")
       org-clock-sound "~/sounds/ding.wav")
 
@@ -908,7 +927,7 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
 
 #+end_src
 
-**** Visual Eenhancements
+**** Visual Enhancements
 
 #+Begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -1156,7 +1175,7 @@ The Task Keywords are noted with their keybindings in parentheses.
 #+end_example
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(add-to-list 'org-capture-templates '(("m" "Meeting" entry
+(add-to-list 'org-capture-templates '(("M" "Meeting" entry
                                        (file+olp+datetree "~/org/Meetings.org")
                                        "* %<%H:%M> - %a :meetings:\n\n%?\n\n"
                                        :clock-in :clock-resume
@@ -1168,6 +1187,17 @@ The Task Keywords are noted with their keybindings in parentheses.
 (add-to-list 'org-capture-templates '(("w" "Web site" entry
                                        (file "")
                                        "* %a :website:\n\n%U %?\n\n%:initial")
+                                      :empty-lines 1) t)
+#+end_src
+
+***** References (org-protocol) - Templates
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(add-to-list 'org-capture-templates '(("r" "References" plain
+                                       "%?\n\n* Citations\n%x"
+                                       :if-new (file+head
+                                                "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                "#+title: ${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
+                                       :unnarrowed t)
                                       :empty-lines 1) t)
 #+end_src
 
@@ -1219,6 +1249,20 @@ The Task Keywords are noted with their keybindings in parentheses.
 
 #+end_src
 
+**** Org Roam Ref Templates (Capture Websites)
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq org-roam-capture-ref-templates '(
+                                       ("r" "Reference" plain
+                                        "%?\n\n* Citations\n%x"
+                                        :if-new (file+head
+                                                 "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                 "#+title: ${title}\n#+date: %U\n")
+                                        :unnarrowed t
+                                        )
+                                       )
+      )
+#+end_src
+
 **** TODO Org Roam Dailies Capture Templates
 - Add some custom floating notes templates.
 - Add org protocol templates
@@ -1230,30 +1274,31 @@ The Task Keywords are noted with their keybindings in parentheses.
          "* %?"
          :if-new (file+head
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
-         :kill-buffer t)
-        ("t" "Task" entry
-         "* TODO %?\n  %U\n  %a\n  %i"
-         :if-new (file+head+olp
-                  "%<%Y-%B>.org"
-                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
-                  ("Tasks")
-         :kill-buffer t)
+                  "#+title: %<%Y-%m-%d>\n\n[[roam:%<%Y-%B>]]\n\n"
+                  :kill-buffer t)
          )
         ("j" "Journal entry" entry
          "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
          :if-new (file+head+olp
+                  "%<%Y-%m-%d>.org"
+                  "#+title: %<%Y-%m-%d>\n\n"
+                  ("Journal")
+                  :kill-buffer t)
+         )
+        ("l" "Log" entry
+         "* %?\n  %U\n  %a\n  %i"
+         :if-new (file+head+olp
                   "%<%Y-%B>.org"
-                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
+                  "#+title: %<%Y-%m-%d>\n\n[[roam:%<%Y-%B>]]\n\n"
                   ("Log")
-         :kill-buffer t)
+                  :kill-buffer t)
          )
         ("m" "meeting" entry
          "* ~%<%H:%M>~ - %^{Meeting Title} :meetings:\n\n%?\n\n"
          :if-new (file+head+olp
-                  "%<%Y-%B>.org"
-                  "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n"
-                  ("Log")))))
+                  "%<%Y-%m-%d>.org"
+                  "#+title: %<%Y-%m-%d>\n\n[[roam:%<%Y-%B>]]\n\n"
+                  ("Meetings")))))
 
 #+end_src
 
@@ -1351,9 +1396,17 @@ The Task Keywords are noted with their keybindings in parentheses.
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-    (setq org-refile-targets
+(setq org-refile-targets
       '(("Archive.org" :maxlevel . 1)
         ("Tasks.org" :maxlevel . 1)))
+
+#+end_src
+
+*** Archive Location
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-archive-location ".archive/%s::")
 
 #+end_src
 
@@ -1465,7 +1518,7 @@ This Configuration runs on start end finish of presentations:
 ;; Enable PlantUML Diagrams
 (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
 ;; Jar Configuration
-(setq org-plantuml-jar-path "/home/jp/.emacs.d/.local/etc/plantuml.jar")
+(setq org-plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
 (setq plantuml-default-exec-mode 'jar)
 
 ;; Sample executable configuration
@@ -1479,6 +1532,32 @@ This Configuration runs on start end finish of presentations:
    (LaTeX . t)
    (plantuml . t)
    (emacs-lisp . t)))
+
+#+end_src
+
+*** BibTeX (Literature Management)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(use-package! org-roam-bibtex
+  :after org-roam
+  :config
+  (require 'org-ref)) ; optional: if Org Ref is not loaded anywhere else, load it here
+
+;; Helm Autocompletion
+;;(autoload 'helm-bibtex "helm-bibtex" "" t)
+
+;; Ivy Autocompletion
+(autoload 'ivy-bibtex "ivy-bibtex" "" t)
+;; ivy-bibtex requires ivy's `ivy--regex-ignore-order` regex builder, which
+;; ignores the order of regexp tokens when searching for matching candidates.
+;; Add something like this to your init file:
+(setq ivy-re-builders-alist
+      '((ivy-bibtex . ivy--regex-ignore-order)
+        (t . ivy--regex-plus)))
+
+(setq bibtex-completion-bibliography '((concat (getenv "HOME") "/ZK/Literature/Library.bib")))
+(setq bibtex-completion-library-path '((concat (getenv "HOME") "/ZK/Literature/.attach")))
 
 #+end_src
 
@@ -1521,9 +1600,9 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
-      (:prefix ("d" . "dired")
-       :desc "Open dired" "d" #'dired
-       :desc "Dired jump to current" "j" #'dired-jump)
+      ;; (:prefix ("d" . "dired")
+      ;;  :desc "Open dired" "d" #'dired
+      ;;  :desc "Dired jump to current" "j" #'dired-jump)
       (:after dired
        (:map dired-mode-map
         :desc "Peep-dired image previews" "d p" #'peep-dired
@@ -1567,10 +1646,10 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
   (kbd "D") 'dired-do-delete
 ;;  (kbd "H") #'jp/dired-hide-dotfiles
   (kbd "J") 'dired-goto-file
-  (kbd "M") 'dired-chmod
-  (kbd "O") 'dired-chown
+  (kbd "M") 'dired-do-chmod
+  (kbd "O") 'dired-do-chown
   (kbd "P") 'dired-do-print
-  (kbd "R") 'dired-rename
+  (kbd "R") 'dired-do-rename
   (kbd "T") 'dired-do-touch
   (kbd "Y") 'dired-copy-filenamecopy-filename-as-kill ; copies filename to kill ring.
   (kbd "+") 'dired-create-directory

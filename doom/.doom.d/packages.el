@@ -58,18 +58,26 @@
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
 (package! org-download)
 (package! org-journal)
-(package! org-roam-bibtex)
+(package! org-roam-bibtex
+    :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(unpin! org-roam)
+(unpin! bibtex-completion helm-bibtex ivy-bibtex)
+
 (package! org-protocol-capture-html
   :recipe (:host github
            :repo "alphapapa/org-protocol-capture-html"
            :files ("org-protocol-capture-html.el")))
-(package! ox-twbs)
 (package! org-special-block-extras
   :recipe (:host github
            :repo "alhassy/org-special-block-extras"))
 ;; (package! ob-napkin)            ; PlantUML in Org Babel
 ;; (package! plantuml-mode)        ; PlantUML Diagrams
 
+; Org Exports
+(package! ox-twbs)      ; HTML Twitter Bootstrap
+(package! ox-rst)       ; ReStructured Text (ReST, RST)
+
+; Support for other File Types
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 
@@ -77,6 +85,8 @@
   :recipe (:host github
            :repo "seanfarley/emacs-bitwarden"
            :files ("bitwarden.el")))
+
+; Visual/Functional Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
 (package! dmenu)                ; Dmenu Plugin.
