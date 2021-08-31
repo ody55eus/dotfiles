@@ -2,11 +2,10 @@ IMAPAccount mailbox
 Host imap.mailbox.org
 Port 993
 User jpieper@mailbox.org
-#PassCmd "bw get password 3df871d3-dc63-4237-85ab-b17955357b78"
-PassCmd "emacsclient -e \"(jp/lookup-password :host \\\"imap.mailbox.org\\\" :user \\\"jpieper@mailbox.org\\\")\" | cut -d '\"' -f2"
+PassCmd "/Users/jp/emacsclient -e \"(jp/lookup-password :host \\\"imap.mailbox.org\\\" :user \\\"jpieper@mailbox.org\\\")\" | cut -d '\"' -f2"
 SSLType IMAPS
 SSLVersions TLSv1.2
-CertificateFile /etc/ssl/certs/ca-certificates.crt
+CertificateFile /etc/ssl/cert.pem
 
 # Define the remote from which mail will be synced
 IMAPStore mailbox-remote
@@ -27,5 +26,5 @@ Patterns * !"Archive/*"
 Expunge None
 CopyArrivalDate yes
 Sync All
-Create Slave
+Create Near
 SyncState *
