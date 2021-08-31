@@ -843,6 +843,16 @@
                 :name "All Inboxes"
                 :query "maildir:/Mailbox/INBOX OR maildir:/Personal/Inbox"
                 :key ?i))
+  (add-to-list 'mu4e-bookmarks
+               (make-mu4e-bookmark
+                :name "Uni-Frankfurt"
+                :query "from:/.*@uni-frankfurt/ OR maildir:/Personal/Uni"
+                :key ?g))
+  (add-to-list 'mu4e-bookmarks
+               (make-mu4e-bookmark
+                :name "Family"
+                :query "from:baerbel OR from:pieper OR from:kaiser OR from:kessler OR from:thewake35 OR maildir:/Mailbox/familie"
+                :key ?m))
 
   ;; don't keep message buffers around
   (setq message-kill-buffer-on-exit t)
