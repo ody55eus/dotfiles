@@ -508,6 +508,54 @@
 
 (add-to-list 'org-modules 'org-habit)
 
+;; (setq org-latex-to-pdf-process '("texi2dvi --pdf --clean --verbose --batch %f"))
+
+(require 'ox-latex)
+(unless (boundp 'org-latex-classes)
+  (setq org-latex-classes nil))
+
+;; Define Koma Article Class
+(add-to-list 'org-latex-classes
+             '("koma-article"
+               "\\documentclass{scrartcl}"
+               ("\\section{%s}" . "\\section*{%s}")))
+
+;; Define Review of Scientific Instruments Class
+(add-to-list 'org-latex-classes
+             '("aip-rsi"
+               "\\documentclass[
+                aip, % AIP Journals
+                rsi, % Review of Scientific Instruments
+                amsmath,amssymb, % Basic Math Packages
+                preprint, % or reprint
+                ]{revtex4-1}
+\\include{structure}
+[NO-DEFAULT-PACKAGES]
+[NO-EXTRA]
+[NO-PACKAGES]
+
+%% Apr 2021: AIP requests that the corresponding
+%% email to be moved after the affiliations
+\\makeatletter
+\\def\\@email#1#2{%
+ \\endgroup
+ \\patchcmd{\\titleblock@produce}
+  {\\frontmatter@RRAPformat}
+  {\\frontmatter@RRAPformat{\\produce@RRAP{*#1\\href{mailto:#2}{#2}}}\\frontmatter@RRAPformat}
+  {}{}
+}%
+\\makeatother"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ))
+
+(defun org-export-latex-no-toc (depth)
+    (when depth
+      (format "%% Org-mode is exporting headings to %s levels.\n"
+              depth)))
+  (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
+
 (require 'org-alert)
 
 (with-eval-after-load 'org
