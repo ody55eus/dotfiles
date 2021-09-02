@@ -112,7 +112,7 @@
                        :font "Roboto"
                        :height 185
                        :weight 'light))
-  ('darwin (set-face-attribute 'variable-pitch nil :font "Verdana" :height 150)))
+  ('darwin (set-face-attribute 'variable-pitch nil :font "Arial" :height 185)))
 
 (setq display-line-numbers-type 'relative)
 
@@ -751,7 +751,11 @@
 ;; Optional Magit Configuration
 
 ;; Tell Emacs where to find mu4e (only necessary if manual compiled)
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e"))
+  ('darwin (use-package mu4e
+  :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/")))
 
 ;; Load org-mode integration
 ;;(require 'mu4e-org)

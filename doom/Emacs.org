@@ -572,7 +572,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
                        :font "Roboto"
                        :height 185
                        :weight 'light))
-  ('darwin (set-face-attribute 'variable-pitch nil :font "Verdana" :height 150)))
+  ('darwin (set-face-attribute 'variable-pitch nil :font "Arial" :height 185)))
 
 #+end_src
 
@@ -1951,7 +1951,11 @@ Useful mu4e manual pages:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 ;; Tell Emacs where to find mu4e (only necessary if manual compiled)
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e"))
+  ('darwin (use-package mu4e
+  :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/")))
 
 ;; Load org-mode integration
 ;;(require 'mu4e-org)
