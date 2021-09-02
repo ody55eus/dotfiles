@@ -199,6 +199,7 @@
 
 (setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
       org-roam-dailies-directory (file-truename "~/ZK/daily")
+      org-attach-id-dir (concat org-roam-directory "/Literature/.attach")
       org-roam-completion-everywhere t
       org-roam-completion-system 'default)
 
