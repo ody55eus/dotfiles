@@ -199,6 +199,7 @@
 
 (setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
       org-roam-dailies-directory (file-truename "~/ZK/daily")
+      org-attach-id-dir (concat org-roam-directory "/Literature/.attach")
       org-roam-completion-everywhere t
       org-roam-completion-system 'default)
 
@@ -770,6 +771,14 @@
   ;; dreaded "UID is N beyond highest assigned" error.
   ;; See this link for more info: https://stackoverflow.com/a/43461973
   (setq mu4e-change-filenames-when-moving t)
+
+  ;; Make sure to use 24h time format.
+  (setq mu4e-headers-time-format "%T" ; %T: Full 24h-Time [same as %H:%M:%S] (e.g. 23:59:59)
+        mu4e-headers-date-format "%d/%m/%y"
+        ;;mu4e-view-date-format "%F %T" ; %F: Full date [like %+4Y-%m-%d] (e.g. 2021-12-31)
+        ;;mu4e-date-format-long "%F %T"
+        ;;mu4e-headers-long-date-format "%F %T"
+        )
 
   ;; Set up contexts for email accounts
   (setq mu4e-contexts
