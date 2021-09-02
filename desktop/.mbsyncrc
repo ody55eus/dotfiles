@@ -2,7 +2,7 @@ IMAPAccount mailbox
 Host imap.mailbox.org
 Port 993
 User jpieper@mailbox.org
-PassCmd "/Users/jp/emacsclient -e \"(jp/lookup-password :host \\\"imap.mailbox.org\\\" :user \\\"jpieper@mailbox.org\\\")\" | cut -d '\"' -f2"
+PassCmd "/Users/jp/build/emacs/lib-src/emacsclient -e \"(jp/lookup-password :host \\\"imap.mailbox.org\\\" :user \\\"jpieper@mailbox.org\\\")\" | cut -d '\"' -f2"
 SSLType IMAPS
 SSLVersions TLSv1.2
 CertificateFile /etc/ssl/cert.pem
