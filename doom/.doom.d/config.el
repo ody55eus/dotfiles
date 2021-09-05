@@ -627,6 +627,42 @@
 (setq bibtex-completion-bibliography '((concat (getenv "HOME") "/ZK/Literature/Library.bib")))
 (setq bibtex-completion-library-path '((concat (getenv "HOME") "/ZK/Literature/.attach")))
 
+(defun jp/org-roam-select-prefix (prefix)
+  (org-roam-node-read
+   nil
+   (lambda (node)
+     (string-prefix-p
+      (concat org-roam-directory prefix)
+      (org-roam-node-file node))
+     )
+   ))
+
+(defun jp/org-roam-select-literature ()
+  (interactive)
+  (jp/org-roam-select-prefix "/Literature"))
+
+(defun jp/org-roam-select-pc ()
+  (interactive)
+  (jp/org-roam-select-prefix "/PC"))
+
+(defun jp/org-roam-select-other ()
+  (interactive)
+  (jp/org-roam-select-prefix "/20"))
+
+(defun jp/org-roam-get-tagged (&optional tag="@work")
+  (interactive)
+  (mapcar
+   #'org-roam-node-file
+   (seq-filter
+    (lambda (node)
+      (member tag (org-roam-node-tags node)))
+    (org-roam-node-list))))
+
+(defun jp/org-roam-agenda ()
+  (interactive)
+  (setq org-agenda-files (jp/org-roam-get-tagged "@work"))
+  (org-agenda))
+
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired
 (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)

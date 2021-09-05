@@ -13,6 +13,7 @@
   - [[#workflow-configuration][Workflow Configuration]]
   - [[#exports][Exports]]
   - [[#additional-org-packages][Additional Org Packages]]
+  - [[#self-written-extensions][Self-written extensions]]
 - [[#additional-packages][Additional Packages]]
   - [[#dired-file-manager][Dired (File Manager)]]
   - [[#languages-ide-using-language-server][Languages (IDE using Language Server)]]
@@ -1626,6 +1627,52 @@ This Configuration runs on start end finish of presentations:
 
 #+end_src
 
+** Self-written extensions
+:Source:
+These extra functions are inspired by the System Crafters live stream of September 3rd 2021:
+https://systemcrafters.net/live-streams/september-03-2021/
+:END:
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(defun jp/org-roam-select-prefix (prefix)
+  (org-roam-node-read
+   nil
+   (lambda (node)
+     (string-prefix-p
+      (concat org-roam-directory prefix)
+      (org-roam-node-file node))
+     )
+   ))
+
+(defun jp/org-roam-select-literature ()
+  (interactive)
+  (jp/org-roam-select-prefix "/Literature"))
+
+(defun jp/org-roam-select-pc ()
+  (interactive)
+  (jp/org-roam-select-prefix "/PC"))
+
+(defun jp/org-roam-select-other ()
+  (interactive)
+  (jp/org-roam-select-prefix "/20"))
+
+(defun jp/org-roam-get-tagged (&optional tag="@work")
+  (interactive)
+  (mapcar
+   #'org-roam-node-file
+   (seq-filter
+    (lambda (node)
+      (member tag (org-roam-node-tags node)))
+    (org-roam-node-list))))
+
+(defun jp/org-roam-agenda ()
+  (interactive)
+  (setq org-agenda-files (jp/org-roam-get-tagged "@work"))
+  (org-agenda))
+
+#+end_src
+
 * TODO Additional Packages
 ** Dired (File Manager)
 
@@ -2158,9 +2205,6 @@ Useful mu4e manual pages:
     (mu4e-alert-enable-notifications)))
 
 #+end_src
-
-#+RESULTS:
-: jp/go-to-inbox
 
 ** Password Save
 
