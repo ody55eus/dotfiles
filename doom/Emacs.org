@@ -1492,6 +1492,11 @@ See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online 
 
 #+end_src
 
+*** HTML
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(add-to-list 'org-link-abbrev-alist '("id" . "https://id.ody5.de/?id="))
+#+end_src
+
 ** Additional Org Packages
 *** Org Alert
 
