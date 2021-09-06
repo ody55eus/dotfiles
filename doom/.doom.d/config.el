@@ -556,6 +556,8 @@
               depth)))
   (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
 
+(add-to-list 'org-link-abbrev-alist '("id" . "https://id.ody5.de/?id="))
+
 (require 'org-alert)
 
 (with-eval-after-load 'org
