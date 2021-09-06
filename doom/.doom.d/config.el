@@ -43,6 +43,7 @@
        :desc "Toggle line highlight in frame" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
+       :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        )
       (:prefix ("w" . "window")
        :desc "evil-window-left" :n "<left>" #'evil-window-left
@@ -186,10 +187,13 @@
 (setq org-directory "~/org/"
       org-agenda-files '("~/org/Agenda.org"
                          "~/org/Tasks.org"
-                         "~/org/Habits.org"
-                         "~/org/Emails.org")
+                         ;;"~/org/Habits.org"
+                         )
       org-default-notes-file (concat org-directory "/Notes.org")
       org-clock-sound "~/sounds/ding.wav")
+
+;; Method-Paper (Project)
+(add-to-list 'org-agenda-files (org-roam-node-file (org-roam-node-from-id "e7c494b3-bb76-4fbe-a79e-a8cb9153ff6d")))
 
 (setq auth-sources '((:source "~/.authinfo.gpg")))
 
@@ -430,7 +434,8 @@
          ((agenda "" ((org-deadline-warning-days 20)))
           (todo "BACKLOG"
                 ((org-agenda-overriding-header "Backlog Tasks")))
-          (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))
+          (todo "ACTIVE" ((org-agenda-overriding-header "Active Tasks")))
+          (todo "REVIEW" ((org-agenda-overriding-header "Active Reviews")))
           (todo "EPIC" ((org-agenda-overriding-header "Active Epics")))))
 
         ("T" "All Todo Tasks"
@@ -555,8 +560,6 @@
       (format "%% Org-mode is exporting headings to %s levels.\n"
               depth)))
   (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
-
-(add-to-list 'org-link-abbrev-alist '("id" . "https://id.ody5.de/?id="))
 
 (require 'org-alert)
 
