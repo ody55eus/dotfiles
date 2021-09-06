@@ -65,12 +65,12 @@ set $mod Mod4
 # use this line to tell which monitor is on the right
 # xrandr --output DVI-I-2 --right-of DVI-I-1 --auto
 #exec --no-startup-id xrandr --output LVDS1 --mode 1366x768 --output DP3 --mode 1920x1080 --right-of LVDS1
-exec --no-startup-id xrandr --output DVI-D-0 --right-of HDMI-0 --auto
 #exec --no-startup-id xrandr --output DVI-1 --right-of DVI-0 --auto
 #exec --no-startup-id xrandr --output DVI-D-1 --right-of DVI-I-1 --auto
 #exec --no-startup-id xrandr --output HDMI-2 --right-of HDMI-1 --auto
 #exec --no-startup-id xrandr --output HDMI2 --right-of HDMI1 --auto
-
+#exec --no-startup-id xrandr --output DVI-D-0 --right-of HDMI-0 --auto
+exec --no-startup-id xrandr --output HDMI2 --right-of eDP1 --auto
 
 # my current setup
 
@@ -90,7 +90,7 @@ exec --no-startup-id xrandr --output DVI-D-0 --right-of HDMI-0 --auto
 #set $firstMonitor HDMI-1
 #set $secondMonitor HDMI-2
 
-set $firstMonitor HDMI1
+set $firstMonitor eDP1
 set $secondMonitor HDMI2
 
 workspace 1 output $firstMonitor
