@@ -1495,7 +1495,8 @@ See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online 
 
 *** HTML
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(add-to-list 'org-link-abbrev-alist '("id" . "https://id.ody5.de/?id="))
+(add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
+(add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
 #+end_src
 
 ** Additional Org Packages
@@ -1662,13 +1663,14 @@ https://systemcrafters.net/live-streams/september-03-2021/
   (interactive)
   (jp/org-roam-select-prefix "/20"))
 
-(defun jp/org-roam-get-tagged (&optional tag="@work")
+(defun jp/org-roam-get-tagged (&optional tag)
   (interactive)
+  (let ((this-tag (or tag "@work"))))
   (mapcar
    #'org-roam-node-file
    (seq-filter
     (lambda (node)
-      (member tag (org-roam-node-tags node)))
+      (member this-tag (org-roam-node-tags node)))
     (org-roam-node-list))))
 
 (defun jp/org-roam-agenda ()

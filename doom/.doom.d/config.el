@@ -651,13 +651,14 @@
   (interactive)
   (jp/org-roam-select-prefix "/20"))
 
-(defun jp/org-roam-get-tagged (&optional tag="@work")
+(defun jp/org-roam-get-tagged (&optional tag)
   (interactive)
+  (let ((this-tag (or tag "@work"))))
   (mapcar
    #'org-roam-node-file
    (seq-filter
     (lambda (node)
-      (member tag (org-roam-node-tags node)))
+      (member this-tag (org-roam-node-tags node)))
     (org-roam-node-list))))
 
 (defun jp/org-roam-agenda ()
