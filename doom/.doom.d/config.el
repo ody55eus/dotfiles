@@ -556,7 +556,8 @@
               depth)))
   (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
 
-(add-to-list 'org-link-abbrev-alist '("id" . "https://id.ody5.de/?id="))
+(add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
+(add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
 
 (require 'org-alert)
 
