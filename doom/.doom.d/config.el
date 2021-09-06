@@ -43,6 +43,7 @@
        :desc "Toggle line highlight in frame" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
+       :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        )
       (:prefix ("w" . "window")
        :desc "evil-window-left" :n "<left>" #'evil-window-left
@@ -434,7 +435,8 @@
          ((agenda "" ((org-deadline-warning-days 20)))
           (todo "BACKLOG"
                 ((org-agenda-overriding-header "Backlog Tasks")))
-          (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))
+          (todo "ACTIVE" ((org-agenda-overriding-header "Active Tasks")))
+          (todo "REVIEW" ((org-agenda-overriding-header "Active Reviews")))
           (todo "EPIC" ((org-agenda-overriding-header "Active Epics")))))
 
         ("T" "All Todo Tasks"
