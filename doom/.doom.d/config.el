@@ -186,8 +186,9 @@
 (setq org-directory "~/org/"
       org-agenda-files '("~/org/Agenda.org"
                          "~/org/Tasks.org"
-                         "~/org/Habits.org"
-                         "~/org/Emails.org")
+                         ;;"~/org/Habits.org"
+                         ;;"~/org/Emails.org"
+                         )
       org-default-notes-file (concat org-directory "/Notes.org")
       org-clock-sound "~/sounds/ding.wav")
 
