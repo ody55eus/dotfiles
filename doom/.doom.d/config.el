@@ -203,6 +203,9 @@
       org-roam-completion-everywhere t
       org-roam-completion-system 'default)
 
+;; Method-Paper (Project)
+(add-to-list 'org-agenda-files (org-roam-node-file (org-roam-node-from-id "e7c494b3-bb76-4fbe-a79e-a8cb9153ff6d")))
+
 (setq org-ellipsis " ▼ ")
 
 (defun jp/org-mode-setup ()
