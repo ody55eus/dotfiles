@@ -46,4 +46,4 @@ export BASH_SILENCE_DEPRECATION_WARNING=1;
 
 # eval "$(fnm env)"
 # eval "$(zoxide init zsh)"
-eval "`pip completion --zsh`"
+eval "`python -m pip completion --zsh`"
