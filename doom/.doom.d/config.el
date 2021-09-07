@@ -1,5 +1,6 @@
 (setq user-full-name "Jonathan Pieper")
 (setq user-mail-address "ody55eus@mailbox.org")
+(setq epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
@@ -112,7 +113,7 @@
                        :font "Roboto"
                        :height 185
                        :weight 'light))
-  ('darwin (set-face-attribute 'variable-pitch nil :font "Arial" :height 185)))
+  ('darwin (set-face-attribute 'variable-pitch nil :font "Roboto" :height 185)))
 
 (setq display-line-numbers-type 'relative)
 

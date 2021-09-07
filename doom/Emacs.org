@@ -28,6 +28,7 @@
 
 (setq user-full-name "Jonathan Pieper")
 (setq user-mail-address "ody55eus@mailbox.org")
+(setq epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 #+end_src
 
@@ -573,7 +574,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
                        :font "Roboto"
                        :height 185
                        :weight 'light))
-  ('darwin (set-face-attribute 'variable-pitch nil :font "Arial" :height 185)))
+  ('darwin (set-face-attribute 'variable-pitch nil :font "Roboto" :height 185)))
 
 #+end_src
 
