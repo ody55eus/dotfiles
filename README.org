@@ -1,0 +1,12 @@
+#+TITLE: Readme
+
+This repository contains my personal computer configuration. These files customize my system for my personal needs. They can provide useful insights for anyone who might find them helpful in customizing their own dotfiles.
+
+* Disclaimer
+I explicitly *do not advice* anyone to blindly use these files *without reading and understanding* them.
+
+* Deployment
+These files are managed using [[https://www.gnu.org/software/stow/][GNU Stow]]. This allows me to clone the repository into =~/.dotfiles= and deploy symbolic links in my home folder.
+
+* License
+My personal code is licensed using the [[./LICENSE][CC0/Public Domain]] license. Some parts of these configuration files are marked to originate from other sources. Please follow the respective links to find out if these parts are licensed using a different license (e.g. [[https://github.com/daviwil][David Wilson]] licensed his [[https://github.com/daviwil/dotfiles][dotfiles]] under the [[https://github.com/daviwil/dotfiles/blob/master/LICENSE][GPLv3]] License and I procured his permission to reuse and publish his [[https://github.com/daviwil/emacs-from-scratch][unlicensed Emacs-from-scratch code]]).
