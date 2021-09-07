@@ -572,6 +572,13 @@
   (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
   (add-to-list 'org-structure-template-alist '("json" . "src json")))
 
+;; Enable Special Blocks in Org-Mode
+(add-hook #'org-mode-hook #'org-special-block-extras-mode)
+
+;; Use short names like ‘defblock’ instead of the fully qualified name
+;; ‘org-special-block-extras--defblock’
+;; (org-special-block-extras-short-names)
+
 (defun jp/presentation-setup()
   ;;(setq text-scale-mode-amount 3)
   ;;(text-scale-mode 1)

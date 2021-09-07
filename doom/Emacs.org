@@ -1538,13 +1538,19 @@ Org-tempo is a package that allows for '<s' followed by TAB to expand to a begin
 
 #+end_src
 
-*** HOLD Org Special Block Extras
+*** TODO Org Special Block Extras
 
 Templating System to export org documents into LaTeX, HTML, etc. with individual templates.
 See [[https://github.com/alhassy/org-special-block-extras][Github Repo→]] for further information.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; Enable Special Blocks in Org-Mode
 (add-hook #'org-mode-hook #'org-special-block-extras-mode)
+
+;; Use short names like ‘defblock’ instead of the fully qualified name
+;; ‘org-special-block-extras--defblock’
+;; (org-special-block-extras-short-names)
 #+end_src
 
 *** Org Tree Slide (Presentations)
