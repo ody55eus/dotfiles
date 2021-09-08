@@ -90,8 +90,8 @@ exec --no-startup-id xrandr --output DVI-D-0 --right-of HDMI-0 --auto
 #set $firstMonitor HDMI-1
 #set $secondMonitor HDMI-2
 
-set $firstMonitor HDMI1
-set $secondMonitor HDMI2
+set $firstMonitor DVI-D-0
+set $secondMonitor HDMI-0
 
 workspace 1 output $firstMonitor
 workspace 2 output $firstMonitor
