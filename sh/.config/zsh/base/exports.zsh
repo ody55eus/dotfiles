@@ -41,7 +41,7 @@ export BASH_SILENCE_DEPRECATION_WARNING=1;
 
 # Speedy keys
 # kbdrate -d 200 -r 30
-# xset r rate 200 30
+xset r rate 200 50
 
 
 # eval "$(fnm env)"
