@@ -367,7 +367,7 @@ font pango:Noto Mono Regular 13
 # you can find the class with the program xprop
 
 # Workspace 1 browser related
-assign [class="Firefox|Vivaldi-stable|Vivaldi-snapshot|Opera"]                      → 1
+#assign [class="Firefox|Vivaldi-stable|Vivaldi-snapshot|Opera"]                      → 1
 #assign [class="Chromium|Google-chrome"]                                             → 1
 
 # Workspace 2 text editor related
@@ -398,9 +398,9 @@ assign [class="Firefox|Vivaldi-stable|Vivaldi-snapshot|Opera"]                  
 #assign [class="Geary|Evolution"]                                                    → 9
 
 # Workspace 10 music related
-assign [class="Spotify|spotify"]                                                    → 10
+#assign [class="Spotify|spotify"]                                                    → 10
 #fix for spotify not moving to workspace 10
-for_window [class="Spotify"] move to workspace 10
+#for_window [class="Spotify"] move to workspace 10
 
 
 
@@ -419,7 +419,7 @@ exec_always --no-startup-id autotiling
 
 #browser
 #exec --no-startup-id vivaldi-stable
-for_window [class="Vivaldi-stable"] focus
+#for_window [class="Vivaldi-stable"] focus
 
 #text-editor
 exec --no-startup-id emacs
@@ -433,8 +433,8 @@ exec --no-startup-id emacs
 #exec --no-startup-id evolution
 
 #Music
-exec --no-startup-id spotify
-for_window [class="Spotify"] focus
+#exec --no-startup-id spotify
+#for_window [class="Spotify"] focus
 
 
 
