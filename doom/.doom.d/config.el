@@ -333,19 +333,6 @@
                                        :clock-in :clock-resume
                                        :empty-lines 1)) t)
 
-(add-to-list 'org-capture-templates '(("w" "Web site" entry
-                                       (file "")
-                                       "* %a :website:\n\n%U %?\n\n%:initial")
-                                      :empty-lines 1) t)
-
-(add-to-list 'org-capture-templates '(("r" "References" plain
-                                       "%?\n\n* Citations\n%x"
-                                       :if-new (file+head
-                                                "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                "#+title: ${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
-                                       :unnarrowed t)
-                                      :empty-lines 1) t)
-
 (setq org-roam-capture-templates
       '(("d" "default" plain
          "%?\n\nSee also %a.\n"
@@ -361,12 +348,11 @@
          :clock-in :clock-resume
          :unnarrowed t
          )
-        ("e" "Person" plain
+        ("i" "Individuum / Persona" plain
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "People/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
-         :clock-in :clock-resume
          :unnarrowed t
          )
         ("l" "Literature" plain
@@ -374,7 +360,6 @@
          :if-new (file+head
                   "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
-         :clock-in :clock-resume
          :unnarrowed t
          )
         ("p" "PC" plain
@@ -382,6 +367,14 @@
          :if-new (file+head
                   "PC/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n#+date: %U")
+         :unnarrowed t
+         )
+        ;; bibliography note template
+        ("r" "Bibliography reference" plain
+         "#+ROAM_KEY: %^{citekey}\n#+PROPERTY: type %^{entry-type}\n#+FILETAGS: %^{keywords}\n#+AUTHOR: %^{author}\n%?"
+         :if-new (file+head
+                  "References/${citekey}.org"
+                  "#+title: ${title}\n")
          :unnarrowed t
          )
         )
@@ -398,35 +391,50 @@
                                        )
       )
 
+(add-to-list 'org-roam-capture-ref-templates '(("w" "Web site" entry
+                                                (file "")
+                                                "* %a :website:\n\n%U %?\n\n%:initial")
+                                               :empty-lines 1)
+             t) ; Append at the end
+
+(add-to-list 'org-roam-capture-ref-templates '(("l" "Literature References" plain
+                                                "%?\n\n* Citations\n%x"
+                                                :if-new (file+head
+                                                         "References/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                         "#+title: ${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
+                                                :unnarrowed t)
+                                               :empty-lines 1)
+             t) ; Append at the end
+
 (setq org-roam-dailies-capture-templates
       '(("d" "default" entry
          "* %?"
          :if-new (file+head
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d>\n\n[[roam:%<%Y-%B>]]\n\n"
-                  :kill-buffer t)
+                  "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
+         :kill-buffer t
          )
         ("j" "Journal entry" entry
          "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d>\n\n"
-                  ("Journal")
-                  :kill-buffer t)
+                  "#+title: %<%Y-%m-%d>\n"
+                  ("Journal"))
+         :kill-buffer t
          )
-        ("l" "Log" entry
+        ("l" "Monthly Log" entry
          "* %?\n  %U\n  %a\n  %i"
          :if-new (file+head+olp
                   "%<%Y-%B>.org"
-                  "#+title: %<%Y-%m-%d>\n\n[[roam:%<%Y-%B>]]\n\n"
-                  ("Log")
-                  :kill-buffer t)
+                  "#+title: %<%Y-%B>\n"
+                  ("Log"))
+         :kill-buffer t
          )
         ("m" "meeting" entry
-         "* ~%<%H:%M>~ - %^{Meeting Title} :meetings:\n\n%?\n\n"
+         (file "templates/Meetings.org")
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d>\n\n[[roam:%<%Y-%B>]]\n\n"
+                  "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
                   ("Meetings")))))
 
 (setq org-agenda-custom-commands
@@ -618,10 +626,10 @@
   (require 'org-ref)) ; optional: if Org Ref is not loaded anywhere else, load it here
 
 ;; Helm Autocompletion
-;;(autoload 'helm-bibtex "helm-bibtex" "" t)
+(autoload 'helm-bibtex "helm-bibtex" "" t)
 
 ;; Ivy Autocompletion
-(autoload 'ivy-bibtex "ivy-bibtex" "" t)
+;;(autoload 'ivy-bibtex "ivy-bibtex" "" t)
 ;; ivy-bibtex requires ivy's `ivy--regex-ignore-order` regex builder, which
 ;; ignores the order of regexp tokens when searching for matching candidates.
 ;; Add something like this to your init file:
@@ -629,8 +637,10 @@
       '((ivy-bibtex . ivy--regex-ignore-order)
         (t . ivy--regex-plus)))
 
-(setq bibtex-completion-bibliography '((concat (getenv "HOME") "/ZK/Literature/Library.bib")))
-(setq bibtex-completion-library-path '((concat (getenv "HOME") "/ZK/Literature/.attach")))
+(setq bibtex-file-path (concat org-roam-directory "/BibTeX/")
+      bibtex-files '("Library.bib" "Master.bib")
+      bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib" "~/ZK/BibTeX/Master.bib")
+      bibtex-completion-library-path '("~/nc/Library/BibTeX/"))
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired
