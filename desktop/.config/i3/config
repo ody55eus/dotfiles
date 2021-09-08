@@ -564,6 +564,7 @@ bindsym $mod+w exec --no-startup-id exo-open --launch webbrowser;focus
 bindsym control+mod1+f exec --no-startup-id firefox;focus
 bindsym control+mod1+v exec --no-startup-id vivaldi-stable;focus
 bindsym control+mod1+g exec --no-startup-id chromium;focus
+bindsym control+mod1+n exec --no-startup-id nyxt;focus
 
 #workspace 2 related
 #bindsym $mod+F2 exec --no-startup-id geany;focus
