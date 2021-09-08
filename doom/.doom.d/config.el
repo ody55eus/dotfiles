@@ -1,5 +1,6 @@
 (setq user-full-name "Jonathan Pieper")
 (setq user-mail-address "ody55eus@mailbox.org")
+(setq epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
@@ -94,7 +95,7 @@
                        :font "Source Code Pro"
                        :weight 'regular
                        :height 140))
-  ('darwin (set-face-attribute 'default nil :font "Liberation Mono for Powerline" :height 140)))
+  ('darwin (set-face-attribute 'default nil :font "Source Code Pro for Powerline" :height 140)))
 
 ;; Set the fixed pitch face
 (pcase system-type
@@ -103,7 +104,7 @@
                        :font "Source Code Pro"
                        :weight 'regular
                        :height 140))
-  ('darwin (set-face-attribute 'fixed-pitch nil :font "Liberation Mono for Powerline" :height 140)))
+  ('darwin (set-face-attribute 'fixed-pitch nil :font "Source Code Pro for Powerline" :height 140)))
 
 ;; Set the variable pitch face
 (pcase system-type
@@ -113,7 +114,7 @@
                        :font "Roboto"
                        :height 185
                        :weight 'light))
-  ('darwin (set-face-attribute 'variable-pitch nil :font "Hiragino Sans" :height 150)))
+  ('darwin (set-face-attribute 'variable-pitch nil :font "Roboto" :height 185)))
 
 (setq display-line-numbers-type 'relative)
 
@@ -188,6 +189,7 @@
       org-agenda-files '("~/org/Agenda.org"
                          "~/org/Tasks.org"
                          ;;"~/org/Habits.org"
+                         ;;"~/org/Emails.org"
                          )
       org-default-notes-file (concat org-directory "/Notes.org")
       org-clock-sound "~/sounds/ding.wav")
@@ -569,6 +571,9 @@
               depth)))
   (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
 
+(add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
+(add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
+
 (require 'org-alert)
 
 (with-eval-after-load 'org
@@ -584,6 +589,13 @@
   (add-to-list 'org-structure-template-alist '("go" . "src go"))
   (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
   (add-to-list 'org-structure-template-alist '("json" . "src json")))
+
+;; Enable Special Blocks in Org-Mode
+(add-hook #'org-mode-hook #'org-special-block-extras-mode)
+
+;; Use short names like ‘defblock’ instead of the fully qualified name
+;; ‘org-special-block-extras--defblock’
+;; (org-special-block-extras-short-names)
 
 (defun jp/presentation-setup()
   ;;(setq text-scale-mode-amount 3)
@@ -641,6 +653,43 @@
       bibtex-files '("Library.bib" "Master.bib")
       bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib" "~/ZK/BibTeX/Master.bib")
       bibtex-completion-library-path '("~/nc/Library/BibTeX/"))
+
+(defun jp/org-roam-select-prefix (prefix)
+  (org-roam-node-read
+   nil
+   (lambda (node)
+     (string-prefix-p
+      (concat org-roam-directory prefix)
+      (org-roam-node-file node))
+     )
+   ))
+
+(defun jp/org-roam-select-literature ()
+  (interactive)
+  (jp/org-roam-select-prefix "/Literature"))
+
+(defun jp/org-roam-select-pc ()
+  (interactive)
+  (jp/org-roam-select-prefix "/PC"))
+
+(defun jp/org-roam-select-other ()
+  (interactive)
+  (jp/org-roam-select-prefix "/20"))
+
+(defun jp/org-roam-get-tagged (&optional tag)
+  (interactive)
+  (let ((this-tag (or tag "@work"))))
+  (mapcar
+   #'org-roam-node-file
+   (seq-filter
+    (lambda (node)
+      (member this-tag (org-roam-node-tags node)))
+    (org-roam-node-list))))
+
+(defun jp/org-roam-agenda ()
+  (interactive)
+  (setq org-agenda-files (jp/org-roam-get-tagged "@work"))
+  (org-agenda))
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired
@@ -815,7 +864,11 @@
 ;; Optional Magit Configuration
 
 ;; Tell Emacs where to find mu4e (only necessary if manual compiled)
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e"))
+  ('darwin (use-package mu4e
+  :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/")))
 
 ;; Load org-mode integration
 ;;(require 'mu4e-org)
@@ -915,6 +968,16 @@
                 :name "All Inboxes"
                 :query "maildir:/Mailbox/INBOX OR maildir:/Personal/Inbox"
                 :key ?i))
+  (add-to-list 'mu4e-bookmarks
+               (make-mu4e-bookmark
+                :name "Uni-Frankfurt"
+                :query "from:/.*@uni-frankfurt/ OR maildir:/Personal/Uni"
+                :key ?g))
+  (add-to-list 'mu4e-bookmarks
+               (make-mu4e-bookmark
+                :name "Family"
+                :query "from:baerbel OR from:pieper OR from:kaiser OR from:kessler OR from:thewake35 OR maildir:/Mailbox/familie"
+                :key ?m))
 
   ;; don't keep message buffers around
   (setq message-kill-buffer-on-exit t)

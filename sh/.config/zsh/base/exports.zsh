@@ -46,4 +46,4 @@ xset r rate 200 50
 
 # eval "$(fnm env)"
 # eval "$(zoxide init zsh)"
-eval "`pip completion --zsh`"
+eval "`python -m pip completion --zsh`"

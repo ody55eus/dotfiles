@@ -39,7 +39,7 @@ Patterns * !"Archive/*"
 Expunge None
 CopyArrivalDate yes
 Sync All
-Create Slave
+Create Near
 SyncState *
 
 #+end_src
