@@ -21,10 +21,6 @@ alias rm='rm -i'
 # Some coloring after clear
 alias clear='clear && colorscript -r'
 
-# Kali still ships python2
-alias python='/usr/bin/python3'
-alias pip='/usr/bin/pip3'
-
 # Shortcuts
 alias d="cd ~/Documents"
 alias dl="cd ~/Downloads"
