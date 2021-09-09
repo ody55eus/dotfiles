@@ -45,6 +45,12 @@
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
+       (:prefix ("SPC" . "Whitespaces")
+        :desc "Toggle local whitespace option" "l" #'whitespace-toggle-options
+        :desc "Toggle global whitespace option" "g" #'global-whitespace-toggle-options
+        :desc "Toggle local whitespace mode" "t" #'whitespace-mode
+        :desc "Toggle global whitespace mode" "w" #'global-whitespace-mode
+        )
        )
       (:prefix ("w" . "window")
        :desc "evil-window-left" :n "<left>" #'evil-window-left
@@ -188,7 +194,7 @@
 (setq org-directory "~/org/"
       org-agenda-files '("~/org/Agenda.org"
                          "~/org/Tasks.org"
-                         ;;"~/org/Habits.org"
+                         "~/org/Habits.org"
                          ;;"~/org/Emails.org"
                          )
       org-default-notes-file (concat org-directory "/Notes.org")
@@ -503,7 +509,6 @@
          ("@sys" . ?S)
          ("@home" . ?H)
          ("@work" . ?W)
-         ("agenda" . ?a)
          ("planning" . ?p)
          ("publish" . ?P)
          ("batch" . ?b)
@@ -518,8 +523,8 @@
 
 (setq org-archive-location ".archive/%s::")
 
-    ;; Save Org buffers after refiling!
-    (advice-add 'org-refile :after 'org-save-all-org-buffers)
+;; Save Org buffers after refiling!
+(advice-add 'org-refile :after 'org-save-all-org-buffers)
 
 (add-to-list 'org-modules 'org-habit)
 
@@ -867,8 +872,9 @@
 (pcase system-type
   ((or 'gnu/linux 'windows-nt 'cygwin)
    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e"))
-  ('darwin (use-package mu4e
-  :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/")))
+  ('darwin
+   (use-package mu4e
+     :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/")))
 
 ;; Load org-mode integration
 ;;(require 'mu4e-org)
