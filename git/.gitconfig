@@ -5,3 +5,6 @@
 	defaultBranch = main
 [gitlab "gitlab.ody5.de/api/v4"]
 	user = ody55eus
+[pull]
+	rebase = false
+	ff = only
