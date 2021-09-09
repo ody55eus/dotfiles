@@ -897,7 +897,7 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
 (setq org-directory "~/org/"
       org-agenda-files '("~/org/Agenda.org"
                          "~/org/Tasks.org"
-                         ;;"~/org/Habits.org"
+                         "~/org/Habits.org"
                          ;;"~/org/Emails.org"
                          )
       org-default-notes-file (concat org-directory "/Notes.org")
@@ -1383,7 +1383,6 @@ The Task Keywords are noted with their keybindings in parentheses.
          ("@sys" . ?S)
          ("@home" . ?H)
          ("@work" . ?W)
-         ("agenda" . ?a)
          ("planning" . ?p)
          ("publish" . ?P)
          ("batch" . ?b)
@@ -1422,8 +1421,8 @@ The Task Keywords are noted with their keybindings in parentheses.
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-    ;; Save Org buffers after refiling!
-    (advice-add 'org-refile :after 'org-save-all-org-buffers)
+;; Save Org buffers after refiling!
+(advice-add 'org-refile :after 'org-save-all-org-buffers)
 
 #+end_src
 
@@ -2089,8 +2088,9 @@ Useful mu4e manual pages:
 (pcase system-type
   ((or 'gnu/linux 'windows-nt 'cygwin)
    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e"))
-  ('darwin (use-package mu4e
-  :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/")))
+  ('darwin
+   (use-package mu4e
+     :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/")))
 
 ;; Load org-mode integration
 ;;(require 'mu4e-org)
