@@ -463,6 +463,12 @@ Just comment/uncomment some lines to disable/enable features.
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
+       (:prefix ("SPC" . "Whitespaces")
+        :desc "Toggle local whitespace option" "l" #'whitespace-toggle-options
+        :desc "Toggle global whitespace option" "g" #'global-whitespace-toggle-options
+        :desc "Toggle local whitespace mode" "t" #'whitespace-mode
+        :desc "Toggle global whitespace mode" "w" #'global-whitespace-mode
+        )
        )
       (:prefix ("w" . "window")
        :desc "evil-window-left" :n "<left>" #'evil-window-left
