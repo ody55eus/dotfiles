@@ -13,7 +13,7 @@
   - [[#workflow-configuration][Workflow Configuration]]
   - [[#exports][Exports]]
   - [[#additional-org-packages][Additional Org Packages]]
-  - [[#self-written-extensions][Self-written extensions]]
+  - [[#org-roam-specific][Org-Roam Specific]]
 - [[#additional-packages][Additional Packages]]
   - [[#dired-file-manager][Dired (File Manager)]]
   - [[#languages-ide-using-language-server][Languages (IDE using Language Server)]]
@@ -1657,7 +1657,20 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
 
 #+end_src
 
-** Self-written extensions
+** Org-Roam Specific
+*** Org-Roam Buffer
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-roam-mode-section-functions
+      (list #'org-roam-backlinks-section
+            #'org-roam-reflinks-section
+            #'org-roam-unlinked-references-section
+            ))
+
+#+end_src
+
+*** Self-written extensions
 :Source:
 These extra functions are inspired by the System Crafters live stream of September 3rd 2021:
 https://systemcrafters.net/live-streams/september-03-2021/

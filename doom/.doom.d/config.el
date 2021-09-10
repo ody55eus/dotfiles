@@ -662,6 +662,12 @@
       bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib" "~/ZK/BibTeX/Master.bib")
       bibtex-completion-library-path '("~/nc/Library/BibTeX/"))
 
+(setq org-roam-mode-section-functions
+      (list #'org-roam-backlinks-section
+            #'org-roam-reflinks-section
+            #'org-roam-unlinked-references-section
+            ))
+
 (defun jp/org-roam-select-prefix (prefix)
   (org-roam-node-read
    nil
