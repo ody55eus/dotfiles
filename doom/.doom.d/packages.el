@@ -96,7 +96,7 @@
 ;;(package! dashboard)            ; Display a dashboard when starting Emacs.
 (package! deft)                 ; Search for file contents
 
-(package! beacon)
+(package! beacon)               ; Highlight Cursor on big change
 
 ;; SVG Tag Mode (not working with doom Emacs yet!)
 ;; converts TODO / DONE etc.into small images.
