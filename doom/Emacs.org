@@ -455,7 +455,9 @@ Just comment/uncomment some lines to disable/enable features.
       ;; (:prefix-map ("o" . "open"))
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
-      ;; (:prefix-map ("s" . "search"))
+      (:prefix ("s" . "search")
+       :desc "Search/Insert BibTeX Cite" "c" #'helm-bibtex
+       )
       (:prefix ("t" . "toogle")
        :desc "Toggle Cmd Log Buffer" "b" #'clm/toggle-command-log-buffer
        :desc "Toggle Global Cmd Log" "c" #'global-command-log-mode
@@ -476,13 +478,14 @@ Just comment/uncomment some lines to disable/enable features.
        :desc "evil-window-up" :n "<up>" #'evil-window-up
        :desc "evil-window-down" :n "<down>" #'evil-window-down
        )
-      (:prefix-map ("n" . "notes")
+      (:prefix ("n" . "notes")
        (:prefix ("r" . "roam")
+        :desc "Insert BibTeX Note Link" "b" #'orb-insert-link
+        :desc "BibTeX Note Actions" "B" #'orb-note-actions
         :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
         :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
         :desc "Find org-roam Node" :n "f" #'org-roam-node-find
         :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
-        :desc "Toggle org-roam Buffer" :n "l" #'org-roam-buffer-toggle
         :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
         )
        )
