@@ -290,59 +290,54 @@
                         )
       )
 
-(setq org-capture-templates '(("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
-                               "* %?\n %x\n %i\n %a")))
-
-(add-to-list 'org-capture-templates '(("a" "Agenda")
-                                     ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
-                                      "* TODO %?\n %i\n %a")
-                                     ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
-                                      "* TODO %?\n %i\n %a")) t)
-
-(add-to-list 'org-capture-templates '(("m" "Email Workflow")
+(setq org-capture-templates '(
+                              ("a" "Agenda")
+                              ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
+                               "* TODO %?\n %i\n %a")
+                              ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
+                               "* TODO %?\n %i\n %a")
+                              ("M" "Meeting" entry
+                                       (file+olp+datetree "~/org/Meetings.org")
+                                       "* %<%H:%M> - %a :meetings:\n\n%?\n\n"
+                                       :clock-in :clock-resume
+                                       :empty-lines 1)
+                              ("m" "Email Workflow")
                               ("mf" "Follow Up" entry (file+olp "~/org/Mail.org" "Follow Up")
                                "* TODO %a")
                               ("mr" "Read Later" entry (file+olp "~/org/Mail.org" "Read Later")
-                               "* TODO %a")) t)
-
-(add-to-list 'org-capture-templates '(("t" "Task Entries")
-                              ("tt" "Todo Task" entry (file+headline "~/org/Tasks.org" "Tasks")
-                               "* TODO %?\n %i\n %a")
-                              ("te" "Epic Task" entry (file+headline "~/org/Tasks.org" "Epic")
-                               "* EPIC %?\n %i\n %a")
-                              ("ti" "New Idea" entry (file+headline "~/org/Tasks.org" "Ideas")
-                               "* IDEA %?\n %i\n %a")) t)
-
-(add-to-list 'org-capture-templates '(("s" "Create Org Scripts")
+                               "* TODO %a")
+                              ("l" "Logbook Entries")
+                              ("ls" "Software" entry
+                               (file+olp+datetree "~/org/Logbook.org")
+                               "\n* %<%I:%M %p> - Software :Software:\n\n%?\n\n"
+                               ;; ,(jp/read-file-as-string "~/Notes/Templates/Daily.org")
+                               :clock-in :clock-resume
+                               :empty-lines 1)
+                              ("lh" "Hardware" entry
+                               (file+olp+datetree "~/org/Logbook.org")
+                               "\n* %<%I:%M %p> - Hardware :Hardware:\n\n%?\n\n"
+                               :clock-in :clock-resume
+                               :empty-lines 1)
+                              ("lc" "Configuration" entry
+                               (file+olp+datetree "~/org/Logbook.org")
+                               "\n* %<%I:%M %p> - Configuration :Configuration:\n\n%?\n\n"
+                               :clock-in :clock-resume
+                               :empty-lines 1)
+                              ("s" "Create Scripts")
                               ("ss" "shell" file
                                (file+headline "~/org/scripts/${name}.org")
                                "\n* Shell Script:\n\n#+begin_src sh :tangle ./${name}.sh\n\n%?\n\n#+end_src"
                                :clock-in :clock-resume
-                               :empty-lines 1)) t)
-
-(add-to-list 'org-capture-templates '(("l" "Logbook Entries")
-                                      ("ls" "Software" entry
-                                       (file+olp+datetree "~/org/Logbook.org")
-                                       "\n* %<%I:%M %p> - Software :Software:\n\n%?\n\n"
-                                       ;; ,(jp/read-file-as-string "~/Notes/Templates/Daily.org")
-                                       :clock-in :clock-resume
-                                       :empty-lines 1)
-                                      ("lh" "Hardware" entry
-                                       (file+olp+datetree "~/org/Logbook.org")
-                                       "\n* %<%I:%M %p> - Hardware :Hardware:\n\n%?\n\n"
-                                       :clock-in :clock-resume
-                                       :empty-lines 1)
-                                      ("lc" "Configuration" entry
-                                       (file+olp+datetree "~/org/Logbook.org")
-                                       "\n* %<%I:%M %p> - Configuration :Configuration:\n\n%?\n\n"
-                                       :clock-in :clock-resume
-                                       :empty-lines 1)) t)
-
-(add-to-list 'org-capture-templates '(("M" "Meeting" entry
-                                       (file+olp+datetree "~/org/Meetings.org")
-                                       "* %<%H:%M> - %a :meetings:\n\n%?\n\n"
-                                       :clock-in :clock-resume
-                                       :empty-lines 1)) t)
+                               :empty-lines 1)
+                              ("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
+                               "* %?\n %x\n %i\n %a")
+                              ("t" "Task Entries")
+                              ("tt" "Todo Task" entry (file+headline "~/org/Notes.org" "Tasks")
+                               "* TODO %?\n %i\n %a")
+                              ("te" "Epic Task" entry (file+headline "~/org/Notes.org" "Epic")
+                               "* EPIC %?\n %i\n %a")
+                              ("ti" "New Idea" entry (file+headline "~/org/Notes.org" "Ideas")
+                               "* IDEA %?\n %i\n %a")))
 
 (setq org-roam-capture-templates
       '(("d" "default" plain
@@ -366,10 +361,18 @@
                   "#+title: ${title}\n")
          :unnarrowed t
          )
-        ("l" "Literature" plain
+        ("l" "Literature")
+        ("ll" "Literature Note" plain
          "%?\n\nSee also %a.\n* Links\n- %x\n* Notes\n"
          :if-new (file+head
                   "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "#+title: ${title}\n")
+         :unnarrowed t
+         )
+        ("lr" "Bibliography reference" plain
+         "#+ROAM_KEY: %^{citekey}\n#+PROPERTY: type %^{entry-type}\n#+FILETAGS: %^{keywords}\n#+AUTHOR: %^{author}\n%?"
+         :if-new (file+head
+                  "References/${citekey}.org"
                   "#+title: ${title}\n")
          :unnarrowed t
          )
@@ -378,14 +381,6 @@
          :if-new (file+head
                   "PC/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n#+date: %U")
-         :unnarrowed t
-         )
-        ;; bibliography note template
-        ("r" "Bibliography reference" plain
-         "#+ROAM_KEY: %^{citekey}\n#+PROPERTY: type %^{entry-type}\n#+FILETAGS: %^{keywords}\n#+AUTHOR: %^{author}\n%?"
-         :if-new (file+head
-                  "References/${citekey}.org"
-                  "#+title: ${title}\n")
          :unnarrowed t
          )
         )
@@ -442,11 +437,22 @@
          :kill-buffer t
          )
         ("m" "meeting" entry
-         (file "templates/Meetings.org")
+         (file "~/.dotfiles/.doom.d/templates/Meeting.org")
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
                   "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
-                  ("Meetings")))))
+                  ("Meetings")))
+        ("r" "Review")
+        ("rd" "Daily Review" entry
+         (file+head
+          "%<%Y-%m-%d>.org"
+          "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
+         (file "~/.dotfiles/doom/.doom.d/templates/daily-review.org"))
+        ("rm" "Monthly Review" entry
+         (file "~/.dotfiles/.doom.d/templates/monthly-review.org")
+         :if-new (file+head
+                  "%<%Y-%B>.org"
+                  "#+title: %<%Y-%B>\n"))))
 
 (setq org-agenda-custom-commands
       '(("d" "Dashboard"

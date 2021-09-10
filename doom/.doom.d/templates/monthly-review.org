@@ -1,0 +1,34 @@
+* Monthly Review
+:PROPERTIES:
+:SORT:     TYPE
+:END:
+** Review [[~/src/notes/goals.org][Life Goals]]
+- [ ] Scroll through completed goals.
+- [ ] Move newly completed goals to “Completed” heading for archives.
+- [ ] Update timelines for existing goals.
+- [ ] Update wording/definition/scale of goals.
+- [ ] Add any new goals, and corresponding projects if needed.
+** Review Project List
+- [ ] Archive any completed or inactive projects
+- [ ] Update outcome for each project, making sure corresponding goal is listed under each project in Org-Mode
+- [ ] Order projects by general priority in Org-Mode
+- [ ] Replicate updated Project List as needed
+  - [ ] Org-Mode
+  - [ ] Evernote
+  - [ ] Dropbox
+  - [ ] Google Drive
+  - [ ] Documents Folder
+** Review Areas of Responsibility
+- [ ] Evaluate areas and capture any new tasks, projects, habits, routines, or decisions needed.
+- [ ] Replicate list of areas across systems.
+  - [ ] Org-Mode
+  - [ ] Evernote
+  - [ ] Dropbox
+  - [ ] Google Drive
+  - [ ] Documents Folder
+** Review Someday / Maybe list
+- [ ] Review [[file:~/org/somedaymaybe.org][Someday Maybe List]]
+- [ ] Assign next actions or new projects to any that I might want to consider doing
+** Re-prioritize tasks
+- [ ] Review next actions and re-apply priority tags, accounting for priority drift
+** Empty trash
