@@ -1,0 +1,21 @@
+* Daily Review
+- [ ] Clear Physical Desktop / Inbox / Notebook
+- [ ] Clear Downloads and Desktop Folders
+  #+BEGIN_SRC emacs-lisp
+  (dired "~/Downloads/")
+  (dired "~/Desktop/")
+  (image-dired "~/Desktop/")
+  #+END_SRC
+- [ ] Clear Email Inboxes
+  #+BEGIN_SRC emacs-lisp
+ (jp/go-to-inbox)
+  #+END_SRC
+- [ ] Capture any remaining open loops as tasks
+  + [ ] Schedule + refile tasks in [[file:~/org/Notes.org][Org Mode Notes]], [[https://nc.ody5.de/][NextCloud]]
+- [ ] Schedule today's tasks (immersive -> process, deep -> shallow):
+  #+BEGIN_SRC emacs-lisp
+    (progn
+      (org-agenda nil "a")
+      (org-agenda-day-view))
+  #+END_SRC
+- [ ] Clock out.
