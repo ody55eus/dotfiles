@@ -1,6 +1,8 @@
 export PATH
 eval $(/opt/homebrew/bin/brew shellenv)
 
+export PATH=/opt/jp/bin:$PATH
+
 # Prefer US English and use UTF-8.
 export LANG='en_US.UTF-8';
 export LC_ALL='en_US.UTF-8';
@@ -18,3 +20,17 @@ export GPG_TTY=$(tty);
 # Hide the “default interactive shell is now zsh” warning on macOS.
 export BASH_SILENCE_DEPRECATION_WARNING=1;
 
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/homebrew/Caskroom/miniforge/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/homebrew/Caskroom/miniforge/base/etc/profile.d/conda.sh" ]; then
+        . "/opt/homebrew/Caskroom/miniforge/base/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/homebrew/Caskroom/miniforge/base/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
