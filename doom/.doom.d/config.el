@@ -123,7 +123,7 @@
                        :font "Roboto"
                        :height 185
                        :weight 'light))
-  ('darwin (set-face-attribute 'variable-pitch nil :font "Roboto" :height 185)))
+  ('darwin (set-face-attribute 'variable-pitch nil :font "Avenir" :height 185)))
 
 (setq display-line-numbers-type 'relative)
 
@@ -388,28 +388,28 @@
 
 (setq org-roam-capture-ref-templates '(
                                        ("r" "Reference" plain
-                                        "%?\n\n* Citations\n%x"
+                                        "%?\n\n* Citations\n${body}"
                                         :if-new (file+head
                                                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
                                                  "#+title: ${title}\n#+date: %U\n")
                                         :unnarrowed t
                                         )
+                                       ("l" "Literature References" plain
+                                        "%?\n\n* Abstract\n${body}"
+                                        :if-new (file+head
+                                                 "References/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                 "#+title: ${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
+                                        :unnarrowed t
+                                        :empty-lines 1)
+                                       ("w" "Web site" entry
+                                        :target (file+head
+                                                 "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                 "#+title: ${title}\n#+date: %U\n")
+                                        "* %a :website:\n\n%U %?\n\n%:initial")
                                        )
       )
 
-(add-to-list 'org-roam-capture-ref-templates '(("w" "Web site" entry
-                                                (file "")
-                                                "* %a :website:\n\n%U %?\n\n%:initial")
-                                               :empty-lines 1)
-             t) ; Append at the end
-
-(add-to-list 'org-roam-capture-ref-templates '(("l" "Literature References" plain
-                                                "%?\n\n* Citations\n%x"
-                                                :if-new (file+head
-                                                         "References/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                         "#+title: ${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
-                                                :unnarrowed t)
-                                               :empty-lines 1)
+(add-to-list 'org-roam-capture-ref-templates '
              t) ; Append at the end
 
 (setq org-roam-dailies-capture-templates
