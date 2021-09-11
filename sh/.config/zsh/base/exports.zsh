@@ -41,9 +41,9 @@ export BASH_SILENCE_DEPRECATION_WARNING=1;
 
 # Speedy keys
 # kbdrate -d 200 -r 30
-xset r rate 200 50
+# xset r rate 200 50
 
 
 # eval "$(fnm env)"
 # eval "$(zoxide init zsh)"
-eval "`python -m pip completion --zsh`"
+# eval "`python -m pip completion --zsh`"
