@@ -120,7 +120,7 @@
                        :font "Roboto"
                        :height 185
                        :weight 'light))
-  ('darwin (set-face-attribute 'variable-pitch nil :font "Roboto" :height 185)))
+  ('darwin (set-face-attribute 'variable-pitch nil :font "Avenir" :height 185)))
 
 (setq display-line-numbers-type 'relative)
 

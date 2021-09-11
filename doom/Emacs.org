@@ -582,7 +582,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
                        :font "Roboto"
                        :height 185
                        :weight 'light))
-  ('darwin (set-face-attribute 'variable-pitch nil :font "Roboto" :height 185)))
+  ('darwin (set-face-attribute 'variable-pitch nil :font "Avenir" :height 185)))
 
 #+end_src
 
