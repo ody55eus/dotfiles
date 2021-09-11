@@ -1,5 +1,8 @@
 .DS_Store
+/vim/.vim/backups/
 /vim/.vim/bundle/*
+/vim/.vim/swaps/*.swp
+/vim/.vim/undo/
 /sh/.config/zsh/.zsh_history
 /sh/.config/zsh/.zsh_sessions
 /sh/.config/zsh/.zcompdump-*
