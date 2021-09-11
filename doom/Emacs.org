@@ -1259,6 +1259,10 @@ The Task Keywords are noted with their keybindings in parentheses.
 - Add some custom floating notes templates.
 - Add org protocol templates
 
+:Source:
+The daily / monthly review templates are inspired by [[https://github.com/benoitj/dotfiles/tree/main/dot_config/emacs.local/templates][Benoit Joly's templates]].
+:END:
+
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq org-roam-dailies-capture-templates
