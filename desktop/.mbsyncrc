@@ -6,7 +6,8 @@ User jpieper@mailbox.org
 PassCmd "emacsclient -e \"(jp/lookup-password :host \\\"imap.mailbox.org\\\" :user \\\"jpieper@mailbox.org\\\")\" | cut -d '\"' -f2"
 SSLType IMAPS
 SSLVersions TLSv1.2
-CertificateFile /etc/ssl/certs/ca-certificates.crt
+CertificateFile ~/Mail/certificates/root-certificates.pem
+
 
 # Define the remote from which mail will be synced
 IMAPStore mailbox-remote
