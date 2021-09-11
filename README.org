@@ -7,6 +7,17 @@ I explicitly *do not advice* anyone to blindly use these files *without reading 
 
 * Deployment
 These files are managed using [[https://www.gnu.org/software/stow/][GNU Stow]]. This allows me to clone the repository into =~/.dotfiles= and deploy symbolic links in my home folder.
+#+begin_src sh
+git clone https://gitlab.com/ody55eus/dotfiles.git .dotfiles
+cd .dotfiles
+stow desktop  # Desktop (i3, conky)
+stow doom     # Doom Emacs as main text editor
+stow git      # Git
+stow keyboard # neo2 Keyboard Layout for MacOS
+stow sh       # bash and zsh configuration
+stow tmux     # tmux for shell sessions
+stow vim      # as alternative text editor
+#+end_src
 
 * License
 My personal code is licensed using the [[./LICENSE][CC0/Public Domain]] license. Some parts of these configuration files are marked to originate from other sources. Please follow the respective links to find out if these parts are licensed using a different license (e.g. [[https://github.com/daviwil][David Wilson]] licensed his [[https://github.com/daviwil/dotfiles][dotfiles]] under the [[https://github.com/daviwil/dotfiles/blob/master/LICENSE][GPLv3]] License and I procured his permission to reuse and publish his [[https://github.com/daviwil/emacs-from-scratch][unlicensed Emacs-from-scratch code]]).
