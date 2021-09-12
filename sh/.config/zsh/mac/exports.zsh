@@ -1,6 +1,7 @@
 export PATH
 eval $(/opt/homebrew/bin/brew shellenv)
 
+# Add my own install path on MacOS
 export PATH=/opt/jp/bin:$PATH
 
 # Prefer US English and use UTF-8.
