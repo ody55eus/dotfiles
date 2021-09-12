@@ -95,7 +95,7 @@
        )
  )
 
-(setq doom-theme 'doom-dark+)
+(setq doom-theme 'modus-vivendi)
 
 ;; Set the font face based on platform
 (pcase system-type
@@ -275,9 +275,9 @@
                                ("TODO" . org-warning)
                                ("IDEA" . (:foreground "BlueViolet"))
                                ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
-                               ("PLAN" . (:foreground "DarkMagenta" :weight bold :underline t))
-                               ("ACTIVE" . (:foreground "" :weight bold :underline t))
-                               ("REVIEW" . (:foreground "" :weight bold :underline t))
+                               ("PLAN" . (:foreground "Magenta1" :weight bold :underline t))
+                               ("ACTIVE" . (:foreground "Systemyellowcolor" :weight bold :slant italic :underline t))
+                               ("REVIEW" . (:foreground "Darkorange2" :weight bold :underline t))
                                ("WAIT" . (:foreground "yellow4" :weight light :slant italic))
                                ("HOLD" . (:foreground "red4"))
                                ("KILL" . "red")

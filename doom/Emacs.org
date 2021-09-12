@@ -552,7 +552,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(setq doom-theme 'doom-dark+)
+(setq doom-theme 'modus-vivendi)
 
 #+end_src
 
@@ -1042,9 +1042,9 @@ Set this value to ~nil~ to display them again.
                                ("TODO" . org-warning)
                                ("IDEA" . (:foreground "BlueViolet"))
                                ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
-                               ("PLAN" . (:foreground "DarkMagenta" :weight bold :underline t))
-                               ("ACTIVE" . (:foreground "" :weight bold :underline t))
-                               ("REVIEW" . (:foreground "" :weight bold :underline t))
+                               ("PLAN" . (:foreground "Magenta1" :weight bold :underline t))
+                               ("ACTIVE" . (:foreground "Systemyellowcolor" :weight bold :slant italic :underline t))
+                               ("REVIEW" . (:foreground "Darkorange2" :weight bold :underline t))
                                ("WAIT" . (:foreground "yellow4" :weight light :slant italic))
                                ("HOLD" . (:foreground "red4"))
                                ("KILL" . "red")
@@ -1312,7 +1312,6 @@ The daily / monthly review templates are inspired by [[https://github.com/benoit
                   "#+title: %<%Y-%B>\n"))))
 
 #+end_src
-
 
 *** TODO Custom Agenda View
 
