@@ -121,9 +121,12 @@
    (set-face-attribute 'variable-pitch nil
                        ;; :font "Cantarell"
                        :font "Roboto"
-                       :height 185
+                       :height 175
                        :weight 'light))
-  ('darwin (set-face-attribute 'variable-pitch nil :font "Avenir" :height 185)))
+  ('darwin (set-face-attribute 'variable-pitch nil
+                               :font "Helvetica"
+                               :height 175
+                               :weight 'light)))
 
 (setq display-line-numbers-type 'relative)
 
@@ -158,8 +161,6 @@
                              (frame-char-height)))))))
 
 (jp/set-frame-size-according-to-resolution)
-
-(add-hook 'org-mode-hook (rainbow-mode))
 
 (setq hl-todo-keyword-faces
       '(("TODO"   . "#cc0")
@@ -211,9 +212,11 @@
 
 (setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
       org-roam-dailies-directory (file-truename "~/ZK/daily")
-      org-attach-id-dir (concat org-roam-directory "/Literature/.attach")
-      org-roam-completion-everywhere t
-      org-roam-completion-system 'default)
+      org-attach-id-dir (concat org-roam-directory "/.attachments")
+      org-roam-completion-everywhere nil
+      org-roam-completion-system 'default
+      ;;org-roam-graph-executable "neato" ; or "dot" (default)
+      )
 
 ;; Method-Paper (Project)
 (add-to-list 'org-agenda-files (org-roam-node-file (org-roam-node-from-id "e7c494b3-bb76-4fbe-a79e-a8cb9153ff6d")))
@@ -221,10 +224,11 @@
 (setq org-ellipsis " ▼ ")
 
 (defun jp/org-mode-setup ()
-  (org-indent-mode)
+  (org-indent-mode 1)
   (mixed-pitch-mode 1) ; Enable different Fonts
-  (org-roam-setup) ; Enable org-roam
+  ;;(org-roam-setup) ; Enable org-roam-db-autosync
   (setq org-image-actual-width nil) ; Set optional images
+  (rainbow-mode 1)    ; Enable rainbow mode
   (visual-line-mode 1))
 
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
