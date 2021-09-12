@@ -41,7 +41,7 @@ zsh_load_config "omz"
 # Normal files to source
 zsh_load_config "base"
 zsh_load_config "vim"
-zsh_load_config "mac"
+zsh_load_config "linux"
 
 # Plugins
 zsh_add_plugin "zsh-users/zsh-autosuggestions"
