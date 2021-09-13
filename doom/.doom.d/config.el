@@ -1053,3 +1053,5 @@
                (entry (nth 0 matches)))
           (plist-get entry :secret)))
   (bitwarden-auth-source-enable))
+
+(setq flyspell-default-dictionary "en_GB-large") # or "en_US-large", "de"

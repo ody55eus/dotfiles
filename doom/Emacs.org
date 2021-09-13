@@ -22,6 +22,7 @@
   - [[#hold-magit][HOLD Magit]]
   - [[#mail-in-emacs-with-mu4e][Mail in Emacs with mu4e]]
   - [[#password-save][Password Save]]
+  - [[#flyspell-spell-checking-dictionary][Flyspell (spell checking dictionary)]]
 
 * About Me
 
@@ -2276,3 +2277,10 @@ Useful mu4e manual pages:
 
 #+end_src
 
+** Flyspell (spell checking dictionary)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq flyspell-default-dictionary "en_GB-large") # or "en_US-large", "de"
+
+#+end_src
