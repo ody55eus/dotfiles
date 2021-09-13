@@ -7,3 +7,6 @@
 [submodule "doom/.emacs.d"]
 	path = doom/.emacs.d
 	url = https://github.com/hlissner/doom-emacs.git
+[submodule "keyboard/neo2-layout-osx"]
+	path = keyboard/Library/Keyboard Layouts
+	url = https://github.com/jgosmann/neo2-layout-osx.git
