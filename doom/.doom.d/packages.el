@@ -58,10 +58,21 @@
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
 (package! org-download)
 (package! org-journal)
-(package! org-roam-bibtex
-    :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+
+;; Use latest version!
 (unpin! org-roam)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
+
+;; Org Roam UI (frontend for exploring and interacting org-roam)
+(package! websocket)
+(package! org-roam-ui
+  :recipe (:host github
+           :repo "org-roam/org-roam-ui"
+           :files ("*.el" "out")))
+
+(package! org-roam-bibtex
+  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+
 
 (package! org-protocol-capture-html
   :recipe (:host github
@@ -73,11 +84,11 @@
 ;; (package! ob-napkin)            ; PlantUML in Org Babel
 ;; (package! plantuml-mode)        ; PlantUML Diagrams
 
-; Org Exports
+                                        ; Org Exports
 (package! ox-twbs)      ; HTML Twitter Bootstrap
 (package! ox-rst)       ; ReStructured Text (ReST, RST)
 
-; Support for other File Types
+                                        ; Support for other File Types
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 
@@ -86,7 +97,7 @@
            :repo "seanfarley/emacs-bitwarden"
            :files ("bitwarden.el")))
 
-; Visual/Functional Enhancements
+                                        ; Visual/Functional Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
 (package! dmenu)                ; Dmenu Plugin.
@@ -118,7 +129,7 @@
 (package! company-box)          ; Auto-Completion
 
 (package! mu4e-alert)           ; E-Mail Alerts
-; Packages to share my keybindings when streaming
+                                        ; Packages to share my keybindings when streaming
 (package! command-log-mode)
 ;; (package! keycast
 ;;   :recipe (:host github

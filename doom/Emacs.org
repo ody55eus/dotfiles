@@ -22,6 +22,7 @@
   - [[#hold-magit][HOLD Magit]]
   - [[#mail-in-emacs-with-mu4e][Mail in Emacs with mu4e]]
   - [[#password-save][Password Save]]
+  - [[#flyspell-spell-checking-dictionary][Flyspell (spell checking dictionary)]]
 
 * About Me
 
@@ -334,10 +335,21 @@ Just comment/uncomment some lines to disable/enable features.
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
 (package! org-download)
 (package! org-journal)
-(package! org-roam-bibtex
-    :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+
+;; Use latest version!
 (unpin! org-roam)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
+
+;; Org Roam UI (frontend for exploring and interacting org-roam)
+(package! websocket)
+(package! org-roam-ui
+  :recipe (:host github
+           :repo "org-roam/org-roam-ui"
+           :files ("*.el" "out")))
+
+(package! org-roam-bibtex
+  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+
 
 (package! org-protocol-capture-html
   :recipe (:host github
@@ -349,11 +361,11 @@ Just comment/uncomment some lines to disable/enable features.
 ;; (package! ob-napkin)            ; PlantUML in Org Babel
 ;; (package! plantuml-mode)        ; PlantUML Diagrams
 
-; Org Exports
+                                        ; Org Exports
 (package! ox-twbs)      ; HTML Twitter Bootstrap
 (package! ox-rst)       ; ReStructured Text (ReST, RST)
 
-; Support for other File Types
+                                        ; Support for other File Types
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 
@@ -362,7 +374,7 @@ Just comment/uncomment some lines to disable/enable features.
            :repo "seanfarley/emacs-bitwarden"
            :files ("bitwarden.el")))
 
-; Visual/Functional Enhancements
+                                        ; Visual/Functional Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
 (package! dmenu)                ; Dmenu Plugin.
@@ -394,7 +406,7 @@ Just comment/uncomment some lines to disable/enable features.
 (package! company-box)          ; Auto-Completion
 
 (package! mu4e-alert)           ; E-Mail Alerts
-; Packages to share my keybindings when streaming
+                                        ; Packages to share my keybindings when streaming
 (package! command-log-mode)
 ;; (package! keycast
 ;;   :recipe (:host github
@@ -1018,10 +1030,12 @@ Set this value to ~nil~ to display them again.
 (require 'org-indent)
 
 ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
+(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
 (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
-(set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
-(set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
 (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
 (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
 (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
@@ -1711,6 +1725,26 @@ https://systemcrafters.net/live-streams/september-03-2021/
   (org-agenda))
 
 #+end_src
+*** Org-Roam UI
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;    :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+
+#+end_src
 
 * TODO Additional Packages
 ** Dired (File Manager)
@@ -2274,3 +2308,10 @@ Useful mu4e manual pages:
 
 #+end_src
 
+** Flyspell (spell checking dictionary)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq flyspell-default-dictionary "en_GB-large") ;; or "en_US-large", "de"
+
+#+end_src

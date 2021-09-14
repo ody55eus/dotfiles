@@ -2,7 +2,7 @@
   "title": "Neo2 (by ody55eus)",
   "rules": [
     {
-      "description": "Neo2 mod 3 and 4 keys (modified for Apple).",
+      "description": "Neo2 mod 3 and 4 keys (modified for Apple by ody55eus).",
       "manipulators": [
         {
           "type": "basic",
@@ -33,22 +33,6 @@
           "to": [
             {
               "key_code": "right_option"
-            }
-          ]
-        },
-        {
-          "type": "basic",
-          "from": {
-            "key_code": "right_option",
-            "modifiers": {
-              "optional": [
-                "any"
-              ]
-            }
-          },
-          "to": [
-            {
-              "key_code": "right_command"
             }
           ]
         },
@@ -201,58 +185,6 @@
         {
           "type": "basic",
           "from": {
-            "key_code": "8",
-            "modifiers": {
-              "optional": [
-                "shift",
-                "caps_lock",
-                "command",
-                "left_option"
-              ]
-            }
-          },
-          "to": [
-            {
-               "apple_vendor_top_case_key_code": "video_mirror"
-            }
-          ],
-          "conditions": [
-            {
-              "type": "variable_unless",
-              "name": "neo2_mod_4",
-              "value": 0
-            }
-          ]
-        },
-        {
-          "type": "basic",
-          "from": {
-            "key_code": "semicolon",
-            "modifiers": {
-              "optional": [
-                "shift",
-                "caps_lock",
-                "command",
-                "left_option"
-              ]
-            }
-          },
-          "to": [
-            {
-              "key_code": "escape"
-            }
-          ],
-          "conditions": [
-            {
-              "type": "variable_unless",
-              "name": "neo2_mod_4",
-              "value": 0
-            }
-          ]
-        },
-        {
-          "type": "basic",
-          "from": {
             "key_code": "a",
             "modifiers": {
               "optional": [
@@ -266,7 +198,7 @@
             {
               "key_code": "left_arrow", 
               "modifiers": [
-                "left_command"
+                "left_option"
               ]
             }
           ],
@@ -294,7 +226,7 @@
             {
               "key_code": "right_arrow", 
               "modifiers": [
-                "left_command"
+                "left_option"
               ]
             }
           ],
@@ -303,27 +235,6 @@
               "type": "variable_unless",
               "name": "neo2_mod_4",
               "value": 0
-			}
-		  ]
-        },
-        {
-          "type": "basic",
-          "from": {
-            "simultaneous": [
-              {
-                "key_code": "left_shift"
-              },
-              {
-                "key_code": "grave_accent_and_tilde"
-              }
-            ],
-            "modifiers": {
-              "optional": ["any"]
-            }
-          },
-          "to": [
-            {
-                "key_code": "escape"
             }
           ]
         }
@@ -1175,7 +1086,7 @@
           },
           "to": [
             {
-              "key_code": "escape"
+              "key_code": "comma"
             }
           ],
           "conditions": [
@@ -1227,7 +1138,7 @@
           },
           "to": [
             {
-               "apple_vendor_top_case_key_code": "video_mirror"
+              "apple_vendor_top_case_key_code": "tab"
             }
           ],
           "conditions": [
