@@ -1078,4 +1078,5 @@
           (plist-get entry :secret)))
   (bitwarden-auth-source-enable))
 
+(setq ispell-hunspell-dictionary-alist '(("~/Library/Spelling")))
 (setq flyspell-default-dictionary "en_GB-large") ;; or "en_US-large", "de"
