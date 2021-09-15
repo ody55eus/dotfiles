@@ -406,11 +406,12 @@ Just comment/uncomment some lines to disable/enable features.
 (package! company-box)          ; Auto-Completion
 
 (package! mu4e-alert)           ; E-Mail Alerts
+
                                         ; Packages to share my keybindings when streaming
 (package! command-log-mode)
-;; (package! keycast
-;;   :recipe (:host github
-;;            :repo "tarsius/keycast"))
+(package! keycast
+   :recipe (:host github
+            :repo "tarsius/keycast"))
 
 #+end_src
 
@@ -903,6 +904,25 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
         (,(concat time-re "-" time-re "\\]")       . svg-tag-make-org-range-inactive)))
 
 (svg-tag-mode)
+
+#+end_src
+
+**** Keycast Mode
+
+:Source:
+Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-627604064
+:END:
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(after! keycast
+  (define-minor-mode keycast-mode
+    "Show current command and its key binding in the mode line."
+    :global t
+    (if keycast-mode
+        (add-hook 'pre-command-hook 'keycast--update t)
+      (remove-hook 'pre-command-hook 'keycast--update))))
+(add-to-list 'global-mode-string '("" mode-line-keycast))
 
 #+end_src
 
