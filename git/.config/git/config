@@ -1,6 +1,7 @@
 [user]
 	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
+    signingkey = 0x01B6FB927AAEC59
 [init]
 	defaultBranch = main
 [gitlab "gitlab.ody5.de/api/v4"]
