@@ -406,11 +406,12 @@ Just comment/uncomment some lines to disable/enable features.
 (package! company-box)          ; Auto-Completion
 
 (package! mu4e-alert)           ; E-Mail Alerts
+
                                         ; Packages to share my keybindings when streaming
 (package! command-log-mode)
-;; (package! keycast
-;;   :recipe (:host github
-;;            :repo "tarsius/keycast"))
+(package! keycast
+   :recipe (:host github
+            :repo "tarsius/keycast"))
 
 #+end_src
 
@@ -903,6 +904,25 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
         (,(concat time-re "-" time-re "\\]")       . svg-tag-make-org-range-inactive)))
 
 (svg-tag-mode)
+
+#+end_src
+
+**** Keycast Mode
+
+:Source:
+Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-627604064
+:END:
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(after! keycast
+  (define-minor-mode keycast-mode
+    "Show current command and its key binding in the mode line."
+    :global t
+    (if keycast-mode
+        (add-hook 'pre-command-hook 'keycast--update t)
+      (remove-hook 'pre-command-hook 'keycast--update))))
+(add-to-list 'global-mode-string '("" mode-line-keycast))
 
 #+end_src
 
@@ -2299,8 +2319,35 @@ Useful mu4e manual pages:
 
 ** Flyspell (spell checking dictionary)
 
+#+begin_src sh :tangle ./.doom.d/install-dictionary.sh
+#!/usr/bin/env zsh
+set -euo pipefail
+
+# Install German dictionary
+npm install dictionary-de
+mkdir -p ~/Library/Spelling
+ln -sf ~/node_modules/dictionary-de/index.aff ~/Library/Spelling/de.aff
+ln -sf ~/node_modules/dictionary-de/index.dic ~/Library/Spelling/de.dic
+
+# Install British English
+curl -L https://sourceforge.net/projects/wordlist/files/speller/2020.12.07/hunspell-en_GB-large-2020.12.07.zip/download > hunspell-en_GB-large-2020.12.07.zip
+unzip hunspell-en_GB-large-2020.12.07.zip
+cp en_GB-large.aff ~/Library/Spelling/
+cp en_GB-large.dic ~/Library/Spelling/
+
+# Install American English
+curl -L https://sourceforge.net/projects/wordlist/files/speller/2020.12.07/hunspell-en_US-large-2020.12.07.zip/download > hunspell-en_US-large-2020.12.07.zip
+unzip hunspell-en_US-large-2020.12.07.zip
+cp en_US-large.aff ~/Library/Spelling/
+cp en_US-large.dic ~/Library/Spelling/
+
+# Cleanup
+rm -f hunspell-en_*.zip en_*.aff en_*.dic README_en_*.txt
+#+end_src
+
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
+(setq ispell-hunspell-dictionary-alist '(("~/Library/Spelling")))
 (setq flyspell-default-dictionary "en_GB-large") ;; or "en_US-large", "de"
 
 #+end_src

@@ -194,6 +194,15 @@
                                            :height 1.0))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 
+(after! keycast
+  (define-minor-mode keycast-mode
+    "Show current command and its key binding in the mode line."
+    :global t
+    (if keycast-mode
+        (add-hook 'pre-command-hook 'keycast--update t)
+      (remove-hook 'pre-command-hook 'keycast--update))))
+(add-to-list 'global-mode-string '("" mode-line-keycast))
+
 (setq org-roam-v2-ack t); Disable Warning for org-roam v2
 (setq org-directory "~/org/"
       org-agenda-files '("~/org/Agenda.org"
@@ -1066,4 +1075,5 @@
           (plist-get entry :secret)))
   (bitwarden-auth-source-enable))
 
+(setq ispell-hunspell-dictionary-alist '(("~/Library/Spelling")))
 (setq flyspell-default-dictionary "en_GB-large") ;; or "en_US-large", "de"
