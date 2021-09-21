@@ -81,8 +81,8 @@
 (package! org-special-block-extras
   :recipe (:host github
            :repo "alhassy/org-special-block-extras"))
-;; (package! ob-napkin)            ; PlantUML in Org Babel
-;; (package! plantuml-mode)        ; PlantUML Diagrams
+(package! ob-napkin)            ; PlantUML in Org Babel
+(package! plantuml-mode)        ; PlantUML Diagrams
 
                                         ; Org Exports
 (package! ox-twbs)      ; HTML Twitter Bootstrap
