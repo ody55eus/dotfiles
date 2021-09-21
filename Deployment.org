@@ -1,0 +1,76 @@
+#+TITLE: Deployment
+#+PROPERTY: header-args:sh :tangle-mode (identity #o755) :comments link :tangle scripts/deploy.sh
+
+* Basic Script Header :noexport:
+#+begin_src sh :tangle yes :export no
+#!/usr/bin/env bash
+set -euo pipefail
+#+end_src
+
+* Installation of Software
+** MacOS
+*** Homebrew
+[[https://brew.sh/][Homebrew]] is a package manager for MacOS. It is installed with a single line:
+#+begin_src sh :tangle (if (eq system-type 'darwin) "yes" "no")
+# MacOS Install Homebrew
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+$INSTALL = "brew install"
+#+end_src
+** Linux
+*** Arch Linux (Pacman, Yay)
+This Configuration  is for Arch based systems using Pacman and Yay as package manager.
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "yes" "no")
+# UPDATE="sudo pacman -Syu"
+# INSTALL="sudo pacman -S"
+
+# Yay has more packages
+UPDATE="yay -Syu"
+INSTALL="yay -S"
+#+end_src
+
+*** Debian (apt)
+On Debian systems uncomment the following lines:
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "yes" "no")
+#UPDATE="apt update && apt upgrade -y"
+#INSTALL="apt install"
+#+end_src
+** Populate Submodules
+#+begin_src sh :tangle yes
+git submodule update --init sh/.config/zsh/ohmyzsh
+git submodule update --init doom/.emacs.d
+git submodule update --init vim/.vim/bundle/Vundle.vim
+#+end_src
+** Update system and install Software
+*** Basic Software
+#+begin_src sh :tangle yes
+$UPDATE
+$INSTALL git neovim wget tmux stow 
+#+end_src
+*** Oh-My-Zsh (Theme)
+#+begin_src sh :tangle yes
+# Install OhMyZsh! Theme
+rm -rf sh/.config/zsh/ohmyzsh/custom/themes
+git clone https://github.com/romkatv/powerlevel10k.git sh/.config/zsh/ohmyzsh/custom/themes
+#+end_src
+*** Compile Emacs from newest Source Code
+#+begin_src sh :tangle yes
+mkdir -p ~/build
+git clone https://git.savannah.gnu.org/git/emacs.git ~/build/emacs
+cd ~/build/emacs
+./autogen.sh
+./configure
+make -j`$(nproc)`
+sudo make install
+cd -
+#+end_src
+*** Doom Emacs
+Install Doom Emacs (needs some y/n questions answered, takes around 5-10 min)
+#+begin_src sh :tangle yes
+doom/.emacs.d/bin/doom install
+#+end_src
+*** Vundle
+Install Vim Plugins via Vundle (takes some time and requires user interaction to quit)
+#+begin_src sh
+nvim -c ":PluiginInstall"
+#+end_src
+**
