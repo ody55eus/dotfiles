@@ -1258,19 +1258,7 @@ The Task Keywords are noted with their keybindings in parentheses.
                                         "* %a :website:\n\n%U %?\n\n%:initial")
                                        )
       )
-#+end_src
 
-***** Website (org-protocol) - Templates
-#+begin_src emacs-lisp
-(add-to-list 'org-roam-capture-ref-templates '(
-                                               :empty-lines 1)
-             t) ; Append at the end
-#+end_src
-
-***** Literature References (org-protocol) - Templates
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(add-to-list 'org-roam-capture-ref-templates '
-             t) ; Append at the end
 #+end_src
 
 **** TODO Org Roam Dailies Capture Templates

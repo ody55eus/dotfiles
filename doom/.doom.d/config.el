@@ -415,9 +415,6 @@
                                        )
       )
 
-(add-to-list 'org-roam-capture-ref-templates '
-             t) ; Append at the end
-
 (setq org-roam-dailies-capture-templates
       '(("d" "default" entry
          "* %?"
