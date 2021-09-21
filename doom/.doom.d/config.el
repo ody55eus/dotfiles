@@ -218,9 +218,6 @@
       ;;org-roam-graph-executable "neato" ; or "dot" (default)
       )
 
-;; Method-Paper (Project)
-(add-to-list 'org-agenda-files (org-roam-node-file (org-roam-node-from-id "e7c494b3-bb76-4fbe-a79e-a8cb9153ff6d")))
-
 (setq org-ellipsis " ▼ ")
 
 (defun jp/org-mode-setup ()
@@ -701,18 +698,21 @@
 
 (defun jp/org-roam-get-tagged (&optional tag)
   (interactive)
-  (let ((this-tag (or tag "@work"))))
+  (let ((this-tag (or tag "@work")))
   (mapcar
    #'org-roam-node-file
    (seq-filter
     (lambda (node)
       (member this-tag (org-roam-node-tags node)))
-    (org-roam-node-list))))
+    (org-roam-node-list)))))
 
 (defun jp/org-roam-agenda ()
   (interactive)
-  (setq org-agenda-files (jp/org-roam-get-tagged "@work"))
-  (org-agenda))
+  (let ((org-agenda-files (jp/org-roam-get-tagged "Tasks")))
+  (org-agenda)))
+
+;; Adding Roam Nodes with Tasks
+(add-to-list 'org-agenda-files (jp/org-roam-get-tagged "Tasks"))
 
 (use-package! websocket
     :after org-roam)

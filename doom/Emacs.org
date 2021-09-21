@@ -942,9 +942,6 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
       ;;org-roam-graph-executable "neato" ; or "dot" (default)
       )
 
-;; Method-Paper (Project)
-(add-to-list 'org-agenda-files (org-roam-node-file (org-roam-node-from-id "e7c494b3-bb76-4fbe-a79e-a8cb9153ff6d")))
-
 #+end_src
 
 ** UI Configuration
@@ -1699,20 +1696,24 @@ https://systemcrafters.net/live-streams/september-03-2021/
 
 (defun jp/org-roam-get-tagged (&optional tag)
   (interactive)
-  (let ((this-tag (or tag "@work"))))
+  (let ((this-tag (or tag "@work")))
   (mapcar
    #'org-roam-node-file
    (seq-filter
     (lambda (node)
       (member this-tag (org-roam-node-tags node)))
-    (org-roam-node-list))))
+    (org-roam-node-list)))))
 
 (defun jp/org-roam-agenda ()
   (interactive)
-  (setq org-agenda-files (jp/org-roam-get-tagged "@work"))
-  (org-agenda))
+  (let ((org-agenda-files (jp/org-roam-get-tagged "Tasks")))
+  (org-agenda)))
+
+;; Adding Roam Nodes with Tasks
+(add-to-list 'org-agenda-files (jp/org-roam-get-tagged "Tasks"))
 
 #+end_src
+
 *** Org-Roam UI
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
