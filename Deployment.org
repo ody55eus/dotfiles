@@ -68,7 +68,7 @@ Install Doom Emacs (needs some y/n questions answered, takes around 5-10 min)
 #+begin_src sh :tangle yes
 doom/.emacs.d/bin/doom install
 #+end_src
-*** Vundle
+*** Vundle Packages :optional:
 Install Vim Plugins via Vundle (takes some time and requires user interaction to quit)
 #+begin_src sh
 nvim -c ":PluiginInstall"

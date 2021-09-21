@@ -31,24 +31,49 @@
       ;; (:prefix-map ("f" . "file"))
       ;; (:prefix-map ("g" . "git"))
       ;; (:prefix-map ("h" . "help"))
-      ;; (:prefix-map ("i" . "emoji"))
+      (:prefix ("i" . "insert")
+       :desc "all-the-icons-insert" "a" #'all-the-icons-insert
+       :desc "helm-ucs" "8" #'helm-ucs
+       )
       ;; (:prefix-map ("m" . "org manage")
       ;;  (:prefix ("a" . "attatch"))
       ;;  (:prefix ("b" . "table"))
       ;;  (:prefix ("c" . "clock"))
       ;;  (:prefix ("d" . "date"))
       ;;  )
-      ;; (:prefix-map ("o" . "open"))
+      (:prefix ("o" . "open")
+       (:prefix ("j" . "jp")
+        :desc "jp/org-roam-agenda" "a" #'jp/org-roam-agenda
+        :desc "jp/enable-bitwarden" "b" #'jp/enable-bitwarden
+        :desc "jp/go-to-inbox" "i" #'jp/go-to-inbox
+        :desc "jp/go-to-projects" "p" #'jp/go-to-projects
+        (:prefix ("r" . "roam")
+         :desc "jp/org-roam-agenda" "a" #'jp/org-roam-agenda
+         :desc "jp/org-roam-ignore-literature" "L" #'jp/org-roam-ignore-literature
+         :desc "jp/org-roam-select-literature" "l" #'jp/org-roam-select-literature
+         :desc "jp/org-roam-ignore-other" "O" #'jp/org-roam-ignore-other
+         :desc "jp/org-roam-select-other" "o" #'jp/org-roam-select-other
+         :desc "jp/org-roam-ignore-projects" "P" #'jp/org-roam-ignore-projects
+         :desc "jp/org-roam-select-projects" "p" #'jp/org-roam-select-projects
+         (:prefix ("r" . "review")
+          :desc "jp/daily-review" "d" #'jp/daily-review
+          :desc "jp/monthly-review" "m" #'jp/monthly-review
+          :desc "jp/weekly-review" "w" #'jp/weekly-review
+          )
+         :desc "jp/org-roam-ignore-pc" "C" #'jp/org-roam-ignore-pc
+         :desc "jp/org-roam-select-pc" "c" #'jp/org-roam-select-pc
+         )
+        )
+       )
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
       (:prefix ("s" . "search")
        :desc "Search/Insert BibTeX Cite" "c" #'helm-bibtex
        )
       (:prefix ("t" . "toogle")
-       :desc "Toggle Cmd Log Buffer" "b" #'clm/toggle-command-log-buffer
-       :desc "Toggle Global Cmd Log" "c" #'global-command-log-mode
-       :desc "Toggle line highlight in frame" "h" #'hl-line-mode
+       :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
+       :desc "Toggle KeyCast Mode" "k" #'keycast-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        (:prefix ("SPC" . "Whitespaces")
@@ -86,10 +111,32 @@
        :desc "Evaluate last sexpression" :n "l" #'eval-last-sexp
        :desc "Evaluate elisp in region" :n "r" #'eval-region))
 
-;; (map! :leader
-;;       (:prefix-map ("l" . "lookup")
-;;        )
-;;       )
+(map! :leader
+      (:prefix ("l" . "lookup")
+       :desc "helm-M-x" "c" #'helm-M-x
+       :desc "helm-bibtex" "b" #'helm-bibtex
+       :desc "helm-occur" "o" #'helm-occur
+       :desc "helm-imenu" "i" #'helm-imenu
+       :desc "helm-imenu-in-all-buffers" "I" #'helm-imenu-in-all-buffers
+       :desc "helm-regexp" "r" #'helm-regexp
+       :desc "helm-ucs" "S" #'helm-ucs
+       :desc "helm-top" "T" #'helm-top
+       :desc "helm-tldr" "t" #'helm-tldr
+       :desc "helm-man-woman" "m" #'helm-man-woman
+       )
+      )
+
+(map! :leader
+      (:prefix ("j" . "jump")
+       :desc "avy-goto-char" "c" #'avy-goto-char
+       :desc "avy-goto-char" "o" #'avy-goto-char-timer
+       :desc "avy-goto-char-2" "O" #'avy-goto-char-2
+       :desc "avy-imenu" "I" #'avy-imenu
+       :desc "evil-avy-goto-line" "l" #'evil-avy-goto-line
+       :desc "evil-avy-goto-word-0" "w" #'evil-avy-goto-word-0
+       :desc "evil-avy-goto-subword-0" "W" #'evil-avy-goto-subword-0
+       )
+      )
 
 (map! (:prefix-map ("C-w" . "window")
        :desc "evil-window-left" :n "<left>" #'evil-window-left
@@ -108,12 +155,10 @@
                        :font "Source Code Pro"
                        :weight 'regular
                        :height 140)
-   (setq doom-font (font-spec :family "Source Code Pro" :size 14))
-   (setq doom-big-font (font-spec :family "Source Code Pro" :size 36)))
+   )
   ('darwin
    (set-face-attribute 'default nil :font "Source Code Pro for Powerline" :height 140)
-   (setq doom-font (font-spec :family "Source Code Pro for Powerline" :size 14))
-   (setq doom-big-font (font-spec :family "Source Code Pro for Powerline" :size 36))))
+   ))
 
 ;; Set the fixed pitch face
 (pcase system-type
@@ -132,12 +177,12 @@
                        :font "Roboto"
                        :height 175
                        :weight 'light)
-   (setq doom-variable-pitch-font (font-spec :family "Roboto" :size 16)))
+   )
   ('darwin (set-face-attribute 'variable-pitch nil
                                :font "Helvetica"
                                :height 175
                                :weight 'light)
-           (setq doom-variable-pitch-font (font-spec :family "Helvetica" :size 16))))
+           ))
 
 (setq display-line-numbers-type 'relative)
 
@@ -181,20 +226,21 @@
  evil-split-window-below t)
 
 (use-package! doom-modeline
-;;       :custom-face
-;;       (mode-line ((t (:height 0.85))))
-;;       (mode-line-inactive ((t (:height 0.85))))
+  :custom-face
+  (mode-line ((t (:height 0.95))))
+  (mode-line-inactive ((t (:height 0.85))))
   :custom
-  (doom-modeline-height 15)
-  (doom-modeline-bar-width 6)
+  (doom-modeline-height 20)
+  (doom-modeline-bar-width 4)
   (doom-modeline-lsp t)
-  (doom-modeline-modal-icon nil)
+  (doom-modeline-modal-icon t)
   (doom-modeline-minor-modes nil)
+  (doom-modeline-major-mode-icon t)
   (doom-modeline-buffer-state-icon t))
 
 (defadvice! prompt-for-buffer (&rest _)
   :after '(evil-window-split evil-window-vsplit)
-  (+ivy/switch-buffer))
+  (counsel-switch-buffer))
 
 (setq hl-todo-keyword-faces
       '(("TODO"   . "#cc0")
@@ -356,13 +402,25 @@
   (interactive)
   (jp/org-roam-select-prefix "/Literature"))
 
+(defun jp/org-roam-ignore-pc ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/PC"))
+
 (defun jp/org-roam-select-pc ()
   (interactive)
   (jp/org-roam-select-prefix "/PC"))
 
+(defun jp/org-roam-ignore-projects ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/Projects"))
+
 (defun jp/org-roam-select-projects ()
   (interactive)
   (jp/org-roam-select-prefix "/Projects"))
+
+(defun jp/org-roam-ignore-other ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/20"))
 
 (defun jp/org-roam-select-other ()
   (interactive)
@@ -1192,3 +1250,5 @@
 
 (setq ispell-hunspell-dictionary-alist '(("~/Library/Spelling")))
 (setq flyspell-default-dictionary "en_GB-large") ;; or "en_US-large", "de"
+
+(setq deft-directory "~/org")

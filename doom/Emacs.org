@@ -23,6 +23,7 @@
   - [[#mail-in-emacs-with-mu4e][Mail in Emacs with mu4e]]
   - [[#password-save][Password Save]]
   - [[#flyspell-spell-checking-dictionary][Flyspell (spell checking dictionary)]]
+  - [[#deft][Deft]]
 
 * About Me
 
@@ -73,13 +74,13 @@ Just comment/uncomment some lines to disable/enable features.
 
        :completion
        (company
-        ;+childframe
+        +childframe
         )           ; the ultimate code completion backend
-       ;;helm              ; the *other* search engine for love and life
+       helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        (ivy
         +fuzzy
-        ;;+childframe         ; display in a floating window
+        +childframe         ; display in a floating window
         +icons)               ; a search engine for love and life
        (vertico +icons)           ; the search engine of the future
 
@@ -88,7 +89,7 @@ Just comment/uncomment some lines to disable/enable features.
        doom              ; what makes DOOM look the way it does
        doom-dashboard    ; a nifty splash screen for Emacs
        ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
-       (emoji +unicode)  ; 🙂
+       ;;(emoji +unicode)  ; 🙂
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        ;;hydra
        indent-guides     ; highlighted indent columns
@@ -101,7 +102,7 @@ Just comment/uncomment some lines to disable/enable features.
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
        ;;tabs              ; a tab bar for Emacs
        treemacs          ; a project drawer, like neotree but cooler
-       unicode           ; extended unicode support for various languages
+       ;;unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
@@ -383,7 +384,6 @@ Just comment/uncomment some lines to disable/enable features.
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
 ;;(package! dashboard)            ; Display a dashboard when starting Emacs (conflicts with doom-dashboard).
-(package! deft)                 ; Search for file contents
 
 (package! beacon)               ; Highlight Cursor on big change
 
@@ -405,8 +405,6 @@ Just comment/uncomment some lines to disable/enable features.
 (package! lsp-latex)
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
-
-(package! mu4e-alert)           ; E-Mail Alerts
 
                                         ; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
@@ -460,24 +458,49 @@ Just comment/uncomment some lines to disable/enable features.
       ;; (:prefix-map ("f" . "file"))
       ;; (:prefix-map ("g" . "git"))
       ;; (:prefix-map ("h" . "help"))
-      ;; (:prefix-map ("i" . "emoji"))
+      (:prefix ("i" . "insert")
+       :desc "all-the-icons-insert" "a" #'all-the-icons-insert
+       :desc "helm-ucs" "8" #'helm-ucs
+       )
       ;; (:prefix-map ("m" . "org manage")
       ;;  (:prefix ("a" . "attatch"))
       ;;  (:prefix ("b" . "table"))
       ;;  (:prefix ("c" . "clock"))
       ;;  (:prefix ("d" . "date"))
       ;;  )
-      ;; (:prefix-map ("o" . "open"))
+      (:prefix ("o" . "open")
+       (:prefix ("j" . "jp")
+        :desc "jp/org-roam-agenda" "a" #'jp/org-roam-agenda
+        :desc "jp/enable-bitwarden" "b" #'jp/enable-bitwarden
+        :desc "jp/go-to-inbox" "i" #'jp/go-to-inbox
+        :desc "jp/go-to-projects" "p" #'jp/go-to-projects
+        (:prefix ("r" . "roam")
+         :desc "jp/org-roam-agenda" "a" #'jp/org-roam-agenda
+         :desc "jp/org-roam-ignore-literature" "L" #'jp/org-roam-ignore-literature
+         :desc "jp/org-roam-select-literature" "l" #'jp/org-roam-select-literature
+         :desc "jp/org-roam-ignore-other" "O" #'jp/org-roam-ignore-other
+         :desc "jp/org-roam-select-other" "o" #'jp/org-roam-select-other
+         :desc "jp/org-roam-ignore-projects" "P" #'jp/org-roam-ignore-projects
+         :desc "jp/org-roam-select-projects" "p" #'jp/org-roam-select-projects
+         (:prefix ("r" . "review")
+          :desc "jp/daily-review" "d" #'jp/daily-review
+          :desc "jp/monthly-review" "m" #'jp/monthly-review
+          :desc "jp/weekly-review" "w" #'jp/weekly-review
+          )
+         :desc "jp/org-roam-ignore-pc" "C" #'jp/org-roam-ignore-pc
+         :desc "jp/org-roam-select-pc" "c" #'jp/org-roam-select-pc
+         )
+        )
+       )
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
       (:prefix ("s" . "search")
        :desc "Search/Insert BibTeX Cite" "c" #'helm-bibtex
        )
       (:prefix ("t" . "toogle")
-       :desc "Toggle Cmd Log Buffer" "b" #'clm/toggle-command-log-buffer
-       :desc "Toggle Global Cmd Log" "c" #'global-command-log-mode
-       :desc "Toggle line highlight in frame" "h" #'hl-line-mode
+       :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
+       :desc "Toggle KeyCast Mode" "k" #'keycast-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        (:prefix ("SPC" . "Whitespaces")
@@ -517,8 +540,8 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 Changing some keybindings from their defaults to better fit with Doom Emacs, and to avoid conflicts with my window managers which sometimes use the control key in their keybindings.  By default, Doom Emacs does not use ~SPC-e~ for anything, so I choose to use the format ~SPC-e~ plus ~key~ for these (I also use ~SPC-e~ for ~eww~ keybindings).
 
-| COMMAND         | DESCRIPTION                                    | KEYBINDING |
-|-----------------+------------------------------------------------+------------|
+| COMMAND         | DESCRIPTION                                  | KEYBINDING |
+|-----------------+----------------------------------------------+------------|
 | eval-buffer     | /Evaluate elisp in buffer/                     | SPC e b    |
 | eval-defun      | /Evaluate the defun containing or after point/ | SPC e d    |
 | eval-expression | /Evaluate an elisp expression/                 | SPC e e    |
@@ -538,14 +561,39 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 #+end_src
 
 **** TODO Lookup (~SPC-l~)
-
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-;; (map! :leader
-;;       (:prefix-map ("l" . "lookup")
-;;        )
-;;       )
+(map! :leader
+      (:prefix ("l" . "lookup")
+       :desc "helm-M-x" "c" #'helm-M-x
+       :desc "helm-bibtex" "b" #'helm-bibtex
+       :desc "helm-occur" "o" #'helm-occur
+       :desc "helm-imenu" "i" #'helm-imenu
+       :desc "helm-imenu-in-all-buffers" "I" #'helm-imenu-in-all-buffers
+       :desc "helm-regexp" "r" #'helm-regexp
+       :desc "helm-ucs" "S" #'helm-ucs
+       :desc "helm-top" "T" #'helm-top
+       :desc "helm-tldr" "t" #'helm-tldr
+       :desc "helm-man-woman" "m" #'helm-man-woman
+       )
+      )
 
+#+end_src
+
+**** TODO Jump (~SPC-j~)
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(map! :leader
+      (:prefix ("j" . "jump")
+       :desc "avy-goto-char" "c" #'avy-goto-char
+       :desc "avy-goto-char" "o" #'avy-goto-char-timer
+       :desc "avy-goto-char-2" "O" #'avy-goto-char-2
+       :desc "avy-imenu" "I" #'avy-imenu
+       :desc "evil-avy-goto-line" "l" #'evil-avy-goto-line
+       :desc "evil-avy-goto-word-0" "w" #'evil-avy-goto-word-0
+       :desc "evil-avy-goto-subword-0" "W" #'evil-avy-goto-subword-0
+       )
+      )
 #+end_src
 
 *** Keybindings (=CTRL= ~C-<Key>~)
@@ -582,12 +630,10 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
                        :font "Source Code Pro"
                        :weight 'regular
                        :height 140)
-   (setq doom-font (font-spec :family "Source Code Pro" :size 14))
-   (setq doom-big-font (font-spec :family "Source Code Pro" :size 36)))
+   )
   ('darwin
    (set-face-attribute 'default nil :font "Source Code Pro for Powerline" :height 140)
-   (setq doom-font (font-spec :family "Source Code Pro for Powerline" :size 14))
-   (setq doom-big-font (font-spec :family "Source Code Pro for Powerline" :size 36))))
+   ))
 
 ;; Set the fixed pitch face
 (pcase system-type
@@ -606,12 +652,12 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
                        :font "Roboto"
                        :height 175
                        :weight 'light)
-   (setq doom-variable-pitch-font (font-spec :family "Roboto" :size 16)))
+   )
   ('darwin (set-face-attribute 'variable-pitch nil
                                :font "Helvetica"
                                :height 175
                                :weight 'light)
-           (setq doom-variable-pitch-font (font-spec :family "Helvetica" :size 16))))
+           ))
 
 #+end_src
 
@@ -681,34 +727,87 @@ Disable the computer =beep= and activate a visual feedback instead.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq confirm-kill-emacs nil)           ;; Don't confirm every kill
 #+end_src
+
 **** Doom Evil Mode
+
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq
  evil-want-fine-undo t                  ;; Undo Emacs Style
  evil-vsplit-window-right t             ;; Split windows the other way around
  evil-split-window-below t)
 #+end_src
+
 **** Doom Modeline
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (use-package! doom-modeline
-;;       :custom-face
-;;       (mode-line ((t (:height 0.85))))
-;;       (mode-line-inactive ((t (:height 0.85))))
+  :custom-face
+  (mode-line ((t (:height 0.95))))
+  (mode-line-inactive ((t (:height 0.85))))
   :custom
-  (doom-modeline-height 15)
-  (doom-modeline-bar-width 6)
+  (doom-modeline-height 20)
+  (doom-modeline-bar-width 4)
   (doom-modeline-lsp t)
-  (doom-modeline-modal-icon nil)
+  (doom-modeline-modal-icon t)
   (doom-modeline-minor-modes nil)
+  (doom-modeline-major-mode-icon t)
   (doom-modeline-buffer-state-icon t))
 #+end_src
+
+**** Doom Dashboard
+
+#+begin_src emacs-lisp
+(setq +doom-dashboard-menu-sections '(("Reload last session" :icon
+                                       (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
+                                       :when
+                                       (cond
+                                        ((featurep! :ui workspaces)
+                                         (file-exists-p
+                                          (expand-file-name persp-auto-save-fname persp-save-dir)))
+                                        ((require 'desktop nil t)
+                                         (file-exists-p
+                                          (desktop-full-file-name))))
+                                       :face
+                                       (:inherit
+                                        (doom-dashboard-menu-title bold)
+                                       :action doom/quickload-session)
+                                      ("Open org-agenda" :icon
+                                       (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+                                       :when
+                                       (fboundp 'org-agenda)
+                                       :action org-agenda)
+                                      ("Recently opened files" :icon
+                                       (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
+                                       :action recentf-open-files)
+                                      ("Open project" :icon
+                                       (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+                                       :action projectile-switch-project)
+                                      ("Jump to bookmark" :icon
+                                       (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
+                                       :action bookmark-jump)
+                                      ("Open private configuration" :icon
+                                       (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+                                       :when
+                                       (file-directory-p doom-private-dir)
+                                       :action doom/open-private-config)
+                                      ("Open documentation" :icon
+                                       (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
+                                       :action doom/help)
+                                      ("Open Roam Agenda"
+                                       :icon
+                                       (all-the-icons-octicon "checklist"
+                                                               :face 'doom-dashboard-menu-title)
+                                       :action jp/org-ram-agenda))
+
+#+end_src
+
 *** Open Bufferlist when splitting windows
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defadvice! prompt-for-buffer (&rest _)
   :after '(evil-window-split evil-window-vsplit)
-  (+ivy/switch-buffer))
+  (counsel-switch-buffer))
 #+end_src
+
 *** Additional Packages
 **** Highlight Todos
 
@@ -1165,18 +1264,31 @@ https://systemcrafters.net/live-streams/september-03-2021/
   (interactive)
   (jp/org-roam-select-prefix "/Literature"))
 
+(defun jp/org-roam-ignore-pc ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/PC"))
+
 (defun jp/org-roam-select-pc ()
   (interactive)
   (jp/org-roam-select-prefix "/PC"))
+
+(defun jp/org-roam-ignore-projects ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/Projects"))
 
 (defun jp/org-roam-select-projects ()
   (interactive)
   (jp/org-roam-select-prefix "/Projects"))
 
+(defun jp/org-roam-ignore-other ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/20"))
+
 (defun jp/org-roam-select-other ()
   (interactive)
   (jp/org-roam-select-prefix "/20"))
 #+end_src
+
 ***** Select by Assigned Tags
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defun jp/org-roam-get-tagged (&optional tag)
@@ -1192,6 +1304,7 @@ https://systemcrafters.net/live-streams/september-03-2021/
   (let ((org-agenda-files (jp/org-roam-get-tagged "Tasks")))
   (org-agenda)))
 #+end_src
+
 **** Reading  a File from Template
 :Source:
 Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
@@ -1216,6 +1329,7 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
   ""
   (jp/read-template "monthly-review.org"))
 #+end_src
+
 **** Regular Reviews
 :Source:
 Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
@@ -1255,6 +1369,7 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
       (org-narrow-to-subtree)
       (org-clock-in))))
 #+end_src
+
 **** Project Management
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defun jp/go-to-projects (&optional name head)
@@ -1269,6 +1384,7 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
     (re-search-forward headline-regex)
     (beginning-of-line)))
   #+end_src
+
 *** Task Keywords
 The Task Keywords are noted with their keybindings in parentheses.
 
@@ -1708,6 +1824,7 @@ See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online 
 (add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
 (add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
 #+end_src
+
 *** PlantUML
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq plantuml-default-exec-mode 'jar)
@@ -1922,8 +2039,8 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 *** Keybindings for Dired
 **** Keybindings To Open Dired (Description)
 
-| COMMAND    | DESCRIPTION                          | KEYBINDING |
-|------------+--------------------------------------+------------|
+| COMMAND    | DESCRIPTION                        | KEYBINDING |
+|------------+------------------------------------+------------|
 | dired      | /Open dired file manager/            | SPC d d    |
 | dired-jump | /Jump to current directory in dired/ | SPC d j    |
 
@@ -1944,15 +2061,15 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 **** Keybindings Within Dired (Description)
 
-| COMMAND             | DESCRIPTION                                   | KEYBINDING |
-|---------------------+-----------------------------------------------+------------|
+| COMMAND             | DESCRIPTION                                 | KEYBINDING |
+|---------------------+---------------------------------------------+------------|
 | dired-view-file     | /View file in dired/                          | SPC d v    |
 | dired-up-directory  | /Go up in directory tree/                     | h          |
 | dired-find-file     | /Go down in directory tree (or open if file)/ | l          |
-| dired-next-line     | Move down to next line                        | j          |
-| dired-previous-line | Move up to previous line                      | k          |
-| dired-mark          | Mark file at point                            | m          |
-| dired-unmark        | Unmark file at point                          | u          |
+| dired-next-line     | Move down to next line                      | j          |
+| dired-previous-line | Move up to previous line                    | k          |
+| dired-mark          | Mark file at point                          | m          |
+| dired-unmark        | Unmark file at point                        | u          |
 
 **** Dired-Mode-Mapping
 
@@ -2488,4 +2605,9 @@ rm -f hunspell-en_*.zip en_*.aff en_*.dic README_en_*.txt
 (setq ispell-hunspell-dictionary-alist '(("~/Library/Spelling")))
 (setq flyspell-default-dictionary "en_GB-large") ;; or "en_US-large", "de"
 
+#+end_src
+
+** Deft
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq deft-directory "~/org")
 #+end_src

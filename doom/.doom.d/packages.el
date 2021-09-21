@@ -104,11 +104,9 @@
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
-;;(package! dashboard)            ; Display a dashboard when starting Emacs.
-(package! deft)                 ; Search for file contents
+;;(package! dashboard)            ; Display a dashboard when starting Emacs (conflicts with doom-dashboard).
 
 (package! beacon)               ; Highlight Cursor on big change
-;;(package! modus-themes)
 
 ;; SVG Tag Mode (not working with doom Emacs yet!)
 ;; converts TODO / DONE etc.into small images.
@@ -129,10 +127,8 @@
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
 
-(package! mu4e-alert)           ; E-Mail Alerts
-
-; Packages to share my keybindings when streaming
+                                        ; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
 (package! keycast
-   :recipe (:host github
-            :repo "tarsius/keycast"))
+  :recipe (:host github
+           :repo "tarsius/keycast"))
