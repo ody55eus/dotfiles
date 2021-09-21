@@ -1,3 +1,7 @@
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+
+;; This Configuration File is managed by ~/Emacs.org. See additional comments there.
+
 (setq user-full-name "Jonathan Pieper")
 (setq user-mail-address "ody55eus@mailbox.org")
 (setq epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
@@ -103,8 +107,13 @@
    (set-face-attribute 'default nil
                        :font "Source Code Pro"
                        :weight 'regular
-                       :height 140))
-  ('darwin (set-face-attribute 'default nil :font "Source Code Pro for Powerline" :height 140)))
+                       :height 140)
+   (setq doom-font (font-spec :family "Source Code Pro" :size 14))
+   (setq doom-big-font (font-spec :family "Source Code Pro" :size 36)))
+  ('darwin
+   (set-face-attribute 'default nil :font "Source Code Pro for Powerline" :height 140)
+   (setq doom-font (font-spec :family "Source Code Pro for Powerline" :size 14))
+   (setq doom-big-font (font-spec :family "Source Code Pro for Powerline" :size 36))))
 
 ;; Set the fixed pitch face
 (pcase system-type
@@ -122,11 +131,13 @@
                        ;; :font "Cantarell"
                        :font "Roboto"
                        :height 175
-                       :weight 'light))
+                       :weight 'light)
+   (setq doom-variable-pitch-font (font-spec :family "Roboto" :size 16)))
   ('darwin (set-face-attribute 'variable-pitch nil
                                :font "Helvetica"
                                :height 175
-                               :weight 'light)))
+                               :weight 'light)
+           (setq doom-variable-pitch-font (font-spec :family "Helvetica" :size 16))))
 
 (setq display-line-numbers-type 'relative)
 
@@ -161,6 +172,29 @@
                              (frame-char-height)))))))
 
 (jp/set-frame-size-according-to-resolution)
+
+(setq confirm-kill-emacs nil)           ;; Don't confirm every kill
+
+(setq
+ evil-want-fine-undo t                  ;; Undo Emacs Style
+ evil-vsplit-window-right t             ;; Split windows the other way around
+ evil-split-window-below t)
+
+(use-package! doom-modeline
+;;       :custom-face
+;;       (mode-line ((t (:height 0.85))))
+;;       (mode-line-inactive ((t (:height 0.85))))
+  :custom
+  (doom-modeline-height 15)
+  (doom-modeline-bar-width 6)
+  (doom-modeline-lsp t)
+  (doom-modeline-modal-icon nil)
+  (doom-modeline-minor-modes nil)
+  (doom-modeline-buffer-state-icon t))
+
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (+ivy/switch-buffer))
 
 (setq hl-todo-keyword-faces
       '(("TODO"   . "#cc0")
@@ -222,6 +256,7 @@
 (setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
       org-roam-dailies-directory (file-truename "~/ZK/daily")
       org-attach-id-dir (concat org-roam-directory "/.attachments")
+      org-id-locations-file "~/ZK/.orgids"
       org-roam-completion-everywhere nil
       org-roam-completion-system 'default
       ;;org-roam-graph-executable "neato" ; or "dot" (default)
@@ -292,6 +327,123 @@
                                ("CANCELLED" . (:foreground "red3" :weight bold :strike-through t))
                                )
       )
+
+(defun jp/org-roam-select-prefix (prefix)
+  (org-roam-node-read
+   nil
+   (lambda (node)
+     (string-prefix-p
+      (concat org-roam-directory prefix)
+      (org-roam-node-file node))
+     )
+   ))
+
+(defun jp/org-roam-ignore-prefix (prefix)
+  (org-roam-node-read
+   nil
+   (lambda (node)
+     (not (string-prefix-p
+           (concat org-roam-directory prefix)
+           (org-roam-node-file node))
+          ))
+   ))
+
+(defun jp/org-roam-ignore-literature ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/Literature"))
+
+(defun jp/org-roam-select-literature ()
+  (interactive)
+  (jp/org-roam-select-prefix "/Literature"))
+
+(defun jp/org-roam-select-pc ()
+  (interactive)
+  (jp/org-roam-select-prefix "/PC"))
+
+(defun jp/org-roam-select-projects ()
+  (interactive)
+  (jp/org-roam-select-prefix "/Projects"))
+
+(defun jp/org-roam-select-other ()
+  (interactive)
+  (jp/org-roam-select-prefix "/20"))
+
+(defun jp/org-roam-get-tagged (&optional tag)
+  (mapcar
+   #'org-roam-node-file
+   (seq-filter
+    (lambda (node)
+      (member tag (org-roam-node-tags node)))
+    (org-roam-node-list))))
+
+(defun jp/org-roam-agenda ()
+  (interactive)
+  (let ((org-agenda-files (jp/org-roam-get-tagged "Tasks")))
+  (org-agenda)))
+
+(setq org-templates-directory (concat doom-private-dir "/templates/"))
+(defun jp/read-template (template)
+  ""
+  (with-temp-buffer
+    (insert-file-contents (concat org-templates-directory template))
+    (buffer-string)))
+(defun jp/read-newproject-template ()
+  ""
+  (jp/read-template "new-project.org"))
+(defun jp/read-dailyreview-template ()
+  ""
+  (jp/read-template "daily-review.org"))
+(defun jp/read-weekly-template ()
+  ""
+  (jp/read-template "weekly-review.org"))
+(defun jp/read-monthly-template ()
+  ""
+  (jp/read-template "monthly-review.org"))
+
+(defun jp/daily-review ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
+                                  (file "~/.doom.d/templates/daily-review.org")))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
+
+(defun jp/weekly-review ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
+                                  (file "~/.doom.d/templates/weekly-review.org")))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
+
+(defun jp/monthly-review ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
+                                  (file "~/.doom.d/templates/monthly-review.org")))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
+
+(defun jp/go-to-projects (&optional name head)
+  ""
+  (interactive)
+  (let* ((headline-regex (or head "* Projects"))
+         (node (jp/org-roam-select-projects)))
+    (org-roam-node-visit node)
+    ;;(org-roam-node-find-noselect node)
+    (widen)
+    (beginning-of-buffer)
+    (re-search-forward headline-regex)
+    (beginning-of-line)))
 
 (setq org-todo-keywords '(
                           (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
@@ -597,6 +749,9 @@
 (add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
 (add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
 
+(setq plantuml-default-exec-mode 'jar)
+(setq plantuml-jar-path "/usr/share/plantuml/lib/plantuml.jar")
+
 (require 'org-alert)
 
 (with-eval-after-load 'org
@@ -682,46 +837,6 @@
             #'org-roam-reflinks-section
             #'org-roam-unlinked-references-section
             ))
-
-(defun jp/org-roam-select-prefix (prefix)
-  (org-roam-node-read
-   nil
-   (lambda (node)
-     (string-prefix-p
-      (concat org-roam-directory prefix)
-      (org-roam-node-file node))
-     )
-   ))
-
-(defun jp/org-roam-select-literature ()
-  (interactive)
-  (jp/org-roam-select-prefix "/Literature"))
-
-(defun jp/org-roam-select-pc ()
-  (interactive)
-  (jp/org-roam-select-prefix "/PC"))
-
-(defun jp/org-roam-select-other ()
-  (interactive)
-  (jp/org-roam-select-prefix "/20"))
-
-(defun jp/org-roam-get-tagged (&optional tag)
-  (interactive)
-  (let ((this-tag (or tag "@work")))
-  (mapcar
-   #'org-roam-node-file
-   (seq-filter
-    (lambda (node)
-      (member this-tag (org-roam-node-tags node)))
-    (org-roam-node-list)))))
-
-(defun jp/org-roam-agenda ()
-  (interactive)
-  (let ((org-agenda-files (jp/org-roam-get-tagged "Tasks")))
-  (org-agenda)))
-
-;; Adding Roam Nodes with Tasks
-(add-to-list 'org-agenda-files (jp/org-roam-get-tagged "Tasks"))
 
 (use-package! websocket
     :after org-roam)

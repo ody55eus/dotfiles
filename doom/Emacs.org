@@ -27,6 +27,9 @@
 * About Me
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+
+;; This Configuration File is managed by ~/Emacs.org. See additional comments there.
 
 (setq user-full-name "Jonathan Pieper")
 (setq user-mail-address "ody55eus@mailbox.org")
@@ -84,7 +87,7 @@ Just comment/uncomment some lines to disable/enable features.
        deft              ; notational velocity for Emacs
        doom              ; what makes DOOM look the way it does
        doom-dashboard    ; a nifty splash screen for Emacs
-       doom-quit         ; DOOM quit-message prompts when you quit Emacs
+       ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
        (emoji +unicode)  ; 🙂
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        ;;hydra
@@ -264,8 +267,6 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+end_src
 
-#+RESULTS:
-
 *** Doom Emacs Package Installation (packages.el)
 **** Docstring
 
@@ -385,6 +386,7 @@ Just comment/uncomment some lines to disable/enable features.
 (package! deft)                 ; Search for file contents
 
 (package! beacon)               ; Highlight Cursor on big change
+;;(package! modus-themes)
 
 ;; SVG Tag Mode (not working with doom Emacs yet!)
 ;; converts TODO / DONE etc.into small images.
@@ -407,8 +409,8 @@ Just comment/uncomment some lines to disable/enable features.
 
 (package! mu4e-alert)           ; E-Mail Alerts
 
-                                        ; Packages to share my keybindings when streaming
-(package! command-log-mode)
+; Packages to share my keybindings when streaming
+;;(package! command-log-mode)
 (package! keycast
    :recipe (:host github
             :repo "tarsius/keycast"))
@@ -573,14 +575,20 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
+
 ;; Set the font face based on platform
 (pcase system-type
   ((or 'gnu/linux 'windows-nt 'cygwin)
    (set-face-attribute 'default nil
                        :font "Source Code Pro"
                        :weight 'regular
-                       :height 140))
-  ('darwin (set-face-attribute 'default nil :font "Source Code Pro for Powerline" :height 140)))
+                       :height 140)
+   (setq doom-font (font-spec :family "Source Code Pro" :size 14))
+   (setq doom-big-font (font-spec :family "Source Code Pro" :size 36)))
+  ('darwin
+   (set-face-attribute 'default nil :font "Source Code Pro for Powerline" :height 140)
+   (setq doom-font (font-spec :family "Source Code Pro for Powerline" :size 14))
+   (setq doom-big-font (font-spec :family "Source Code Pro for Powerline" :size 36))))
 
 ;; Set the fixed pitch face
 (pcase system-type
@@ -598,11 +606,13 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
                        ;; :font "Cantarell"
                        :font "Roboto"
                        :height 175
-                       :weight 'light))
+                       :weight 'light)
+   (setq doom-variable-pitch-font (font-spec :family "Roboto" :size 16)))
   ('darwin (set-face-attribute 'variable-pitch nil
                                :font "Helvetica"
                                :height 175
-                               :weight 'light)))
+                               :weight 'light)
+           (setq doom-variable-pitch-font (font-spec :family "Helvetica" :size 16))))
 
 #+end_src
 
@@ -667,6 +677,39 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 #+end_src
 
+*** Doom Emacs Customization
+**** Confirm Leaving Emacs
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq confirm-kill-emacs nil)           ;; Don't confirm every kill
+#+end_src
+**** Doom Evil Mode
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq
+ evil-want-fine-undo t                  ;; Undo Emacs Style
+ evil-vsplit-window-right t             ;; Split windows the other way around
+ evil-split-window-below t)
+#+end_src
+**** Doom Modeline
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(use-package! doom-modeline
+;;       :custom-face
+;;       (mode-line ((t (:height 0.85))))
+;;       (mode-line-inactive ((t (:height 0.85))))
+  :custom
+  (doom-modeline-height 15)
+  (doom-modeline-bar-width 6)
+  (doom-modeline-lsp t)
+  (doom-modeline-modal-icon nil)
+  (doom-modeline-minor-modes nil)
+  (doom-modeline-buffer-state-icon t))
+#+end_src
+*** Open Bufferlist when splitting windows
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (+ivy/switch-buffer))
+#+end_src
 *** Additional Packages
 **** Highlight Todos
 
@@ -957,6 +1000,7 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
 (setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
       org-roam-dailies-directory (file-truename "~/ZK/daily")
       org-attach-id-dir (concat org-roam-directory "/.attachments")
+      org-id-locations-file "~/ZK/.orgids"
       org-roam-completion-everywhere nil
       org-roam-completion-system 'default
       ;;org-roam-graph-executable "neato" ; or "dot" (default)
@@ -1086,6 +1130,146 @@ Set this value to ~nil~ to display them again.
 #+end_src
 
 ** Workflow Configuration
+*** Self-written extensions
+**** Select Org Roam Notes
+***** Select by Folder Prefix
+:Source:
+These extra functions are inspired by the System Crafters live stream of September 3rd 2021:
+https://systemcrafters.net/live-streams/september-03-2021/
+:END:
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(defun jp/org-roam-select-prefix (prefix)
+  (org-roam-node-read
+   nil
+   (lambda (node)
+     (string-prefix-p
+      (concat org-roam-directory prefix)
+      (org-roam-node-file node))
+     )
+   ))
+
+(defun jp/org-roam-ignore-prefix (prefix)
+  (org-roam-node-read
+   nil
+   (lambda (node)
+     (not (string-prefix-p
+           (concat org-roam-directory prefix)
+           (org-roam-node-file node))
+          ))
+   ))
+
+(defun jp/org-roam-ignore-literature ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/Literature"))
+
+(defun jp/org-roam-select-literature ()
+  (interactive)
+  (jp/org-roam-select-prefix "/Literature"))
+
+(defun jp/org-roam-select-pc ()
+  (interactive)
+  (jp/org-roam-select-prefix "/PC"))
+
+(defun jp/org-roam-select-projects ()
+  (interactive)
+  (jp/org-roam-select-prefix "/Projects"))
+
+(defun jp/org-roam-select-other ()
+  (interactive)
+  (jp/org-roam-select-prefix "/20"))
+#+end_src
+***** Select by Assigned Tags
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(defun jp/org-roam-get-tagged (&optional tag)
+  (mapcar
+   #'org-roam-node-file
+   (seq-filter
+    (lambda (node)
+      (member tag (org-roam-node-tags node)))
+    (org-roam-node-list))))
+
+(defun jp/org-roam-agenda ()
+  (interactive)
+  (let ((org-agenda-files (jp/org-roam-get-tagged "Tasks")))
+  (org-agenda)))
+#+end_src
+**** Reading  a File from Template
+:Source:
+Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
+:END:
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq org-templates-directory (concat doom-private-dir "/templates/"))
+(defun jp/read-template (template)
+  ""
+  (with-temp-buffer
+    (insert-file-contents (concat org-templates-directory template))
+    (buffer-string)))
+(defun jp/read-newproject-template ()
+  ""
+  (jp/read-template "new-project.org"))
+(defun jp/read-dailyreview-template ()
+  ""
+  (jp/read-template "daily-review.org"))
+(defun jp/read-weekly-template ()
+  ""
+  (jp/read-template "weekly-review.org"))
+(defun jp/read-monthly-template ()
+  ""
+  (jp/read-template "monthly-review.org"))
+#+end_src
+**** Regular Reviews
+:Source:
+Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
+:END:
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(defun jp/daily-review ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
+                                  (file "~/.doom.d/templates/daily-review.org")))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
+
+(defun jp/weekly-review ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
+                                  (file "~/.doom.d/templates/weekly-review.org")))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
+
+(defun jp/monthly-review ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
+                                  (file "~/.doom.d/templates/monthly-review.org")))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
+#+end_src
+**** Project Management
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(defun jp/go-to-projects (&optional name head)
+  ""
+  (interactive)
+  (let* ((headline-regex (or head "* Projects"))
+         (node (jp/org-roam-select-projects)))
+    (org-roam-node-visit node)
+    ;;(org-roam-node-find-noselect node)
+    (widen)
+    (beginning-of-buffer)
+    (re-search-forward headline-regex)
+    (beginning-of-line)))
+  #+end_src
 *** Task Keywords
 The Task Keywords are noted with their keybindings in parentheses.
 
@@ -1525,6 +1709,11 @@ See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online 
 (add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
 (add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
 #+end_src
+*** PlantUML
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq plantuml-default-exec-mode 'jar)
+(setq plantuml-jar-path "/usr/share/plantuml/lib/plantuml.jar")
+#+end_src
 
 ** Additional Org Packages
 *** Org Alert
@@ -1681,56 +1870,6 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
             #'org-roam-reflinks-section
             #'org-roam-unlinked-references-section
             ))
-
-#+end_src
-
-*** Self-written extensions
-:Source:
-These extra functions are inspired by the System Crafters live stream of September 3rd 2021:
-https://systemcrafters.net/live-streams/september-03-2021/
-:END:
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(defun jp/org-roam-select-prefix (prefix)
-  (org-roam-node-read
-   nil
-   (lambda (node)
-     (string-prefix-p
-      (concat org-roam-directory prefix)
-      (org-roam-node-file node))
-     )
-   ))
-
-(defun jp/org-roam-select-literature ()
-  (interactive)
-  (jp/org-roam-select-prefix "/Literature"))
-
-(defun jp/org-roam-select-pc ()
-  (interactive)
-  (jp/org-roam-select-prefix "/PC"))
-
-(defun jp/org-roam-select-other ()
-  (interactive)
-  (jp/org-roam-select-prefix "/20"))
-
-(defun jp/org-roam-get-tagged (&optional tag)
-  (interactive)
-  (let ((this-tag (or tag "@work")))
-  (mapcar
-   #'org-roam-node-file
-   (seq-filter
-    (lambda (node)
-      (member this-tag (org-roam-node-tags node)))
-    (org-roam-node-list)))))
-
-(defun jp/org-roam-agenda ()
-  (interactive)
-  (let ((org-agenda-files (jp/org-roam-get-tagged "Tasks")))
-  (org-agenda)))
-
-;; Adding Roam Nodes with Tasks
-(add-to-list 'org-agenda-files (jp/org-roam-get-tagged "Tasks"))
 
 #+end_src
 

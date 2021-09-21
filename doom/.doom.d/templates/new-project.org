@@ -1,0 +1,34 @@
+* %^{Project name}
+DEADLINE: %^t
+:PROPERTIES:
+:STARTDATE: %u
+:END:
+%^{OUTCOME}p
+%^{AREA}p
+%?
+- [ ] Add project tags for context (e.g. work, personal)
+- [ ] List specific tasks
+- [ ] Schedule next actions from generated tasks
+- [ ] Create an Evernote notebook matching project name
+
+  #+name: headline
+  #+BEGIN_SRC emacs-lisp
+  (nth 4 (org-heading-components))
+  #+END_SRC
+
+  #+BEGIN_SRC shell :var project=headline
+  osascript -e "tell application \"Evernote\" to create notebook \"$project\""
+  #+END_SRC
+- [ ] Create Folder Structure
+  + [ ] Local Git Repository
+    #+begin_src shell :var project=headline
+    mkdir -p ~/Projects/Code/$project
+    cd ~/Projects/Code/$project
+    git init .
+    #+end_src
+
+  + [ ] Ody5 Git Repository
+    #+begin_src shell :var project=headline
+    cd ~/Projects/Code/
+    git clone ssh://git@gitlab.ody5.de/ody55eus/${project}.git
+    #+end_src

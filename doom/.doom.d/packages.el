@@ -108,6 +108,7 @@
 (package! deft)                 ; Search for file contents
 
 (package! beacon)               ; Highlight Cursor on big change
+;;(package! modus-themes)
 
 ;; SVG Tag Mode (not working with doom Emacs yet!)
 ;; converts TODO / DONE etc.into small images.
@@ -130,8 +131,8 @@
 
 (package! mu4e-alert)           ; E-Mail Alerts
 
-                                        ; Packages to share my keybindings when streaming
-(package! command-log-mode)
+; Packages to share my keybindings when streaming
+;;(package! command-log-mode)
 (package! keycast
    :recipe (:host github
             :repo "tarsius/keycast"))
