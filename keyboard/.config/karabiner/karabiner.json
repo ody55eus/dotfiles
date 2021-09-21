@@ -3184,67 +3184,6 @@
                 },
                 "rules": [
                     {
-                        "description": "Vim specific tricks (top).",
-                        "manipulators": [
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "neo2_mod_4",
-                                        "type": "variable_unless",
-                                        "value": 0
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "a",
-                                    "modifiers": {
-                                        "optional": [
-                                            "shift",
-                                            "caps_lock",
-                                            "left_option"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "left_arrow",
-                                        "modifiers": [
-                                            "left_option"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "neo2_mod_4",
-                                        "type": "variable_unless",
-                                        "value": 0
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "g",
-                                    "modifiers": {
-                                        "optional": [
-                                            "shift",
-                                            "caps_lock",
-                                            "left_option"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "right_arrow",
-                                        "modifiers": [
-                                            "left_option"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "Neo2 mod 4: Map ↖ to Home and ↘︎ to End in terminal apps (move this rule above the rule 'Neo2 layer 4').",
                         "manipulators": [
                             {
