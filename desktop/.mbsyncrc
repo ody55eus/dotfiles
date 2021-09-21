@@ -2,10 +2,10 @@ IMAPAccount mailbox
 Host imap.mailbox.org
 Port 993
 User jpieper@mailbox.org
-#PassCmd "bw get password 3df871d3-dc63-4237-85ab-b17955357b78"
 PassCmd "emacsclient -e \"(jp/lookup-password :host \\\"imap.mailbox.org\\\" :user \\\"jpieper@mailbox.org\\\")\" | cut -d '\"' -f2"
 SSLType IMAPS
 SSLVersions TLSv1.2
+
 CertificateFile ~/Mail/certificates/root-certificates.pem
 
 # Define the remote from which mail will be synced

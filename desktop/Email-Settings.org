@@ -14,11 +14,25 @@ IMAPAccount mailbox
 Host imap.mailbox.org
 Port 993
 User jpieper@mailbox.org
-#PassCmd "bw get password 3df871d3-dc63-4237-85ab-b17955357b78"
 PassCmd "emacsclient -e \"(jp/lookup-password :host \\\"imap.mailbox.org\\\" :user \\\"jpieper@mailbox.org\\\")\" | cut -d '\"' -f2"
 SSLType IMAPS
 SSLVersions TLSv1.2
+#+end_src
+
+For Linux and MacOS the certificates are at different places.
+
+- This configuration is for Linux:
+  #+begin_src conf :tangle (cond ((eq system-type 'gnu/linux) ".mbsyncrc") ((eq system-type 'darwin) "no"))
+CertificateFile /etc/ssl/cert.pem
+  #+end_src
+
+- This configuration is for MacOS:
+  #+begin_src conf :tangle (cond ((eq system-type 'darwin) ".mbsyncrc") ((eq system-type 'gnu/linux) "no"))
 CertificateFile ~/Mail/certificates/root-certificates.pem
+  #+end_src
+
+
+#+begin_src conf :tangle .mbsyncrc
 
 # Define the remote from which mail will be synced
 IMAPStore mailbox-remote
