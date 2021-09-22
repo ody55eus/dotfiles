@@ -441,22 +441,23 @@
 
 (setq org-templates-directory (concat doom-private-dir "/templates/"))
 (defun jp/read-template (template)
-  ""
+  "Reading TEMPLATE as a file from org-templates-directory.
+Returns file content as a string."
   (with-temp-buffer
     (insert-file-contents (concat org-templates-directory template))
     (buffer-string)))
 (defun jp/read-newproject-template ()
-  ""
   (jp/read-template "new-project.org"))
 (defun jp/read-dailyreview-template ()
-  ""
   (jp/read-template "daily-review.org"))
 (defun jp/read-weekly-template ()
-  ""
   (jp/read-template "weekly-review.org"))
 (defun jp/read-monthly-template ()
-  ""
   (jp/read-template "monthly-review.org"))
+(defun jp/read-meeting-template ()
+  (jp/read-template "Meeting.org"))
+(defun jp/read-script-template ()
+  (jp/read-template "script.org"))
 
 (defun jp/daily-review ()
   (interactive)
@@ -519,36 +520,32 @@
                               ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
                                "* TODO %?\n %i\n %a")
                               ("M" "Meeting" entry
-                                       (file+olp+datetree "~/org/Meetings.org")
-                                       "* %<%H:%M> - %a :meetings:\n\n%?\n\n"
-                                       :clock-in :clock-resume
-                                       :empty-lines 1)
+                               (file+olp+datetree "~/org/Meetings.org")
+                               (function jp/read-meeting-template)
+                               :clock-in :clock-resume
+                               :empty-lines 1)
                               ("m" "Email Workflow")
                               ("mf" "Follow Up" entry (file+olp "~/org/Mail.org" "Follow Up")
-                               "* TODO %a")
+                               "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote")
                               ("mr" "Read Later" entry (file+olp "~/org/Mail.org" "Read Later")
-                               "* TODO %a")
+                               "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote%x")
                               ("l" "Logbook Entries")
                               ("ls" "Software" entry
                                (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %<%I:%M %p> - Software :Software:\n\n%?\n\n"
-                               ;; ,(jp/read-file-as-string "~/Notes/Templates/Daily.org")
-                               :clock-in :clock-resume
-                               :empty-lines 1)
+                               "\n* %U %a%? :Software:"
+                               :clock-in :clock-resume)
                               ("lh" "Hardware" entry
                                (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %<%I:%M %p> - Hardware :Hardware:\n\n%?\n\n"
-                               :clock-in :clock-resume
-                               :empty-lines 1)
+                               "\n* %U %a%? :Hardware:"
+                               :clock-in :clock-resume)
                               ("lc" "Configuration" entry
                                (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %<%I:%M %p> - Configuration :Configuration:\n\n%?\n\n"
-                               :clock-in :clock-resume
-                               :empty-lines 1)
+                               "\n* %U %a%? :Configuration:"
+                               :clock-in :clock-resume)
                               ("s" "Create Scripts")
-                              ("ss" "shell" file
-                               (file+headline "~/org/scripts/${name}.org")
-                               "\n* Shell Script:\n\n#+begin_src sh :tangle ./${name}.sh\n\n%?\n\n#+end_src"
+                              ("ss" "shell" entry
+                               (file+headline "~/org/scripts/%<%Y%m%d%H%M%S>.org" "Scripts")
+                               (function jp/read-script-template)
                                :clock-in :clock-resume
                                :empty-lines 1)
                               ("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
@@ -568,8 +565,8 @@
                   "%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
          :unnarrowed t)
-        ("c" "Coding" plain
-         "%?\n\nSee also %a.\n"
+        ("j" "Projects" plain
+         (function jp/read-newproject-template)
          :if-new (file+head
                   "Coding/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
@@ -610,14 +607,14 @@
 
 (setq org-roam-capture-ref-templates '(
                                        ("r" "Reference" plain
-                                        "%?\n\n* Citations\n${body}"
+                                        "%?\n\n* Citations\n#+begin_quote\n${body}\n#+end_quote"
                                         :if-new (file+head
                                                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
                                                  "#+title: ${title}\n#+date: %U\n")
                                         :unnarrowed t
                                         )
                                        ("l" "Literature References" plain
-                                        "%?\n\n* Abstract\n${body}"
+                                        "%?\n\n* Abstract\n#+begin_quote\n${body}\n#+end_quote"
                                         :if-new (file+head
                                                  "References/%<%Y%m%d%H%M%S>-${slug}.org"
                                                  "#+title: ${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
@@ -627,7 +624,7 @@
                                         :target (file+head
                                                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
                                                  "#+title: ${title}\n#+date: %U\n")
-                                        "* %a :website:\n\n%U %?\n\n%:initial")
+                                        "* %a :website:\n\n%U %?\n\n#+begin_quote\n%:initial\n#+end_quote")
                                        )
       )
 

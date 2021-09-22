@@ -1,5 +1,9 @@
 
-** %^{Meeting Title} :meetings:
+** %<%H:%M> - %^{Meeting Title} :meetings:
 :Participants:
--
+- %^{Participants}
 :END:
+*** Tasks [0/1]
+- [ ] Prepair Meeting
+*** Notes
+- %a
