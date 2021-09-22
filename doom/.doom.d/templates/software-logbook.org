@@ -1,0 +1,6 @@
+* %U - %? :%^{type|software|hardware|configuration}:
+#+begin_src sh :tangle ./%^{name}.zsh :shebang #!/usr/bin/env zsh
+set -euo pipefail
+
+yay -S %?
+#+end_src

@@ -1,4 +1,3 @@
-
 ** %<%H:%M> - %^{Meeting Title} :meetings:
 :Participants:
 - %^{Participants}
