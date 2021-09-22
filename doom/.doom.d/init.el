@@ -21,13 +21,13 @@
 
        :completion
        (company
-        +childframe
+        ;;+childframe
         )           ; the ultimate code completion backend
-       helm              ; the *other* search engine for love and life
+       ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        (ivy
         +fuzzy
-        +childframe         ; display in a floating window
+       ;; +childframe         ; display in a floating window
         +icons)               ; a search engine for love and life
        (vertico +icons)           ; the search engine of the future
 
@@ -38,7 +38,7 @@
        ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
        ;;(emoji +unicode)  ; 🙂
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
-       ;;hydra
+       hydra
        indent-guides     ; highlighted indent columns
        ligatures         ; ligatures and symbols to make your code pretty again
        ;;minimap           ; show a map of the code on the side
