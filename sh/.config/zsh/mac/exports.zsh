@@ -1,4 +1,4 @@
-export PATH
+#!/usr/bin/env zsh
 eval $(/opt/homebrew/bin/brew shellenv)
 
 # Add my own install path on MacOS
@@ -9,7 +9,7 @@ export LANG='en_US.UTF-8';
 export LC_ALL='en_US.UTF-8';
 
 # Highlight section titles in manual pages.
-export LESS_TERMCAP_md="${yellow}";
+# export LESS_TERMCAP_md="${yellow}";
 
 # Don’t clear the screen after quitting a manual page.
 # export MANPAGER='less -X';
@@ -20,6 +20,8 @@ export GPG_TTY=$(tty);
 
 # Hide the “default interactive shell is now zsh” warning on macOS.
 export BASH_SILENCE_DEPRECATION_WARNING=1;
+
+# zsh_add_file '/opt/homebrew/Cellar/docker/20.10.8/share/zsh/site-functions/_docker'
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!

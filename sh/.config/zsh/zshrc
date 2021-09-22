@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env zsh
+set -euo pipefail
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -41,12 +42,16 @@ zsh_load_config "omz"
 # Normal files to source
 zsh_load_config "base"
 zsh_load_config "vim"
-zsh_load_config "linux"
+if [ "$(uname)" == "Darwin" ]; then
+  zsh_load_config "mac"
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+  zsh_load_config "linux"
+fi
 
 # Plugins
-zsh_add_plugin "zsh-users/zsh-autosuggestions"
+# zsh_add_plugin "zsh-users/zsh-autosuggestions"
+# zsh_add_plugin "hlissner/zsh-autopair"
 zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
-zsh_add_plugin "hlissner/zsh-autopair"
 zsh_add_completion "esc/conda-zsh-completion" false
 
 # For more plugins: https://github.com/unixorn/awesome-zsh-plugins
