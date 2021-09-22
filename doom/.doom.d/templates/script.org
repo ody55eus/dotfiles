@@ -1,0 +1,6 @@
+* Script
+#+begin_src sh :tangle yes :shebang "#!/usr/bin/env zsh"
+set -euo pipefail
+
+%?
+#+end_src
