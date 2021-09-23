@@ -1,10 +1,11 @@
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
+;;; config.el -*- lexical-binding: t; -*-
+;;; In case you run in trouble:
+;;(toggle-debug-on-error)
 ;; This Configuration File is managed by ~/Emacs.org. See additional comments there.
 
-(setq user-full-name "Jonathan Pieper")
-(setq user-mail-address "ody55eus@mailbox.org")
-(setq epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
+(setq user-full-name "Jonathan Pieper"
+      user-mail-address "ody55eus@mailbox.org"
+      epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
@@ -19,6 +20,11 @@
 (add-hook 'emacs-startup-hook #'jp/display-startup-time)
 
 (server-start)  ; Start Emacs as Server!
+
+(setq-default
+ delete-by-moving-to-trash t                      ; Delete files to trash
+ window-combination-resize t                      ; take new window space from all other windows (not just current)
+ x-stretch-cursor t)                              ; Stretch cursor to the glyph width
 
 (map! :leader
       (:prefix ("b" . "buffer")
@@ -138,51 +144,38 @@
        )
       )
 
-(map! (:prefix-map ("C-w" . "window")
-       :desc "evil-window-left" :n "<left>" #'evil-window-left
-       :desc "evil-window-right" :n "<right>" #'evil-window-right
-       :desc "evil-window-up" :n "<up>" #'evil-window-up
-       :desc "evil-window-down" :n "<down>" #'evil-window-down
-       )
- )
+(map! :map evil-window-map
+      "SPC" #'rotate-layout
+      ;; Navigation
+      "<left>"     #'evil-window-left
+      "<down>"     #'evil-window-down
+      "<up>"       #'evil-window-up
+      "<right>"    #'evil-window-right
+      ;; Swapping windows
+      "C-<left>"       #'+evil/window-move-left
+      "C-<down>"       #'+evil/window-move-down
+      "C-<up>"         #'+evil/window-move-up
+      "C-<right>"      #'+evil/window-move-right)
 
-(setq doom-theme 'modus-vivendi)
+(map! :map +doom-dashboard-mode-map
+      :ne "f" #'find-file
+      :ne "r" #'consult-recent-file
+      :ne "p" #'jp/go-to-projects
+      :ne "c" #'jp/go-to-config
+      :ne "i" #'jp/go-to-inbox
+      :ne "." (cmd! (doom-project-find-file "~/.config/")) ; . for dotfiles
+      :ne "b" #'+vertico/switch-workspace-buffer
+      :ne "B" #'counsel-switch-buffer)
 
-;; Set the font face based on platform
-(pcase system-type
-  ((or 'gnu/linux 'windows-nt 'cygwin)
-   (set-face-attribute 'default nil
-                       :font "Source Code Pro"
-                       :weight 'regular
-                       :height 140)
-   )
-  ('darwin
-   (set-face-attribute 'default nil :font "Source Code Pro for Powerline" :height 140)
-   ))
+(setq doom-theme 'doom-vibrant)
+(custom-set-faces!
+  '(doom-modeline-buffer-modified :foreground "DarkOrange"))
 
-;; Set the fixed pitch face
-(pcase system-type
-  ((or 'gnu/linux 'windows-nt 'cygwin)
-   (set-face-attribute 'fixed-pitch nil
-                       :font "Source Code Pro"
-                       :weight 'regular
-                       :height 140))
-  ('darwin (set-face-attribute 'fixed-pitch nil :font "Source Code Pro for Powerline" :height 140)))
-
-;; Set the variable pitch face
-(pcase system-type
-  ((or 'gnu/linux 'windows-nt 'cygwin)
-   (set-face-attribute 'variable-pitch nil
-                       ;; :font "Cantarell"
-                       :font "Roboto"
-                       :height 175
-                       :weight 'light)
-   )
-  ('darwin (set-face-attribute 'variable-pitch nil
-                               :font "Helvetica"
-                               :height 175
-                               :weight 'light)
-           ))
+(setq doom-font (font-spec :family "JetBrains Mono" :size 16)
+      doom-big-font (font-spec :family "JetBrains Mono" :size 24)
+      doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
+      doom-unicode-font (font-spec :family "JuliaMono" :size 16)
+      doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light :size 16))
 
 (setq display-line-numbers-type 'relative)
 
@@ -227,16 +220,25 @@
 
 (use-package! doom-modeline
   :custom-face
-  (mode-line ((t (:height 0.95))))
-  (mode-line-inactive ((t (:height 0.85))))
+  (mode-line ((t (:height 1.1))))
+  (mode-line-inactive ((t (:height 0.95))))
   :custom
-  (doom-modeline-height 20)
+  (doom-modeline-height 16)
   (doom-modeline-bar-width 4)
   (doom-modeline-lsp t)
   (doom-modeline-modal-icon t)
   (doom-modeline-minor-modes nil)
   (doom-modeline-major-mode-icon t)
-  (doom-modeline-buffer-state-icon t))
+
+ (defun doom-modeline-conditional-buffer-encoding ()
+  "We expect the encoding to be LF UTF-8, so only show the modeline when this is not the case"
+  (setq-local doom-modeline-buffer-encoding
+              (unless (and (memq (plist-get (coding-system-plist buffer-file-coding-system) :category)
+                                 '(coding-category-undecided coding-category-utf-8))
+                           (not (memq (coding-system-eol-type buffer-file-coding-system) '(1 2))))
+                t)))
+
+(add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding) (doom-modeline-buffer-state-icon t))
 
 (defadvice! prompt-for-buffer (&rest _)
   :after '(evil-window-split evil-window-vsplit)
@@ -1226,6 +1228,9 @@ Returns file content as a string."
     (setq mu4e-alert-notify-repeated-mails nil)
 
     (mu4e-alert-enable-notifications)))
+
+(setq auth-sources '("~/.authinfo.gpg")
+      auth-source-cache-expiry nil)
 
 (defun jp/lookup-password (&rest keys)
   (let ((result (apply #'auth-source-search keys)))
