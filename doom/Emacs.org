@@ -1,7 +1,8 @@
 #+TITLE: Doom Emacs Configuration
-#+STARTUP: content
+#+STARTUP: fold
 
 * Table of Contents :TOC:
+- [[#about-this-configuration][About this Configuration]]
 - [[#about-me][About Me]]
 - [[#basic-configuration][Basic Configuration]]
   - [[#other-doom-emacs-configuration-files-init--packages][Other Doom Emacs Configuration Files (init / packages)]]
@@ -25,16 +26,23 @@
   - [[#flyspell-spell-checking-dictionary][Flyspell (spell checking dictionary)]]
   - [[#deft][Deft]]
 
+* About this Configuration
+Make this file run (slightly) faster with lexical binding (see [[https://nullprogram.com/blog/2016/12/22/][this blog post]] for more info).
+#+begin_src emacs-lisp :comments no :tangle ./.doom.d/config.el
+;;; config.el -*- lexical-binding: t; -*-
+;;; In case you run in trouble:
+;;(toggle-debug-on-error)
+;; This Configuration File is managed by ~/Emacs.org. See additional comments there.
+#+end_src
+
 * About Me
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-;; This Configuration File is managed by ~/Emacs.org. See additional comments there.
+(setq user-full-name "Jonathan Pieper"
+      user-mail-address "ody55eus@mailbox.org"
+      epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
-(setq user-full-name "Jonathan Pieper")
-(setq user-mail-address "ody55eus@mailbox.org")
-(setq epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 #+end_src
 
@@ -441,6 +449,17 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+end_src
 
+*** Default Variables
+:Source:
+Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-settings][tecosaur]].
+:END:
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq-default
+ delete-by-moving-to-trash t                      ; Delete files to trash
+ window-combination-resize t                      ; take new window space from all other windows (not just current)
+ x-stretch-cursor t)                              ; Stretch cursor to the glyph width
+#+end_src
+
 ** UI Configuration
 *** Keybindings (=:leader= ~SPC-<Key>~)
 **** Basic Keybindings
@@ -596,31 +615,65 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
       )
 #+end_src
 
-*** Keybindings (=CTRL= ~C-<Key>~)
-
+**** Keybindings (=CTRL= ~C-w~ Window)
+:Source:
+Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecosaur]].
+:END:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(map! (:prefix-map ("C-w" . "window")
-       :desc "evil-window-left" :n "<left>" #'evil-window-left
-       :desc "evil-window-right" :n "<right>" #'evil-window-right
-       :desc "evil-window-up" :n "<up>" #'evil-window-up
-       :desc "evil-window-down" :n "<down>" #'evil-window-down
-       )
- )
+(map! :map evil-window-map
+      "SPC" #'rotate-layout
+      ;; Navigation
+      "<left>"     #'evil-window-left
+      "<down>"     #'evil-window-down
+      "<up>"       #'evil-window-up
+      "<right>"    #'evil-window-right
+      ;; Swapping windows
+      "C-<left>"       #'+evil/window-move-left
+      "C-<down>"       #'+evil/window-move-down
+      "C-<up>"         #'+evil/window-move-up
+      "C-<right>"      #'+evil/window-move-right)
 
+#+end_src
+
+**** Doom Dashboard
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(map! :map +doom-dashboard-mode-map
+      :ne "f" #'find-file
+      :ne "r" #'consult-recent-file
+      :ne "p" #'jp/go-to-projects
+      :ne "c" #'jp/go-to-config
+      :ne "i" #'jp/go-to-inbox
+      :ne "." (cmd! (doom-project-find-file "~/.config/")) ; . for dotfiles
+      :ne "b" #'+vertico/switch-workspace-buffer
+      :ne "B" #'counsel-switch-buffer)
 #+end_src
 
 *** Color Theme
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(setq doom-theme 'modus-vivendi)
+(setq doom-theme 'doom-vibrant)
+(custom-set-faces!
+  '(doom-modeline-buffer-modified :foreground "DarkOrange"))
 
 #+end_src
 
 *** Font Face Configuration
-
+**** New Configuration
+:Source:
+Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
+:END:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq doom-font (font-spec :family "JetBrains Mono" :size 16)
+      doom-big-font (font-spec :family "JetBrains Mono" :size 24)
+      doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
+      doom-unicode-font (font-spec :family "JuliaMono" :size 16)
+      doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light :size 16))
+#+end_src
+
+**** Old System Dependent
+#+begin_src emacs-lisp
 
 
 ;; Set the font face based on platform
@@ -742,16 +795,25 @@ Disable the computer =beep= and activate a visual feedback instead.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (use-package! doom-modeline
   :custom-face
-  (mode-line ((t (:height 0.95))))
-  (mode-line-inactive ((t (:height 0.85))))
+  (mode-line ((t (:height 1.1))))
+  (mode-line-inactive ((t (:height 0.95))))
   :custom
-  (doom-modeline-height 20)
+  (doom-modeline-height 16)
   (doom-modeline-bar-width 4)
   (doom-modeline-lsp t)
   (doom-modeline-modal-icon t)
   (doom-modeline-minor-modes nil)
   (doom-modeline-major-mode-icon t)
-  (doom-modeline-buffer-state-icon t))
+
+ (defun doom-modeline-conditional-buffer-encoding ()
+  "We expect the encoding to be LF UTF-8, so only show the modeline when this is not the case"
+  (setq-local doom-modeline-buffer-encoding
+              (unless (and (memq (plist-get (coding-system-plist buffer-file-coding-system) :category)
+                                 '(coding-category-undecided coding-category-utf-8))
+                           (not (memq (coding-system-eol-type buffer-file-coding-system) '(1 2))))
+                t)))
+
+(add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding) (doom-modeline-buffer-state-icon t))
 #+end_src
 
 ***** Display Time in Modeline
@@ -2554,6 +2616,9 @@ Useful mu4e manual pages:
 ** Password Save
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq auth-sources '("~/.authinfo.gpg")
+      auth-source-cache-expiry nil)
 
 (defun jp/lookup-password (&rest keys)
   (let ((result (apply #'auth-source-search keys)))
