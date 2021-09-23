@@ -1,0 +1,62 @@
+#+TITLE: Legal Infomation
+
+* Work of others
+Some part of my configuration is build on work of other people. In order to aknowledge their contribution, I list them here:
+
+** David Wilson (System Crafters)
+[[https://github.com/daviwil][David Wilson]] is sharing his [[https://github.com/daviwil/dotfiles][Emacs configuration]] through his [[https://github.com/daviwil/dotfiles][YouTube channel System Crafters]]. He granted me full rights to copy and share parts of his unlicensed [[https://github.com/daviwil/emacs-from-scratch][Emacs from scratch]] configuration.
+
+** Tecosaur
+- https://github.com/tecosaur/emacs-config
+- https://tecosaur.github.io/emacs-config/config.html
+
+*** MIT License
+#+begin_quote
+Copyright (c) 2020 tecosaur
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+#+end_quote
+
+** Derek Taylor (DistroTube)
+Another [[https://www.youtube.com/DistroTube][Youtuber]] ([[https://odysee.com/@DistroTube:2][Odysee]]) with his own [[https://distro.tube/][blog]], sharing his [[https://gitlab.com/dwt1/dotfiles][dotfiles via GitLab]].
+*** MIT License
+
+Copyright (c) 2019 Derek Taylor
+https://www.youtube.com/c/DistroTube
+https://gitlab.com/dwt1/
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+** Pierre Neidhardt (ambrevar)
+His [[https://ambrevar.xyz/index.html][blog]] ([[https://gitlab.com/ambrevar/ambrevar.gitlab.io/-/blob/master/COPYING][GPLv3]]) and [[https://gitlab.com/ambrevar/dotfiles][dotfiles]] ([[https://gitlab.com/ambrevar/dotfiles/-/blob/master/COPYING][GPLv3]]) inspired me to find my own configuration.
