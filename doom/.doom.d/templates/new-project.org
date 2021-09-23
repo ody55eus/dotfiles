@@ -4,7 +4,7 @@ DEADLINE: %^t
 :STARTDATE: %u
 :END:
 %^{OUTCOME}p
-%^{AREA}p
+%^{CATEGORY}p
 %?
 - [ ] Add project tags for context (e.g. work, personal)
 - [ ] List specific tasks
@@ -16,19 +16,19 @@ DEADLINE: %^t
   (nth 4 (org-heading-components))
   #+END_SRC
 
-  #+BEGIN_SRC shell :var project=headline
-  osascript -e "tell application \"Evernote\" to create notebook \"$project\""
+  #+BEGIN_SRC shell :noweb t
+  osascript -e "tell application \"Evernote\" to create notebook \"<<headline()>>\""
   #+END_SRC
 - [ ] Create Folder Structure
   + [ ] Local Git Repository
-    #+begin_src shell :var project=headline
-    mkdir -p ~/Projects/Code/$project
-    cd ~/Projects/Code/$project
+    #+begin_src shell :noweb t
+    mkdir -p ~/Projects/Code/<<headline()>>
+    cd ~/Projects/Code/<<headline()>>
     git init .
     #+end_src
 
   + [ ] Ody5 Git Repository
-    #+begin_src shell :var project=headline
+    #+begin_src shell :noweb t
     cd ~/Projects/Code/
-    git clone ssh://git@gitlab.ody5.de/ody55eus/${project}.git
+    git clone ssh://git@gitlab.ody5.de/ody55eus/<<headline()>>.git
     #+end_src

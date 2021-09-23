@@ -568,7 +568,7 @@ Returns file content as a string."
         ("j" "Projects" plain
          (function jp/read-newproject-template)
          :if-new (file+head
-                  "Coding/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "Projects/%<%Y%m%d%H%M%S>-${slug}.org"
                   "#+title: ${title}\n")
          :clock-in :clock-resume
          :unnarrowed t
