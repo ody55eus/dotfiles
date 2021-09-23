@@ -738,7 +738,7 @@ Disable the computer =beep= and activate a visual feedback instead.
 #+end_src
 
 **** Doom Modeline
-
+***** Basic Configuration
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (use-package! doom-modeline
   :custom-face
@@ -752,6 +752,12 @@ Disable the computer =beep= and activate a visual feedback instead.
   (doom-modeline-minor-modes nil)
   (doom-modeline-major-mode-icon t)
   (doom-modeline-buffer-state-icon t))
+#+end_src
+
+***** Display Time in Modeline
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq display-time-24hr-format t)
+(display-time-mode 1)
 #+end_src
 
 **** Doom Dashboard

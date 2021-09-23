@@ -238,6 +238,9 @@
   (doom-modeline-major-mode-icon t)
   (doom-modeline-buffer-state-icon t))
 
+(setq display-time-24hr-format t)
+(display-time-mode 1)
+
 (defadvice! prompt-for-buffer (&rest _)
   :after '(evil-window-split evil-window-vsplit)
   (counsel-switch-buffer))
