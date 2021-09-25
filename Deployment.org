@@ -1,59 +1,85 @@
 #+TITLE: Deployment
 #+PROPERTY: header-args:sh :tangle-mode (identity #o755) :comments link :tangle scripts/deploy.sh
 
-* Basic Script Header :noexport:
-#+begin_src sh :tangle yes :export no
+* Script Setup
+The final [[file:scripts/deploy.sh][deploy.sh]] script is tangled from this file. Any shell code not marked optional is automatically added to this script.
+First, make sure we're running the correct environment and set correct executing flags:
+#+begin_src sh
 #!/usr/bin/env bash
 set -euo pipefail
 #+end_src
 
 * Installation of Software
-** MacOS
-*** Homebrew
+** Setup Package Manager
+*** MacOS (Homebrew)
 [[https://brew.sh/][Homebrew]] is a package manager for MacOS. It is installed with a single line:
-#+begin_src sh :tangle (if (eq system-type 'darwin) "yes" "no")
+#+begin_src sh :tangle (if (eq system-type 'darwin) "scripts/deploy.sh" "no")
 # MacOS Install Homebrew
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 $INSTALL = "brew install"
 #+end_src
-** Linux
-*** Arch Linux (Pacman, Yay)
-This Configuration  is for Arch based systems using Pacman and Yay as package manager.
-#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "yes" "no")
-# UPDATE="sudo pacman -Syu"
-# INSTALL="sudo pacman -S"
 
+*** Linux
+**** Arch Linux (Pacman, Yay)
+This Configuration  is for Arch based systems using Pacman or Yay as package manager.
+#+begin_src sh :tangle (if (file-exists-p "/etc/arch-release") "scripts/deploy.sh" "no")
 # Yay has more packages
 UPDATE="yay -Syu"
 INSTALL="yay -S"
+
+# Alternatively use pacman
+# UPDATE="sudo pacman -Syu"
+# INSTALL="sudo pacman -S"
 #+end_src
 
-*** Debian (apt)
+**** Debian (apt)
 On Debian systems uncomment the following lines:
-#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "yes" "no")
-#UPDATE="apt update && apt upgrade -y"
-#INSTALL="apt install"
+#+begin_src sh :tangle (if (file-exists-p "/etc/debian-release") "scripts/deploy.sh" "no")
+UPDATE="apt update && apt upgrade -y"
+INSTALL="apt install"
 #+end_src
-** Populate Submodules
-#+begin_src sh :tangle yes
-git submodule update --init sh/.config/zsh/ohmyzsh
-git submodule update --init doom/.emacs.d
-git submodule update --init vim/.vim/bundle/Vundle.vim
-#+end_src
+
 ** Update system and install Software
 *** Basic Software
-#+begin_src sh :tangle yes
+#+begin_src sh
 $UPDATE
-$INSTALL git neovim wget tmux stow 
+$INSTALL git neovim wget tmux stow
 #+end_src
+*** Graphical Desktop Environment :optional:
+Here are some desktop environments to choose from.
+
+**** Window Manager
+I started my journey through [[https://en.wikipedia.org/wiki/Tiling_window_manager][tiling window managers]] with [[https://i3wm.org/][i3]]. More will follow soon (e.g. [[https://awesomewm.org/][awesome]], [[https://www.qtile.org/][qtile]], or [[https://xmonad.org/][xmonad]])
+***** TODO i3
+Nothing here yet ... please update me
+**** Desktop Software
+***** Conky
+[[https://github.com/brndnmtthws/conky][Conky]] is a system monitor which can display your important system information on the desktop.
+#+begin_src sh
+$INSTALL conky
+#+end_src
+
+***** Rofi / Dmenu
+[[https://github.com/davatorium/rofi][Rofi]] and [[https://tools.suckless.org/dmenu/][Dmenu]] are application launcher. They display a nice GUI to input a search string and allows you to easily find your installed apps, files, open windows, ssh connections, etc. Another good alternative is [[https://ulauncher.io/][Ulauncher]].
+#+begin_src sh
+$INSTALL rofi dmenu
+#+end_src
+
+*****
+
+** Fetching additional software via git
 *** Oh-My-Zsh (Theme)
-#+begin_src sh :tangle yes
+#+begin_src sh
+# Download OhMyZsh from github
+git submodule update --init sh/.config/zsh/ohmyzsh
 # Install OhMyZsh! Theme
 rm -rf sh/.config/zsh/ohmyzsh/custom/themes
 git clone https://github.com/romkatv/powerlevel10k.git sh/.config/zsh/ohmyzsh/custom/themes
 #+end_src
-*** Compile Emacs from newest Source Code
-#+begin_src sh :tangle yes
+
+*** Emacs and Doom Emacs
+**** Compile Emacs from newest Source Code
+#+begin_src sh
 mkdir -p ~/build
 git clone https://git.savannah.gnu.org/git/emacs.git ~/build/emacs
 cd ~/build/emacs
@@ -63,14 +89,20 @@ make -j`$(nproc)`
 sudo make install
 cd -
 #+end_src
-*** Doom Emacs
+
+**** Doom Emacs
 Install Doom Emacs (needs some y/n questions answered, takes around 5-10 min)
-#+begin_src sh :tangle yes
+#+begin_src sh
+# Download Doom from Git
+git submodule update --init doom/.emacs.d
+# Install Doom
 doom/.emacs.d/bin/doom install
 #+end_src
-*** Vundle Packages :optional:
-Install Vim Plugins via Vundle (takes some time and requires user interaction to quit)
-#+begin_src sh
+
+*** Vim Vundle Packages :optional:
+Install Vim (Neovim) Plugins via Vundle (takes some time and requires user interaction to quit)
+#+begin_src sh :tangle no
+# Download Vundle
+git submodule update --init vim/.vim/bundle/Vundle.vim
 nvim -c ":PluiginInstall"
 #+end_src
-**
