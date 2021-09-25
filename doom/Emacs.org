@@ -23,7 +23,6 @@
   - [[#hold-magit][HOLD Magit]]
   - [[#mail-in-emacs-with-mu4e][Mail in Emacs with mu4e]]
   - [[#password-save][Password Save]]
-  - [[#flyspell-spell-checking-dictionary][Flyspell (spell checking dictionary)]]
   - [[#deft][Deft]]
 
 * About this Configuration
@@ -347,7 +346,7 @@ Just comment/uncomment some lines to disable/enable features.
 (package! org-journal)
 
 ;; Use latest version!
-(unpin! org-roam)
+(unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
 
 ;; Org Roam UI (frontend for exploring and interacting org-roam)
@@ -359,7 +358,6 @@ Just comment/uncomment some lines to disable/enable features.
 
 (package! org-roam-bibtex
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
-
 
 (package! org-protocol-capture-html
   :recipe (:host github
@@ -666,7 +664,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 :END:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq doom-font (font-spec :family "JetBrains Mono" :size 16)
-      doom-big-font (font-spec :family "JetBrains Mono" :size 24)
+      doom-big-font (font-spec :family "JetBrains Mono" :size 22)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
       doom-unicode-font (font-spec :family "JuliaMono" :size 16)
       doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light :size 16))
@@ -742,11 +740,18 @@ Disable the computer =beep= and activate a visual feedback instead.
 #+end_src
 
 **** Enable Menu Bar
+This allows you to see some basic actions (activates dropdown menus File, Edit, Options, etc.)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (menu-bar-mode 1)
 
+#+end_src
+
+**** Enable Mouse (Backward, Forward) Buttons
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(map! :n [mouse-8] #'better-jumper-jump-backward
+      :n [mouse-9] #'better-jumper-jump-forward)
 #+end_src
 
 **** Resize Startup Window
@@ -795,7 +800,7 @@ Disable the computer =beep= and activate a visual feedback instead.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (use-package! doom-modeline
   :custom-face
-  (mode-line ((t (:height 1.1))))
+  (mode-line ((t (:height 1.0))))
   (mode-line-inactive ((t (:height 0.95))))
   :custom
   (doom-modeline-height 16)
@@ -1898,17 +1903,27 @@ See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online 
 
 ** Additional Org Packages
 *** Org Alert
-
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (require 'org-alert)
 #+end_src
 
+*** Org Msg
+Doom does a fantastic stuff with the defaults with this, so we only make a few minor tweaks.
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq +org-msg-accent-color "#1a5fb4"
+      org-msg-greeting-fmt "\nHi %s,\n\n"
+      org-msg-signature "\n\n#+begin_signature\nAll the best,\\\\\n@@html:<b>@@Jonathan@@html:</b>@@\n#+end_signature")
+(map! :map org-msg-edit-mode-map
+      :after org-msg
+      :n "G" #'org-msg-goto-body)
+#+end_src
 *** Org Tempo
-
-Auto Completion for Code Blocks in org mode!
 :SOURCE:
 Description by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
 :END:
+
+This enables auto completion to easily create OrgBabel code blocks in org mode!
+
 Org-tempo is a package that allows for '<s' followed by TAB to expand to a begin_src tag.  Other expansions available include:
 
 | Typing the below + TAB | Expands to ...                          |
@@ -2637,41 +2652,6 @@ Useful mu4e manual pages:
                (entry (nth 0 matches)))
           (plist-get entry :secret)))
   (bitwarden-auth-source-enable))
-
-#+end_src
-
-** Flyspell (spell checking dictionary)
-
-#+begin_src sh :tangle ./.doom.d/install-dictionary.sh
-#!/usr/bin/env zsh
-set -euo pipefail
-
-# Install German dictionary
-npm install dictionary-de
-mkdir -p ~/Library/Spelling
-ln -sf ~/node_modules/dictionary-de/index.aff ~/Library/Spelling/de.aff
-ln -sf ~/node_modules/dictionary-de/index.dic ~/Library/Spelling/de.dic
-
-# Install British English
-curl -L https://sourceforge.net/projects/wordlist/files/speller/2020.12.07/hunspell-en_GB-large-2020.12.07.zip/download > hunspell-en_GB-large-2020.12.07.zip
-unzip hunspell-en_GB-large-2020.12.07.zip
-cp en_GB-large.aff ~/Library/Spelling/
-cp en_GB-large.dic ~/Library/Spelling/
-
-# Install American English
-curl -L https://sourceforge.net/projects/wordlist/files/speller/2020.12.07/hunspell-en_US-large-2020.12.07.zip/download > hunspell-en_US-large-2020.12.07.zip
-unzip hunspell-en_US-large-2020.12.07.zip
-cp en_US-large.aff ~/Library/Spelling/
-cp en_US-large.dic ~/Library/Spelling/
-
-# Cleanup
-rm -f hunspell-en_*.zip en_*.aff en_*.dic README_en_*.txt
-#+end_src
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq ispell-hunspell-dictionary-alist '(("~/Library/Spelling")))
-(setq flyspell-default-dictionary "en_GB-large") ;; or "en_US-large", "de"
 
 #+end_src
 

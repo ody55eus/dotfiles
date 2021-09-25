@@ -60,7 +60,7 @@
 (package! org-journal)
 
 ;; Use latest version!
-(unpin! org-roam)
+(unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
 
 ;; Org Roam UI (frontend for exploring and interacting org-roam)
@@ -72,7 +72,6 @@
 
 (package! org-roam-bibtex
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
-
 
 (package! org-protocol-capture-html
   :recipe (:host github

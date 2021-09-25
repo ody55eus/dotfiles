@@ -172,7 +172,7 @@
   '(doom-modeline-buffer-modified :foreground "DarkOrange"))
 
 (setq doom-font (font-spec :family "JetBrains Mono" :size 16)
-      doom-big-font (font-spec :family "JetBrains Mono" :size 24)
+      doom-big-font (font-spec :family "JetBrains Mono" :size 22)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
       doom-unicode-font (font-spec :family "JuliaMono" :size 16)
       doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light :size 16))
@@ -190,6 +190,9 @@
 (setq visible-bell t)
 
 (menu-bar-mode 1)
+
+(map! :n [mouse-8] #'better-jumper-jump-backward
+      :n [mouse-9] #'better-jumper-jump-forward)
 
 (defun jp/set-frame-size-according-to-resolution ()
   (interactive)
@@ -220,7 +223,7 @@
 
 (use-package! doom-modeline
   :custom-face
-  (mode-line ((t (:height 1.1))))
+  (mode-line ((t (:height 1.0))))
   (mode-line-inactive ((t (:height 0.95))))
   :custom
   (doom-modeline-height 16)
@@ -814,6 +817,13 @@ Returns file content as a string."
 
 (require 'org-alert)
 
+(setq +org-msg-accent-color "#1a5fb4"
+      org-msg-greeting-fmt "\nHi %s,\n\n"
+      org-msg-signature "\n\n#+begin_signature\nAll the best,\\\\\n@@html:<b>@@Jonathan@@html:</b>@@\n#+end_signature")
+(map! :map org-msg-edit-mode-map
+      :after org-msg
+      :n "G" #'org-msg-goto-body)
+
 (with-eval-after-load 'org
   ;; This is needed as of Org 9.2
   (require 'org-tempo)
@@ -1252,8 +1262,5 @@ Returns file content as a string."
                (entry (nth 0 matches)))
           (plist-get entry :secret)))
   (bitwarden-auth-source-enable))
-
-(setq ispell-hunspell-dictionary-alist '(("~/Library/Spelling")))
-(setq flyspell-default-dictionary "en_GB-large") ;; or "en_US-large", "de"
 
 (setq deft-directory "~/org")
