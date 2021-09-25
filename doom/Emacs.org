@@ -1,7 +1,7 @@
 #+TITLE: Doom Emacs Configuration
 #+STARTUP: fold
 
-* Table of Contents :TOC:
+* Table of Contents :TOC:noexport:
 - [[#about-this-configuration][About this Configuration]]
 - [[#about-me][About Me]]
 - [[#basic-configuration][Basic Configuration]]
@@ -10,9 +10,10 @@
   - [[#ui-configuration][UI Configuration]]
 - [[#org-mode][Org Mode]]
   - [[#org-configuration][Org Configuration]]
+  - [[#self-written-extensions][Self-written extensions]]
   - [[#ui-configuration-1][UI Configuration]]
   - [[#workflow-configuration][Workflow Configuration]]
-  - [[#exports][Exports]]
+  - [[#org-publish-exporting-org-files][Org Publish (Exporting org files)]]
   - [[#additional-org-packages][Additional Org Packages]]
   - [[#org-roam-specific][Org-Roam Specific]]
 - [[#additional-packages][Additional Packages]]
@@ -1160,24 +1161,163 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
 
 #+end_src
 
-*** Org Roam (Zettelkasten)
+** Self-written extensions
+*** Select Org Roam Notes
+**** Select by Folder Prefix
+:Source:
+These extra functions are inspired by the System Crafters live stream of September 3rd 2021:
+https://systemcrafters.net/live-streams/september-03-2021/
+:END:
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(defun jp/org-roam-select-prefix (prefix)
+  (org-roam-node-read
+   nil
+   (lambda (node)
+     (string-prefix-p
+      (concat org-roam-directory prefix)
+      (org-roam-node-file node))
+     )
+   ))
 
+(defun jp/org-roam-ignore-prefix (prefix)
+  (org-roam-node-read
+   nil
+   (lambda (node)
+     (not (string-prefix-p
+           (concat org-roam-directory prefix)
+           (org-roam-node-file node))
+          ))
+   ))
+
+(defun jp/org-roam-ignore-literature ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/Literature"))
+
+(defun jp/org-roam-select-literature ()
+  (interactive)
+  (jp/org-roam-select-prefix "/Literature"))
+
+(defun jp/org-roam-ignore-pc ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/PC"))
+
+(defun jp/org-roam-select-pc ()
+  (interactive)
+  (jp/org-roam-select-prefix "/PC"))
+
+(defun jp/org-roam-ignore-projects ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/Projects"))
+
+(defun jp/org-roam-select-projects ()
+  (interactive)
+  (jp/org-roam-select-prefix "/Projects"))
+
+(defun jp/org-roam-ignore-other ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/20"))
+
+(defun jp/org-roam-select-other ()
+  (interactive)
+  (jp/org-roam-select-prefix "/20"))
+#+end_src
+
+**** Select by Assigned Tags
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(defun jp/org-roam-get-tagged (&optional tag)
+  (mapcar
+   #'org-roam-node-file
+   (seq-filter
+    (lambda (node)
+      (member tag (org-roam-node-tags node)))
+    (org-roam-node-list))))
+
+(defun jp/org-roam-agenda ()
+  (interactive)
+  (let ((org-agenda-files (jp/org-roam-get-tagged "Tasks")))
+  (org-agenda)))
+#+end_src
+
+*** Reading  a File from Template
+:Source:
+Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]] (see [[https://github.com/benoitj/dotfiles/tree/main/dot_config/emacs.local/templates][dot_config/emacs.local/templates]] and [[https://github.com/benoitj/dotfiles/blob/main/dot_config/doom/%2Borg.el#L28][dot_config/doom/+org.el (Lines 28ff)]]).
+:END:
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq org-templates-directory (concat doom-private-dir "/templates/"))
+(defun jp/read-template (template)
+  "Reading TEMPLATE as a file from org-templates-directory.
+Returns file content as a string."
+  (with-temp-buffer
+    (insert-file-contents (concat org-templates-directory template))
+    (buffer-string)))
+(defun jp/read-newproject-template ()
+  (jp/read-template "new-project.org"))
+(defun jp/read-dailyreview-template ()
+  (jp/read-template "daily-review.org"))
+(defun jp/read-weekly-template ()
+  (jp/read-template "weekly-review.org"))
+(defun jp/read-monthly-template ()
+  (jp/read-template "monthly-review.org"))
+(defun jp/read-meeting-template ()
+  (jp/read-template "Meeting.org"))
+(defun jp/read-script-template ()
+  (jp/read-template "script.org"))
+#+end_src
+
+*** Regular Reviews
+:Source:
+Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
+:END:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
-(require 'org-roam-protocol)
-(require 'org-protocol-capture-html)
+(defun jp/daily-review ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
+                                  (file "~/.doom.d/templates/daily-review.org")))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
 
-(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
-      org-roam-dailies-directory (file-truename "~/ZK/daily")
-      org-attach-id-dir (concat org-roam-directory "/.attachments")
-      org-id-locations-file "~/ZK/.orgids"
-      org-roam-completion-everywhere nil
-      org-roam-completion-system 'default
-      ;;org-roam-graph-executable "neato" ; or "dot" (default)
-      )
+(defun jp/weekly-review ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
+                                  (file "~/.doom.d/templates/weekly-review.org")))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
 
+(defun jp/monthly-review ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
+                                  (file "~/.doom.d/templates/monthly-review.org")))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
 #+end_src
+
+*** Project Management
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(defun jp/go-to-projects (&optional name head)
+  ""
+  (interactive)
+  (let* ((headline-regex (or head "* Projects"))
+         (node (jp/org-roam-select-projects)))
+    (org-roam-node-visit node)
+    ;;(org-roam-node-find-noselect node)
+    (widen)
+    (beginning-of-buffer)
+    (re-search-forward headline-regex)
+    (beginning-of-line)))
+  #+end_src
 
 ** UI Configuration
 *** Visual Feedback
@@ -1301,164 +1441,6 @@ Set this value to ~nil~ to display them again.
 #+end_src
 
 ** Workflow Configuration
-*** Self-written extensions
-**** Select Org Roam Notes
-***** Select by Folder Prefix
-:Source:
-These extra functions are inspired by the System Crafters live stream of September 3rd 2021:
-https://systemcrafters.net/live-streams/september-03-2021/
-:END:
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(defun jp/org-roam-select-prefix (prefix)
-  (org-roam-node-read
-   nil
-   (lambda (node)
-     (string-prefix-p
-      (concat org-roam-directory prefix)
-      (org-roam-node-file node))
-     )
-   ))
-
-(defun jp/org-roam-ignore-prefix (prefix)
-  (org-roam-node-read
-   nil
-   (lambda (node)
-     (not (string-prefix-p
-           (concat org-roam-directory prefix)
-           (org-roam-node-file node))
-          ))
-   ))
-
-(defun jp/org-roam-ignore-literature ()
-  (interactive)
-  (jp/org-roam-ignore-prefix "/Literature"))
-
-(defun jp/org-roam-select-literature ()
-  (interactive)
-  (jp/org-roam-select-prefix "/Literature"))
-
-(defun jp/org-roam-ignore-pc ()
-  (interactive)
-  (jp/org-roam-ignore-prefix "/PC"))
-
-(defun jp/org-roam-select-pc ()
-  (interactive)
-  (jp/org-roam-select-prefix "/PC"))
-
-(defun jp/org-roam-ignore-projects ()
-  (interactive)
-  (jp/org-roam-ignore-prefix "/Projects"))
-
-(defun jp/org-roam-select-projects ()
-  (interactive)
-  (jp/org-roam-select-prefix "/Projects"))
-
-(defun jp/org-roam-ignore-other ()
-  (interactive)
-  (jp/org-roam-ignore-prefix "/20"))
-
-(defun jp/org-roam-select-other ()
-  (interactive)
-  (jp/org-roam-select-prefix "/20"))
-#+end_src
-
-***** Select by Assigned Tags
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(defun jp/org-roam-get-tagged (&optional tag)
-  (mapcar
-   #'org-roam-node-file
-   (seq-filter
-    (lambda (node)
-      (member tag (org-roam-node-tags node)))
-    (org-roam-node-list))))
-
-(defun jp/org-roam-agenda ()
-  (interactive)
-  (let ((org-agenda-files (jp/org-roam-get-tagged "Tasks")))
-  (org-agenda)))
-#+end_src
-
-**** Reading  a File from Template
-:Source:
-Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]] (see [[https://github.com/benoitj/dotfiles/tree/main/dot_config/emacs.local/templates][dot_config/emacs.local/templates]] and [[https://github.com/benoitj/dotfiles/blob/main/dot_config/doom/%2Borg.el#L28][dot_config/doom/+org.el (Lines 28ff)]]).
-:END:
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq org-templates-directory (concat doom-private-dir "/templates/"))
-(defun jp/read-template (template)
-  "Reading TEMPLATE as a file from org-templates-directory.
-Returns file content as a string."
-  (with-temp-buffer
-    (insert-file-contents (concat org-templates-directory template))
-    (buffer-string)))
-(defun jp/read-newproject-template ()
-  (jp/read-template "new-project.org"))
-(defun jp/read-dailyreview-template ()
-  (jp/read-template "daily-review.org"))
-(defun jp/read-weekly-template ()
-  (jp/read-template "weekly-review.org"))
-(defun jp/read-monthly-template ()
-  (jp/read-template "monthly-review.org"))
-(defun jp/read-meeting-template ()
-  (jp/read-template "Meeting.org"))
-(defun jp/read-script-template ()
-  (jp/read-template "script.org"))
-#+end_src
-
-**** Regular Reviews
-:Source:
-Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
-:END:
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(defun jp/daily-review ()
-  (interactive)
-  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
-                                  (file "~/.doom.d/templates/daily-review.org")))))
-    (progn
-      (org-capture nil "d")
-      (org-capture-finalize t)
-      (org-speed-move-safe 'outline-up-heading)
-      (org-narrow-to-subtree)
-      (org-clock-in))))
-
-(defun jp/weekly-review ()
-  (interactive)
-  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
-                                  (file "~/.doom.d/templates/weekly-review.org")))))
-    (progn
-      (org-capture nil "d")
-      (org-capture-finalize t)
-      (org-speed-move-safe 'outline-up-heading)
-      (org-narrow-to-subtree)
-      (org-clock-in))))
-
-(defun jp/monthly-review ()
-  (interactive)
-  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
-                                  (file "~/.doom.d/templates/monthly-review.org")))))
-    (progn
-      (org-capture nil "d")
-      (org-capture-finalize t)
-      (org-speed-move-safe 'outline-up-heading)
-      (org-narrow-to-subtree)
-      (org-clock-in))))
-#+end_src
-
-**** Project Management
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(defun jp/go-to-projects (&optional name head)
-  ""
-  (interactive)
-  (let* ((headline-regex (or head "* Projects"))
-         (node (jp/org-roam-select-projects)))
-    (org-roam-node-visit node)
-    ;;(org-roam-node-find-noselect node)
-    (widen)
-    (beginning-of-buffer)
-    (re-search-forward headline-regex)
-    (beginning-of-line)))
-  #+end_src
-
 *** Task Keywords
 The Task Keywords are noted with their keybindings in parentheses.
 
@@ -1826,7 +1808,7 @@ The daily / monthly review templates are inspired by [[https://github.com/benoit
 
 #+end_src
 
-** Exports
+** Org Publish (Exporting org files)
 *** LaTeX
 
 See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online Documentation]] for LaTeX Export for Org Mode.
@@ -2002,9 +1984,8 @@ This Configuration runs on start end finish of presentations:
 #+end_src
 
 *** Babel (Programming Languages in Org)
-
+**** PlantUML
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
 ;; Enable PlantUML Diagrams
 (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
 ;; Jar Configuration
@@ -2014,7 +1995,9 @@ This Configuration runs on start end finish of presentations:
 ;; Sample executable configuration
 ;;(setq plantuml-executable-path "/path/to/your/copy/of/plantuml.bin")
 ;;(setq plantuml-default-exec-mode 'executable)
-
+#+end_src
+**** OrgBabel Languages
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((R . t)
@@ -2022,7 +2005,12 @@ This Configuration runs on start end finish of presentations:
    (LaTeX . t)
    (plantuml . t)
    (emacs-lisp . t)))
-
+#+end_src
+**** Turn Tangle Comments off
+Since Emacs 28 OrgBabel tangle creates comments like ="[[%link][%source-name]]"= to indicate the source of tangled code. The following lines deactivate this behavior:
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq org-babel-tangle-comment-format-beg ""
+      org-babel-tangle-comment-format-end "")
 #+end_src
 
 *** TODO BibTeX (Literature Management)
@@ -2057,6 +2045,25 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
 #+end_src
 
 ** Org-Roam Specific
+*** Zettelkasten Files and Basic Variables
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
+(require 'org-roam-protocol)
+(require 'org-protocol-capture-html)
+
+(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
+      org-roam-dailies-directory (file-truename "~/ZK/daily")
+      org-attach-id-dir (concat org-roam-directory "/.attachments")
+      org-id-locations-file "~/ZK/.orgids"
+      org-roam-completion-everywhere nil
+      org-roam-completion-system 'default
+      ;;org-roam-graph-executable "neato" ; or "dot" (default)
+      )
+
+#+end_src
+
 *** Org-Roam Buffer
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el

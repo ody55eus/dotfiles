@@ -303,85 +303,6 @@
 
 (setq auth-sources '((:source "~/.authinfo.gpg")))
 
-(require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
-(require 'org-roam-protocol)
-(require 'org-protocol-capture-html)
-
-(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
-      org-roam-dailies-directory (file-truename "~/ZK/daily")
-      org-attach-id-dir (concat org-roam-directory "/.attachments")
-      org-id-locations-file "~/ZK/.orgids"
-      org-roam-completion-everywhere nil
-      org-roam-completion-system 'default
-      ;;org-roam-graph-executable "neato" ; or "dot" (default)
-      )
-
-(setq org-ellipsis " ▼ ")
-
-(defun jp/org-mode-setup ()
-  (org-indent-mode 1)
-  (mixed-pitch-mode 1) ; Enable different Fonts
-  ;;(org-roam-setup) ; Enable org-roam-db-autosync
-  (setq org-image-actual-width nil) ; Set optional images
-  (rainbow-mode 1)    ; Enable rainbow mode
-  (visual-line-mode 1))
-
-(add-hook 'org-mode-hook #'jp/org-mode-setup)
-
-(setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
-
-(defun jp/org-visual-fill-column ()
-  (setq visual-fill-column-width 120
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
-
-(add-hook 'org-mode-hook #'jp/org-visual-fill-column)
-
-(require 'org-bullets)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))) ; Enable org-mode bullets
-
-;; setting org headlines
-(custom-set-faces
-   '(org-level-1 ((t (:inherit outline-1 :height 1.2))))
-   '(org-level-2 ((t (:inherit outline-2 :height 1.1))))
-   '(org-level-3 ((t (:inherit outline-3 :height 1.0))))
-   '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
-   '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
-  )
-
-;; Make sure org-indent face is available
-(require 'org-indent)
-
-;; Ensure that anything that should be fixed-pitch in Org files appears that way
-(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
-(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
-
-(setq org-todo-keyword-faces '(
-                               ("PROJ" . "DarkGreen")
-                               ("EPIC" . (:foreground "DodgerBlue" :weight bold))
-                               ("TODO" . org-warning)
-                               ("IDEA" . (:foreground "BlueViolet"))
-                               ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
-                               ("PLAN" . (:foreground "Magenta1" :weight bold :underline t))
-                               ("ACTIVE" . (:foreground "Systemyellowcolor" :weight bold :slant italic :underline t))
-                               ("REVIEW" . (:foreground "Darkorange2" :weight bold :underline t))
-                               ("WAIT" . (:foreground "yellow4" :weight light :slant italic))
-                               ("HOLD" . (:foreground "red4"))
-                               ("KILL" . "red")
-                               ("CANCELLED" . (:foreground "red3" :weight bold :strike-through t))
-                               )
-      )
-
 (defun jp/org-roam-select-prefix (prefix)
   (org-roam-node-read
    nil
@@ -511,6 +432,72 @@ Returns file content as a string."
     (beginning-of-buffer)
     (re-search-forward headline-regex)
     (beginning-of-line)))
+
+(setq org-ellipsis " ▼ ")
+
+(defun jp/org-mode-setup ()
+  (org-indent-mode 1)
+  (mixed-pitch-mode 1) ; Enable different Fonts
+  ;;(org-roam-setup) ; Enable org-roam-db-autosync
+  (setq org-image-actual-width nil) ; Set optional images
+  (rainbow-mode 1)    ; Enable rainbow mode
+  (visual-line-mode 1))
+
+(add-hook 'org-mode-hook #'jp/org-mode-setup)
+
+(setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
+
+(defun jp/org-visual-fill-column ()
+  (setq visual-fill-column-width 120
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(add-hook 'org-mode-hook #'jp/org-visual-fill-column)
+
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))) ; Enable org-mode bullets
+
+;; setting org headlines
+(custom-set-faces
+   '(org-level-1 ((t (:inherit outline-1 :height 1.2))))
+   '(org-level-2 ((t (:inherit outline-2 :height 1.1))))
+   '(org-level-3 ((t (:inherit outline-3 :height 1.0))))
+   '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
+   '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
+  )
+
+;; Make sure org-indent face is available
+(require 'org-indent)
+
+;; Ensure that anything that should be fixed-pitch in Org files appears that way
+(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
+(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
+(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
+
+(setq org-todo-keyword-faces '(
+                               ("PROJ" . "DarkGreen")
+                               ("EPIC" . (:foreground "DodgerBlue" :weight bold))
+                               ("TODO" . org-warning)
+                               ("IDEA" . (:foreground "BlueViolet"))
+                               ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
+                               ("PLAN" . (:foreground "Magenta1" :weight bold :underline t))
+                               ("ACTIVE" . (:foreground "Systemyellowcolor" :weight bold :slant italic :underline t))
+                               ("REVIEW" . (:foreground "Darkorange2" :weight bold :underline t))
+                               ("WAIT" . (:foreground "yellow4" :weight light :slant italic))
+                               ("HOLD" . (:foreground "red4"))
+                               ("KILL" . "red")
+                               ("CANCELLED" . (:foreground "red3" :weight bold :strike-through t))
+                               )
+      )
 
 (setq org-todo-keywords '(
                           (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
@@ -880,6 +867,9 @@ Returns file content as a string."
    (plantuml . t)
    (emacs-lisp . t)))
 
+(setq org-babel-tangle-comment-format-beg ""
+      org-babel-tangle-comment-format-end "")
+
 (use-package! org-roam-bibtex
   :after org-roam
   :config
@@ -901,6 +891,19 @@ Returns file content as a string."
       bibtex-files '("Library.bib" "Master.bib")
       bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib" "~/ZK/BibTeX/Master.bib")
       bibtex-completion-library-path '("~/nc/Library/BibTeX/"))
+
+(require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
+(require 'org-roam-protocol)
+(require 'org-protocol-capture-html)
+
+(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
+      org-roam-dailies-directory (file-truename "~/ZK/daily")
+      org-attach-id-dir (concat org-roam-directory "/.attachments")
+      org-id-locations-file "~/ZK/.orgids"
+      org-roam-completion-everywhere nil
+      org-roam-completion-system 'default
+      ;;org-roam-graph-executable "neato" ; or "dot" (default)
+      )
 
 (setq org-roam-mode-section-functions
       (list #'org-roam-backlinks-section
