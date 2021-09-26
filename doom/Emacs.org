@@ -367,6 +367,8 @@ Just comment/uncomment some lines to disable/enable features.
 (package! org-special-block-extras
   :recipe (:host github
            :repo "alhassy/org-special-block-extras"))
+
+;; PlantUML
 (package! ob-napkin)            ; PlantUML in Org Babel
 (package! plantuml-mode)        ; PlantUML Diagrams
 
@@ -390,16 +392,9 @@ Just comment/uncomment some lines to disable/enable features.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
-;;(package! dashboard)            ; Display a dashboard when starting Emacs (conflicts with doom-dashboard).
 
-(package! beacon)               ; Highlight Cursor on big change
-
-;; SVG Tag Mode (not working with doom Emacs yet!)
-;; converts TODO / DONE etc.into small images.
-;; (package! svg-tag-mode
-;;   :recipe (:host github
-;;            :repo "rougier/svg-tag-mode"
-;;            :files ("svg-tag-mode.el")))
+(package! xkcd)
+;;(package! beacon)               ; Highlight Cursor on big change
 
 ;;(package! synosaurus)           ; Thesaurus synonyms
 
@@ -442,7 +437,7 @@ Just comment/uncomment some lines to disable/enable features.
 
 *** Start Emacs as Server!
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+begin_src emacs-lisp
 
 (server-start)  ; Start Emacs as Server!
 
@@ -729,6 +724,46 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 
 #+end_src
 
+**** White Spaces
+:Source:
+Inspired by [[http://ergoemacs.org/emacs/whitespace-mode.html][Xah]].
+:END:
+Sometimes I need some additional whitespace information. This function enables all important whitespaces:
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(defun jp/more-whitespaces ()
+  (interactive)
+  ;; Make whitespace-mode with very basic background coloring for whitespaces.
+  (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark)))
+
+  ;; Make whitespace-mode and whitespace-newline-mode use “¶” for end of line char and “⇥” for tab.
+  (setq whitespace-display-mappings
+        ;; all numbers are unicode codepoint in decimal. e.g. (insert-char 182 1)
+        '(
+          (space-mark 32 [183] [46]) ; SPACE 32 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+          (newline-mark 10 [182 10]) ; LINE FEED,
+          (tab-mark 9 [8677 9] [92 9]) ; tab
+          ))
+  (whitespace-mode 1))
+#+end_src
+
+Other useful codes:
+|------+---------------------+------+---------------------------------------|
+| char | codepoint (decimal) | hex  | name                                  |
+|------+---------------------+------+---------------------------------------|
+| ·    |                 183 | b7   | MIDDLE DOT                            |
+| ¶    |                 182 | b6   | PILCROW SIGN                          |
+| ↵    |                8629 | 21b5 | DOWNWARDS ARROW WITH CORNER LEFTWARDS |
+| ↩    |                8617 | 21a9 | LEFTWARDS ARROW WITH HOOK             |
+| ⏎    |                9166 | 23ce | RETURN SYMBOL                         |
+| ▷    |                9655 | 25b7 | WHITE RIGHT POINTING TRIANGLE         |
+| ▶    |                9654 | 25b6 | BLACK RIGHT-POINTING TRIANGLE         |
+| →    |                8594 | 2192 | RIGHTWARDS ARROW                      |
+| ↦    |                8614 | 21a6 | RIGHTWARDS ARROW FROM BAR             |
+| ⇥    |                8677 | 21e5 | RIGHTWARDS ARROW TO BAR               |
+| ⇨    |                8680 | 21e8 | RIGHTWARDS WHITE ARROW                |
+|------+---------------------+------+---------------------------------------|
+#+TBLFM: $3=$2 ;%x
+
 **** Visible Bell
 
 Disable the computer =beep= and activate a visual feedback instead.
@@ -806,25 +841,26 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
   :custom
   (doom-modeline-height 16)
   (doom-modeline-bar-width 4)
-  (doom-modeline-lsp t)
+  (doom-modeline-lsp nil)
   (doom-modeline-modal-icon t)
   (doom-modeline-minor-modes nil)
   (doom-modeline-major-mode-icon t)
 
- (defun doom-modeline-conditional-buffer-encoding ()
-  "We expect the encoding to be LF UTF-8, so only show the modeline when this is not the case"
-  (setq-local doom-modeline-buffer-encoding
-              (unless (and (memq (plist-get (coding-system-plist buffer-file-coding-system) :category)
-                                 '(coding-category-undecided coding-category-utf-8))
-                           (not (memq (coding-system-eol-type buffer-file-coding-system) '(1 2))))
-                t)))
+  (defun doom-modeline-conditional-buffer-encoding ()
+    "We expect the encoding to be LF UTF-8, so only show the modeline when this is not the case"
+    (setq-local doom-modeline-buffer-encoding
+                (unless (and (memq (plist-get (coding-system-plist buffer-file-coding-system) :category)
+                                   '(coding-category-undecided coding-category-utf-8))
+                             (not (memq (coding-system-eol-type buffer-file-coding-system) '(1 2))))
+                  t)))
 
-(add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding) (doom-modeline-buffer-state-icon t))
+  (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding) (doom-modeline-buffer-state-icon t))
 #+end_src
 
 ***** Display Time in Modeline
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq display-time-24hr-format t)
+(setq display-time-24hr-format t                ;; Display 24 Hrs rather than 12
+      display-time-default-load-average nil)    ;; Do not display my CPU Load
 (display-time-mode 1)
 #+end_src
 
@@ -876,9 +912,10 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 #+end_src
 
 *** Open Bufferlist when splitting windows
+This command runs ~counsel-switch-buffer~ after splitting a window. It automatically shows a preview of the selected buffer during selection.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defadvice! prompt-for-buffer (&rest _)
-  :after '(evil-window-split evil-window-vsplit)
+  :after 'window-split
   (counsel-switch-buffer))
 #+end_src
 

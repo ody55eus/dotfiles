@@ -80,6 +80,8 @@
 (package! org-special-block-extras
   :recipe (:host github
            :repo "alhassy/org-special-block-extras"))
+
+;; PlantUML
 (package! ob-napkin)            ; PlantUML in Org Babel
 (package! plantuml-mode)        ; PlantUML Diagrams
 
@@ -103,16 +105,9 @@
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
-;;(package! dashboard)            ; Display a dashboard when starting Emacs (conflicts with doom-dashboard).
 
-(package! beacon)               ; Highlight Cursor on big change
-
-;; SVG Tag Mode (not working with doom Emacs yet!)
-;; converts TODO / DONE etc.into small images.
-;; (package! svg-tag-mode
-;;   :recipe (:host github
-;;            :repo "rougier/svg-tag-mode"
-;;            :files ("svg-tag-mode.el")))
+(package! xkcd)
+;;(package! beacon)               ; Highlight Cursor on big change
 
 ;;(package! synosaurus)           ; Thesaurus synonyms
 
