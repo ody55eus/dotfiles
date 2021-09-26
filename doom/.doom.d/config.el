@@ -20,9 +20,15 @@
 (add-hook 'emacs-startup-hook #'jp/display-startup-time)
 
 (setq-default
- delete-by-moving-to-trash t                      ; Delete files to trash
- window-combination-resize t                      ; take new window space from all other windows (not just current)
- x-stretch-cursor t)                              ; Stretch cursor to the glyph width
+ delete-by-moving-to-trash t        ; Delete files to trash
+ mouse-yank-at-point t              ; Yank at point rather than pointer
+ window-combination-resize t)       ; take new window space from all other windows (not just current)
+(setq indent-tabs-mode nil          ; Stop using tabs to indent
+      tab-always-indent 'complete   ; Tab indents first then tries completions
+      tab-width 4                   ; Smaller width for tab characters
+      scroll-margin 2               ; Add a margin when scrolling vertically
+      x-stretch-cursor t)           ; Stretch cursor to the glyph width
+(set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
 
 (map! :leader
       (:prefix ("b" . "buffer")
@@ -241,22 +247,23 @@
   :custom
   (doom-modeline-height 16)
   (doom-modeline-bar-width 4)
-  (doom-modeline-lsp t)
+  (doom-modeline-lsp nil)
   (doom-modeline-modal-icon t)
   (doom-modeline-minor-modes nil)
   (doom-modeline-major-mode-icon t)
 
- (defun doom-modeline-conditional-buffer-encoding ()
-  "We expect the encoding to be LF UTF-8, so only show the modeline when this is not the case"
-  (setq-local doom-modeline-buffer-encoding
-              (unless (and (memq (plist-get (coding-system-plist buffer-file-coding-system) :category)
-                                 '(coding-category-undecided coding-category-utf-8))
-                           (not (memq (coding-system-eol-type buffer-file-coding-system) '(1 2))))
-                t)))
+  (defun doom-modeline-conditional-buffer-encoding ()
+    "We expect the encoding to be LF UTF-8, so only show the modeline when this is not the case"
+    (setq-local doom-modeline-buffer-encoding
+                (unless (and (memq (plist-get (coding-system-plist buffer-file-coding-system) :category)
+                                   '(coding-category-undecided coding-category-utf-8))
+                             (not (memq (coding-system-eol-type buffer-file-coding-system) '(1 2))))
+                  t)))
 
-(add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding) (doom-modeline-buffer-state-icon t))
+  (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding) (doom-modeline-buffer-state-icon t))
 
-(setq display-time-24hr-format t)
+(setq display-time-24hr-format t                ;; Display 24 Hrs rather than 12
+      display-time-default-load-average nil)    ;; Do not display my CPU Load
 (display-time-mode 1)
 
 (defadvice! prompt-for-buffer (&rest _)
@@ -303,6 +310,20 @@
         (add-hook 'pre-command-hook 'keycast--update t)
       (remove-hook 'pre-command-hook 'keycast--update))))
 (add-to-list 'global-mode-string '("" mode-line-keycast))
+
+(after! org
+  (custom-set-faces!
+    '(org-document-title :height 1.2)))
+
+(after! org
+  (setq org-priority-highest ?A
+        org-priority-lowest ?E
+        org-priority-faces
+        '((?A . 'all-the-icons-red)
+          (?B . 'all-the-icons-orange)
+          (?C . 'all-the-icons-yellow)
+          (?D . 'all-the-icons-green)
+          (?E . 'all-the-icons-blue))))
 
 (setq org-roam-v2-ack t); Disable Warning for org-roam v2
 (setq org-directory "~/org/"
@@ -466,9 +487,6 @@ Returns file content as a string."
   (visual-fill-column-mode 1))
 
 (add-hook 'org-mode-hook #'jp/org-visual-fill-column)
-
-(require 'org-bullets)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))) ; Enable org-mode bullets
 
 ;; setting org headlines
 (custom-set-faces
@@ -1197,6 +1215,20 @@ Returns file content as a string."
 
   ;; Signing messages (use mml-secure-sign-pgpmime)
   (setq mml-secure-openpgp-signers '("2361DFC839413E7A84B2152B01B6FB927AAEC59B"))
+  (defun sign-or-encrypt-message ()
+    (let ((answer (read-from-minibuffer "Sign or encrypt?\nEmpty to do nothing.\n[s/e]: ")))
+      (cond
+       ((string-equal answer "s") (progn
+                                    (message "Signing message.")
+                                    (mml-secure-message-sign-pgpmime)))
+       ((string-equal answer "e") (progn
+                                    (message "Encrypt and signing message.")
+                                    (mml-secure-message-encrypt-pgpmime)))
+       (t (progn
+            (message "Dont signing or encrypting message.")
+            nil)))))
+
+  (add-hook 'message-send-hook 'sign-or-encrypt-message)
 
   ;; (See the documentation for `mu4e-sent-messages-behavior' if you have
   ;; additional non-Gmail addresses and want assign them different

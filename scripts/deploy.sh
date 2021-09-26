@@ -10,7 +10,7 @@ INSTALL="yay -S"
 # INSTALL="sudo pacman -S"
 
 $UPDATE
-$INSTALL git neovim wget tmux stow
+$INSTALL git neovim wget tmux stow npm gem
 
 $INSTALL conky
 

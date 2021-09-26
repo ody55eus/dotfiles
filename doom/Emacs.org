@@ -6,8 +6,24 @@
 - [[#about-me][About Me]]
 - [[#basic-configuration][Basic Configuration]]
   - [[#other-doom-emacs-configuration-files-init--packages][Other Doom Emacs Configuration Files (init / packages)]]
-  - [[#emacs-startup][Emacs Startup]]
-  - [[#ui-configuration][UI Configuration]]
+- [[#initialization-initel][Initialization (init.el)]]
+  - [[#docstring][Docstring]]
+  - [[#enable-features][Enable Features]]
+- [[#doom-emacs-package-installation-packagesel][Doom Emacs Package Installation (packages.el)]]
+  - [[#docstring-1][Docstring]]
+  - [[#load-packages][Load Packages]]
+- [[#emacs-startup][Emacs Startup]]
+  - [[#improve-startup-performance][Improve Startup Performance]]
+  - [[#start-emacs-as-server][Start Emacs as Server!]]
+  - [[#default-variables][Default Variables]]
+- [[#ui-configuration][UI Configuration]]
+  - [[#keybindings-leader-spc-key][Keybindings (=:leader= ~SPC-<Key>~)]]
+  - [[#color-theme][Color Theme]]
+  - [[#font-face-configuration][Font Face Configuration]]
+  - [[#basic-emacs-ui-enhancements][Basic Emacs UI Enhancements]]
+  - [[#doom-emacs-customization][Doom Emacs Customization]]
+  - [[#open-bufferlist-when-splitting-windows][Open Bufferlist when splitting windows]]
+  - [[#additional-packages][Additional Packages]]
 - [[#org-mode][Org Mode]]
   - [[#org-configuration][Org Configuration]]
   - [[#self-written-extensions][Self-written extensions]]
@@ -16,7 +32,7 @@
   - [[#org-publish-exporting-org-files][Org Publish (Exporting org files)]]
   - [[#additional-org-packages][Additional Org Packages]]
   - [[#org-roam-specific][Org-Roam Specific]]
-- [[#additional-packages][Additional Packages]]
+- [[#additional-packages-1][Additional Packages]]
   - [[#dired-file-manager][Dired (File Manager)]]
   - [[#languages-ide-using-language-server][Languages (IDE using Language Server)]]
   - [[#projectile][Projectile]]
@@ -48,8 +64,8 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
 
 * Basic Configuration
 ** Other Doom Emacs Configuration Files (init / packages)
-*** Initialization (init.el)
-**** Docstring
+* Initialization (init.el)
+** Docstring
 
 #+begin_src emacs-lisp :tangle ./.doom.d/init.el
 ;;; init.el -*- lexical-binding: t; -*-
@@ -69,7 +85,7 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
 ;;      directory (for easy access to its source code).
 #+end_src
 
-**** Enable Features
+** Enable Features
 
 Just comment/uncomment some lines to disable/enable features.
 
@@ -276,8 +292,8 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+end_src
 
-*** Doom Emacs Package Installation (packages.el)
-**** Docstring
+* Doom Emacs Package Installation (packages.el)
+** Docstring
 
 #+begin_src emacs-lisp :tangle ./.doom.d/packages.el
 ;; -*- no-byte-compile: t; -*-
@@ -332,19 +348,25 @@ Just comment/uncomment some lines to disable/enable features.
 ;(unpin! t)
 #+end_src
 
-**** Load Packages
+** Load Packages
 
 #+begin_src emacs-lisp :tangle ./.doom.d/packages.el
 
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
 (package! org-roam)             ; Extended org-mode for Zettelkasten principle.
-(package! org-bullets)          ; Display nice bullets in org-mode (deprecated).
+(package! org-ref)              ; References and citations
+(package! org-super-agenda)
+;;(package! org-bullets)        ; Display nice bullets in org-mode (deprecated).
 (package! org-alert)            ; Enable org-mode notifications.
 (package! org-tree-slide)       ; Enable org-mode presentations.
-;;(package! org-superstar)        ; Alternative for org-bullets.
+(package! org-superstar)        ; Alternative for org-bullets.
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
 (package! org-download)
 (package! org-journal)
+(package! org-pretty-tags)
+(package! org-pretty-table-mode
+  :recipe (:host github :repo "Fuco1/org-pretty-table"))
+
 
 ;; Use latest version!
 (unpin! org-roam org)
@@ -416,8 +438,8 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+end_src
 
-** Emacs Startup
-*** Improve Startup Performance
+* Emacs Startup
+** Improve Startup Performance
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -435,7 +457,7 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+end_src
 
-*** Start Emacs as Server!
+** Start Emacs as Server!
 
 #+begin_src emacs-lisp
 
@@ -443,20 +465,26 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+end_src
 
-*** Default Variables
+** Default Variables
 :Source:
-Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-settings][tecosaur]].
+Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-settings][tecosaur]] and [[https://github.com/angrybacon/dotemacs/blob/master/dotemacs.org][angrybacon/dotemacs.org]].
 :END:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq-default
- delete-by-moving-to-trash t                      ; Delete files to trash
- window-combination-resize t                      ; take new window space from all other windows (not just current)
- x-stretch-cursor t)                              ; Stretch cursor to the glyph width
+ delete-by-moving-to-trash t        ; Delete files to trash
+ mouse-yank-at-point t              ; Yank at point rather than pointer
+ window-combination-resize t)       ; take new window space from all other windows (not just current)
+(setq indent-tabs-mode nil          ; Stop using tabs to indent
+      tab-always-indent 'complete   ; Tab indents first then tries completions
+      tab-width 4                   ; Smaller width for tab characters
+      scroll-margin 2               ; Add a margin when scrolling vertically
+      x-stretch-cursor t)           ; Stretch cursor to the glyph width
+(set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
 #+end_src
 
-** UI Configuration
-*** Keybindings (=:leader= ~SPC-<Key>~)
-**** Basic Keybindings
+* UI Configuration
+** Keybindings (=:leader= ~SPC-<Key>~)
+*** Basic Keybindings
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -545,7 +573,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
 
 #+end_src
 
-**** Evaluate Elisp Expressions (~SPC-e~)
+*** Evaluate Elisp Expressions (~SPC-e~)
 
 :SOURCE:
 Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
@@ -573,7 +601,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 
 #+end_src
 
-**** TODO Lookup (~SPC-l~)
+*** TODO Lookup (~SPC-l~)
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
@@ -593,7 +621,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 
 #+end_src
 
-**** TODO Jump (~SPC-j~)
+*** TODO Jump (~SPC-j~)
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
@@ -609,7 +637,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
       )
 #+end_src
 
-**** Keybindings (=CTRL= ~C-w~ Window)
+*** Keybindings (=CTRL= ~C-w~ Window)
 :Source:
 Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecosaur]].
 :END:
@@ -630,7 +658,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 
 #+end_src
 
-**** Doom Dashboard
+*** Doom Dashboard
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (map! :map +doom-dashboard-mode-map
       :ne "f" #'find-file
@@ -643,7 +671,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
       :ne "B" #'counsel-switch-buffer)
 #+end_src
 
-*** Color Theme
+** Color Theme
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -653,8 +681,8 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 
 #+end_src
 
-*** Font Face Configuration
-**** New Configuration
+** Font Face Configuration
+*** New Configuration
 :Source:
 Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 :END:
@@ -666,7 +694,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
       doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light :size 16))
 #+end_src
 
-**** Old System Dependent
+*** Old System Dependent
 #+begin_src emacs-lisp
 
 
@@ -708,8 +736,8 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 
 #+end_src
 
-*** Basic Emacs UI Enhancements
-**** Line Numbers
+** Basic Emacs UI Enhancements
+*** Line Numbers
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -724,7 +752,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 
 #+end_src
 
-**** White Spaces
+*** White Spaces
 :Source:
 Inspired by [[http://ergoemacs.org/emacs/whitespace-mode.html][Xah]].
 :END:
@@ -764,7 +792,7 @@ Other useful codes:
 |------+---------------------+------+---------------------------------------|
 #+TBLFM: $3=$2 ;%x
 
-**** Visible Bell
+*** Visible Bell
 
 Disable the computer =beep= and activate a visual feedback instead.
 
@@ -775,7 +803,7 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 #+end_src
 
-**** Enable Menu Bar
+*** Enable Menu Bar
 This allows you to see some basic actions (activates dropdown menus File, Edit, Options, etc.)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -784,13 +812,13 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 
 #+end_src
 
-**** Enable Mouse (Backward, Forward) Buttons
+*** Enable Mouse (Backward, Forward) Buttons
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (map! :n [mouse-8] #'better-jumper-jump-backward
       :n [mouse-9] #'better-jumper-jump-forward)
 #+end_src
 
-**** Resize Startup Window
+*** Resize Startup Window
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -816,13 +844,13 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 
 #+end_src
 
-*** Doom Emacs Customization
-**** Confirm Leaving Emacs
+** Doom Emacs Customization
+*** Confirm Leaving Emacs
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq confirm-kill-emacs nil)           ;; Don't confirm every kill
 #+end_src
 
-**** Doom Evil Mode
+*** Doom Evil Mode
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq
@@ -831,8 +859,8 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
  evil-split-window-below t)
 #+end_src
 
-**** Doom Modeline
-***** Basic Configuration
+*** Doom Modeline
+**** Basic Configuration
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (use-package! doom-modeline
   :custom-face
@@ -857,14 +885,14 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
   (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding) (doom-modeline-buffer-state-icon t))
 #+end_src
 
-***** Display Time in Modeline
+**** Display Time in Modeline
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq display-time-24hr-format t                ;; Display 24 Hrs rather than 12
       display-time-default-load-average nil)    ;; Do not display my CPU Load
 (display-time-mode 1)
 #+end_src
 
-**** Doom Dashboard
+*** Doom Dashboard
 
 #+begin_src emacs-lisp
 (setq +doom-dashboard-menu-sections '(("Reload last session" :icon
@@ -911,7 +939,7 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 
 #+end_src
 
-*** Open Bufferlist when splitting windows
+** Open Bufferlist when splitting windows
 This command runs ~counsel-switch-buffer~ after splitting a window. It automatically shows a preview of the selected buffer during selection.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defadvice! prompt-for-buffer (&rest _)
@@ -919,8 +947,8 @@ This command runs ~counsel-switch-buffer~ after splitting a window. It automatic
   (counsel-switch-buffer))
 #+end_src
 
-*** Additional Packages
-**** Highlight Todos
+** Additional Packages
+*** Highlight Todos
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -938,7 +966,7 @@ This command runs ~counsel-switch-buffer~ after splitting a window. It automatic
 
 #+end_src
 
-**** PDF Tools
+*** PDF Tools
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -955,7 +983,7 @@ This command runs ~counsel-switch-buffer~ after splitting a window. It automatic
 
 #+end_src
 
-**** nov.el (EPUB)
+*** nov.el (EPUB)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -969,11 +997,11 @@ This command runs ~counsel-switch-buffer~ after splitting a window. It automatic
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 #+end_src
 
-**** WAIT SVG Tag Mode
+*** WAIT SVG Tag Mode
 
 Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mode/issues/10][Issue on Github→]] for further information.
 
-***** Example 1
+**** Example 1
 
 #+begin_src emacs-lisp
 
@@ -1037,7 +1065,7 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
 
 #+end_src
 
-***** Example 2
+**** Example 2
 
 #+begin_src emacs-lisp
 ;; :tangle ./.doom.d/config.el
@@ -1159,7 +1187,7 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
 
 #+end_src
 
-**** Keycast Mode
+*** Keycast Mode
 
 :Source:
 Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-627604064
@@ -1180,6 +1208,86 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
 
 * Org Mode
 ** Org Configuration
+*** Org Prettify
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(after! org
+  (custom-set-faces!
+    '(org-document-title :height 1.2)))
+#+end_src
+**** Set pretty code symbols
+
+#+begin_src emacs-lisp
+(after! org
+  (org-superstar-mode)
+  (appendq! +pretty-code-symbols
+            `(:checkbox      "☐"
+              :pending       "◼"
+              :checkedbox    "☑"
+              :list_property "∷"
+              :results       "🠶"
+              :property      "☸"
+              :properties    "⚙"
+              :end           "∎"
+              :options       "⌥"
+              :title         "𝙏"
+              :subtitle      "𝙩"
+              :author        "𝘼"
+              :date          "𝘿"
+              :latex_header  "⇥"
+              :latex_class   "🄲"
+              :beamer_header "↠"
+              :begin_quote   "❮"
+              :end_quote     "❯"
+              :begin_export  "⯮"
+              :end_export    "⯬"
+              :priority_a   ,(propertize "⚑" 'face 'all-the-icons-red)
+              :priority_b   ,(propertize "⬆" 'face 'all-the-icons-orange)
+              :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
+              :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
+              :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)
+              :em_dash       "—"))
+  (set-pretty-symbols! 'org-mode
+    :merge t
+    :checkbox      "[ ]"
+    :pending       "[-]"
+    :checkedbox    "[X]"
+    :list_property "::"
+    :results       "#+RESULTS:"
+    :property      "#+PROPERTY:"
+    :property      ":PROPERTIES:"
+    :end           ":END:"
+    :options       "#+OPTIONS:"
+    :title         "#+TITLE:"
+    :subtitle      "#+SUBTITLE:"
+    :author        "#+AUTHOR:"
+    :date          "#+DATE:"
+    :latex_class   "#+LATEX_CLASS:"
+    :latex_header  "#+LATEX_HEADER:"
+    :beamer_header "#+BEAMER_HEADER:"
+    :begin_quote   "#+BEGIN_QUOTE"
+    :end_quote     "#+END_QUOTE"
+    :begin_export  "#+BEGIN_EXPORT"
+    :end_export    "#+END_EXPORT"
+    :priority_a    "[#A]"
+    :priority_b    "[#B]"
+    :priority_c    "[#C]"
+    :priority_d    "[#D]"
+    :priority_e    "[#E]"
+    :em_dash       "---"))
+(plist-put +pretty-code-symbols :name "⁍") ; or › could be good?
+#+end_src
+*** Priorities
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(after! org
+  (setq org-priority-highest ?A
+        org-priority-lowest ?E
+        org-priority-faces
+        '((?A . 'all-the-icons-red)
+          (?B . 'all-the-icons-orange)
+          (?C . 'all-the-icons-yellow)
+          (?D . 'all-the-icons-green)
+          (?E . 'all-the-icons-blue))))
+#+end_src
 *** Directories and Files
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -1406,9 +1514,9 @@ Set this value to ~nil~ to display them again.
 
 #+end_src
 
-**** Org Bullets
+**** KILL Org Bullets (Deprecated)
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+begin_src emacs-lisp
 
 (require 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))) ; Enable org-mode bullets
@@ -2609,6 +2717,20 @@ Useful mu4e manual pages:
 
   ;; Signing messages (use mml-secure-sign-pgpmime)
   (setq mml-secure-openpgp-signers '("2361DFC839413E7A84B2152B01B6FB927AAEC59B"))
+  (defun sign-or-encrypt-message ()
+    (let ((answer (read-from-minibuffer "Sign or encrypt?\nEmpty to do nothing.\n[s/e]: ")))
+      (cond
+       ((string-equal answer "s") (progn
+                                    (message "Signing message.")
+                                    (mml-secure-message-sign-pgpmime)))
+       ((string-equal answer "e") (progn
+                                    (message "Encrypt and signing message.")
+                                    (mml-secure-message-encrypt-pgpmime)))
+       (t (progn
+            (message "Dont signing or encrypting message.")
+            nil)))))
+
+  (add-hook 'message-send-hook 'sign-or-encrypt-message)
 
   ;; (See the documentation for `mu4e-sent-messages-behavior' if you have
   ;; additional non-Gmail addresses and want assign them different

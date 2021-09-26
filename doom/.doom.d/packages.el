@@ -51,13 +51,19 @@
 
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
 (package! org-roam)             ; Extended org-mode for Zettelkasten principle.
-(package! org-bullets)          ; Display nice bullets in org-mode (deprecated).
+(package! org-ref)              ; References and citations
+(package! org-super-agenda)
+;;(package! org-bullets)        ; Display nice bullets in org-mode (deprecated).
 (package! org-alert)            ; Enable org-mode notifications.
 (package! org-tree-slide)       ; Enable org-mode presentations.
-;;(package! org-superstar)        ; Alternative for org-bullets.
+(package! org-superstar)        ; Alternative for org-bullets.
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
 (package! org-download)
 (package! org-journal)
+(package! org-pretty-tags)
+(package! org-pretty-table-mode
+  :recipe (:host github :repo "Fuco1/org-pretty-table"))
+
 
 ;; Use latest version!
 (unpin! org-roam org)

@@ -43,29 +43,27 @@ INSTALL="apt install"
 *** Basic Software
 #+begin_src sh
 $UPDATE
-$INSTALL git neovim wget tmux stow
+$INSTALL git neovim wget tmux stow npm gem
 #+end_src
-*** Graphical Desktop Environment :optional:
+*** Graphical Desktop Environment
 Here are some desktop environments to choose from.
 
-**** Window Manager
+**** Window Manager :optional:
 I started my journey through [[https://en.wikipedia.org/wiki/Tiling_window_manager][tiling window managers]] with [[https://i3wm.org/][i3]]. More will follow soon (e.g. [[https://awesomewm.org/][awesome]], [[https://www.qtile.org/][qtile]], or [[https://xmonad.org/][xmonad]])
 ***** TODO i3
 Nothing here yet ... please update me
 **** Desktop Software
-***** Conky
+***** Conky :optional:
 [[https://github.com/brndnmtthws/conky][Conky]] is a system monitor which can display your important system information on the desktop.
 #+begin_src sh
 $INSTALL conky
 #+end_src
 
-***** Rofi / Dmenu
+***** Rofi / Dmenu :optional:
 [[https://github.com/davatorium/rofi][Rofi]] and [[https://tools.suckless.org/dmenu/][Dmenu]] are application launcher. They display a nice GUI to input a search string and allows you to easily find your installed apps, files, open windows, ssh connections, etc. Another good alternative is [[https://ulauncher.io/][Ulauncher]].
 #+begin_src sh
 $INSTALL rofi dmenu
 #+end_src
-
-*****
 
 ** Fetching additional software via git
 *** Oh-My-Zsh (Theme)
