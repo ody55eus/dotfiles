@@ -414,7 +414,6 @@
   (setq org-image-actual-width nil) ; Set optional images
   (rainbow-mode 1)    ; Enable rainbow mode
   )
-
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
 
 (defun jp/org-visual-fill-column ()
@@ -863,7 +862,7 @@ Returns file content as a string."
                 rsi, % Review of Scientific Instruments
                 amsmath,amssymb, % Basic Math Packages
                 preprint, % or reprint
-                ]{revtex4-1}
+                ]{revtex4-2}
 \\include{structure}
 [NO-DEFAULT-PACKAGES]
 [NO-EXTRA]
@@ -895,7 +894,6 @@ Returns file content as a string."
 (add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
 
 (setq plantuml-default-exec-mode 'jar)
-(setq plantuml-jar-path "/usr/share/plantuml/lib/plantuml.jar")
 
 (require 'org-alert)
 

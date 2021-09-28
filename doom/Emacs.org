@@ -1965,7 +1965,7 @@ See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online 
  | LATEX_CLASS  | Document Class | Description                      |
  |--------------+----------------+----------------------------------|
  | =koma-article= | =scrartcl=       | Normal article                   |
- | =aip-rst=      | =revtex4-1=      | Paper Template for AIP Journals: |
+ | =aip-rst=      | =revtex4-2=      | Paper Template for AIP Journals: |
  |              |                | Review of Scientific Instruments |
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el :results none
@@ -1989,7 +1989,7 @@ See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online 
                 rsi, % Review of Scientific Instruments
                 amsmath,amssymb, % Basic Math Packages
                 preprint, % or reprint
-                ]{revtex4-1}
+                ]{revtex4-2}
 \\include{structure}
 [NO-DEFAULT-PACKAGES]
 [NO-EXTRA]
@@ -2027,7 +2027,6 @@ See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online 
 *** PlantUML
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq plantuml-default-exec-mode 'jar)
-(setq plantuml-jar-path "/usr/share/plantuml/lib/plantuml.jar")
 #+end_src
 
 ** Additional Org Packages
