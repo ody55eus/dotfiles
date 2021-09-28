@@ -4,12 +4,10 @@
 * Table of Contents :TOC:noexport:
 - [[#about-this-configuration][About this Configuration]]
 - [[#about-me][About Me]]
-- [[#basic-configuration][Basic Configuration]]
-  - [[#other-doom-emacs-configuration-files-init--packages][Other Doom Emacs Configuration Files (init / packages)]]
 - [[#initialization-initel][Initialization (init.el)]]
   - [[#docstring][Docstring]]
   - [[#enable-features][Enable Features]]
-- [[#doom-emacs-package-installation-packagesel][Doom Emacs Package Installation (packages.el)]]
+- [[#package-installation-packagesel][Package Installation (packages.el)]]
   - [[#docstring-1][Docstring]]
   - [[#load-packages][Load Packages]]
 - [[#emacs-startup][Emacs Startup]]
@@ -25,13 +23,13 @@
   - [[#open-bufferlist-when-splitting-windows][Open Bufferlist when splitting windows]]
   - [[#additional-packages][Additional Packages]]
 - [[#org-mode][Org Mode]]
-  - [[#org-configuration][Org Configuration]]
-  - [[#self-written-extensions][Self-written extensions]]
+  - [[#visual-enhancements][Visual Enhancements]]
+  - [[#self-written-functions][Self-written functions]]
   - [[#ui-configuration-1][UI Configuration]]
   - [[#workflow-configuration][Workflow Configuration]]
   - [[#org-publish-exporting-org-files][Org Publish (Exporting org files)]]
   - [[#additional-org-packages][Additional Org Packages]]
-  - [[#org-roam-specific][Org-Roam Specific]]
+  - [[#org-roam-zettelkasten][Org-Roam (Zettelkasten)]]
 - [[#additional-packages-1][Additional Packages]]
   - [[#dired-file-manager][Dired (File Manager)]]
   - [[#languages-ide-using-language-server][Languages (IDE using Language Server)]]
@@ -62,8 +60,6 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
 
 #+end_src
 
-* Basic Configuration
-** Other Doom Emacs Configuration Files (init / packages)
 * Initialization (init.el)
 ** Docstring
 
@@ -109,29 +105,29 @@ Just comment/uncomment some lines to disable/enable features.
        (vertico +icons)           ; the search engine of the future
 
        :ui
-       deft              ; notational velocity for Emacs
-       doom              ; what makes DOOM look the way it does
-       doom-dashboard    ; a nifty splash screen for Emacs
-       ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
-       ;;(emoji +unicode)  ; 🙂
-       hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
+       deft               ; notational velocity for Emacs
+       doom               ; what makes DOOM look the way it does
+       doom-dashboard     ; a nifty splash screen for Emacs
+       ;;doom-quit        ; DOOM quit-message prompts when you quit Emacs
+       (emoji +unicode)   ; 🙂
+       hl-todo            ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        ;;hydra
-       indent-guides     ; highlighted indent columns
-       ligatures         ; ligatures and symbols to make your code pretty again
-       ;;minimap           ; show a map of the code on the side
-       modeline          ; snazzy, Atom-inspired modeline, plus API
-       nav-flash         ; blink cursor line after big motions
-       ;;neotree           ; a project drawer, like NERDTree for vim
-       ophints           ; highlight the region an operation acts on
-       (popup +defaults)   ; tame sudden yet inevitable temporary windows
-       ;;tabs              ; a tab bar for Emacs
-       treemacs          ; a project drawer, like neotree but cooler
-       ;;unicode           ; extended unicode support for various languages
-       vc-gutter         ; vcs diff in the fringe
-       vi-tilde-fringe   ; fringe tildes to mark beyond EOB
-       window-select     ; visually switch windows
-       workspaces        ; tab emulation, persistence & separate workspaces
-       zen               ; distraction-free coding or writing
+       indent-guides      ; highlighted indent columns
+       (ligatures +extra) ; ligatures and symbols to make your code pretty again
+       ;;minimap          ; show a map of the code on the side
+       modeline           ; snazzy, Atom-inspired modeline, plus API
+       nav-flash          ; blink cursor line after big motions
+       ;;neotree          ; a project drawer, like NERDTree for vim
+       ophints            ; highlight the region an operation acts on
+       (popup +defaults)  ; tame sudden yet inevitable temporary windows
+       ;;tabs             ; a tab bar for Emacs
+       treemacs           ; a project drawer, like neotree but cooler
+       ;;unicode          ; extended unicode support for various languages
+       vc-gutter          ; vcs diff in the fringe
+       vi-tilde-fringe    ; fringe tildes to mark beyond EOB
+       window-select      ; visually switch windows
+       workspaces         ; tab emulation, persistence & separate workspaces
+       zen                ; distraction-free coding or writing
 
        :editor
        (evil +everywhere); come to the dark side, we have cookies
@@ -292,7 +288,7 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+end_src
 
-* Doom Emacs Package Installation (packages.el)
+* Package Installation (packages.el)
 ** Docstring
 
 #+begin_src emacs-lisp :tangle ./.doom.d/packages.el
@@ -402,6 +398,12 @@ Just comment/uncomment some lines to disable/enable features.
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 
+(package! telega
+  :recipe (:host github
+           :repo "zevlg/telega.el"
+           :branch "master"
+           :files (:defaults "contrib" "etc" "server" "Makefile")))
+
 (package! emacs-bitwarden       ; Password Manager
   :recipe (:host github
            :repo "seanfarley/emacs-bitwarden"
@@ -474,9 +476,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
  delete-by-moving-to-trash t        ; Delete files to trash
  mouse-yank-at-point t              ; Yank at point rather than pointer
  window-combination-resize t)       ; take new window space from all other windows (not just current)
-(setq indent-tabs-mode nil          ; Stop using tabs to indent
-      tab-always-indent 'complete   ; Tab indents first then tries completions
-      tab-width 4                   ; Smaller width for tab characters
+(setq tab-width 2                   ; Smaller width for tab characters
       scroll-margin 2               ; Add a margin when scrolling vertically
       x-stretch-cursor t)           ; Stretch cursor to the glyph width
 (set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
@@ -781,10 +781,10 @@ Other useful codes:
 | ·    |                 183 | b7   | MIDDLE DOT                            |
 | ¶    |                 182 | b6   | PILCROW SIGN                          |
 | ↵    |                8629 | 21b5 | DOWNWARDS ARROW WITH CORNER LEFTWARDS |
-| ↩    |                8617 | 21a9 | LEFTWARDS ARROW WITH HOOK             |
+| ↩   |                8617 | 21a9 | LEFTWARDS ARROW WITH HOOK             |
 | ⏎    |                9166 | 23ce | RETURN SYMBOL                         |
 | ▷    |                9655 | 25b7 | WHITE RIGHT POINTING TRIANGLE         |
-| ▶    |                9654 | 25b6 | BLACK RIGHT-POINTING TRIANGLE         |
+| ▶   |                9654 | 25b6 | BLACK RIGHT-POINTING TRIANGLE         |
 | →    |                8594 | 2192 | RIGHTWARDS ARROW                      |
 | ↦    |                8614 | 21a6 | RIGHTWARDS ARROW FROM BAR             |
 | ⇥    |                8677 | 21e5 | RIGHTWARDS ARROW TO BAR               |
@@ -1207,19 +1207,20 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
 #+end_src
 
 * Org Mode
-** Org Configuration
-*** Org Prettify
+** Visual Enhancements
+*** Pretty Text
+**** Pretty Tables
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (after! org
-  (custom-set-faces!
-    '(org-document-title :height 1.2)))
+  (+org-pretty-mode)
+  (org-pretty-table-mode)
+  )
 #+end_src
 **** Set pretty code symbols
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (after! org
-  (org-superstar-mode)
-  (appendq! +pretty-code-symbols
+  (appendq! +ligatures-extra-symbols
             `(:checkbox      "☐"
               :pending       "◼"
               :checkedbox    "☑"
@@ -1248,6 +1249,7 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
               :em_dash       "—"))
   (set-pretty-symbols! 'org-mode
     :merge t
+    :name           "⁍"
     :checkbox      "[ ]"
     :pending       "[-]"
     :checkedbox    "[X]"
@@ -1273,9 +1275,45 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
     :priority_c    "[#C]"
     :priority_d    "[#D]"
     :priority_e    "[#E]"
-    :em_dash       "---"))
-(plist-put +pretty-code-symbols :name "⁍") ; or › could be good?
+    :em_dash       "---")
+  )
 #+end_src
+
+**** KILL Org Bullets (Deprecated)
+
+#+begin_src emacs-lisp
+
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))) ; Enable org-mode bullets
+
+#+end_src
+
+**** Org Superstar
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(after! org
+  (org-superstar-mode)
+  )
+#+end_src
+
+**** Ellipsis symbol (folding)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-ellipsis " ▼ ")
+
+#+end_src
+
+**** Hiding Emphasis Marker
+
+Hiding some emphasis marker (* / = )  when using them to /highlight/ *text*.
+Set this value to ~nil~ to display them again.
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
+
+#+end_src
+
 *** Priorities
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (after! org
@@ -1288,6 +1326,92 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
           (?D . 'all-the-icons-green)
           (?E . 'all-the-icons-blue))))
 #+end_src
+
+*** Tasks
+**** Color and weight of keywords
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq org-todo-keyword-faces '(
+                               ("PROJ" . "DarkGreen")
+                               ("EPIC" . (:foreground "DodgerBlue" :weight bold))
+                               ("TODO" . org-warning)
+                               ("IDEA" . (:foreground "BlueViolet"))
+                               ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
+                               ("PLAN" . (:foreground "Magenta1" :weight bold :underline t))
+                               ("ACTIVE" . (:foreground "Systemyellowcolor" :weight bold :slant italic :underline t))
+                               ("REVIEW" . (:foreground "Darkorange2" :weight bold :underline t))
+                               ("WAIT" . (:foreground "yellow4" :weight light :slant italic))
+                               ("HOLD" . (:foreground "red4"))
+                               ("KILL" . "red")
+                               ("CANCELLED" . (:foreground "red3" :weight bold :strike-through t))
+                               )
+      )
+#+end_src
+
+*** Default minor modes
+**** Fonts and Colors
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(defun jp/org-mode-setup ()
+  (org-indent-mode 1)  ; Indent text following current headline
+  (mixed-pitch-mode 1) ; Enable different Fonts
+  ;;(org-roam-setup) ; Enable org-roam-db-autosync
+  (setq org-image-actual-width nil) ; Set optional images
+  (rainbow-mode 1)    ; Enable rainbow mode
+  )
+(add-hook 'org-mode-hook #'jp/org-mode-setup)
+#+end_src
+
+**** Visual Fill Column (add spaces and center text)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(defun jp/org-visual-fill-column ()
+  (setq visual-fill-column-width 120  ; Margin width
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1) ; Enable Margins
+  (visual-line-mode 1)  ; also show entire lines
+  )
+
+(add-hook 'org-mode-hook #'jp/org-visual-fill-column)
+
+#+end_src
+
+*** Font Configuration
+**** Text Size Org Headlines
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+;; setting org headlines
+(custom-set-faces!
+   '(org-level-1 :inherit outline-1 :height 1.2)
+   '(org-level-2 :inherit outline-2 :height 1.1)
+   '(org-level-3 :inherit outline-3 :height 1.0)
+   '(org-level-4 :inherit outline-4 :height 1.0)
+   '(org-level-5 :inherit outline-5 :height 1.0)
+  )
+  #+end_src
+
+**** Setting Text Fonts for Mixed Fixed Pitch
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; Make sure org-indent face is available
+(require 'org-indent)
+
+;; Ensure that anything that should be fixed-pitch in Org files appears that way
+(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
+(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
+(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
+
+#+end_src
+
 *** Directories and Files
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -1306,7 +1430,7 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
 
 #+end_src
 
-** Self-written extensions
+** Self-written functions
 *** Select Org Roam Notes
 **** Select by Folder Prefix
 :Source:
@@ -1465,126 +1589,6 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
   #+end_src
 
 ** UI Configuration
-*** Visual Feedback
-**** Ellipsis symbol (folding)
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-ellipsis " ▼ ")
-
-#+end_src
-
-**** Visual Enhancements
-
-#+Begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(defun jp/org-mode-setup ()
-  (org-indent-mode 1)
-  (mixed-pitch-mode 1) ; Enable different Fonts
-  ;;(org-roam-setup) ; Enable org-roam-db-autosync
-  (setq org-image-actual-width nil) ; Set optional images
-  (rainbow-mode 1)    ; Enable rainbow mode
-  (visual-line-mode 1))
-
-(add-hook 'org-mode-hook #'jp/org-mode-setup)
-
-#+end_src
-
-**** Hiding Emphasis Marker
-
-Hiding some emphasis marker (* / = )  when using them to /highlight/ *text*.
-Set this value to ~nil~ to display them again.
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
-
-#+end_src
-
-**** Visual Fill Column (add spaces and center text)
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(defun jp/org-visual-fill-column ()
-  (setq visual-fill-column-width 120
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
-
-(add-hook 'org-mode-hook #'jp/org-visual-fill-column)
-
-#+end_src
-
-**** KILL Org Bullets (Deprecated)
-
-#+begin_src emacs-lisp
-
-(require 'org-bullets)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))) ; Enable org-mode bullets
-
-#+end_src
-
-**** Font Configuration
-***** Text Size Org Headlines
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-;; setting org headlines
-(custom-set-faces
-   '(org-level-1 ((t (:inherit outline-1 :height 1.2))))
-   '(org-level-2 ((t (:inherit outline-2 :height 1.1))))
-   '(org-level-3 ((t (:inherit outline-3 :height 1.0))))
-   '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
-   '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
-  )
-
-  #+end_src
-
-***** Setting Text Fonts for Mixed Fixed Pitch
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-;; Make sure org-indent face is available
-(require 'org-indent)
-
-;; Ensure that anything that should be fixed-pitch in Org files appears that way
-(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
-(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
-
-#+end_src
-
-*** Tasks Appearance
-**** Color and weight of keywords
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-todo-keyword-faces '(
-                               ("PROJ" . "DarkGreen")
-                               ("EPIC" . (:foreground "DodgerBlue" :weight bold))
-                               ("TODO" . org-warning)
-                               ("IDEA" . (:foreground "BlueViolet"))
-                               ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
-                               ("PLAN" . (:foreground "Magenta1" :weight bold :underline t))
-                               ("ACTIVE" . (:foreground "Systemyellowcolor" :weight bold :slant italic :underline t))
-                               ("REVIEW" . (:foreground "Darkorange2" :weight bold :underline t))
-                               ("WAIT" . (:foreground "yellow4" :weight light :slant italic))
-                               ("HOLD" . (:foreground "red4"))
-                               ("KILL" . "red")
-                               ("CANCELLED" . (:foreground "red3" :weight bold :strike-through t))
-                               )
-      )
-
-#+end_src
-
 ** Workflow Configuration
 *** Task Keywords
 The Task Keywords are noted with their keybindings in parentheses.
@@ -1965,7 +1969,6 @@ See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online 
  |              |                | Review of Scientific Instruments |
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el :results none
-
 ;; (setq org-latex-to-pdf-process '("texi2dvi --pdf --clean --verbose --batch %f"))
 
 (require 'ox-latex)
@@ -2009,11 +2012,10 @@ See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online 
                ))
 
 (defun org-export-latex-no-toc (depth)
-    (when depth
-      (format "%% Org-mode is exporting headings to %s levels.\n"
-              depth)))
-  (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
-
+  (when depth
+    (format "%% Org-mode is exporting headings to %s levels.\n"
+            depth)))
+(setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
 #+end_src
 
 *** HTML
@@ -2044,6 +2046,7 @@ Doom does a fantastic stuff with the defaults with this, so we only make a few m
       :after org-msg
       :n "G" #'org-msg-goto-body)
 #+end_src
+
 *** Org Tempo
 :SOURCE:
 Description by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
@@ -2053,18 +2056,18 @@ This enables auto completion to easily create OrgBabel code blocks in org mode!
 
 Org-tempo is a package that allows for '<s' followed by TAB to expand to a begin_src tag.  Other expansions available include:
 
-| Typing the below + TAB | Expands to ...                          |
-|------------------------+-----------------------------------------|
-| <a                     | '#+BEGIN_EXPORT ascii' … '#+END_EXPORT  |
-| <c                     | '#+BEGIN_CENTER' … '#+END_CENTER'       |
-| <C                     | '#+BEGIN_COMMENT' … '#+END_COMMENT'     |
-| <e                     | '#+BEGIN_EXAMPLE' … '#+END_EXAMPLE'     |
-| <E                     | '#+BEGIN_EXPORT' … '#+END_EXPORT'       |
-| <h                     | '#+BEGIN_EXPORT html' … '#+END_EXPORT'  |
-| <l                     | '#+BEGIN_EXPORT latex' … '#+END_EXPORT' |
-| <q                     | '#+BEGIN_QUOTE' … '#+END_QUOTE'         |
-| <s                     | '#+BEGIN_SRC' … '#+END_SRC'             |
-| <v                     | '#+BEGIN_VERSE' … '#+END_VERSE'         |
+| Typing the below + TAB | Expands to ...                      |
+|------------------------+-------------------------------------|
+| <a                     | '#+BEGIN_EXPORT ascii' … '#+END_EXPORT                      |
+| <c                     | '#+BEGIN_CENTER' … '#+END_CENTER'   |
+| <C                     | '#+BEGIN_COMMENT' … '#+END_COMMENT' |
+| <e                     | '#+BEGIN_EXAMPLE' … '#+END_EXAMPLE' |
+| <E                     | '#+BEGIN_EXPORT' … '#+END_EXPORT'   |
+| <h                     | '#+BEGIN_EXPORT html' … '#+END_EXPORT'           |
+| <l                     | '#+BEGIN_EXPORT latex' … '#+END_EXPORT'          |
+| <q                     | '#+BEGIN_QUOTE' … '#+END_QUOTE'     |
+| <s                     | '#+BEGIN_SRC' … '#+END_SRC'         |
+| <v                     | '#+BEGIN_VERSE' … '#+END_VERSE'     |
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -2087,10 +2090,9 @@ Org-tempo is a package that allows for '<s' followed by TAB to expand to a begin
 *** TODO Org Special Block Extras
 
 Templating System to export org documents into LaTeX, HTML, etc. with individual templates.
-See [[https://github.com/alhassy/org-special-block-extras][Github Repo→]] for further information.
+See [[https://github.com/alhassy/org-special-block-extras][Maintainer (upstream)]] for further information.
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
 ;; Enable Special Blocks in Org-Mode
 (add-hook #'org-mode-hook #'org-special-block-extras-mode)
 
@@ -2135,11 +2137,8 @@ This Configuration runs on start end finish of presentations:
 (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
 ;; Jar Configuration
 (setq org-plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
+(setq plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
 (setq plantuml-default-exec-mode 'jar)
-
-;; Sample executable configuration
-;;(setq plantuml-executable-path "/path/to/your/copy/of/plantuml.bin")
-;;(setq plantuml-default-exec-mode 'executable)
 #+end_src
 **** OrgBabel Languages
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -2189,8 +2188,8 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
 
 #+end_src
 
-** Org-Roam Specific
-*** Zettelkasten Files and Basic Variables
+** Org-Roam (Zettelkasten)
+*** Files and Basic Variables
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -2209,16 +2208,14 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
 
 #+end_src
 
-*** Org-Roam Buffer
+*** Org-Roam Buffer (Side-Window)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
 (setq org-roam-mode-section-functions
       (list #'org-roam-backlinks-section
             #'org-roam-reflinks-section
             #'org-roam-unlinked-references-section
             ))
-
 #+end_src
 
 *** Org-Roam UI
@@ -2240,6 +2237,13 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 
+#+end_src
+
+***** Resize Document Title
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(after! org
+  (custom-set-faces!
+    '(org-document-title :height 1.2)))
 #+end_src
 
 * TODO Additional Packages

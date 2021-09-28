@@ -23,9 +23,7 @@
  delete-by-moving-to-trash t        ; Delete files to trash
  mouse-yank-at-point t              ; Yank at point rather than pointer
  window-combination-resize t)       ; take new window space from all other windows (not just current)
-(setq indent-tabs-mode nil          ; Stop using tabs to indent
-      tab-always-indent 'complete   ; Tab indents first then tries completions
-      tab-width 4                   ; Smaller width for tab characters
+(setq tab-width 2                   ; Smaller width for tab characters
       scroll-margin 2               ; Add a margin when scrolling vertically
       x-stretch-cursor t)           ; Stretch cursor to the glyph width
 (set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
@@ -312,8 +310,76 @@
 (add-to-list 'global-mode-string '("" mode-line-keycast))
 
 (after! org
-  (custom-set-faces!
-    '(org-document-title :height 1.2)))
+  (+org-pretty-mode)
+  (org-pretty-table-mode)
+  )
+
+(after! org
+  (appendq! +ligatures-extra-symbols
+            `(:checkbox      "☐"
+              :pending       "◼"
+              :checkedbox    "☑"
+              :list_property "∷"
+              :results       "🠶"
+              :property      "☸"
+              :properties    "⚙"
+              :end           "∎"
+              :options       "⌥"
+              :title         "𝙏"
+              :subtitle      "𝙩"
+              :author        "𝘼"
+              :date          "𝘿"
+              :latex_header  "⇥"
+              :latex_class   "🄲"
+              :beamer_header "↠"
+              :begin_quote   "❮"
+              :end_quote     "❯"
+              :begin_export  "⯮"
+              :end_export    "⯬"
+              :priority_a   ,(propertize "⚑" 'face 'all-the-icons-red)
+              :priority_b   ,(propertize "⬆" 'face 'all-the-icons-orange)
+              :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
+              :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
+              :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)
+              :em_dash       "—"))
+  (set-pretty-symbols! 'org-mode
+    :merge t
+    :name           "⁍"
+    :checkbox      "[ ]"
+    :pending       "[-]"
+    :checkedbox    "[X]"
+    :list_property "::"
+    :results       "#+RESULTS:"
+    :property      "#+PROPERTY:"
+    :property      ":PROPERTIES:"
+    :end           ":END:"
+    :options       "#+OPTIONS:"
+    :title         "#+TITLE:"
+    :subtitle      "#+SUBTITLE:"
+    :author        "#+AUTHOR:"
+    :date          "#+DATE:"
+    :latex_class   "#+LATEX_CLASS:"
+    :latex_header  "#+LATEX_HEADER:"
+    :beamer_header "#+BEAMER_HEADER:"
+    :begin_quote   "#+BEGIN_QUOTE"
+    :end_quote     "#+END_QUOTE"
+    :begin_export  "#+BEGIN_EXPORT"
+    :end_export    "#+END_EXPORT"
+    :priority_a    "[#A]"
+    :priority_b    "[#B]"
+    :priority_c    "[#C]"
+    :priority_d    "[#D]"
+    :priority_e    "[#E]"
+    :em_dash       "---")
+  )
+
+(after! org
+  (org-superstar-mode)
+  )
+
+(setq org-ellipsis " ▼ ")
+
+(setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
 
 (after! org
   (setq org-priority-highest ?A
@@ -324,6 +390,67 @@
           (?C . 'all-the-icons-yellow)
           (?D . 'all-the-icons-green)
           (?E . 'all-the-icons-blue))))
+
+(setq org-todo-keyword-faces '(
+                               ("PROJ" . "DarkGreen")
+                               ("EPIC" . (:foreground "DodgerBlue" :weight bold))
+                               ("TODO" . org-warning)
+                               ("IDEA" . (:foreground "BlueViolet"))
+                               ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
+                               ("PLAN" . (:foreground "Magenta1" :weight bold :underline t))
+                               ("ACTIVE" . (:foreground "Systemyellowcolor" :weight bold :slant italic :underline t))
+                               ("REVIEW" . (:foreground "Darkorange2" :weight bold :underline t))
+                               ("WAIT" . (:foreground "yellow4" :weight light :slant italic))
+                               ("HOLD" . (:foreground "red4"))
+                               ("KILL" . "red")
+                               ("CANCELLED" . (:foreground "red3" :weight bold :strike-through t))
+                               )
+      )
+
+(defun jp/org-mode-setup ()
+  (org-indent-mode 1)  ; Indent text following current headline
+  (mixed-pitch-mode 1) ; Enable different Fonts
+  ;;(org-roam-setup) ; Enable org-roam-db-autosync
+  (setq org-image-actual-width nil) ; Set optional images
+  (rainbow-mode 1)    ; Enable rainbow mode
+  )
+
+(add-hook 'org-mode-hook #'jp/org-mode-setup)
+
+(defun jp/org-visual-fill-column ()
+  (setq visual-fill-column-width 120  ; Margin width
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1) ; Enable Margins
+  (visual-line-mode 1)  ; also show entire lines
+  )
+
+(add-hook 'org-mode-hook #'jp/org-visual-fill-column)
+
+;; setting org headlines
+(custom-set-faces!
+   '(org-level-1 :inherit outline-1 :height 1.2)
+   '(org-level-2 :inherit outline-2 :height 1.1)
+   '(org-level-3 :inherit outline-3 :height 1.0)
+   '(org-level-4 :inherit outline-4 :height 1.0)
+   '(org-level-5 :inherit outline-5 :height 1.0)
+  )
+
+;; Make sure org-indent face is available
+(require 'org-indent)
+
+;; Ensure that anything that should be fixed-pitch in Org files appears that way
+(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
+(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
+(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
 
 (setq org-roam-v2-ack t); Disable Warning for org-roam v2
 (setq org-directory "~/org/"
@@ -466,69 +593,6 @@ Returns file content as a string."
     (beginning-of-buffer)
     (re-search-forward headline-regex)
     (beginning-of-line)))
-
-(setq org-ellipsis " ▼ ")
-
-(defun jp/org-mode-setup ()
-  (org-indent-mode 1)
-  (mixed-pitch-mode 1) ; Enable different Fonts
-  ;;(org-roam-setup) ; Enable org-roam-db-autosync
-  (setq org-image-actual-width nil) ; Set optional images
-  (rainbow-mode 1)    ; Enable rainbow mode
-  (visual-line-mode 1))
-
-(add-hook 'org-mode-hook #'jp/org-mode-setup)
-
-(setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
-
-(defun jp/org-visual-fill-column ()
-  (setq visual-fill-column-width 120
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
-
-(add-hook 'org-mode-hook #'jp/org-visual-fill-column)
-
-;; setting org headlines
-(custom-set-faces
-   '(org-level-1 ((t (:inherit outline-1 :height 1.2))))
-   '(org-level-2 ((t (:inherit outline-2 :height 1.1))))
-   '(org-level-3 ((t (:inherit outline-3 :height 1.0))))
-   '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
-   '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
-  )
-
-;; Make sure org-indent face is available
-(require 'org-indent)
-
-;; Ensure that anything that should be fixed-pitch in Org files appears that way
-(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
-(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
-
-(setq org-todo-keyword-faces '(
-                               ("PROJ" . "DarkGreen")
-                               ("EPIC" . (:foreground "DodgerBlue" :weight bold))
-                               ("TODO" . org-warning)
-                               ("IDEA" . (:foreground "BlueViolet"))
-                               ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
-                               ("PLAN" . (:foreground "Magenta1" :weight bold :underline t))
-                               ("ACTIVE" . (:foreground "Systemyellowcolor" :weight bold :slant italic :underline t))
-                               ("REVIEW" . (:foreground "Darkorange2" :weight bold :underline t))
-                               ("WAIT" . (:foreground "yellow4" :weight light :slant italic))
-                               ("HOLD" . (:foreground "red4"))
-                               ("KILL" . "red")
-                               ("CANCELLED" . (:foreground "red3" :weight bold :strike-through t))
-                               )
-      )
 
 (setq org-todo-keywords '(
                           (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
@@ -822,10 +886,10 @@ Returns file content as a string."
                ))
 
 (defun org-export-latex-no-toc (depth)
-    (when depth
-      (format "%% Org-mode is exporting headings to %s levels.\n"
-              depth)))
-  (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
+  (when depth
+    (format "%% Org-mode is exporting headings to %s levels.\n"
+            depth)))
+(setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
 
 (add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
 (add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
@@ -884,11 +948,8 @@ Returns file content as a string."
 (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
 ;; Jar Configuration
 (setq org-plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
+(setq plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
 (setq plantuml-default-exec-mode 'jar)
-
-;; Sample executable configuration
-;;(setq plantuml-executable-path "/path/to/your/copy/of/plantuml.bin")
-;;(setq plantuml-default-exec-mode 'executable)
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -956,6 +1017,10 @@ Returns file content as a string."
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
+
+(after! org
+  (custom-set-faces!
+    '(org-document-title :height 1.2)))
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired

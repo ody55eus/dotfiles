@@ -10,11 +10,15 @@ INSTALL="yay -S"
 # INSTALL="sudo pacman -S"
 
 $UPDATE
-$INSTALL git neovim wget tmux stow npm gem
+$INSTALL git neovim wget tmux stow npm gem make cmake python3
 
 $INSTALL conky
 
 $INSTALL rofi dmenu
+
+$INSTALL telegram-desktop
+
+$INSTALL libappindicator3 tdlib
 
 # Download OhMyZsh from github
 git submodule update --init sh/.config/zsh/ohmyzsh

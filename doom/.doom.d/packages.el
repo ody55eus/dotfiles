@@ -99,6 +99,12 @@
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 
+(package! telega
+  :recipe (:host github
+           :repo "zevlg/telega.el"
+           :branch "master"
+           :files (:defaults "contrib" "etc" "server" "Makefile")))
+
 (package! emacs-bitwarden       ; Password Manager
   :recipe (:host github
            :repo "seanfarley/emacs-bitwarden"

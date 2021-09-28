@@ -43,7 +43,7 @@ INSTALL="apt install"
 *** Basic Software
 #+begin_src sh
 $UPDATE
-$INSTALL git neovim wget tmux stow npm gem
+$INSTALL git neovim wget tmux stow npm gem make cmake python3
 #+end_src
 *** Graphical Desktop Environment
 Here are some desktop environments to choose from.
@@ -64,7 +64,24 @@ $INSTALL conky
 #+begin_src sh
 $INSTALL rofi dmenu
 #+end_src
-
+***** Telegram Desktop
+This should be in the [[https://archlinux.org/packages/?name=telegram-desktop][Arch Repos]] (alternatively take [[https://aur.archlinux.org/packages/telegram-desktop-bin/][telegram-desktop-bin]] from AUR repo).
+#+begin_src sh
+$INSTALL telegram-desktop
+#+end_src
+*** CLI Dependencies
+**** Telegram for Emacs
+***** Dependencies
+[[https://zevlg.github.io/telega.el/#dependencies][telega.el]] depends on ~libappindicator3~ and ~gperf~ (to build TDLib):
+#+begin_src sh
+$INSTALL libappindicator3 gperf
+#+end_src
+***** Building TDLib
+#+begin_src sh
+cd ~/build
+git clone https://github.com/tdlib/td.git
+mkdir td/build && cd td/build && cmake ../
+#+end_src
 ** Fetching additional software via git
 *** Oh-My-Zsh (Theme)
 #+begin_src sh
