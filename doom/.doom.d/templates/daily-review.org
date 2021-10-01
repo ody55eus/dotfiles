@@ -12,6 +12,14 @@
   #+END_SRC
 - [ ] Capture any remaining open loops as tasks
   + [ ] Schedule + refile tasks in [[file:~/org/Notes.org][Org Mode Notes]], [[https://nc.ody5.de/][NextCloud]]
+  + [ ] Refile Fleeting notes
+    #+begin_src emacs-lisp
+    (jp/org-roam-select-literature)
+    (jp/org-roam-select-projects)
+    (jp/org-roam-select-pc)
+    (jp/org-roam-select-other)
+    #+end_src
+  + [ ] Sort Zettelkasten
 - [ ] Schedule today's tasks (immersive -> process, deep -> shallow):
   #+BEGIN_SRC emacs-lisp
     (progn
