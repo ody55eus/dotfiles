@@ -2457,7 +2457,7 @@ Try these commands with =M-x=:
 #+end_src
 
 *** Python
-
+**** General
 We use =lsp-mode= and =dap-mode= to provide a more complete development environment for Python in Emacs.  Check out the [[https://emacs-lsp.github.io/lsp-pyright][documentation of =lsp-pyright= ]]in the =lsp-mode= documentation for more details.
 
 Make sure you have the =lsp-pyright= language server installed before trying =lsp-mode=!
@@ -2474,16 +2474,24 @@ There are a number of other language servers for Python so if you find that =pyl
 (add-hook 'python-mode-hook #'jp/python-mode-hook)
 
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
+(setq dap-python-debugger 'debugpy)
+#+end_src
+**** MacOS
+- MacOS has different location thanks to Anaconda:
+  #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/config.el" "no")
+(setq python-shell-interpreter "/opt/homebrew/Caskroom/miniforge/base/envs/metal-tf/bin/python")
+(setq dap-python-executable "/opt/homebrew/Caskroom/miniforge/base/envs/metal-tf/bin/python")
+  #+end_src
+**** Linux
+Linux uses ~python3~:
+  #+begin_src emacs-lisp :tangle (if (eq system-type 'gnu/linux) "./.doom.d/config.el" "no")
 (setq python-shell-interpreter "python3")
 (setq dap-python-executable "python3")
-(setq dap-python-debugger 'debugpy)
-
-
-#+end_src
-
+  #+end_src
+**** PyEnv
 You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =pyvenv-activate= command should configure Emacs to cause =lsp-mode= and =dap-mode= to use the virtual environment when they are loaded, just select the path to your virtual environment before loading your project.
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+begin_src emacs-lisp
 
 (use-package pyvenv
   :after python-mode

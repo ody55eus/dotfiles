@@ -1130,14 +1130,10 @@ Returns file content as a string."
 (add-hook 'python-mode-hook #'jp/python-mode-hook)
 
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
-(setq python-shell-interpreter "python3")
-(setq dap-python-executable "python3")
 (setq dap-python-debugger 'debugpy)
 
-(use-package pyvenv
-  :after python-mode
-  :config
-  (pyvenv-mode 1))
+(setq python-shell-interpreter "/opt/homebrew/Caskroom/miniforge/base/envs/metal-tf/bin/python")
+(setq dap-python-executable "/opt/homebrew/Caskroom/miniforge/base/envs/metal-tf/bin/python")
 
 (use-package company
   :after lsp-mode
