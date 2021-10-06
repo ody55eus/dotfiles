@@ -57,7 +57,6 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
       user-mail-address "ody55eus@mailbox.org"
       epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
-
 #+end_src
 
 * Initialization (init.el)
@@ -461,9 +460,9 @@ Just comment/uncomment some lines to disable/enable features.
 
 ** Start Emacs as Server!
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(server-start)  ; Start Emacs as Server!
+(unless (server-running-p) (server-start))  ; Start Emacs as Server!
 
 #+end_src
 

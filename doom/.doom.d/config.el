@@ -19,6 +19,8 @@
 
 (add-hook 'emacs-startup-hook #'jp/display-startup-time)
 
+(unless (server-running-p) (server-start))  ; Start Emacs as Server!
+
 (setq-default
  delete-by-moving-to-trash t        ; Delete files to trash
  mouse-yank-at-point t              ; Yank at point rather than pointer
