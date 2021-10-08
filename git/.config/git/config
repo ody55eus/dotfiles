@@ -1,7 +1,9 @@
 [user]
 	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
-    signingkey = 0x01B6FB927AAEC59B
+    signingKey = 0x01B6FB927AAEC59B
+[gpg]
+	program = gpg
 [init]
 	defaultBranch = main
 [gitlab "gitlab.ody5.de/api/v4"]
@@ -13,9 +15,9 @@
 	excludesfile = ~/.config/git/ignore
 	attributesfile = ~/.config/git/attributes
 [commit]
-	gpgsign = true
+	gpgSign = true
 [tag]
-	gpgsign = true
+	gpgSign = true
 
 [diff]
 	tool = ediff
