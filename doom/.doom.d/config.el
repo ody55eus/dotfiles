@@ -19,7 +19,7 @@
 
 (add-hook 'emacs-startup-hook #'jp/display-startup-time)
 
-(unless (server-running-p) (server-start))  ; Start Emacs as Server!
+(server-start)  ; Start Emacs as Server!
 
 (setq-default
  delete-by-moving-to-trash t        ; Delete files to trash
@@ -891,6 +891,58 @@ Returns file content as a string."
     (format "%% Org-mode is exporting headings to %s levels.\n"
             depth)))
 (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
+
+(add-to-list 'org-latex-classes
+      '("letter"
+         "\\documentclass[
+    fontsize=12pt,
+    % Satzspiegel
+    DIV=13,
+    paper=a4,
+    enlargefirstpage=on,
+    pagenumber=headright,
+    %---------------------------------------------------------------------------
+    % Layout
+    headsepline=on,
+    parskip=half,
+    %---------------------------------------------------------------------------
+    % Briefkopf und Anschrift
+    %fromalign=location,
+    fromphone=off,
+    fromrule=off,
+    fromfax=off,
+    fromemail=on,
+    fromurl=on,
+    fromlogo=off,
+    addrfield=on,
+    backaddress=off,
+    subject=beforeopening,
+    locfield=narrow,
+    foldmarks=on,
+    numericaldate=off,
+    refline=narrow,
+    draft=off
+          ]{scrlttr2}
+\\include{structure}
+[NO-DEFAULT-PACKAGES]
+[NO-EXTRA]
+[NO-PACKAGES]
+\\usepackage[T1]{fontenc}
+\\usepackage[utf8]{inputenc}
+\\usepackage{url}
+\\usepackage{graphicx}
+\\usepackage{uniinput}
+% Fonts
+\\setkomafont{fromname}{\\sffamily}
+\\setkomafont{fromaddress}{\\sffamily}
+\\setkomafont{pagenumber}{\\sffamily}
+\\setkomafont{subject}{\\mdseries \\bfseries}
+\\setkomafont{backaddress}{\\mdseries}
+\\usepackage{mathptmx}%% Schrift Times
+"
+         ("\\textbf{%s}" . "\\textbf*{%s}")
+         ("\\textbf{%s}" . "\\textbf*{%s}")
+         ))
 
 (add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
 (add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
