@@ -978,8 +978,9 @@ Returns file content as a string."
         (t . ivy--regex-plus)))
 
 (setq bibtex-file-path (concat org-roam-directory "/BibTeX/")
-      bibtex-files '("Library.bib" "Master.bib")
-      bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib" "~/ZK/BibTeX/Master.bib")
+      bibtex-files '("Library.bib")
+      org-ref-default-bibliography '("~/ZK/BibTeX/Library.bib")
+      bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib")
       bibtex-completion-library-path '("~/nc/Library/BibTeX/"))
 
 (require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
