@@ -2275,10 +2275,10 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
         (t . ivy--regex-plus)))
 
 (setq bibtex-file-path (concat org-roam-directory "/BibTeX/")
-      bibtex-files '("Library.bib" "Master.bib")
-      bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib" "~/ZK/BibTeX/Master.bib")
+      bibtex-files '("Library.bib")
+      org-ref-default-bibliography '("~/ZK/BibTeX/Library.bib")
+      bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib")
       bibtex-completion-library-path '("~/nc/Library/BibTeX/"))
-
 #+end_src
 
 ** Org-Roam (Zettelkasten)
