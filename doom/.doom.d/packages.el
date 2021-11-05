@@ -134,6 +134,9 @@
 (package! lsp-latex)
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
+(package! pomm
+  :recipe (:host github
+           :repo "SqrtMinusOne/pomm.el"))
 
                                         ; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)

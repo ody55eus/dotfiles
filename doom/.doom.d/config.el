@@ -143,6 +143,7 @@
        :desc "avy-goto-char-2" "O" #'avy-goto-char-2
        :desc "avy-imenu" "I" #'avy-imenu
        :desc "evil-avy-goto-line" "l" #'evil-avy-goto-line
+       :desc "pomm" "p" #'pomm
        :desc "evil-avy-goto-word-0" "w" #'evil-avy-goto-word-0
        :desc "evil-avy-goto-subword-0" "W" #'evil-avy-goto-subword-0
        )
@@ -298,7 +299,13 @@
 
 (setq display-time-24hr-format t                ;; Display 24 Hrs rather than 12
       display-time-default-load-average nil)    ;; Do not display my CPU Load
-(display-time-mode 1)
+(display-time-mode 0)
+
+(add-to-list 'mode-line-misc-info '(:eval pomm-current-mode-line-string))
+(add-hook 'pomm-on-tick-hook 'pomm-update-mode-line-string)
+(add-hook 'pomm-on-tick-hook 'force-mode-line-update)
+(add-hook 'pomm-on-status-changed-hook 'pomm-update-mode-line-string)
+(add-hook 'pomm-on-status-changed-hook 'force-mode-line-update)
 
 (defadvice! prompt-for-buffer (&rest _)
   :after 'window-split

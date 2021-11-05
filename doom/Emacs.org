@@ -432,6 +432,9 @@ Just comment/uncomment some lines to disable/enable features.
 (package! lsp-latex)
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
+(package! pomm
+  :recipe (:host github
+           :repo "SqrtMinusOne/pomm.el"))
 
                                         ; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
@@ -632,6 +635,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
        :desc "avy-goto-char-2" "O" #'avy-goto-char-2
        :desc "avy-imenu" "I" #'avy-imenu
        :desc "evil-avy-goto-line" "l" #'evil-avy-goto-line
+       :desc "pomm" "p" #'pomm
        :desc "evil-avy-goto-word-0" "w" #'evil-avy-goto-word-0
        :desc "evil-avy-goto-subword-0" "W" #'evil-avy-goto-subword-0
        )
@@ -930,7 +934,16 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq display-time-24hr-format t                ;; Display 24 Hrs rather than 12
       display-time-default-load-average nil)    ;; Do not display my CPU Load
-(display-time-mode 1)
+(display-time-mode 0)
+#+end_src
+
+**** Display Pomm Timer
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(add-to-list 'mode-line-misc-info '(:eval pomm-current-mode-line-string))
+(add-hook 'pomm-on-tick-hook 'pomm-update-mode-line-string)
+(add-hook 'pomm-on-tick-hook 'force-mode-line-update)
+(add-hook 'pomm-on-status-changed-hook 'pomm-update-mode-line-string)
+(add-hook 'pomm-on-status-changed-hook 'force-mode-line-update)
 #+end_src
 
 *** Doom Dashboard
