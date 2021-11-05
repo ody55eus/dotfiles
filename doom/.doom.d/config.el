@@ -243,6 +243,8 @@
 ;; Set up the visible bell
 (setq visible-bell t)
 
+(setq alert-default-style 'osx-notifier)
+
 (menu-bar-mode 1)
 
 (map! :n [mouse-8] #'better-jumper-jump-backward

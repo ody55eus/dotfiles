@@ -848,6 +848,10 @@ Disable the computer =beep= and activate a visual feedback instead.
 (setq visible-bell t)
 
 #+end_src
+*** Alert Styles
+#+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/config.el" "no")
+(setq alert-default-style 'osx-notifier)
+#+end_src
 
 *** Enable Menu Bar
 This allows you to see some basic actions (activates dropdown menus File, Edit, Options, etc.)
