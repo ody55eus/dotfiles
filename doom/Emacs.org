@@ -865,7 +865,7 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 
 *** Resize Startup Window
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+begin_src emacs-lisp
 
 (defun jp/set-frame-size-according-to-resolution ()
   (interactive)
