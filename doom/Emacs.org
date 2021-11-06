@@ -20,7 +20,6 @@
   - [[#font-face-configuration][Font Face Configuration]]
   - [[#basic-emacs-ui-enhancements][Basic Emacs UI Enhancements]]
   - [[#doom-emacs-customization][Doom Emacs Customization]]
-  - [[#open-bufferlist-when-splitting-windows][Open Bufferlist when splitting windows]]
   - [[#additional-packages][Additional Packages]]
 - [[#org-mode][Org Mode]]
   - [[#visual-enhancements][Visual Enhancements]]
@@ -680,9 +679,6 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 (define-key embark-bookmark-map (kbd "3") (my/embark-split-action bookmark-jump split-window-right))
 #+end_src
 
-#+RESULTS:
-: embark-export
-
 *** Keybindings (=CTRL= ~C-w~ Window)
 :Source:
 Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecosaur]].
@@ -827,10 +823,10 @@ Other useful codes:
 | ·    |                 183 | b7   | MIDDLE DOT                            |
 | ¶    |                 182 | b6   | PILCROW SIGN                          |
 | ↵    |                8629 | 21b5 | DOWNWARDS ARROW WITH CORNER LEFTWARDS |
-| ↩   |                8617 | 21a9 | LEFTWARDS ARROW WITH HOOK             |
+| ↩  |                8617 | 21a9 | LEFTWARDS ARROW WITH HOOK             |
 | ⏎    |                9166 | 23ce | RETURN SYMBOL                         |
 | ▷    |                9655 | 25b7 | WHITE RIGHT POINTING TRIANGLE         |
-| ▶   |                9654 | 25b6 | BLACK RIGHT-POINTING TRIANGLE         |
+| ▶  |                9654 | 25b6 | BLACK RIGHT-POINTING TRIANGLE         |
 | →    |                8594 | 2192 | RIGHTWARDS ARROW                      |
 | ↦    |                8614 | 21a6 | RIGHTWARDS ARROW FROM BAR             |
 | ⇥    |                8677 | 21e5 | RIGHTWARDS ARROW TO BAR               |
@@ -848,6 +844,7 @@ Disable the computer =beep= and activate a visual feedback instead.
 (setq visible-bell t)
 
 #+end_src
+
 *** Alert Styles
 #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/config.el" "no")
 (setq alert-default-style 'osx-notifier)
@@ -996,14 +993,6 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
                                                                :face 'doom-dashboard-menu-title)
                                        :action jp/org-ram-agenda))
 
-#+end_src
-
-** Open Bufferlist when splitting windows
-This command runs ~counsel-switch-buffer~ after splitting a window. It automatically shows a preview of the selected buffer during selection.
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(defadvice! prompt-for-buffer (&rest _)
-  :after 'window-split
-  (counsel-switch-buffer))
 #+end_src
 
 ** Additional Packages
@@ -1385,6 +1374,7 @@ argument, query for word to search."
   (org-pretty-table-mode)
   )
 #+end_src
+
 **** Set pretty code symbols
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el

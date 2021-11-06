@@ -124,6 +124,7 @@
 ;;(package! beacon)               ; Highlight Cursor on big change
 
 ;;(package! synosaurus)           ; Thesaurus synonyms
+(package! powerthesaurus)
 
 ;; Language Server
 (package! lsp-mode)

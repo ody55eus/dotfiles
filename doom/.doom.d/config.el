@@ -289,10 +289,6 @@
 (add-hook 'pomm-on-status-changed-hook 'pomm-update-mode-line-string)
 (add-hook 'pomm-on-status-changed-hook 'force-mode-line-update)
 
-(defadvice! prompt-for-buffer (&rest _)
-  :after 'window-split
-  (counsel-switch-buffer))
-
 (setq hl-todo-keyword-faces
       '(("TODO"   . "#cc0")
         ("FIXME"  . "#990000")
