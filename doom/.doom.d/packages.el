@@ -60,14 +60,15 @@
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
 (package! org-download)
 (package! org-journal)
-(package! org-pretty-tags)
-(package! org-pretty-table-mode
-  :recipe (:host github :repo "Fuco1/org-pretty-table"))
+;;(package! org-pretty-tags)
+;; (package! org-pretty-table-mode
+;;   :recipe (:host github :repo "Fuco1/org-pretty-table"))
 
 
 ;; Use latest version!
 (unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
+(package! helm-bibtex)
 
 ;; Org Roam UI (frontend for exploring and interacting org-roam)
 (package! websocket)
@@ -99,11 +100,11 @@
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 
-(package! telega
-  :recipe (:host github
-           :repo "zevlg/telega.el"
-           :branch "master"
-           :files (:defaults "contrib" "etc" "server" "Makefile")))
+;; (package! telega
+;;   :recipe (:host github
+;;            :repo "zevlg/telega.el"
+;;            :branch "master"
+;;            :files (:defaults "contrib" "etc" "server" "Makefile")))
 
 (package! emacs-bitwarden       ; Password Manager
   :recipe (:host github
@@ -120,7 +121,7 @@
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
 
-(package! xkcd)
+(package! diminish)
 ;;(package! beacon)               ; Highlight Cursor on big change
 
 ;;(package! synosaurus)           ; Thesaurus synonyms
@@ -130,7 +131,7 @@
 (package! lsp-mode)
 (package! lsp-ui)
 (package! lsp-treemacs)
-(package! lsp-ivy)
+;;(package! lsp-ivy)
 (package! lsp-pyright)          ; Python language server
 (package! lsp-latex)
 (package! dap-mode)             ; Debugging Functions

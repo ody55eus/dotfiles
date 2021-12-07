@@ -32,8 +32,8 @@
 
 (map! :leader
       (:prefix ("b" . "buffer")
-       :desc "Counsel buffer" :n "j" #'counsel-switch-buffer
-       :desc "Counsel buffer other window" :n "J" #'counsel-switch-buffer-other-window
+       :desc "Consult buffer" :n "j" #'consult-buffer
+       :desc "Consult buffer other window" :n "J" #'consult-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
        :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
@@ -330,6 +330,7 @@
       (remove-hook 'pre-command-hook 'keycast--update))))
 (add-to-list 'global-mode-string '("" mode-line-keycast))
 
+(require 'avy)
 (defun avy-action-mark-to-char (pt)
   (activate-mark)
   (goto-char pt))
@@ -419,11 +420,6 @@ argument, query for word to search."
   t)
 
 (setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
-
-(after! org
-  (+org-pretty-mode)
-  (org-pretty-table-mode)
-  )
 
 (after! org
   (appendq! +ligatures-extra-symbols
@@ -1136,9 +1132,9 @@ Returns file content as a string."
 ;; ivy-bibtex requires ivy's `ivy--regex-ignore-order` regex builder, which
 ;; ignores the order of regexp tokens when searching for matching candidates.
 ;; Add something like this to your init file:
-(setq ivy-re-builders-alist
-      '((ivy-bibtex . ivy--regex-ignore-order)
-        (t . ivy--regex-plus)))
+;; (setq ivy-re-builders-alist
+;;       '((ivy-bibtex . ivy--regex-ignore-order)
+;;         (t . ivy--regex-plus)))
 
 (setq bibtex-file-path (concat org-roam-directory "/BibTeX/")
       bibtex-files '("Library.bib")
@@ -1156,6 +1152,7 @@ Returns file content as a string."
       org-id-locations-file "~/ZK/.orgids"
       org-roam-completion-everywhere nil
       org-roam-completion-system 'default
+      org-roam-db-location "~/.emacs.d/org-roam.db"
       ;;org-roam-graph-executable "neato" ; or "dot" (default)
       )
 
@@ -1265,9 +1262,6 @@ Returns file content as a string."
   (use-package lsp-treemacs
     :after lsp)
 
-  (use-package lsp-ivy
-    :after lsp)
-
 (use-package dap-mode
   ;; Uncomment the config below if you want all UI panes to be hidden by default!
   ;; :custom
@@ -1296,8 +1290,9 @@ Returns file content as a string."
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
 (setq dap-python-debugger 'debugpy)
 
-(setq python-shell-interpreter "/opt/homebrew/Caskroom/miniforge/base/envs/metal-tf/bin/python")
-(setq dap-python-executable "/opt/homebrew/Caskroom/miniforge/base/envs/metal-tf/bin/python")
+(setq python-shell-interpreter "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
+(setq dap-python-executable "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
+(setq lsp-python-ms-python-executable-cmd "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
 
 (use-package company
   :after lsp-mode
