@@ -715,6 +715,8 @@ Returns file content as a string."
                                "* TODO %?\n %i\n %a")
                               ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
                                "* TODO %?\n %i\n %a")
+                              ("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
+                               "* %?\n %x\n %i\n %a")
                               ("M" "Meeting" entry
                                (file+olp+datetree "~/org/Meetings.org")
                                (function jp/read-meeting-template)
@@ -738,14 +740,10 @@ Returns file content as a string."
                                (file+olp+datetree "~/org/Logbook.org")
                                "\n* %U %a%? :Configuration:"
                                :clock-in :clock-resume)
-                              ("s" "Create Scripts")
-                              ("ss" "shell" entry
-                               (file+headline "~/org/scripts/%<%Y%m%d%H%M%S>.org" "Scripts")
-                               (function jp/read-script-template)
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
-                               "* %?\n %x\n %i\n %a")
+                              ("s" "Symptom Journal" entry (file+datetree "symptom-journal.org")
+                               "* ~%<%H:%M>~ - %? :symptom:\n"
+                               :time-prompt t
+                               :unnarrowed t)
                               ("t" "Task Entries")
                               ("tt" "Todo Task" entry (file+headline "~/org/Notes.org" "Tasks")
                                "* TODO %?\n %i\n %a")
@@ -849,19 +847,19 @@ Returns file content as a string."
          :kill-buffer t
          )
         ("m" "meeting" entry
-         (file "~/.dotfiles/.doom.d/templates/Meeting.org")
+         (file "~/.dotfiles/doom/.doom.d/templates/Meeting.org")
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
                   "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
                   ("Meetings")))
         ("r" "Review")
         ("rd" "Daily Review" entry
-         (file+head
+         (file "~/.dotfiles/doom/.doom.d/templates/daily-review.org")
+         :target (file+head
           "%<%Y-%m-%d>.org"
-          "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
-         (file "~/.dotfiles/doom/.doom.d/templates/daily-review.org"))
+          "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"))
         ("rm" "Monthly Review" entry
-         (file "~/.dotfiles/.doom.d/templates/monthly-review.org")
+         (file "~/.dotfiles/doom/.doom.d/templates/monthly-review.org")
          :if-new (file+head
                   "%<%Y-%B>.org"
                   "#+title: %<%Y-%B>\n"))))
