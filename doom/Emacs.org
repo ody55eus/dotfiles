@@ -97,11 +97,11 @@ Just comment/uncomment some lines to disable/enable features.
        ;; )           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
-       ;;(ivy
-       ;; +fuzzy  ; Enables fuzzy completion for Ivy searches
-       ;; +prescient ;Enables prescient filtering and sorting for Ivy searches.
+       (ivy
+       ;; +fuzzy              ; Enables fuzzy completion for Ivy searches
+        +prescient            ; Enables prescient filtering and sorting for Ivy searches.
        ;; +childframe         ; display in a floating window
-       ;; +icons)               ; a search engine for love and life
+        +icons)               ; a search engine for love and life
        (vertico +icons)           ; the search engine of the future
 
        :ui
@@ -1842,7 +1842,7 @@ The Task Keywords are noted with their keybindings in parentheses.
                                (file+olp+datetree "~/org/Logbook.org")
                                "\n* %U %a%? :Configuration:"
                                :clock-in :clock-resume)
-                              ("s" "Symptom Journal" entry (file+datetree "symptom-journal.org")
+                              ("s" "Symptom Journal" entry (file+datetree "symptom-journal.org.gpg")
                                "* ~%<%H:%M>~ - %? :symptom:\n"
                                :time-prompt t
                                :unnarrowed t)

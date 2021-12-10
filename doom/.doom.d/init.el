@@ -25,11 +25,11 @@
        ;; )           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
-       ;;(ivy
-       ;; +fuzzy  ; Enables fuzzy completion for Ivy searches
-       ;; +prescient ;Enables prescient filtering and sorting for Ivy searches.
+       (ivy
+       ;; +fuzzy              ; Enables fuzzy completion for Ivy searches
+        +prescient            ; Enables prescient filtering and sorting for Ivy searches.
        ;; +childframe         ; display in a floating window
-       ;; +icons)               ; a search engine for love and life
+        +icons)               ; a search engine for love and life
        (vertico +icons)           ; the search engine of the future
 
        :ui

@@ -740,7 +740,7 @@ Returns file content as a string."
                                (file+olp+datetree "~/org/Logbook.org")
                                "\n* %U %a%? :Configuration:"
                                :clock-in :clock-resume)
-                              ("s" "Symptom Journal" entry (file+datetree "symptom-journal.org")
+                              ("s" "Symptom Journal" entry (file+datetree "symptom-journal.org.gpg")
                                "* ~%<%H:%M>~ - %? :symptom:\n"
                                :time-prompt t
                                :unnarrowed t)
