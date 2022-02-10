@@ -1135,10 +1135,11 @@ Returns file content as a string."
 ;;         (t . ivy--regex-plus)))
 
 (setq bibtex-file-path (concat org-roam-directory "/BibTeX/")
-      bibtex-files '("Library.bib")
-      org-ref-default-bibliography '("~/ZK/BibTeX/Library.bib")
-      bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib")
-      bibtex-completion-library-path '("~/nc/Library/BibTeX/"))
+      bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib"
+                                       "~/ZK/BibTeX/Master.bib"
+                                       "~/Projects/Method-Paper/bibliography.bib")
+      bibtex-completion-library-path '("~/nc/Library/BibTeX/")
+      bibtex-completion-notes-path "~/ZK/References/")
 
 (require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
 (require 'org-roam-protocol)
