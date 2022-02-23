@@ -29,6 +29,7 @@
   - [[#org-publish-exporting-org-files][Org Publish (Exporting org files)]]
   - [[#additional-org-packages][Additional Org Packages]]
   - [[#org-roam-zettelkasten][Org-Roam (Zettelkasten)]]
+  - [[#org-noter-annotating-pdf-documents][Org-Noter (Annotating PDF Documents)]]
 - [[#additional-packages-1][Additional Packages]]
   - [[#dired-file-manager][Dired (File Manager)]]
   - [[#languages-ide-using-language-server][Languages (IDE using Language Server)]]
@@ -2456,6 +2457,11 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
 (after! org
   (custom-set-faces!
     '(org-document-title :height 1.2)))
+#+end_src
+** Org-Noter (Annotating PDF Documents)
+[[https://github.com/weirdNox/org-noter][org-noter]] is an annotation extension to sync text annotations to PDF documents. It allows to store all text notes inside a folder and link to the corresponding PDF.
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq org-noter-notes-search-path '("~/ZK/References"))
 #+end_src
 
 * TODO Additional Packages
