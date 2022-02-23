@@ -1180,6 +1180,8 @@ Returns file content as a string."
   (custom-set-faces!
     '(org-document-title :height 1.2)))
 
+(setq org-noter-notes-search-path '("~/ZK/References"))
+
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired
 (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
