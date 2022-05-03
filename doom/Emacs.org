@@ -2507,9 +2507,9 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
-      ;; (:prefix ("d" . "dired")
-      ;;  :desc "Open dired" "d" #'dired
-      ;;  :desc "Dired jump to current" "j" #'dired-jump)
+      (:prefix ("d" . "dired")
+       :desc "Open dired" "d" #'dired
+       :desc "Dired jump to current" "j" #'dired-jump)
       (:after dired
        (:map dired-mode-map
         :desc "Peep-dired image previews" "d p" #'peep-dired
