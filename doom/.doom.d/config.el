@@ -19,6 +19,8 @@
 
 (add-hook 'emacs-startup-hook #'jp/display-startup-time)
 
+(server-start)  ; Start Emacs as Server!
+
 (setq-default
  delete-by-moving-to-trash t        ; Delete files to trash
  mouse-yank-at-point t              ; Yank at point rather than pointer
@@ -30,8 +32,8 @@
 
 (map! :leader
       (:prefix ("b" . "buffer")
-       :desc "Counsel buffer" :n "j" #'counsel-switch-buffer
-       :desc "Counsel buffer other window" :n "J" #'counsel-switch-buffer-other-window
+       :desc "Consult buffer" :n "j" #'consult-buffer
+       :desc "Consult buffer other window" :n "J" #'consult-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
        :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
@@ -137,14 +139,49 @@
 (map! :leader
       (:prefix ("j" . "jump")
        :desc "avy-goto-char" "c" #'avy-goto-char
-       :desc "avy-goto-char" "o" #'avy-goto-char-timer
+       :desc "avy-goto-char-timer" "o" #'avy-goto-char-timer
        :desc "avy-goto-char-2" "O" #'avy-goto-char-2
        :desc "avy-imenu" "I" #'avy-imenu
        :desc "evil-avy-goto-line" "l" #'evil-avy-goto-line
+       :desc "pomm" "p" #'pomm
        :desc "evil-avy-goto-word-0" "w" #'evil-avy-goto-word-0
        :desc "evil-avy-goto-subword-0" "W" #'evil-avy-goto-subword-0
        )
       )
+
+(require 'embark)
+(global-set-key (kbd "C-:") 'embark-act)
+
+(eval-when-compile
+  (defmacro my/embark-ace-action (fn)
+    `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
+       (interactive)
+       (with-demoted-errors "%s"
+         (require 'ace-window)
+         (aw-switch-to-window (aw-select nil))
+         (call-interactively (symbol-function ',fn)))))
+
+  (defmacro my/embark-split-action (fn split-type)
+    `(defun ,(intern (concat "my/embark-"
+                             (symbol-name fn)
+                             "-"
+                             (car (last  (split-string
+                                          (symbol-name split-type) "-"))))) ()
+       (interactive)
+       (funcall #',split-type)
+       (call-interactively #',fn))))
+
+(define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
+(define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
+(define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
+
+(define-key embark-file-map     (kbd "2") (my/embark-split-action find-file split-window-below))
+(define-key embark-buffer-map   (kbd "2") (my/embark-split-action switch-to-buffer split-window-below))
+(define-key embark-bookmark-map (kbd "2") (my/embark-split-action bookmark-jump split-window-below))
+
+(define-key embark-file-map     (kbd "3") (my/embark-split-action find-file split-window-right))
+(define-key embark-buffer-map   (kbd "3") (my/embark-split-action switch-to-buffer split-window-right))
+(define-key embark-bookmark-map (kbd "3") (my/embark-split-action bookmark-jump split-window-right))
 
 (map! :map evil-window-map
       "SPC" #'rotate-layout
@@ -211,26 +248,6 @@
 (map! :n [mouse-8] #'better-jumper-jump-backward
       :n [mouse-9] #'better-jumper-jump-forward)
 
-(defun jp/set-frame-size-according-to-resolution ()
-  (interactive)
-  (if window-system
-  (progn
-    ;; use 120 char wide window for largeish displays
-    ;; and smaller 80 column windows for smaller displays
-    ;; pick whatever numbers make sense for you
-    (if (> (x-display-pixel-width) 1280)
-           (add-to-list 'default-frame-alist (cons 'width 177))
-           (add-to-list 'default-frame-alist (cons 'width 100)))
-    ;; for the height, subtract a couple hundred pixels
-    ;; from the screen height (for panels, menubars and
-    ;; whatnot), then divide by the height of a char to
-    ;; get the height we want
-    (add-to-list 'default-frame-alist
-         (cons 'height (/ (- (x-display-pixel-height) 120)
-                             (frame-char-height)))))))
-
-(jp/set-frame-size-according-to-resolution)
-
 (setq confirm-kill-emacs nil)           ;; Don't confirm every kill
 
 (setq
@@ -262,11 +279,13 @@
 
 (setq display-time-24hr-format t                ;; Display 24 Hrs rather than 12
       display-time-default-load-average nil)    ;; Do not display my CPU Load
-(display-time-mode 1)
+(display-time-mode 0)
 
-(defadvice! prompt-for-buffer (&rest _)
-  :after 'window-split
-  (counsel-switch-buffer))
+(add-to-list 'mode-line-misc-info '(:eval pomm-current-mode-line-string))
+(add-hook 'pomm-on-tick-hook 'pomm-update-mode-line-string)
+(add-hook 'pomm-on-tick-hook 'force-mode-line-update)
+(add-hook 'pomm-on-status-changed-hook 'pomm-update-mode-line-string)
+(add-hook 'pomm-on-status-changed-hook 'force-mode-line-update)
 
 (setq hl-todo-keyword-faces
       '(("TODO"   . "#cc0")
@@ -308,6 +327,97 @@
         (add-hook 'pre-command-hook 'keycast--update t)
       (remove-hook 'pre-command-hook 'keycast--update))))
 (add-to-list 'global-mode-string '("" mode-line-keycast))
+
+(require 'avy)
+(defun avy-action-mark-to-char (pt)
+  (activate-mark)
+  (goto-char pt))
+
+(setf (alist-get ?  avy-dispatch-alist) 'avy-action-mark-to-char)
+
+(defun avy-action-copy-whole-line (pt)
+  (save-excursion
+    (goto-char pt)
+    (cl-destructuring-bind (start . end)
+        (bounds-of-thing-at-point 'line)
+      (copy-region-as-kill start end)))
+  (select-window
+   (cdr
+    (ring-ref avy-ring 0)))
+  t)
+
+(defun avy-action-yank-whole-line (pt)
+  (avy-action-copy-whole-line pt)
+  (save-excursion (yank))
+  t)
+
+(defun avy-action-kill-whole-line (pt)
+  (save-excursion
+    (goto-char pt)
+    (kill-whole-line))
+  (select-window
+   (cdr
+    (ring-ref avy-ring 0)))
+  t)
+
+(setf (alist-get ?k avy-dispatch-alist) 'avy-action-kill-stay
+      (alist-get ?K avy-dispatch-alist) 'avy-action-kill-whole-line
+      (alist-get ?y avy-dispatch-alist) 'avy-action-yank
+      (alist-get ?w avy-dispatch-alist) 'avy-action-copy
+      (alist-get ?W avy-dispatch-alist) 'avy-action-copy-whole-line
+      (alist-get ?Y avy-dispatch-alist) 'avy-action-yank-whole-line)
+
+(defun avy-action-teleport-whole-line (pt)
+    (avy-action-kill-whole-line pt)
+    (save-excursion (yank)) t)
+
+(setf (alist-get ?t avy-dispatch-alist) 'avy-action-teleport
+      (alist-get ?T avy-dispatch-alist) 'avy-action-teleport-whole-line)
+
+(defun dictionary-search-dwim (&optional arg)
+  "Search for definition of word at point. If region is active,
+search for contents of region instead. If called with a prefix
+argument, query for word to search."
+  (interactive "P")
+  (if arg
+      (dictionary-search nil)
+    (if (use-region-p)
+        (dictionary-search (buffer-substring-no-properties
+                            (region-beginning)
+                            (region-end)))
+      (if (thing-at-point 'word)
+          (dictionary-lookup-definition)
+        (dictionary-search-dwim '(4))))))
+
+(defun avy-action-define (pt)
+  (save-excursion
+    (goto-char pt)
+    (dictionary-search-dwim))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(setf (alist-get ?= avy-dispatch-alist) 'avy-action-define)
+
+(defun avy-action-helpful (pt)
+  (save-excursion
+    (goto-char pt)
+    (helpful-at-point))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(setf (alist-get ?H avy-dispatch-alist) 'avy-action-helpful)
+
+(defun avy-action-embark (pt)
+  (save-excursion
+    (goto-char pt)
+    (embark-act))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
 
 (after! org
   (+org-pretty-mode)
@@ -610,6 +720,8 @@ Returns file content as a string."
                                "* TODO %?\n %i\n %a")
                               ("as" "Sys" entry (file+headline "~/share/org/Agenda.org" "Sys")
                                "* TODO %?\n %i\n %a")
+                              ("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
+                               "* %?\n %x\n %i\n %a")
                               ("M" "Meeting" entry
                                (file+olp+datetree "~/share/org/Meetings.org")
                                (function jp/read-meeting-template)
@@ -641,6 +753,10 @@ Returns file content as a string."
                                :empty-lines 1)
                               ("f" "Fleeting Note" entry (file+headline "~/share/org/Notes.org" "Tasks")
                                "* %?\n %x\n %i\n %a")
+                              ("p" "Privat" entry (file+datetree "privat.org.gpg")
+                               "* ~%<%H:%M>~ - %?\n"
+                               :time-prompt t
+                               :unnarrowed t)
                               ("t" "Task Entries")
                               ("tt" "Todo Task" entry (file+headline "~/share/org/Notes.org" "Tasks")
                                "* TODO %?\n %i\n %a")
@@ -744,19 +860,19 @@ Returns file content as a string."
          :kill-buffer t
          )
         ("m" "meeting" entry
-         (file "~/.dotfiles/.doom.d/templates/Meeting.org")
+         (file "~/.dotfiles/doom/.doom.d/templates/Meeting.org")
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
                   "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
                   ("Meetings")))
         ("r" "Review")
         ("rd" "Daily Review" entry
-         (file+head
+         (file "~/.dotfiles/doom/.doom.d/templates/daily-review.org")
+         :target (file+head
           "%<%Y-%m-%d>.org"
-          "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
-         (file "~/.dotfiles/doom/.doom.d/templates/daily-review.org"))
+          "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"))
         ("rm" "Monthly Review" entry
-         (file "~/.dotfiles/.doom.d/templates/monthly-review.org")
+         (file "~/.dotfiles/doom/.doom.d/templates/monthly-review.org")
          :if-new (file+head
                   "%<%Y-%B>.org"
                   "#+title: %<%Y-%B>\n"))))
@@ -892,6 +1008,58 @@ Returns file content as a string."
             depth)))
 (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
 
+(add-to-list 'org-latex-classes
+      '("letter"
+         "\\documentclass[
+    fontsize=12pt,
+    % Satzspiegel
+    DIV=13,
+    paper=a4,
+    enlargefirstpage=on,
+    pagenumber=headright,
+    %---------------------------------------------------------------------------
+    % Layout
+    headsepline=on,
+    parskip=half,
+    %---------------------------------------------------------------------------
+    % Briefkopf und Anschrift
+    %fromalign=location,
+    fromphone=off,
+    fromrule=off,
+    fromfax=off,
+    fromemail=on,
+    fromurl=on,
+    fromlogo=off,
+    addrfield=on,
+    backaddress=off,
+    subject=beforeopening,
+    locfield=narrow,
+    foldmarks=on,
+    numericaldate=off,
+    refline=narrow,
+    draft=off
+          ]{scrlttr2}
+\\include{structure}
+[NO-DEFAULT-PACKAGES]
+[NO-EXTRA]
+[NO-PACKAGES]
+\\usepackage[T1]{fontenc}
+\\usepackage[utf8]{inputenc}
+\\usepackage{url}
+\\usepackage{graphicx}
+\\usepackage{uniinput}
+% Fonts
+\\setkomafont{fromname}{\\sffamily}
+\\setkomafont{fromaddress}{\\sffamily}
+\\setkomafont{pagenumber}{\\sffamily}
+\\setkomafont{subject}{\\mdseries \\bfseries}
+\\setkomafont{backaddress}{\\mdseries}
+\\usepackage{mathptmx}%% Schrift Times
+"
+         ("\\textbf{%s}" . "\\textbf*{%s}")
+         ("\\textbf{%s}" . "\\textbf*{%s}")
+         ))
+
 (add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
 (add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
 
@@ -975,14 +1143,16 @@ Returns file content as a string."
 ;; ivy-bibtex requires ivy's `ivy--regex-ignore-order` regex builder, which
 ;; ignores the order of regexp tokens when searching for matching candidates.
 ;; Add something like this to your init file:
-(setq ivy-re-builders-alist
-      '((ivy-bibtex . ivy--regex-ignore-order)
-        (t . ivy--regex-plus)))
+;; (setq ivy-re-builders-alist
+;;       '((ivy-bibtex . ivy--regex-ignore-order)
+;;         (t . ivy--regex-plus)))
 
 (setq bibtex-file-path (concat org-roam-directory "/BibTeX/")
-      bibtex-files '("Library.bib" "Master.bib")
-      bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib" "~/ZK/BibTeX/Master.bib")
-      bibtex-completion-library-path '("~/nc/Library/BibTeX/"))
+      bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib"
+                                       "~/ZK/BibTeX/Master.bib"
+                                       "~/Projects/Method-Paper/bibliography.bib")
+      bibtex-completion-library-path '("~/nc/Library/BibTeX/")
+      bibtex-completion-notes-path "~/ZK/References/")
 
 (setq org-roam-directory (file-truename "~/share/notes")   ; Set org-roam directory
       org-roam-dailies-directory (file-truename "~/share/notes/daily")
@@ -990,6 +1160,7 @@ Returns file content as a string."
       org-id-locations-file "~/share/notes/.orgids"
       org-roam-completion-everywhere nil
       org-roam-completion-system 'default
+      org-roam-db-location "~/.emacs.d/org-roam.db"
       ;;org-roam-graph-executable "neato" ; or "dot" (default)
       )
 
@@ -1099,9 +1270,6 @@ Returns file content as a string."
   (use-package lsp-treemacs
     :after lsp)
 
-  (use-package lsp-ivy
-    :after lsp)
-
 (use-package dap-mode
   ;; Uncomment the config below if you want all UI panes to be hidden by default!
   ;; :custom
@@ -1128,14 +1296,10 @@ Returns file content as a string."
 (add-hook 'python-mode-hook #'jp/python-mode-hook)
 
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
-(setq python-shell-interpreter "python3")
-(setq dap-python-executable "python3")
 (setq dap-python-debugger 'debugpy)
 
-(use-package pyvenv
-  :after python-mode
-  :config
-  (pyvenv-mode 1))
+(setq python-shell-interpreter "python3")
+(setq dap-python-executable "python3")
 
 (use-package company
   :after lsp-mode
