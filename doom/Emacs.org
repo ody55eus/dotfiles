@@ -1210,12 +1210,14 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
 ** Visual Enhancements
 *** Pretty Text
 **** Pretty Tables
+
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (after! org
   (+org-pretty-mode)
   (org-pretty-table-mode)
   )
 #+end_src
+
 **** Set pretty code symbols
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -1417,11 +1419,11 @@ Set this value to ~nil~ to display them again.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq org-roam-v2-ack t); Disable Warning for org-roam v2
-(setq org-directory "~/org/"
-      org-agenda-files '("~/org/Agenda.org"
-                         "~/org/Tasks.org"
-                         "~/org/Habits.org"
-                         ;;"~/org/Emails.org"
+(setq org-directory "~/share/org/"
+      org-agenda-files '("~/share/org/Agenda.org"
+                         "~/share/org/Tasks.org"
+                         "~/share/org/Habits.org"
+                         ;;"~/share/org/Emails.org"
                          )
       org-default-notes-file (concat org-directory "/Notes.org")
       org-clock-sound "~/sounds/ding.wav")
@@ -1651,47 +1653,49 @@ The Task Keywords are noted with their keybindings in parentheses.
 
 (setq org-capture-templates '(
                               ("a" "Agenda")
-                              ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
+                              ("ah" "Programming" entry (file+headline "~/share/org/Agenda.org" "Programming")
                                "* TODO %?\n %i\n %a")
-                              ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
+                              ("ai" "Important" entry (file+headline "~/share/org/Agenda.org" "Important")
+                               "* TODO %?\n %i\n %a")
+                              ("as" "Sys" entry (file+headline "~/share/org/Agenda.org" "Sys")
                                "* TODO %?\n %i\n %a")
                               ("M" "Meeting" entry
-                               (file+olp+datetree "~/org/Meetings.org")
+                               (file+olp+datetree "~/share/org/Meetings.org")
                                (function jp/read-meeting-template)
                                :clock-in :clock-resume
                                :empty-lines 1)
                               ("m" "Email Workflow")
-                              ("mf" "Follow Up" entry (file+olp "~/org/Mail.org" "Follow Up")
+                              ("mf" "Follow Up" entry (file+olp "~/share/org/Mail.org" "Follow Up")
                                "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote")
-                              ("mr" "Read Later" entry (file+olp "~/org/Mail.org" "Read Later")
+                              ("mr" "Read Later" entry (file+olp "~/share/org/Mail.org" "Read Later")
                                "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote%x")
                               ("l" "Logbook Entries")
                               ("ls" "Software" entry
-                               (file+olp+datetree "~/org/Logbook.org")
+                               (file+olp+datetree "~/share/org/Logbook.org")
                                "\n* %U %a%? :Software:"
                                :clock-in :clock-resume)
                               ("lh" "Hardware" entry
-                               (file+olp+datetree "~/org/Logbook.org")
+                               (file+olp+datetree "~/share/org/Logbook.org")
                                "\n* %U %a%? :Hardware:"
                                :clock-in :clock-resume)
                               ("lc" "Configuration" entry
-                               (file+olp+datetree "~/org/Logbook.org")
+                               (file+olp+datetree "~/share/org/Logbook.org")
                                "\n* %U %a%? :Configuration:"
                                :clock-in :clock-resume)
                               ("s" "Create Scripts")
                               ("ss" "shell" entry
-                               (file+headline "~/org/scripts/%<%Y%m%d%H%M%S>.org" "Scripts")
+                               (file+headline "~/share/org/scripts/%<%Y%m%d%H%M%S>.org" "Scripts")
                                (function jp/read-script-template)
                                :clock-in :clock-resume
                                :empty-lines 1)
-                              ("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
+                              ("f" "Fleeting Note" entry (file+headline "~/share/org/Notes.org" "Tasks")
                                "* %?\n %x\n %i\n %a")
                               ("t" "Task Entries")
-                              ("tt" "Todo Task" entry (file+headline "~/org/Notes.org" "Tasks")
+                              ("tt" "Todo Task" entry (file+headline "~/share/org/Notes.org" "Tasks")
                                "* TODO %?\n %i\n %a")
-                              ("te" "Epic Task" entry (file+headline "~/org/Notes.org" "Epic")
+                              ("te" "Epic Task" entry (file+headline "~/share/org/Notes.org" "Epic")
                                "* EPIC %?\n %i\n %a")
-                              ("ti" "New Idea" entry (file+headline "~/org/Notes.org" "Ideas")
+                              ("ti" "New Idea" entry (file+headline "~/share/org/Notes.org" "Ideas")
                                "* IDEA %?\n %i\n %a")))
 
 #+end_src
@@ -1895,7 +1899,8 @@ The daily / monthly review templates are inspired by [[https://github.com/benoit
 
 #+end_src
 
-*** Task Tags
+*** Tasks
+**** Task Tags
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -1914,7 +1919,7 @@ The daily / monthly review templates are inspired by [[https://github.com/benoit
 
 #+end_src
 
-*** Task Priorities
+**** Task Priorities
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -2188,18 +2193,24 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
 #+end_src
 
 ** Org-Roam (Zettelkasten)
-*** Files and Basic Variables
+*** STOPPED Require Org-Protocol
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+begin_src emacs-lisp
 
 (require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
 (require 'org-roam-protocol)
 (require 'org-protocol-capture-html)
 
-(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
-      org-roam-dailies-directory (file-truename "~/ZK/daily")
+#+end_src
+
+*** Files and Basic Variables
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq org-roam-directory (file-truename "~/share/notes")   ; Set org-roam directory
+      org-roam-dailies-directory (file-truename "~/share/notes/daily")
       org-attach-id-dir (concat org-roam-directory "/.attachments")
-      org-id-locations-file "~/ZK/.orgids"
+      org-id-locations-file "~/share/notes/.orgids"
       org-roam-completion-everywhere nil
       org-roam-completion-system 'default
       ;;org-roam-graph-executable "neato" ; or "dot" (default)
@@ -2826,5 +2837,5 @@ Useful mu4e manual pages:
 
 ** Deft
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq deft-directory "~/org")
+(setq deft-directory "~/share/org")
 #+end_src

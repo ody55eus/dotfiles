@@ -452,11 +452,11 @@
 (set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
 
 (setq org-roam-v2-ack t); Disable Warning for org-roam v2
-(setq org-directory "~/org/"
-      org-agenda-files '("~/org/Agenda.org"
-                         "~/org/Tasks.org"
-                         "~/org/Habits.org"
-                         ;;"~/org/Emails.org"
+(setq org-directory "~/share/org/"
+      org-agenda-files '("~/share/org/Agenda.org"
+                         "~/share/org/Tasks.org"
+                         "~/share/org/Habits.org"
+                         ;;"~/share/org/Emails.org"
                          )
       org-default-notes-file (concat org-directory "/Notes.org")
       org-clock-sound "~/sounds/ding.wav")
@@ -604,47 +604,49 @@ Returns file content as a string."
 
 (setq org-capture-templates '(
                               ("a" "Agenda")
-                              ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
+                              ("ah" "Programming" entry (file+headline "~/share/org/Agenda.org" "Programming")
                                "* TODO %?\n %i\n %a")
-                              ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
+                              ("ai" "Important" entry (file+headline "~/share/org/Agenda.org" "Important")
+                               "* TODO %?\n %i\n %a")
+                              ("as" "Sys" entry (file+headline "~/share/org/Agenda.org" "Sys")
                                "* TODO %?\n %i\n %a")
                               ("M" "Meeting" entry
-                               (file+olp+datetree "~/org/Meetings.org")
+                               (file+olp+datetree "~/share/org/Meetings.org")
                                (function jp/read-meeting-template)
                                :clock-in :clock-resume
                                :empty-lines 1)
                               ("m" "Email Workflow")
-                              ("mf" "Follow Up" entry (file+olp "~/org/Mail.org" "Follow Up")
+                              ("mf" "Follow Up" entry (file+olp "~/share/org/Mail.org" "Follow Up")
                                "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote")
-                              ("mr" "Read Later" entry (file+olp "~/org/Mail.org" "Read Later")
+                              ("mr" "Read Later" entry (file+olp "~/share/org/Mail.org" "Read Later")
                                "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote%x")
                               ("l" "Logbook Entries")
                               ("ls" "Software" entry
-                               (file+olp+datetree "~/org/Logbook.org")
+                               (file+olp+datetree "~/share/org/Logbook.org")
                                "\n* %U %a%? :Software:"
                                :clock-in :clock-resume)
                               ("lh" "Hardware" entry
-                               (file+olp+datetree "~/org/Logbook.org")
+                               (file+olp+datetree "~/share/org/Logbook.org")
                                "\n* %U %a%? :Hardware:"
                                :clock-in :clock-resume)
                               ("lc" "Configuration" entry
-                               (file+olp+datetree "~/org/Logbook.org")
+                               (file+olp+datetree "~/share/org/Logbook.org")
                                "\n* %U %a%? :Configuration:"
                                :clock-in :clock-resume)
                               ("s" "Create Scripts")
                               ("ss" "shell" entry
-                               (file+headline "~/org/scripts/%<%Y%m%d%H%M%S>.org" "Scripts")
+                               (file+headline "~/share/org/scripts/%<%Y%m%d%H%M%S>.org" "Scripts")
                                (function jp/read-script-template)
                                :clock-in :clock-resume
                                :empty-lines 1)
-                              ("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
+                              ("f" "Fleeting Note" entry (file+headline "~/share/org/Notes.org" "Tasks")
                                "* %?\n %x\n %i\n %a")
                               ("t" "Task Entries")
-                              ("tt" "Todo Task" entry (file+headline "~/org/Notes.org" "Tasks")
+                              ("tt" "Todo Task" entry (file+headline "~/share/org/Notes.org" "Tasks")
                                "* TODO %?\n %i\n %a")
-                              ("te" "Epic Task" entry (file+headline "~/org/Notes.org" "Epic")
+                              ("te" "Epic Task" entry (file+headline "~/share/org/Notes.org" "Epic")
                                "* EPIC %?\n %i\n %a")
-                              ("ti" "New Idea" entry (file+headline "~/org/Notes.org" "Ideas")
+                              ("ti" "New Idea" entry (file+headline "~/share/org/Notes.org" "Ideas")
                                "* IDEA %?\n %i\n %a")))
 
 (setq org-roam-capture-templates
@@ -982,14 +984,10 @@ Returns file content as a string."
       bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib" "~/ZK/BibTeX/Master.bib")
       bibtex-completion-library-path '("~/nc/Library/BibTeX/"))
 
-(require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
-(require 'org-roam-protocol)
-(require 'org-protocol-capture-html)
-
-(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
-      org-roam-dailies-directory (file-truename "~/ZK/daily")
+(setq org-roam-directory (file-truename "~/share/notes")   ; Set org-roam directory
+      org-roam-dailies-directory (file-truename "~/share/notes/daily")
       org-attach-id-dir (concat org-roam-directory "/.attachments")
-      org-id-locations-file "~/ZK/.orgids"
+      org-id-locations-file "~/share/notes/.orgids"
       org-roam-completion-everywhere nil
       org-roam-completion-system 'default
       ;;org-roam-graph-executable "neato" ; or "dot" (default)
@@ -1374,4 +1372,4 @@ Returns file content as a string."
           (plist-get entry :secret)))
   (bitwarden-auth-source-enable))
 
-(setq deft-directory "~/org")
+(setq deft-directory "~/share/org")
