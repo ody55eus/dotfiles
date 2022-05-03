@@ -1,6 +1,7 @@
 [user]
 	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
+	singingkey = CF2474B880
 [gpg]
 	program = gpg
 [init]
