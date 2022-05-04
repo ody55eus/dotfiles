@@ -19,7 +19,9 @@
 
 (add-hook 'emacs-startup-hook #'jp/display-startup-time)
 
-(server-start)  ; Start Emacs as Server!
+(require 'server)
+(if (not (server-running-p))
+    (server-start))  ; Start Emacs as Server!
 
 (setq-default
  delete-by-moving-to-trash t        ; Delete files to trash
@@ -1184,6 +1186,8 @@ Returns file content as a string."
   (custom-set-faces!
     '(org-document-title :height 1.2)))
 
+(setq org-noter-notes-search-path '("~/ZK/References"))
+
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired
 (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
@@ -1198,9 +1202,9 @@ Returns file content as a string."
                               ("mp4" . "mpv")))
 
 (map! :leader
-      ;; (:prefix ("d" . "dired")
-      ;;  :desc "Open dired" "d" #'dired
-      ;;  :desc "Dired jump to current" "j" #'dired-jump)
+      (:prefix ("d" . "dired")
+       :desc "Open dired" "d" #'dired
+       :desc "Dired jump to current" "j" #'dired-jump)
       (:after dired
        (:map dired-mode-map
         :desc "Peep-dired image previews" "d p" #'peep-dired

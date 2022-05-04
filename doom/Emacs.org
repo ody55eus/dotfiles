@@ -1,4 +1,5 @@
 #+TITLE: Doom Emacs Configuration
+#+AUTHOR: Jonathan Pieper
 #+STARTUP: fold
 
 * Table of Contents :TOC:noexport:
@@ -29,6 +30,7 @@
   - [[#org-publish-exporting-org-files][Org Publish (Exporting org files)]]
   - [[#additional-org-packages][Additional Org Packages]]
   - [[#org-roam-zettelkasten][Org-Roam (Zettelkasten)]]
+  - [[#org-noter-annotating-pdf-documents][Org-Noter (Annotating PDF Documents)]]
 - [[#additional-packages-1][Additional Packages]]
   - [[#dired-file-manager][Dired (File Manager)]]
   - [[#languages-ide-using-language-server][Languages (IDE using Language Server)]]
@@ -470,7 +472,9 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(server-start)  ; Start Emacs as Server!
+(require 'server)
+(if (not (server-running-p))
+    (server-start))  ; Start Emacs as Server!
 
 #+end_src
 
@@ -2476,6 +2480,11 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
   (custom-set-faces!
     '(org-document-title :height 1.2)))
 #+end_src
+** Org-Noter (Annotating PDF Documents)
+[[https://github.com/weirdNox/org-noter][org-noter]] is an annotation extension to sync text annotations to PDF documents. It allows to store all text notes inside a folder and link to the corresponding PDF.
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq org-noter-notes-search-path '("~/ZK/References"))
+#+end_src
 
 * TODO Additional Packages
 ** Dired (File Manager)
@@ -2516,9 +2525,9 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
-      ;; (:prefix ("d" . "dired")
-      ;;  :desc "Open dired" "d" #'dired
-      ;;  :desc "Dired jump to current" "j" #'dired-jump)
+      (:prefix ("d" . "dired")
+       :desc "Open dired" "d" #'dired
+       :desc "Dired jump to current" "j" #'dired-jump)
       (:after dired
        (:map dired-mode-map
         :desc "Peep-dired image previews" "d p" #'peep-dired
