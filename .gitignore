@@ -11,3 +11,4 @@
 /doom/.local/
 /doom/.doom.d/custom.el
 /doom/.doom.d/misc/
+*.pyc
