@@ -34,3 +34,6 @@
     trueExitCode = true
 [color]
 	pager = no
+[safe]
+	directory = /home/jp/share/org
+	directory = /home/jp/share/notes
