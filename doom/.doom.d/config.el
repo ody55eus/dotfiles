@@ -4,7 +4,7 @@
 ;; This Configuration File is managed by ~/Emacs.org. See additional comments there.
 
 (setq user-full-name "Jonathan Pieper"
-      user-mail-address "ody55eus@mailbox.org"
+      user-mail-address "jpieper@acg-gmbh.de"
       epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 ;; The default is 800 kilobytes.  Measured in bytes.
@@ -418,11 +418,6 @@ argument, query for word to search."
   t)
 
 (setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
-
-(after! org
-  (+org-pretty-mode)
-  (org-pretty-table-mode)
-  )
 
 (after! org
   (appendq! +ligatures-extra-symbols
@@ -1352,7 +1347,9 @@ Returns file content as a string."
 
     (eshell-git-prompt-use-theme 'powerline))
 
-;; Optional Magit Configuration
+;; Magit Configuration to enable gpg to sign keys
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+(setq exec-path (append exec-path '("/usr/local/bin")))
 
 ;; Tell Emacs where to find mu4e (only necessary if manual compiled)
 (pcase system-type

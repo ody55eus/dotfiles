@@ -54,7 +54,7 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq user-full-name "Jonathan Pieper"
-      user-mail-address "ody55eus@mailbox.org"
+      user-mail-address "jpieper@acg-gmbh.de"
       epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 #+end_src
@@ -1367,12 +1367,13 @@ argument, query for word to search."
 
 (setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
 #+end_src
+
 * Org Mode
 ** Visual Enhancements
 *** Pretty Text
 **** Pretty Tables
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+begin_src emacs-lisp
 (after! org
   (+org-pretty-mode)
   (org-pretty-table-mode)
@@ -2855,8 +2856,9 @@ For more thoughts on Eshell, check out these articles by Pierre Neidhardt:
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-;; Optional Magit Configuration
-
+;; Magit Configuration to enable gpg to sign keys
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+(setq exec-path (append exec-path '("/usr/local/bin")))
 #+end_src
 
 ** Mail in Emacs with mu4e
