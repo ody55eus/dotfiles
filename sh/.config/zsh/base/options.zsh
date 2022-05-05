@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 # some useful options (man zshoptions)
 # setopt interactive_comments
 

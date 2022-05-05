@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 # Enable aliases to be sudo’ed
 alias sudo='sudo '
 

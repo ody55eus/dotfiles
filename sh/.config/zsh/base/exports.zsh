@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env zsh
 HISTFILE="$ZDOTDIR"/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=500000

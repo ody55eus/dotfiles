@@ -1,0 +1,28 @@
+working_directory: '/home/jp'
+
+font:
+  normal:
+    family: 'JuliaMono'
+  style: Regular
+  size: 19.5
+
+cursor:
+  style:
+    shape: Beam
+  unfocused_hollow: false
+  thickness: 0.15
+
+shell:
+  program: /bin/zsh
+  args:
+    - -l
+    - -c
+    - 'tmux attach || tmux'
+
+window:
+  padding:
+    x: 13
+
+key_bindings:
+  - {key: Right, mods: Alt, chars: "\x1BF"}
+  - {key: Left, mods: Alt, chars: "\x1BB"}
