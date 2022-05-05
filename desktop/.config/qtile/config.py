@@ -33,7 +33,7 @@ import os, subprocess, datetime
 
 mod = "mod4"
 terminal = guess_terminal()
-emacs = "emacs"
+emacs = "emacsclient -c"
 rofi = "rofi -show drun"
 
 keys = [

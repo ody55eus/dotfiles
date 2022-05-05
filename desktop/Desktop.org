@@ -41,7 +41,7 @@ import os, subprocess, datetime
 #+begin_src python :tangle .config/qtile/config.py
 mod = "mod4"
 terminal = guess_terminal()
-emacs = "emacs"
+emacs = "emacsclient -c"
 rofi = "rofi -show drun"
 #+end_src
 
@@ -104,8 +104,11 @@ def autostart():
     subprocess.Popen([home + '/.config/qtile/autostart.sh'])
 #+end_src
 *** Autostart Script
+- Set Screent-Resolution to =1920x1080=.
+- Start Emacs Daemon
 #+begin_src python :tangle .config/qtile/autostart.sh :tangle-mode (identity #o755) :shebang #!/usr/bin/env zsh
 xrandr --output Virtual-1 --mode 1920x1080
+emacs --daemon
 #+end_src
 
 ** Desktop Groups
