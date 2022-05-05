@@ -208,7 +208,7 @@
       :ne "b" #'+vertico/switch-workspace-buffer
       :ne "B" #'counsel-switch-buffer)
 
-(setq doom-theme 'doom-vibrant)
+(setq doom-theme 'doom-outrun-electric)
 (custom-set-faces!
   '(doom-modeline-buffer-modified :foreground "DarkOrange"))
 
@@ -499,9 +499,9 @@ argument, query for word to search."
           (?E . 'all-the-icons-blue))))
 
 (setq org-todo-keyword-faces '(
-                               ("PROJ" . "DarkGreen")
+                               ("PROJ" . +org-todo-project)
                                ("EPIC" . (:foreground "DodgerBlue" :weight bold))
-                               ("TODO" . org-warning)
+                               ("TODO" . +org-todo-active)
                                ("IDEA" . (:foreground "BlueViolet"))
                                ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
                                ("PLAN" . (:foreground "Magenta1" :weight bold :underline t))

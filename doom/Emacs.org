@@ -36,7 +36,7 @@
   - [[#languages-ide-using-language-server][Languages (IDE using Language Server)]]
   - [[#projectile][Projectile]]
   - [[#eshell][Eshell]]
-  - [[#hold-magit][HOLD Magit]]
+  - [[#magit][Magit]]
   - [[#mail-in-emacs-with-mu4e][Mail in Emacs with mu4e]]
   - [[#password-save][Password Save]]
   - [[#deft][Deft]]
@@ -724,7 +724,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(setq doom-theme 'doom-vibrant)
+(setq doom-theme 'doom-outrun-electric)
 (custom-set-faces!
   '(doom-modeline-buffer-modified :foreground "DarkOrange"))
 
@@ -1499,9 +1499,9 @@ Set this value to ~nil~ to display them again.
 **** Color and weight of keywords
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq org-todo-keyword-faces '(
-                               ("PROJ" . "DarkGreen")
+                               ("PROJ" . +org-todo-project)
                                ("EPIC" . (:foreground "DodgerBlue" :weight bold))
-                               ("TODO" . org-warning)
+                               ("TODO" . +org-todo-active)
                                ("IDEA" . (:foreground "BlueViolet"))
                                ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
                                ("PLAN" . (:foreground "Magenta1" :weight bold :underline t))
@@ -2417,7 +2417,7 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
 #+end_src
 
 ** Org-Roam (Zettelkasten)
-*** STOPPED Require Org-Protocol
+*** STOPPED Require Org-Protocol (Broken)
 
 #+begin_src emacs-lisp
 
@@ -2861,13 +2861,14 @@ For more thoughts on Eshell, check out these articles by Pierre Neidhardt:
 
 #+end_src
 
-** HOLD Magit
+** Magit
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 ;; Magit Configuration to enable gpg to sign keys
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
+
 #+end_src
 
 ** Mail in Emacs with mu4e
