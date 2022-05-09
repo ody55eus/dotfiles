@@ -109,6 +109,7 @@ def autostart():
 #+begin_src python :tangle .config/qtile/autostart.sh :tangle-mode (identity #o755) :shebang #!/usr/bin/env zsh
 xrandr --output Virtual-1 --mode 1920x1080
 emacs --daemon
+alacritty -e ~/startup.sh
 #+end_src
 
 ** Desktop Groups
