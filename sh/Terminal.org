@@ -1,5 +1,4 @@
 #+title: Terminal and Shell Configuration
-#+PROPERTY: header-args:sh :tangle-mode (identity #o644)
 
 * Table of Contents :TOC:
 - [[#alacritty][Alacritty]]
@@ -22,7 +21,7 @@ font:
   normal:
     family: 'JuliaMono'
   style: Regular
-  size: 19.5
+  size: 12
 
 cursor:
   style:
