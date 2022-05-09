@@ -92,11 +92,11 @@
 (package! ob-napkin)            ; PlantUML in Org Babel
 (package! plantuml-mode)        ; PlantUML Diagrams
 
-                                        ; Org Exports
+;; Org Exports
 (package! ox-twbs)      ; HTML Twitter Bootstrap
 (package! ox-rst)       ; ReStructured Text (ReST, RST)
 
-                                        ; Support for other File Types
+;; Support for other File Types
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 
@@ -111,7 +111,7 @@
            :repo "seanfarley/emacs-bitwarden"
            :files ("bitwarden.el")))
 
-                                        ; Visual/Functional Enhancements
+; Visual/Functional Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
 
@@ -140,7 +140,7 @@
   :recipe (:host github
            :repo "SqrtMinusOne/pomm.el"))
 
-                                        ; Packages to share my keybindings when streaming
+; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
 (package! keycast
   :recipe (:host github
