@@ -1,4 +1,55 @@
-#!/bin/sh
+#+title: Git
+
+* Gitconfig
+#+begin_src conf :tangle .config/git/config
+[user]
+	email = ody55eus@mailbox.org
+	name = Jonathan Pieper
+	singingkey = CF2474B880
+[gpg]
+	program = gpg
+[init]
+	defaultBranch = main
+[gitlab "gitlab.ody5.de/api/v4"]
+	user = ody55eus
+[pull]
+	rebase = false
+	ff = only
+[core]
+	excludesfile = ~/.config/git/ignore
+	attributesfile = ~/.config/git/attributes
+	pager = nvim -R
+[diff]
+	tool = ediff
+	guitool = ediff
+[merge]
+	tool = ediff
+[diff "lisp"]
+	xfuncname = "^(\\(.*)$"
+[diff "org"]
+	xfuncname = "^(\\*+ +.*)$"
+[difftool "ediff"]
+    cmd = ~/.local/bin/ediff.sh $LOCAL $REMOTE $MERGED
+[merge]
+    tool = ediff
+[mergetool "ediff"]
+    cmd = ~/.local/bin/ediff.sh $LOCAL $REMOTE $MERGED $BASE
+    trueExitCode = true
+[color]
+	pager = no
+[safe]
+	directory = /home/jp/share/org
+	directory = /home/jp/share/notes
+#+end_src
+* Git Attributes
+#+begin_src conf :tangle .config/git/attributes
+*.lisp	diff=lisp
+*.el	diff=lisp
+*.org	diff=org
+#+end_src
+* Diff - Tool (ediff.sh)
+See also [[https://github.com/paulotome/emacstool][Paulotome/Emacstool]].
+#+begin_src sh :tangle .local/bin/ediff.sh :shebang #!/bin/sh
 ########
 #### taken from github.com/paulotome/emacstool
 ####
@@ -68,3 +119,4 @@ if [ ! "$(grep -Ec '^(<<<<<<<|=======|>>>>>>>|####### Ancestor)' "${_MERGED}")" 
 fi
 
 exit 0
+#+end_src
