@@ -152,7 +152,7 @@ screens = [
                     },
                     name_transform=lambda name: name.upper(),
                 ),
-                widget.Countdown(date=datetime.datetime(2022, 5, 6, 18)),
+                widget.Countdown(date=datetime.datetime(2022, 5, 20, 14)),
                 widget.KeyboardLayout(configured_keyboards=['de neo', 'de', 'us']),
                 widget.TextBox("JPI", foreground="#d75f5f", mouse_callbacks={'Button1': lazy.spawn(terminal)}),
                 widget.Systray(),
