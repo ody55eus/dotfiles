@@ -1351,6 +1351,8 @@ Returns file content as a string."
 
     (eshell-git-prompt-use-theme 'powerline))
 
+(remove-hook 'server-switch-hook 'magit-commit-diff)
+
 ;; Magit Configuration to enable gpg to sign keys
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
