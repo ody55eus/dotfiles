@@ -481,6 +481,10 @@ argument, query for word to search."
   )
 
 (after! org
+  (emojify-mode 1)
+)
+
+(after! org
   (org-superstar-mode)
   )
 
@@ -1290,6 +1294,7 @@ Returns file content as a string."
 (defun jp/python-mode-hook()
   (require 'lsp-pyright)
   (require 'dap-python)
+  (modify-syntax-entry ?_ "w") ; treat underscore (_) as word-breaking character
   (lsp-deferred))
 
 (add-hook 'python-mode-hook #'jp/python-mode-hook)
@@ -1319,7 +1324,8 @@ Returns file content as a string."
   (setq projectile-project-search-path '("~/Projects/Code")))
 (setq projectile-switch-project-action #'projectile-dired)
 
-(setq projectile-completion-system 'vertico)
+(setq projectile-completion-system 'vertico
+      projectile-globally-ignored-directories '("/home/jp/share/notes/.attachments" "^flow-typed$" "^node_modules$" "~/.emacs.d/.local/" "^\\.idea$" "^\\.vscode$" "^\\.ensime_cache$" "^\\.eunit$" "^\\.git$" "^\\.hg$" "^\\.fslckout$" "^_FOSSIL_$" "^\\.bzr$" "^_darcs$" "^\\.pijul$" "^\\.tox$" "^\\.svn$" "^\\.stack-work$" "^\\.ccls-cache$" "^\\.cache$" "^\\.clangd$" "\\.git$"))
 
   (defun jp/configure-eshell ()
     ;; Save command history when commands are entered
