@@ -481,10 +481,6 @@ argument, query for word to search."
   )
 
 (after! org
-  (emojify-mode 1)
-)
-
-(after! org
   (org-superstar-mode)
   )
 
@@ -524,6 +520,7 @@ argument, query for word to search."
   ;;(org-roam-setup) ; Enable org-roam-db-autosync
   (setq org-image-actual-width nil) ; Set optional images
   (rainbow-mode 1)    ; Enable rainbow mode
+  (emojify-mode 1)    ; Enable Emojis
   )
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
 
@@ -1357,7 +1354,9 @@ Returns file content as a string."
 
     (eshell-git-prompt-use-theme 'powerline))
 
-(remove-hook 'server-switch-hook 'magit-commit-diff)
+(after! magit
+  (remove-hook 'server-switch-hook 'magit-commit-diff)
+)
 
 ;; Magit Configuration to enable gpg to sign keys
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
