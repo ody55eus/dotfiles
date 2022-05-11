@@ -1,6 +1,7 @@
 #+TITLE: Doom Emacs Configuration
 #+AUTHOR: Jonathan Pieper
 #+STARTUP: fold
+#+SETUPFILE: ~/.doom.d/org-styles/readtheorg_inline/readtheorg_inline.theme
 
 * Table of Contents :TOC:noexport:
 - [[#about-this-configuration][About this Configuration]]
