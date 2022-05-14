@@ -292,6 +292,45 @@
 (add-hook 'pomm-on-status-changed-hook 'pomm-update-mode-line-string)
 (add-hook 'pomm-on-status-changed-hook 'force-mode-line-update)
 
+(setq +doom-dashboard-menu-sections '(("Reload last session" :icon
+                                       (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
+                                       :when
+                                       (cond
+                                        ((featurep! :ui workspaces)
+                                         (file-exists-p
+                                          (expand-file-name persp-auto-save-fname persp-save-dir)))
+                                        ((require 'desktop nil t)
+                                         (file-exists-p
+                                          (desktop-full-file-name))))
+                                       :face
+                                       (:inherit
+                                        (doom-dashboard-menu-title bold)
+                                       :action doom/quickload-session))
+                                      ("Open org-agenda" :icon
+                                       (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+                                       :action org-agenda)
+                                      ("Open Roam Agenda" :icon
+                                       (all-the-icons-octicon "checklist"
+                                                               :face 'doom-dashboard-menu-title)
+                                       :action jp/org-roam-agenda)
+                                      ("Recently opened files" :icon
+                                       (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
+                                       :action recentf-open-files)
+                                      ("Open project" :icon
+                                       (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+                                       :action projectile-switch-project)
+                                      ("Jump to bookmark" :icon
+                                       (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
+                                       :action bookmark-jump)
+                                      ("Open private configuration" :icon
+                                       (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+                                       :when
+                                       (file-directory-p doom-private-dir)
+                                       :action doom/open-private-config)
+                                      ("Open documentation" :icon
+                                       (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
+                                       :action doom/help)))
+
 (setq hl-todo-keyword-faces
       '(("TODO"   . "#cc0")
         ("FIXME"  . "#990000")

@@ -595,8 +595,8 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 Changing some keybindings from their defaults to better fit with Doom Emacs, and to avoid conflicts with my window managers which sometimes use the control key in their keybindings.  By default, Doom Emacs does not use ~SPC-e~ for anything, so I choose to use the format ~SPC-e~ plus ~key~ for these (I also use ~SPC-e~ for ~eww~ keybindings).
 
-| COMMAND         | DESCRIPTION                                  | KEYBINDING |
-|-----------------+----------------------------------------------+------------|
+| COMMAND         | DESCRIPTION                                    | KEYBINDING |
+|-----------------+------------------------------------------------+------------|
 | eval-buffer     | /Evaluate elisp in buffer/                     | SPC e b    |
 | eval-defun      | /Evaluate the defun containing or after point/ | SPC e d    |
 | eval-expression | /Evaluate an elisp expression/                 | SPC e e    |
@@ -960,7 +960,7 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 
 *** Doom Dashboard
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq +doom-dashboard-menu-sections '(("Reload last session" :icon
                                        (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
                                        :when
@@ -974,12 +974,14 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
                                        :face
                                        (:inherit
                                         (doom-dashboard-menu-title bold)
-                                       :action doom/quickload-session)
+                                       :action doom/quickload-session))
                                       ("Open org-agenda" :icon
                                        (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
-                                       :when
-                                       (fboundp 'org-agenda)
                                        :action org-agenda)
+                                      ("Open Roam Agenda" :icon
+                                       (all-the-icons-octicon "checklist"
+                                                               :face 'doom-dashboard-menu-title)
+                                       :action jp/org-roam-agenda)
                                       ("Recently opened files" :icon
                                        (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
                                        :action recentf-open-files)
@@ -996,12 +998,7 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
                                        :action doom/open-private-config)
                                       ("Open documentation" :icon
                                        (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
-                                       :action doom/help)
-                                      ("Open Roam Agenda"
-                                       :icon
-                                       (all-the-icons-octicon "checklist"
-                                                               :face 'doom-dashboard-menu-title)
-                                       :action jp/org-ram-agenda))
+                                       :action doom/help)))
 
 #+end_src
 
