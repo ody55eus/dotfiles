@@ -1375,12 +1375,12 @@ argument, query for word to search."
 * Org Mode
 ** Visual Enhancements
 *** Pretty Text
-**** Pretty Tables
+**** KILL Pretty Tables
 #+begin_src emacs-lisp
-;; (after! org
-;;   (+org-pretty-mode)
-;;   (org-pretty-table-mode)
-;;   )
+(after! org
+  (+org-pretty-mode)
+  (org-pretty-table-mode)
+  )
 #+end_src
 
 **** Set pretty code symbols
@@ -1763,36 +1763,36 @@ The Task Keywords are noted with their keybindings in parentheses.
 |-----------------+-------------------------------------|
 | Special Symbols | Meaning                             |
 |-----------------+-------------------------------------|
-| =@=               | Append Note when set to this State. |
-| =!=               | Add Timestamp to Logbook.           |
+| =@=             | Append Note when set to this State. |
+| =!=             | Add Timestamp to Logbook.           |
 |-----------------+-------------------------------------|
 
-|---------+----------------------------------------------------------------------------------|
-| Seq 1   | Description                                                            @tasks    |
-|---------+----------------------------------------------------------------------------------|
-| ~PROJ(p)~ | Bigger ongoing Projects.                                                         |
-| ~EPIC(e)~ | Epic Tasks: A specific problem with a pre-defined reachable goal.                |
+|-----------+------------------------------------------------------------------------------------|
+| Seq 1     | Description                                                            @tasks      |
+|-----------+------------------------------------------------------------------------------------|
+| ~PROJ(p)~ | Bigger ongoing Projects.                                                           |
+| ~EPIC(e)~ | Epic Tasks: A specific problem with a pre-defined reachable goal.                  |
 | ~TODO(t)~ | Single tasks to accomplish in reasonable time (/Hint/: Set effort to range tasks). |
-| ~IDEA(i)~ | Small ideas that could grow into something beautiful. (optional)                 |
-|---------+----------------------------------------------------------------------------------|
-| ~DONE(d)~ | Finished Tasks                                                                   |
-|---------+----------------------------------------------------------------------------------|
+| ~IDEA(i)~ | Small ideas that could grow into something beautiful. (optional)                   |
+|-----------+------------------------------------------------------------------------------------|
+| ~DONE(d)~ | Finished Tasks                                                                     |
+|-----------+------------------------------------------------------------------------------------|
 
-|--------------+------------------------------------------------------------------------|
-| Seq 2        | Description                                                   @backlog |
-|--------------+------------------------------------------------------------------------|
-| ~BACKLOG(b)~   | Tasks that are on the back of my head, if nothing else holds priority. |
-|--------------+------------------------------------------------------------------------|
-| ~PLAN(p)~      | Planning Phase                                                (#Max=5) |
-| ~ACTIVE(a)~    | Active Tasks                                                  (#Max=5) |
-| ~REVIEW(r)~    | .                                                             (#Max=5) |
+|----------------+--------------------------------------------------------------------------|
+| Seq 2          | Description                                                   @backlog   |
+|----------------+--------------------------------------------------------------------------|
+| ~BACKLOG(b)~   | Tasks that are on the back of my head, if nothing else holds priority.   |
+|----------------+--------------------------------------------------------------------------|
+| ~PLAN(p)~      | Planning Phase                                                (#Max=5)   |
+| ~ACTIVE(a)~    | Active Tasks                                                  (#Max=5)   |
+| ~REVIEW(r)~    | .                                                             (#Max=5)   |
 | ~WAIT(w@/!)~   | Waiting on external influences (*Explain and Log this*).        (#Max=∞) |
-| ~HOLD(h)~      | Holding back until my time is free again.                     (#Max=∞) |
-|--------------+------------------------------------------------------------------------|
-| ~COMPLETED(c)~ |                                                                        |
-| ~KILL(k)~      |                                                                        |
+| ~HOLD(h)~      | Holding back until my time is free again.                     (#Max=∞)   |
+|----------------+--------------------------------------------------------------------------|
+| ~COMPLETED(c)~ |                                                                          |
+| ~KILL(k)~      |                                                                          |
 | ~STOPPED(s@)~  | Stopped a task. *Explain this*.                                          |
-|--------------+------------------------------------------------------------------------|
+|----------------+--------------------------------------------------------------------------|
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -2125,11 +2125,11 @@ The daily / monthly review templates are inspired by [[https://github.com/benoit
 
 See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online Documentation]] for LaTeX Export for Org Mode.
 
- | LATEX_CLASS  | Document Class | Description                      |
- |--------------+----------------+----------------------------------|
- | =koma-article= | =scrartcl=       | Normal article                   |
- | =aip-rst=      | =revtex4-2=      | Paper Template for AIP Journals: |
- |              |                | Review of Scientific Instruments |
+ | LATEX_CLASS    | Document Class | Description                      |
+ |----------------+----------------+----------------------------------|
+ | =koma-article= | =scrartcl=     | Normal article                   |
+ | =aip-rst=      | =revtex4-2=    | Paper Template for AIP Journals: |
+ |                |                | Review of Scientific Instruments |
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el :results none
 ;; (setq org-latex-to-pdf-process '("texi2dvi --pdf --clean --verbose --batch %f"))
@@ -2459,12 +2459,13 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
 
 #+end_src
 
-***** Resize Document Title
+*** Resize Document Title
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (after! org
   (custom-set-faces!
     '(org-document-title :height 1.2)))
 #+end_src
+
 ** Org-Noter (Annotating PDF Documents)
 [[https://github.com/weirdNox/org-noter][org-noter]] is an annotation extension to sync text annotations to PDF documents. It allows to store all text notes inside a folder and link to the corresponding PDF.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -2500,8 +2501,8 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 *** Keybindings for Dired
 **** Keybindings To Open Dired (Description)
 
-| COMMAND    | DESCRIPTION                        | KEYBINDING |
-|------------+------------------------------------+------------|
+| COMMAND    | DESCRIPTION                          | KEYBINDING |
+|------------+--------------------------------------+------------|
 | dired      | /Open dired file manager/            | SPC d d    |
 | dired-jump | /Jump to current directory in dired/ | SPC d j    |
 
@@ -2522,15 +2523,15 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 **** Keybindings Within Dired (Description)
 
-| COMMAND             | DESCRIPTION                                 | KEYBINDING |
-|---------------------+---------------------------------------------+------------|
+| COMMAND             | DESCRIPTION                                   | KEYBINDING |
+|---------------------+-----------------------------------------------+------------|
 | dired-view-file     | /View file in dired/                          | SPC d v    |
 | dired-up-directory  | /Go up in directory tree/                     | h          |
 | dired-find-file     | /Go down in directory tree (or open if file)/ | l          |
-| dired-next-line     | Move down to next line                      | j          |
-| dired-previous-line | Move up to previous line                    | k          |
-| dired-mark          | Mark file at point                          | m          |
-| dired-unmark        | Unmark file at point                        | u          |
+| dired-next-line     | Move down to next line                        | j          |
+| dired-previous-line | Move up to previous line                      | k          |
+| dired-mark          | Mark file at point                            | m          |
+| dired-unmark        | Unmark file at point                          | u          |
 
 **** Dired-Mode-Mapping
 
