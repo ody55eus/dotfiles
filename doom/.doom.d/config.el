@@ -1183,10 +1183,6 @@ Returns file content as a string."
       bibtex-completion-library-path '("~/nc/Library/BibTeX/")
       bibtex-completion-notes-path "~/ZK/References/")
 
-(require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
-(require 'org-roam-protocol)
-(require 'org-protocol-capture-html)
-
 (setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
       org-roam-dailies-directory (file-truename "~/ZK/daily")
       org-attach-id-dir (concat org-roam-directory "/.attachments")
