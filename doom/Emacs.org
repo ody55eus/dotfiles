@@ -447,6 +447,7 @@ Just comment/uncomment some lines to disable/enable features.
   :recipe (:host github
            :repo "tarsius/keycast"))
 
+(package! spotlight)
 #+end_src
 
 * Emacs Startup
@@ -521,6 +522,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
       ;;  (:prefix ("d" . "date"))
       ;;  )
       (:prefix ("o" . "open")
+       :desc "spotlight" "s" #'spotlight
        (:prefix ("j" . "jp")
         :desc "jp/org-roam-agenda" "a" #'jp/org-roam-agenda
         :desc "jp/enable-bitwarden" "b" #'jp/enable-bitwarden
@@ -2407,7 +2409,7 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
 ** Org-Roam (Zettelkasten)
 *** Files and Basic Variables
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+begin_src emacs-lisp
 
 (require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
 (require 'org-roam-protocol)

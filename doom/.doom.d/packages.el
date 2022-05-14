@@ -145,3 +145,5 @@
 (package! keycast
   :recipe (:host github
            :repo "tarsius/keycast"))
+
+(package! spotlight)

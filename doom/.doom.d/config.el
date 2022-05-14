@@ -54,6 +54,7 @@
       ;;  (:prefix ("d" . "date"))
       ;;  )
       (:prefix ("o" . "open")
+       :desc "spotlight" "s" #'spotlight
        (:prefix ("j" . "jp")
         :desc "jp/org-roam-agenda" "a" #'jp/org-roam-agenda
         :desc "jp/enable-bitwarden" "b" #'jp/enable-bitwarden
