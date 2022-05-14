@@ -120,6 +120,7 @@
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
+(package! calfw)  ; fancy calendar
 
 (package! diminish)
 ;;(package! beacon)               ; Highlight Cursor on big change
