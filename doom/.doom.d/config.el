@@ -1333,6 +1333,10 @@ Returns file content as a string."
 (setq dap-python-executable "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
 (setq lsp-python-ms-python-executable-cmd "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
 
+;; Anaconda Path
+(setq conda-env-home-directory "/opt/homebrew/Caskroom/miniforge/base"
+      conda-anaconda-home conda-env-home-directory)
+
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
