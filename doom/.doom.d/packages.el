@@ -61,14 +61,17 @@
 (package! org-download)
 (package! org-journal)
 ;;(package! org-pretty-tags)
-;; (package! org-pretty-table-mode
-;;   :recipe (:host github :repo "Fuco1/org-pretty-table"))
+ (package! org-pretty-table-mode
+   :recipe (:host github :repo "Fuco1/org-pretty-table"))
 
 
 ;; Use latest version!
 (unpin! org-roam org)
+
+; Bibliography
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
 (package! helm-bibtex)
+(package! citar)
 
 ;; Org Roam UI (frontend for exploring and interacting org-roam)
 (package! websocket)
@@ -121,7 +124,7 @@
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
 (package! calfw)  ; fancy calendar
-
+(package! company-ledger)
 (package! diminish)
 ;;(package! beacon)               ; Highlight Cursor on big change
 
@@ -148,3 +151,5 @@
            :repo "tarsius/keycast"))
 
 (package! spotlight)
+(package! elfeed)
+(package! elfeed-score)

@@ -34,8 +34,8 @@
 
 (map! :leader
       (:prefix ("b" . "buffer")
-       :desc "Consult buffer" :n "j" #'consult-buffer
-       :desc "Consult buffer other window" :n "J" #'consult-buffer-other-window
+       :desc "Consult buffer" :n "o" #'consult-buffer
+       :desc "Consult buffer other window" :n "j" #'consult-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
        :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
@@ -286,12 +286,6 @@
       display-time-default-load-average nil)    ;; Do not display my CPU Load
 (display-time-mode 0)
 
-(add-to-list 'mode-line-misc-info '(:eval pomm-current-mode-line-string))
-(add-hook 'pomm-on-tick-hook 'pomm-update-mode-line-string)
-(add-hook 'pomm-on-tick-hook 'force-mode-line-update)
-(add-hook 'pomm-on-status-changed-hook 'pomm-update-mode-line-string)
-(add-hook 'pomm-on-status-changed-hook 'force-mode-line-update)
-
 (setq +doom-dashboard-menu-sections '(("Reload last session" :icon
                                        (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
                                        :when
@@ -462,6 +456,13 @@ argument, query for word to search."
   t)
 
 (setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
+
+(defun jp/make-tables-pretty ()
+  (+org-pretty-mode)
+  (org-pretty-table-mode)
+  )
+
+(add-hook #'org-mode-hook #'jp/make-tables-pretty)
 
 (after! org
   (appendq! +ligatures-extra-symbols
@@ -1094,6 +1095,52 @@ Returns file content as a string."
 
 (setq plantuml-default-exec-mode 'jar)
 
+(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
+      org-roam-dailies-directory (file-truename "~/ZK/daily")
+      org-attach-id-dir (concat org-roam-directory "/.attachments")
+      org-id-locations-file "~/ZK/.orgids"
+      org-roam-completion-everywhere nil
+      org-roam-completion-system 'default
+      org-roam-db-location "~/.emacs.d/org-roam.db"
+      ;;org-roam-graph-executable "neato" ; or "dot" (default)
+      )
+
+(setq org-roam-mode-section-functions
+      (list #'org-roam-backlinks-section
+            #'org-roam-reflinks-section
+            #'org-roam-unlinked-references-section
+            ))
+
+(use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;    :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+
+(after! org
+  (custom-set-faces!
+    '(org-document-title :height 1.2)))
+
+;; Enable org protocol for links (org-roam://...)
+(defun jp/load-protocol ()
+  (condition-case nil
+      (require 'org-protocol)
+    (error nil))
+  (require 'org-protocol)
+  (require 'org-roam-protocol)
+  (require 'org-protocol-capture-html))
+
+(jp/load-protocol)
+
 (require 'org-alert)
 
 (setq +org-msg-accent-color "#1a5fb4"
@@ -1159,6 +1206,16 @@ Returns file content as a string."
 (setq org-babel-tangle-comment-format-beg ""
       org-babel-tangle-comment-format-end "")
 
+(defconst jp/bib-libraries (list
+                            (concat org-roam-directory "/BibTeX/Library.bib")
+                            (concat org-roam-directory "/BibTeX/Master.bib")
+                            "~/Projects/Method-Paper/bibliography.bib"))
+(defconst jp/main-bib-library (nth 0 jp/bib-libraries))
+(defconst jp/main-pdfs-library-paths `("~/nc/Library/BibTeX/")) ; PDFs directories in a list
+(defconst jp/main-pdfs-library-path (nth 0 jp/main-pdfs-library-paths)) ; Main PDFs directory
+(defconst jp/bib-notes-dir (concat org-roam-directory "/References/")) ; I use org-roam to manage all my notes, including bib notes.
+
+
 (use-package! org-roam-bibtex
   :after org-roam
   :config
@@ -1176,47 +1233,120 @@ Returns file content as a string."
 ;;       '((ivy-bibtex . ivy--regex-ignore-order)
 ;;         (t . ivy--regex-plus)))
 
-(setq bibtex-file-path (concat org-roam-directory "/BibTeX/")
-      bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib"
-                                       "~/ZK/BibTeX/Master.bib"
-                                       "~/Projects/Method-Paper/bibliography.bib")
-      bibtex-completion-library-path '("~/nc/Library/BibTeX/")
-      bibtex-completion-notes-path "~/ZK/References/")
+(setq bibtex-file-path (file-name-directory jp/main-bib-library)
+      bibtex-completion-bibliography jp/bib-libraries
+      bibtex-completion-library-path jp/main-pdfs-library-paths
+      bibtex-completion-notes-path jp/bib-notes-dir
+      bibtex-dialect 'biblatex
+      org-cite-global-bibliography jp/bib-libraries
+      org-cite-insert-processor 'citar
+      org-cite-follow-processor 'citar
+      org-cite-activate-processor 'citar
+      org-cite-export-processors '((latex biblatex)
+                                   (t csl))
+      citar-open-note-function 'orb-citar-edit-note
+      citar-notes-paths (list (file-name-directory jp/bib-notes-dir))
+      orb-preformat-keywords '("citekey" "title" "url" "author-or-editor" "keywords" "file")
+      orb-process-file-keyword t
+      orb-file-field-extensions '("pdf"))
 
-(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
-      org-roam-dailies-directory (file-truename "~/ZK/daily")
-      org-attach-id-dir (concat org-roam-directory "/.attachments")
-      org-id-locations-file "~/ZK/.orgids"
-      org-roam-completion-everywhere nil
-      org-roam-completion-system 'default
-      org-roam-db-location "~/.emacs.d/org-roam.db"
-      ;;org-roam-graph-executable "neato" ; or "dot" (default)
-      )
+(require 'oc-biblatex)
+(require 'oc-csl)
+(require 'citar)
 
-(setq org-roam-mode-section-functions
-      (list #'org-roam-backlinks-section
-            #'org-roam-reflinks-section
-            #'org-roam-unlinked-references-section
-            ))
+(use-package! citar
+  :hook (doom-after-init-modules . citar-refresh)
+  :config
+  ;; This will add watches for the global bib files and in addition add a hook to LaTeX-mode-hook and org-mode-hook to add watches for local bibliographic files.
+  (citar-filenotify-setup '(LaTeX-mode-hook org-mode-hook))
+  (require 'citar-org)
+  (setq citar-bibliography jp/bib-libraries
+        citar-library-paths jp/main-pdfs-library-paths
+        citar-file-extensions '("pdf" "org" "md")
+        citar-file-open-function #'find-file)
+  (defun jp/citar-full-names (names)
+    "Transform names like LastName, FirstName to FirstName LastName."
+    (when (stringp names)
+      (mapconcat
+       (lambda (name)
+         (if (eq 1 (length name))
+             (split-string name " ")
+           (let ((split-name (split-string name ", ")))
+             (cl-concatenate 'string (nth 1 split-name) " " (nth 0 split-name)))))
+       (split-string names " and ") ", ")))
+  (setq citar-display-transform-functions
+        '((t . citar-clean-string)
+          (("author" "editor") . jp/citar-full-names)))
+  (setq citar-templates
+        '((main . "${author editor:55}     ${date year issued:4}     ${title:55}")
+          (suffix . "  ${tags keywords keywords:40}")
+          (preview . "${author editor} ${title}, ${journal publisher container-title collection-title booktitle} ${volume} (${year issued date}).\n")
+          (note . "#+title: Notes on ${author editor}, ${title}")))
+  ;; use consult-completing-read for enhanced interface
+  (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple))
 
-(use-package! websocket
-    :after org-roam)
+(map! :leader
+      :desc "arXiv paper to library" "n x" #'arxiv-get-pdf-add-bibtex-entry
+      :desc "Elfeed" "n E" #'elfeed)
 
-(use-package! org-roam-ui
-    :after org-roam ;; or :after org
-;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-;;         a hookable mode anymore, you're advised to pick something yourself
-;;         if you don't care about startup time, use
-;;    :hook (after-init . org-roam-ui-mode)
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+(use-package! elfeed
+  :config
+  (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
+  (defun concatenate-authors (authors-list)
+    "Given AUTHORS-LIST, list of plists; return string of all authors concatenated."
+    (if (> (length authors-list) 1)
+        (format "%s et al." (plist-get (nth 0 authors-list) :name))
+      (plist-get (nth 0 authors-list) :name)))
 
-(after! org
-  (custom-set-faces!
-    '(org-document-title :height 1.2)))
+  (defun my-search-print-fn (entry)
+    "Print ENTRY to the buffer."
+    (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
+           (title (or (elfeed-meta entry :title)
+                      (elfeed-entry-title entry) ""))
+           (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
+           (entry-authors (concatenate-authors
+                           (elfeed-meta entry :authors)))
+           (title-width (- (window-width) 10
+                           elfeed-search-trailing-width))
+           (title-column (elfeed-format-column
+                          title 100
+                          :left))
+           (entry-score (elfeed-format-column (number-to-string (elfeed-score-scoring-get-score-from-entry entry)) 10 :left))
+           (authors-column (elfeed-format-column entry-authors 40 :left)))
+      (insert (propertize date 'face 'elfeed-search-date-face) " ")
+
+      (insert (propertize title-column
+                          'face title-faces 'kbd-help title) " ")
+      (insert (propertize authors-column
+                          'kbd-help entry-authors) " ")
+      (insert entry-score " ")))
+  (defun jp/elfeed-entry-to-arxiv ()
+    "Fetch an arXiv paper into the local library from the current elfeed entry."
+    (interactive)
+    (let* ((link (elfeed-entry-link elfeed-show-entry))
+           (match-idx (string-match "arxiv.org/abs/\\([0-9.]*\\)" link))
+           (matched-arxiv-number (match-string 1 link)))
+      (when matched-arxiv-number
+        (message "Going to arXiv: %s" matched-arxiv-number)
+        (arxiv-get-pdf-add-bibtex-entry matched-arxiv-number jp/main-bib-library jp/main-pdfs-library-path))))
+  (map! (:after elfeed
+         (:map elfeed-search-mode-map
+          :desc "Open entry" "m" #'elfeed-search-show-entry)
+         (:map elfeed-show-mode-map
+          :desc "Fetch arXiv paper to the local library" "a" #'jp/elfeed-entry-to-arxiv)))
+  (setq elfeed-search-print-entry-function #'my-search-print-fn)
+  (setq elfeed-search-date-format '("%y-%m-%d" 10 :left))
+  (setq elfeed-search-title-max-width 110)
+  (setq elfeed-feeds '("http://export.arxiv.org/api/query?search_query=cat:math.OC&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending" "http://export.arxiv.org/api/query?search_query=cat:stat.ML&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending" "http://export.arxiv.org/api/query?search_query=cat:cs.LG&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending"))
+  (setq elfeed-search-filter "@2-week-ago +unread")
+
+(use-package! elfeed-score
+  :after elfeed
+  :config
+  (elfeed-score-load-score-file "~/.doom.d/elfeed.score") ; See the elfeed-score documentation for the score file syntax
+  (setq elfeed-score-serde-score-file "~/.doom.d/elfeed.serde.score")
+  (elfeed-score-enable)
+  (define-key elfeed-search-mode-map "=" elfeed-score-map))
 
 (setq org-noter-notes-search-path '("~/ZK/References"))
 
@@ -1573,3 +1703,8 @@ Returns file content as a string."
   (bitwarden-auth-source-enable))
 
 (setq deft-directory "~/org")
+
+(with-eval-after-load 'company
+  (add-to-list 'company-backends 'company-ledger))
+
+(ivy-mode 0)
