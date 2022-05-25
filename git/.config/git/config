@@ -42,3 +42,5 @@
 	directory = /home/jp/share/Projects/Code/frontdesk
 [gitlab]
 	user = ody55eus
+[commit]
+	gpgsign = true
