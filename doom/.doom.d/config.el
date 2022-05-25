@@ -250,6 +250,8 @@
 (map! :n [mouse-8] #'better-jumper-jump-backward
       :n [mouse-9] #'better-jumper-jump-forward)
 
+(setq calendar-week-start-day 1) ; Start the Week on Monday
+
 (setq confirm-kill-emacs nil)           ;; Don't confirm every kill
 
 (setq
@@ -480,10 +482,6 @@ argument, query for word to search."
     :em_dash       "---")
   )
 
-(after! org
-  (org-superstar-mode)
-  )
-
 (setq org-ellipsis " ▼ ")
 
 (setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
@@ -521,6 +519,7 @@ argument, query for word to search."
   (setq org-image-actual-width nil) ; Set optional images
   (rainbow-mode 1)    ; Enable rainbow mode
   (emojify-mode 1)    ; Enable Emojis
+  (org-superstar-mode)
   )
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
 
@@ -1299,8 +1298,10 @@ Returns file content as a string."
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
 (setq dap-python-debugger 'debugpy)
 
-(setq python-shell-interpreter "python3")
-(setq dap-python-executable "python3")
+(setq python-shell-interpreter "/home/jp/.conda/envs/webserver/bin/python")
+(setq dap-python-executable python-shell-interpreter
+      treemacs-python-executable python-shell-interpreter
+      lsp-pyright-python-executable-cmd python-shell-interpreter)
 
 (use-package company
   :after lsp-mode

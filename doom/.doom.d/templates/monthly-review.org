@@ -22,13 +22,13 @@
 - [ ] Evaluate areas and capture any new tasks, projects, habits, routines, or decisions needed.
 - [ ] Replicate list of areas across systems.
   - [ ] Org-Mode
-  - [ ] Evernote
-  - [ ] Dropbox
-  - [ ] Google Drive
   - [ ] Documents Folder
-** Review Someday / Maybe list
-- [ ] Review [[file:~/org/somedaymaybe.org][Someday Maybe List]]
-- [ ] Assign next actions or new projects to any that I might want to consider doing
+  - [ ] ACG Filestructure
+** Update Systems
+- [ ] Update Laptop
+  - [ ] Update ACGArch
+  - [ ] Update Windows
+- [ ] Update iPhone and other devices
 ** Re-prioritize tasks
 - [ ] Review next actions and re-apply priority tags, accounting for priority drift
 ** Empty trash

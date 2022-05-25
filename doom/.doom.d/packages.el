@@ -64,11 +64,14 @@
 ;; (package! org-pretty-table-mode
 ;;   :recipe (:host github :repo "Fuco1/org-pretty-table"))
 
+(package! org-roam-bibtex
+  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(package! helm-bibtex)
+(package! ivy-bibtex)
 
 ;; Use latest version!
 (unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
-(package! helm-bibtex)
 
 ;; Org Roam UI (frontend for exploring and interacting org-roam)
 (package! websocket)
@@ -76,9 +79,6 @@
   :recipe (:host github
            :repo "org-roam/org-roam-ui"
            :files ("*.el" "out")))
-
-(package! org-roam-bibtex
-  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 
 (package! org-protocol-capture-html
   :recipe (:host github
@@ -116,14 +116,20 @@
 (package! emojify)              ; Convert ☺ into emoji's.
 
 (package! embark)
+
+;; Other Software Integrations
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
+(package! calfw)
+(package! calfw-org)
+(package! helm-ag)              ; Ack and the_silver_searcher support
 
 (package! diminish)
 ;;(package! beacon)               ; Highlight Cursor on big change
 
+;; Dictionaries
 ;;(package! synosaurus)           ; Thesaurus synonyms
 (package! powerthesaurus)
 
@@ -136,12 +142,16 @@
 (package! lsp-latex)
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
-(package! pomm
-  :recipe (:host github
-           :repo "SqrtMinusOne/pomm.el"))
+;; (package! pomm
+;;   :recipe (:host github
+;;            :repo "SqrtMinusOne/pomm.el"))
 
                                         ; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
 (package! keycast
   :recipe (:host github
            :repo "tarsius/keycast"))
+
+(package! emacs-rotate
+  :recipe (:host github
+           :repo "daichirata/emacs-rotate"))

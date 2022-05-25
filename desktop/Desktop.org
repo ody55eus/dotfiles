@@ -108,8 +108,10 @@ def autostart():
 - Start Emacs Daemon
 #+begin_src sh :tangle .config/qtile/autostart.sh :tangle-mode (identity #o755) :shebang #!/usr/bin/env zsh
 xrandr --output Virtual-1 --mode 1920x1080
+xwallpaper --center /usr/share/backgrounds/archlinux/archwave.png
 alacritty -e ~/startup.sh
 #+end_src
+
 *** Startup Script
 #+begin_src sh :tangle startup.sh :tangle-mode (identity #o755) :shebang #!/usr/bin/env zsh
 sudo mount -t vboxsf share /home/jp/share
@@ -233,6 +235,7 @@ floating_layout = layout.Floating(
         Match(wm_class="ssh-askpass"),  # ssh-askpass
         Match(title="branchdialog"),  # gitk
         Match(title="pinentry"),  # GPG key password entry
+        Match(title="iPhoneApp"),
     ]
 )
 auto_fullscreen = True

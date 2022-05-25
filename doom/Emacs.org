@@ -366,11 +366,14 @@ Just comment/uncomment some lines to disable/enable features.
 ;; (package! org-pretty-table-mode
 ;;   :recipe (:host github :repo "Fuco1/org-pretty-table"))
 
+(package! org-roam-bibtex
+  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(package! helm-bibtex)
+(package! ivy-bibtex)
 
 ;; Use latest version!
 (unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
-(package! helm-bibtex)
 
 ;; Org Roam UI (frontend for exploring and interacting org-roam)
 (package! websocket)
@@ -378,9 +381,6 @@ Just comment/uncomment some lines to disable/enable features.
   :recipe (:host github
            :repo "org-roam/org-roam-ui"
            :files ("*.el" "out")))
-
-(package! org-roam-bibtex
-  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 
 (package! org-protocol-capture-html
   :recipe (:host github
@@ -418,14 +418,20 @@ Just comment/uncomment some lines to disable/enable features.
 (package! emojify)              ; Convert ☺ into emoji's.
 
 (package! embark)
+
+;; Other Software Integrations
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
+(package! calfw)
+(package! calfw-org)
+(package! helm-ag)              ; Ack and the_silver_searcher support
 
 (package! diminish)
 ;;(package! beacon)               ; Highlight Cursor on big change
 
+;; Dictionaries
 ;;(package! synosaurus)           ; Thesaurus synonyms
 (package! powerthesaurus)
 
@@ -438,9 +444,9 @@ Just comment/uncomment some lines to disable/enable features.
 (package! lsp-latex)
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
-(package! pomm
-  :recipe (:host github
-           :repo "SqrtMinusOne/pomm.el"))
+;; (package! pomm
+;;   :recipe (:host github
+;;            :repo "SqrtMinusOne/pomm.el"))
 
                                         ; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
@@ -448,6 +454,9 @@ Just comment/uncomment some lines to disable/enable features.
   :recipe (:host github
            :repo "tarsius/keycast"))
 
+(package! emacs-rotate
+  :recipe (:host github
+           :repo "daichirata/emacs-rotate"))
 #+end_src
 
 * Emacs Startup
@@ -896,6 +905,14 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
                              (frame-char-height)))))))
 
 (jp/set-frame-size-according-to-resolution)
+
+#+end_src
+
+*** Configure Calendar
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq calendar-week-start-day 1) ; Start the Week on Monday
 
 #+end_src
 
@@ -1457,13 +1474,6 @@ argument, query for word to search."
 )
 #+end_src
 
-**** Org Superstar
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(after! org
-  (org-superstar-mode)
-  )
-#+end_src
-
 **** Ellipsis symbol (folding)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -1526,6 +1536,7 @@ Set this value to ~nil~ to display them again.
   (setq org-image-actual-width nil) ; Set optional images
   (rainbow-mode 1)    ; Enable rainbow mode
   (emojify-mode 1)    ; Enable Emojis
+  (org-superstar-mode)
   )
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
 #+end_src
@@ -2730,9 +2741,11 @@ There are a number of other language servers for Python so if you find that =pyl
 **** Linux
 Linux uses ~python3~:
   #+begin_src emacs-lisp :tangle (if (eq system-type 'gnu/linux) "./.doom.d/config.el" "no")
-(setq python-shell-interpreter "python3")
-(setq dap-python-executable "python3")
-  #+end_src
+(setq python-shell-interpreter "/home/jp/.conda/envs/webserver/bin/python")
+(setq dap-python-executable python-shell-interpreter
+      treemacs-python-executable python-shell-interpreter
+      lsp-pyright-python-executable-cmd python-shell-interpreter)
+#+end_src
 **** PyEnv
 You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =pyvenv-activate= command should configure Emacs to cause =lsp-mode= and =dap-mode= to use the virtual environment when they are loaded, just select the path to your virtual environment before loading your project.
 

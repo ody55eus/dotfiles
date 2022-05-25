@@ -1,17 +1,5 @@
 #+title: Terminal and Shell Configuration
-
-* Table of Contents :TOC:
-- [[#alacritty][Alacritty]]
-- [[#bashrc][BashRC]]
-- [[#zsh][Zsh]]
-  - [[#zshrc-home-folder][ZshRC Home-Folder]]
-  - [[#zshrc-config][ZshRC Config]]
-  - [[#functionszsh][Functions.zsh]]
-  - [[#base-extensions][Base Extensions]]
-  - [[#macos-extensions][MacOS Extensions]]
-  - [[#linux-extensions][Linux Extensions]]
-  - [[#vim-improvements][Vim Improvements]]
-  - [[#oh-my-zsh-initialization][Oh-My-Zsh! Initialization]]
+#+setupfile: ~/.doom.d/org-styles/darksun/darksun.theme
 
 * Alacritty
 #+begin_src yaml :tangle .config/alacritty/alacritty.yml
@@ -43,6 +31,38 @@ window:
 key_bindings:
   - {key: Right, mods: Alt, chars: "\x1BF"}
   - {key: Left, mods: Alt, chars: "\x1BB"}
+#+end_src
+
+** Theme Dracula
+#+begin_src yaml :tangle .config/alacritty/alacritty.yml
+colors:
+  # Default colors
+  primary:
+    background: '#282a36'
+    foreground: '#f8f8f2'
+
+  # Normal colors
+  normal:
+    black: '#000000'
+    red: '#ff5555'
+    green: '#50fa7b'
+    yellow: '#f1fa8c'
+    blue: '#caa9fa'
+    magenta: '#ff79c6'
+    cyan: '#8be9fd'
+    white: '#bfbfbf'
+
+  # Bright colors
+  bright:
+    black: '#575b70'
+    red: '#ff6e67'
+    green: '#5af78e'
+    yellow: '#f4f99d'
+    blue: '#caa9fa'
+    magenta: '#ff92d0'
+    cyan: '#9aedfe'
+    white: '#e6e6e6'
+theme: Dracula
 #+end_src
 
 * BashRC
@@ -198,6 +218,7 @@ if ! shopt -oq posix; then
   fi
 fi
 #+end_src
+
 * Zsh
 ** ZshRC Home-Folder
 #+begin_src sh :tangle .zshrc :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
@@ -306,6 +327,7 @@ bindkey '^e' edit-command-line
 
 colorscript -r
 #+end_src
+
 ** Functions.zsh
 #+begin_src sh :tangle .config/zsh/functions.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
 # Function to source files if they exist
@@ -393,6 +415,7 @@ ex ()
   fi
 }
 #+end_src
+
 ** Base Extensions
 *** Aliases
 #+begin_src sh :tangle .config/zsh/base/aliases.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
@@ -529,6 +552,7 @@ alias mergepdf='gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=_merged.p
 # Print each PATH entry on a separate line
 alias path='echo -e ${PATH//:/\\n}'
 #+end_src
+
 *** Exports
 #+begin_src sh :tangle .config/zsh/base/exports.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
 HISTFILE="$ZDOTDIR"/.zsh_history
@@ -568,6 +592,7 @@ export LC_ALL='en_US.UTF-8';
 # https://stackoverflow.com/a/42265848/96656
 export GPG_TTY=$(tty);
 #+end_src
+
 *** Options
 #+begin_src sh :tangle .config/zsh/base/options.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
 # some useful options (man zshoptions)
@@ -593,6 +618,7 @@ zle -N down-line-or-beginning-search
 # Colors
 autoload -Uz colors && colors
 #+END_SRC
+
 ** MacOS Extensions
 *** Anaconda Path
 #+begin_src sh :tangle .config/zsh/mac/path.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
@@ -610,6 +636,7 @@ else
 fi
 unset __conda_setup
 #+end_src
+
 *** Aliases
 #+begin_src sh :tangle .config/zsh/mac/aliases.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
 # Enable aliases to be sudo’ed
@@ -709,6 +736,7 @@ alias reload="exec ${SHELL} -l"
 # Print each PATH entry on a separate line
 alias path='echo -e ${PATH//:/\\n}'
 #+end_src
+
 *** Exports
 #+begin_src sh :tangle .config/zsh/mac/exports.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
 eval $(/opt/homebrew/bin/brew shellenv)
@@ -737,6 +765,7 @@ export BASH_SILENCE_DEPRECATION_WARNING=1;
 
 # zsh_add_file '/opt/homebrew/Cellar/docker/20.10.8/share/zsh/site-functions/_docker'
 #+end_src
+
 ** Linux Extensions
 *** Aliases
 #+begin_src sh :tangle .config/zsh/linux/aliases.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
@@ -747,6 +776,7 @@ elif [[ -f /etc/arch-release ]]; then
   alias update='yay -Syu && ~/.emacs.d/bin/doom upgrade; ~/.emacs.d/bin/doom build;  npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
 fi
 #+end_src
+
 *** Exports
 - Speed-Up Keys when pressed and hold.
 #+begin_src sh :tangle .config/zsh/linux/exports.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
@@ -754,12 +784,14 @@ fi
 # kbdrate -d 200 -r 30
 xset r rate 200 50
 #+end_src
+
 *** Dircolors
 Update some broken colors when displaying FAT32 Files.
 #+begin_src sh :tangle .config/zsh/linux/dircolors.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
 LS_COLORS='rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=31;32:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.swp=00;90:*.tmp=00;90:*.dpkg-dist=00;90:*.dpkg-old=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:';
 export LS_COLORS
 #+end_src
+
 ** Vim Improvements
 Activating Vim Keybindings in the Terminal (=bindkey -v=).
 #+begin_src sh :tangle .config/zsh/vim/vim-mode.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
@@ -790,6 +822,7 @@ bindkey -v '^?' backward-delete-char
 # echo -ne '\e[5 q' # Use beam shape cursor on startup.
 # preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 #+end_src
+
 ** Oh-My-Zsh! Initialization
 #+begin_src sh :tangle .config/zsh/omz/init.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
 # If you come from bash you might have to change your $PATH.
@@ -894,3 +927,32 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 #+end_src
+
+* Bat
+#+BEGIN_SRC conf :tangle .config/bat/config
+# This is `bat`s configuration file. Each line either contains a comment or
+# a command-line option that you want to pass to `bat` by default. You can
+# run `bat --help` to get a list of all possible configuration options.
+
+# Specify desired highlighting theme (e.g. "TwoDark"). Run `bat --list-themes`
+# for a list of all available themes
+--theme="Dracula"
+
+# Enable this to use italic text on the terminal. This is not supported on all
+# terminal emulators (like tmux, by default):
+--italic-text=always
+
+# Uncomment the following line to disable automatic paging:
+--paging=never
+
+# Uncomment the following line if you are using less version >= 551 and want to
+# enable mouse scrolling support in `bat` when running inside tmux. This might
+# disable text selection, unless you press shift.
+#--pager="less --RAW-CONTROL-CHARS --quit-if-one-screen --mouse"
+
+# Syntax mappings: map a certain filename pattern to a language.
+#   Example 1: use the C++ syntax for Arduino .ino files
+#   Example 2: Use ".gitignore"-style highlighting for ".ignore" files
+--map-syntax "*.ino:C++"
+--map-syntax ".ignore:Git Ignore"
+#+END_SRC
