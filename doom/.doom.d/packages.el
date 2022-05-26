@@ -49,27 +49,40 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+;; Use latest version!
+(unpin! org-roam org)
+(unpin! bibtex-completion helm-bibtex ivy-bibtex)
+
+;; Org Enhancements
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
 (package! org-roam)             ; Extended org-mode for Zettelkasten principle.
 (package! org-ref)              ; References and citations
 (package! org-super-agenda)
-;;(package! org-bullets)        ; Display nice bullets in org-mode (deprecated).
 (package! org-alert)            ; Enable org-mode notifications.
 (package! org-tree-slide)       ; Enable org-mode presentations.
 (package! org-superstar)        ; Alternative for org-bullets.
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
 (package! org-download)
 (package! org-journal)
-;;(package! org-pretty-tags)
- (package! org-pretty-table-mode
-   :recipe (:host github :repo "Fuco1/org-pretty-table"))
+(package! org-sidebar)
+(package! org-protocol-capture-html
+  :recipe (:host github
+           :repo "alphapapa/org-protocol-capture-html"
+           :files ("org-protocol-capture-html.el")))
+(package! org-special-block-extras
+  :recipe (:host github
+           :repo "alhassy/org-special-block-extras"))
 
+;; Org Roam
+(package! org-transclusion)
+(package! vulpea)
+(package! delve
+  :recipe (:repo "publicimageltd/delve"
+           :host github))
 
-;; Use latest version!
-(unpin! org-roam org)
-
-; Bibliography
-(unpin! bibtex-completion helm-bibtex ivy-bibtex)
+;; Bibliography
+(package! org-roam-bibtex
+  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! helm-bibtex)
 (package! citar)
 
@@ -80,22 +93,11 @@
            :repo "org-roam/org-roam-ui"
            :files ("*.el" "out")))
 
-(package! org-roam-bibtex
-  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
-
-(package! org-protocol-capture-html
-  :recipe (:host github
-           :repo "alphapapa/org-protocol-capture-html"
-           :files ("org-protocol-capture-html.el")))
-(package! org-special-block-extras
-  :recipe (:host github
-           :repo "alhassy/org-special-block-extras"))
-
 ;; PlantUML
 (package! ob-napkin)            ; PlantUML in Org Babel
 (package! plantuml-mode)        ; PlantUML Diagrams
 
-;; Org Exports
+;; Org Exports (ox-*)
 (package! ox-twbs)      ; HTML Twitter Bootstrap
 (package! ox-rst)       ; ReStructured Text (ReST, RST)
 
@@ -114,10 +116,11 @@
            :repo "seanfarley/emacs-bitwarden"
            :files ("bitwarden.el")))
 
-; Visual/Functional Enhancements
+; Visual Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
 
+;; Functional Enhancements
 (package! embark)
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
@@ -126,9 +129,14 @@
 (package! calfw)  ; fancy calendar
 (package! company-ledger)
 (package! diminish)
-;;(package! beacon)               ; Highlight Cursor on big change
+(package! beacon)               ; Highlight Cursor on big change
 
-;;(package! synosaurus)           ; Thesaurus synonyms
+;; Feed Reader
+(package! elfeed)
+(package! elfeed-score)
+
+;; Thesaurus synonyms
+;(package! synosaurus)
 (package! powerthesaurus)
 
 ;; Language Server
@@ -150,6 +158,5 @@
   :recipe (:host github
            :repo "tarsius/keycast"))
 
+;; MacOS Only
 (package! spotlight)
-(package! elfeed)
-(package! elfeed-score)

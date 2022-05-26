@@ -81,12 +81,12 @@
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
       (:prefix ("s" . "search")
-       :desc "Search/Insert BibTeX Cite" "c" #'helm-bibtex
+       :desc "Search/Insert BibTeX Cite" "c" #'org-ref-cite-insert-helm
        )
       (:prefix ("t" . "toogle")
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
-       :desc "Toggle KeyCast Mode" "k" #'keycast-mode
+       :desc "Toggle KeyCast Mode" "k" #'keycast-tab-bar-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        (:prefix ("SPC" . "Whitespaces")
@@ -107,10 +107,12 @@
         :desc "Insert BibTeX Note Link" "b" #'orb-insert-link
         :desc "BibTeX Note Actions" "B" #'orb-note-actions
         :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
+        :desc "Delve" :n "D" #'delve
         :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
         :desc "Find org-roam Node" :n "f" #'org-roam-node-find
         :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
         :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
+        :desc "Org Roam UI" :n "u" #'org-roam-ui-open
         )
        )
       ;; (:prefix-map ("TAB" . "workspace"))
@@ -211,7 +213,11 @@
 
 (setq doom-theme 'doom-vibrant)
 (custom-set-faces!
-  '(doom-modeline-buffer-modified :foreground "DarkOrange"))
+  '(doom-modeline-buffer-modified :foreground "DarkOrange")
+  '(bold :inherit 'warning)
+  ;; '(highlight :background "DarkBlue")
+  ;; '(mode-line-highlight :background "DarkBlue")
+  )
 
 (setq doom-font (font-spec :family "JetBrains Mono" :size 16)
       doom-big-font (font-spec :family "JetBrains Mono" :size 22)
@@ -267,7 +273,8 @@
   :custom
   (doom-modeline-height 16)
   (doom-modeline-bar-width 4)
-  (doom-modeline-lsp nil)
+  (doom-modeline-lsp t)
+  (doom-modeline-display-default-persp-name t)
   (doom-modeline-modal-icon t)
   (doom-modeline-minor-modes nil)
   (doom-modeline-major-mode-icon t)
@@ -298,8 +305,8 @@
                                           (desktop-full-file-name))))
                                        :face
                                        (:inherit
-                                        (doom-dashboard-menu-title bold)
-                                       :action doom/quickload-session))
+                                        (doom-dashboard-menu-title bold))
+                                       :action doom/quickload-session)
                                       ("Open org-agenda" :icon
                                        (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
                                        :action org-agenda)
@@ -321,12 +328,15 @@
                                        :when
                                        (file-directory-p doom-private-dir)
                                        :action doom/open-private-config)
-                                      ("Open documentation" :icon
-                                       (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
-                                       :action doom/help)))
+                                      ("Switch Workspace Buffer" :icon
+                                       (all-the-icons-octicon "file-symlink-file" :face 'doom-dashboard-menu-title)
+                                       :action +vertico/switch-workspace-buffer)
+                                      ("Switch Buffer" :icon
+                                       (all-the-icons-octicon "file-symlink-directory" :face 'doom-dashboard-menu-title)
+                                       :action counsel-switch-buffer)))
 
 (setq hl-todo-keyword-faces
-      '(("TODO"   . "#cc0")
+      '(("TODO"   . "#c0c")
         ("FIXME"  . "#990000")
         ("NOTE"   . "#009999")
         ("REVIEW"   . "#990099")
@@ -457,12 +467,24 @@ argument, query for word to search."
 
 (setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
 
-(defun jp/make-tables-pretty ()
-  (+org-pretty-mode)
-  (org-pretty-table-mode)
-  )
+(setq tab-bar-new-tab-choice "*scratch*")
 
-(add-hook #'org-mode-hook #'jp/make-tables-pretty)
+(setq tab-bar-close-button-show t
+      tab-bar-new-button-show t
+      tab-bar-button-relief 1)
+
+(custom-set-faces!
+  '(tab-bar :inherit 'default)
+  '(tab-bar-tab :inherit 'bold :foreground "LightGreen"))
+
+;; Don't turn on tab-bar-mode when tabs are created
+;(setq tab-bar-show nil)
+
+;; Get the current tab name for use in some other display
+(defun jp/current-tab-name ()
+  (alist-get 'name (tab-bar--current-tab)))
+
+(global-emojify-mode 1)
 
 (after! org
   (appendq! +ligatures-extra-symbols
@@ -1039,8 +1061,8 @@ Returns file content as a string."
 (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
 
 (add-to-list 'org-latex-classes
-      '("letter"
-         "\\documentclass[
+             '("letter"
+               "\\documentclass[
     fontsize=12pt,
     % Satzspiegel
     DIV=13,
@@ -1069,7 +1091,6 @@ Returns file content as a string."
     refline=narrow,
     draft=off
           ]{scrlttr2}
-\\include{structure}
 [NO-DEFAULT-PACKAGES]
 [NO-EXTRA]
 [NO-PACKAGES]
@@ -1086,9 +1107,9 @@ Returns file content as a string."
 \\setkomafont{backaddress}{\\mdseries}
 \\usepackage{mathptmx}%% Schrift Times
 "
-         ("\\textbf{%s}" . "\\textbf*{%s}")
-         ("\\textbf{%s}" . "\\textbf*{%s}")
-         ))
+               ("" . "")
+               )
+             )
 
 (add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
 (add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
@@ -1140,6 +1161,21 @@ Returns file content as a string."
   (require 'org-protocol-capture-html))
 
 (jp/load-protocol)
+
+(after! delve
+  (setq delve-dashboard-tags '("entry"))
+  (add-hook #'delve-mode-hook #'delve-compact-view-mode)
+  (delve-global-minor-mode)
+  (evil-define-key* '(normal insert) delve-mode-map
+    (kbd "<return>") #'delve--key--insert-query-or-pile
+    (kbd "<tab>") #'delve--key--tab
+    (kbd "gr") #'delve--key--toggle-preview
+    (kbd "sm") #'delve--key--sort
+    (kbd "<right>") #'delve--key--insert-fromlink
+    (kbd "<left>")  #'delve--key--insert-backlink
+    (kbd "c") #'delve--key--collect-into-pile
+    (kbd "q") #'delve-kill-all-delve-buffers
+    (kbd "t") #' delve--key--add-tags))
 
 (require 'org-alert)
 
@@ -1199,6 +1235,9 @@ Returns file content as a string."
  'org-babel-load-languages
  '((R . t)
    (python . t)
+   (ipython . t)
+   (jupyter . t)
+   (sqlite . t)
    (LaTeX . t)
    (plantuml . t)
    (emacs-lisp . t)))
@@ -1216,9 +1255,7 @@ Returns file content as a string."
 (defconst jp/bib-notes-dir (concat org-roam-directory "/References/")) ; I use org-roam to manage all my notes, including bib notes.
 
 
-(use-package! org-roam-bibtex
-  :after org-roam
-  :config
+(after! org-roam
   (require 'org-ref)) ; optional: if Org Ref is not loaded anywhere else, load it here
 
 ;; Helm Autocompletion
@@ -1239,9 +1276,9 @@ Returns file content as a string."
       bibtex-completion-notes-path jp/bib-notes-dir
       bibtex-dialect 'biblatex
       org-cite-global-bibliography jp/bib-libraries
-      org-cite-insert-processor 'citar
-      org-cite-follow-processor 'citar
-      org-cite-activate-processor 'citar
+      org-cite-insert-processor 'org-ref
+      org-cite-follow-processor 'org-ref
+      org-cite-activate-processor 'org-ref
       org-cite-export-processors '((latex biblatex)
                                    (t csl))
       citar-open-note-function 'orb-citar-edit-note
@@ -1285,70 +1322,7 @@ Returns file content as a string."
   ;; use consult-completing-read for enhanced interface
   (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple))
 
-(map! :leader
-      :desc "arXiv paper to library" "n x" #'arxiv-get-pdf-add-bibtex-entry
-      :desc "Elfeed" "n E" #'elfeed)
-
-(use-package! elfeed
-  :config
-  (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
-  (defun concatenate-authors (authors-list)
-    "Given AUTHORS-LIST, list of plists; return string of all authors concatenated."
-    (if (> (length authors-list) 1)
-        (format "%s et al." (plist-get (nth 0 authors-list) :name))
-      (plist-get (nth 0 authors-list) :name)))
-
-  (defun my-search-print-fn (entry)
-    "Print ENTRY to the buffer."
-    (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
-           (title (or (elfeed-meta entry :title)
-                      (elfeed-entry-title entry) ""))
-           (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
-           (entry-authors (concatenate-authors
-                           (elfeed-meta entry :authors)))
-           (title-width (- (window-width) 10
-                           elfeed-search-trailing-width))
-           (title-column (elfeed-format-column
-                          title 100
-                          :left))
-           (entry-score (elfeed-format-column (number-to-string (elfeed-score-scoring-get-score-from-entry entry)) 10 :left))
-           (authors-column (elfeed-format-column entry-authors 40 :left)))
-      (insert (propertize date 'face 'elfeed-search-date-face) " ")
-
-      (insert (propertize title-column
-                          'face title-faces 'kbd-help title) " ")
-      (insert (propertize authors-column
-                          'kbd-help entry-authors) " ")
-      (insert entry-score " ")))
-  (defun jp/elfeed-entry-to-arxiv ()
-    "Fetch an arXiv paper into the local library from the current elfeed entry."
-    (interactive)
-    (let* ((link (elfeed-entry-link elfeed-show-entry))
-           (match-idx (string-match "arxiv.org/abs/\\([0-9.]*\\)" link))
-           (matched-arxiv-number (match-string 1 link)))
-      (when matched-arxiv-number
-        (message "Going to arXiv: %s" matched-arxiv-number)
-        (arxiv-get-pdf-add-bibtex-entry matched-arxiv-number jp/main-bib-library jp/main-pdfs-library-path))))
-  (map! (:after elfeed
-         (:map elfeed-search-mode-map
-          :desc "Open entry" "m" #'elfeed-search-show-entry)
-         (:map elfeed-show-mode-map
-          :desc "Fetch arXiv paper to the local library" "a" #'jp/elfeed-entry-to-arxiv)))
-  (setq elfeed-search-print-entry-function #'my-search-print-fn)
-  (setq elfeed-search-date-format '("%y-%m-%d" 10 :left))
-  (setq elfeed-search-title-max-width 110)
-  (setq elfeed-feeds '("http://export.arxiv.org/api/query?search_query=cat:math.OC&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending" "http://export.arxiv.org/api/query?search_query=cat:stat.ML&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending" "http://export.arxiv.org/api/query?search_query=cat:cs.LG&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending"))
-  (setq elfeed-search-filter "@2-week-ago +unread")
-
-(use-package! elfeed-score
-  :after elfeed
-  :config
-  (elfeed-score-load-score-file "~/.doom.d/elfeed.score") ; See the elfeed-score documentation for the score file syntax
-  (setq elfeed-score-serde-score-file "~/.doom.d/elfeed.serde.score")
-  (elfeed-score-enable)
-  (define-key elfeed-search-mode-map "=" elfeed-score-map))
-
-(setq org-noter-notes-search-path '("~/ZK/References"))
+(setq org-noter-notes-search-path (list jp/bib-notes-dir))
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired
