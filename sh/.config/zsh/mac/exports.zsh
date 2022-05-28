@@ -12,7 +12,7 @@ export LC_ALL='en_US.UTF-8';
 # export LESS_TERMCAP_md="${yellow}";
 
 # Make vi (neovim) the default manpage viewer
-export MANPAGER="/bin/sh -c \"col -b | vi -c 'set ft=man ts=8 nomod nolist nonu noma' -\""
+# export MANPAGER="/bin/sh -c \"col -b | vi -c 'set ft=man ts=8 nomod nolist nonu noma' -\""
 # Don’t clear the screen after quitting a manual page.
 # export MANPAGER='less -X';
 

@@ -214,7 +214,7 @@
 (setq doom-theme 'doom-vibrant)
 (custom-set-faces!
   '(doom-modeline-buffer-modified :foreground "DarkOrange")
-  '(bold :inherit 'warning)
+  '(bold :inherit 'doom-modeline-highlight)
   ;; '(highlight :background "DarkBlue")
   ;; '(mode-line-highlight :background "DarkBlue")
   )
@@ -1681,4 +1681,4 @@ Returns file content as a string."
 (with-eval-after-load 'company
   (add-to-list 'company-backends 'company-ledger))
 
-(ivy-mode 0)
+(add-hook 'after-init-hook (lambda () (ivy-mode 0)))

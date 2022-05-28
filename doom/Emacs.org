@@ -454,6 +454,10 @@ Just comment/uncomment some lines to disable/enable features.
   :recipe (:host github
            :repo "SqrtMinusOne/pomm.el"))
 
+(package! mu4e-dashboard
+  :recipe (:host github
+           :repo "rougier/mu4e-dashboard"))
+
 ; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
 (package! keycast
@@ -746,7 +750,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 (setq doom-theme 'doom-vibrant)
 (custom-set-faces!
   '(doom-modeline-buffer-modified :foreground "DarkOrange")
-  '(bold :inherit 'warning)
+  '(bold :inherit 'doom-modeline-highlight)
   ;; '(highlight :background "DarkBlue")
   ;; '(mode-line-highlight :background "DarkBlue")
   )
@@ -2810,6 +2814,9 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
 
 * TODO Additional Packages
 ** Dired (File Manager)
+:PROPERTIES:
+:LOCATION: https://gitlab.com/dwt1/dotfiles
+:END:
 
 :SOURCE:
 Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
@@ -2915,6 +2922,9 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 #+end_src
 
 ** Languages (IDE using Language Server)
+:PROPERTIES:
+:LOCATION: https://github.com/daviwil/emacs-from-scratch.git
+:END:
 
 :SOURCE:
 Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
@@ -3430,5 +3440,5 @@ Useful mu4e manual pages:
 
 ** Decactivate Ivy
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(ivy-mode 0)
+(add-hook 'after-init-hook (lambda () (ivy-mode 0)))
 #+end_src
