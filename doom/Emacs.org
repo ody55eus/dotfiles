@@ -40,9 +40,8 @@
   - [[#mail-in-emacs-with-mu4e][Mail in Emacs with mu4e]]
   - [[#password-save][Password Save]]
   - [[#deft][Deft]]
-  - [[#ledger-financial-support][Ledger (Financial Support)]]
+  - [[#finances][Finances]]
   - [[#scimax][Scimax]]
-  - [[#decactivate-ivy][Decactivate Ivy]]
 
 * About this Configuration
 Make this file run (slightly) faster with lexical binding (see [[https://nullprogram.com/blog/2016/12/22/][this blog post]] for more info).
@@ -237,7 +236,7 @@ Just comment/uncomment some lines to disable/enable features.
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org               ; organize your plain life in plain text
-        +pretty                     ; yessss my pretties! (nice unicode symbols)
+        ;+pretty                     ; yessss my pretties! (nice unicode symbols)
         +dragndrop                  ; drag & drop files/images into org buffers
         ;;+hugo                     ; use Emacs for hugo blogging
         +noter                      ; enhanced PDF notetaking
@@ -362,7 +361,7 @@ Just comment/uncomment some lines to disable/enable features.
 (package! org-super-agenda)
 (package! org-alert)            ; Enable org-mode notifications.
 (package! org-tree-slide)       ; Enable org-mode presentations.
-(package! org-superstar)        ; Alternative for org-bullets.
+(package! org-modern)           ; Alternative for org-bullets and org-superstar.
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
 (package! org-download)
 (package! org-journal)
@@ -454,6 +453,11 @@ Just comment/uncomment some lines to disable/enable features.
   :recipe (:host github
            :repo "SqrtMinusOne/pomm.el"))
 
+(package! beancount-mode
+  :recipe (:host github
+           :repo "beancount/beancount-mode"
+           :files ("beancount.el")))
+
 (package! mu4e-dashboard
   :recipe (:host github
            :repo "rougier/mu4e-dashboard"))
@@ -463,7 +467,9 @@ Just comment/uncomment some lines to disable/enable features.
 (package! keycast
   :recipe (:host github
            :repo "tarsius/keycast"))
+#+end_src
 
+#+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/packages.el" "no")
 ;; MacOS Only
 (package! spotlight)
 #+end_src
@@ -478,10 +484,10 @@ Just comment/uncomment some lines to disable/enable features.
 
 (defun jp/display-startup-time ()
   (message "Emacs loaded in %s with %d garbage collections."
-           (format "%.2f seconds"
-                   (float-time
-                    (time-subtract after-init-time before-init-time)))
-           gcs-done))
+                  (format "%.2f seconds"
+                          (float-time
+                           (time-subtract after-init-time before-init-time)))
+                  gcs-done))
 
 (add-hook 'emacs-startup-hook #'jp/display-startup-time)
 
@@ -1537,7 +1543,7 @@ Inspired by [[https://github.com/daviwil/emacs-from-scratch.git][David Wilson]].
 
 One downside to this is that =doom-modeline= (currently) stops showing the tab name in the mode line when =tab-bar-mode= isn't turned on.
 
-* Org Mode
+* Org Mode :org:
 ** Visual Enhancements
 *** Pretty Text
 **** KILL Pretty Tables
@@ -1627,10 +1633,12 @@ One downside to this is that =doom-modeline= (currently) stops showing the tab n
 )
 #+end_src
 
-**** Org Superstar (Pretty Bullets)
+**** Org Modern (Prettify Org Buffers)
+Alternatives are: ~org-bullets~ or ~org-superstar~:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (after! org
-  (org-superstar-mode)
+  (global-org-modern-mode 1)
+  (setq org-modern-todo nil) ; Don't prettify TODO Items
   )
 #+end_src
 
@@ -1690,7 +1698,6 @@ Set this value to ~nil~ to display them again.
 **** Fonts and Colors
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defun jp/org-mode-setup ()
-  (org-indent-mode 1)  ; Indent text following current headline
   (mixed-pitch-mode 1) ; Enable different Fonts
   ;;(org-roam-setup) ; Enable org-roam-db-autosync
   (setq org-image-actual-width nil) ; Set optional images
@@ -1707,6 +1714,7 @@ Set this value to ~nil~ to display them again.
   (setq visual-fill-column-width 120  ; Margin width
         visual-fill-column-center-text t)
   (visual-fill-column-mode 1) ; Enable Margins
+  (org-indent-mode 1)  ; Indent text following current headline
   (visual-line-mode 1)  ; also show entire lines
   )
 
@@ -3423,10 +3431,39 @@ Useful mu4e manual pages:
 (setq deft-directory "~/org")
 #+end_src
 
-** Ledger (Financial Support)
+** Finances
+*** Ledger (Financial Support)
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq jp/decrypt-ledger "")
 (with-eval-after-load 'company
   (add-to-list 'company-backends 'company-ledger))
+
+(setq ledger-reconcile-default-commodity "€")
+
+(setq ledger-reports
+ '(("bal"            "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal")
+   ("bal this month" "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal -p %(month) -S amount")
+   ("bal this year"  "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal -p 'this year'")
+   ("net worth"      "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal Assets Liabilities")
+   ("reg"        "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f %(ledger-file) reg")
+   ("account"        "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f %(ledger-file) reg %(account)")))
+
+(map! :map ledger-reconcile-mode-map
+      :ne "q" #'ledger-reconcile-quit
+      :ne "a" #'ledger-reconcile-add
+      :ne "d" #'ledger-reconcile-delete)
+#+end_src
+
+*** Beancount
+[[https://beancount.github.io/docs/][Beancount]] is a CLI Tool written in Python to manage finances.
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(map! :map beancount-mode-map
+      (:leader
+       (:prefix "m"
+        :desc "Insert Date" :n "i" #'beancount-insert-date
+        :desc "Query" :n "q" #'beancount-query
+        )))
 #+end_src
 
 ** Scimax
@@ -3436,9 +3473,4 @@ Useful mu4e manual pages:
 (require 'f)
 (require 'scimax)
 (scimax-update)
-#+end_src
-
-** Decactivate Ivy
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(add-hook 'after-init-hook (lambda () (ivy-mode 0)))
 #+end_src

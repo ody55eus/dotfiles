@@ -12,10 +12,10 @@
 
 (defun jp/display-startup-time ()
   (message "Emacs loaded in %s with %d garbage collections."
-           (format "%.2f seconds"
-                   (float-time
-                    (time-subtract after-init-time before-init-time)))
-           gcs-done))
+                  (format "%.2f seconds"
+                          (float-time
+                           (time-subtract after-init-time before-init-time)))
+                  gcs-done))
 
 (add-hook 'emacs-startup-hook #'jp/display-startup-time)
 
@@ -546,7 +546,8 @@ argument, query for word to search."
   )
 
 (after! org
-  (org-superstar-mode)
+  (global-org-modern-mode 1)
+  (setq org-modern-todo nil) ; Don't prettify TODO Items
   )
 
 (setq org-ellipsis " ▼ ")
@@ -580,7 +581,6 @@ argument, query for word to search."
       )
 
 (defun jp/org-mode-setup ()
-  (org-indent-mode 1)  ; Indent text following current headline
   (mixed-pitch-mode 1) ; Enable different Fonts
   ;;(org-roam-setup) ; Enable org-roam-db-autosync
   (setq org-image-actual-width nil) ; Set optional images
@@ -592,6 +592,7 @@ argument, query for word to search."
   (setq visual-fill-column-width 120  ; Margin width
         visual-fill-column-center-text t)
   (visual-fill-column-mode 1) ; Enable Margins
+  (org-indent-mode 1)  ; Indent text following current headline
   (visual-line-mode 1)  ; also show entire lines
   )
 
@@ -1678,7 +1679,28 @@ Returns file content as a string."
 
 (setq deft-directory "~/org")
 
+(setq jp/decrypt-ledger "")
 (with-eval-after-load 'company
   (add-to-list 'company-backends 'company-ledger))
 
-(add-hook 'after-init-hook (lambda () (ivy-mode 0)))
+(setq ledger-reconcile-default-commodity "€")
+
+(setq ledger-reports
+ '(("bal"            "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal")
+   ("bal this month" "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal -p %(month) -S amount")
+   ("bal this year"  "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal -p 'this year'")
+   ("net worth"      "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal Assets Liabilities")
+   ("reg"        "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f %(ledger-file) reg")
+   ("account"        "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f %(ledger-file) reg %(account)")))
+
+(map! :map ledger-reconcile-mode-map
+      :ne "q" #'ledger-reconcile-quit
+      :ne "a" #'ledger-reconcile-add
+      :ne "d" #'ledger-reconcile-delete)
+
+(map! :map beancount-mode-map
+      (:leader
+       (:prefix "m"
+        :desc "Insert Date" :n "i" #'beancount-insert-date
+        :desc "Query" :n "q" #'beancount-query
+        )))

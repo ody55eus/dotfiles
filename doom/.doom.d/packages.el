@@ -60,7 +60,7 @@
 (package! org-super-agenda)
 (package! org-alert)            ; Enable org-mode notifications.
 (package! org-tree-slide)       ; Enable org-mode presentations.
-(package! org-superstar)        ; Alternative for org-bullets.
+(package! org-modern)           ; Alternative for org-bullets and org-superstar.
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
 (package! org-download)
 (package! org-journal)
@@ -151,6 +151,15 @@
 (package! pomm
   :recipe (:host github
            :repo "SqrtMinusOne/pomm.el"))
+
+(package! beancount-mode
+  :recipe (:host github
+           :repo "beancount/beancount-mode"
+           :files ("beancount.el")))
+
+(package! mu4e-dashboard
+  :recipe (:host github
+           :repo "rougier/mu4e-dashboard"))
 
 ; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
