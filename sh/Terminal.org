@@ -1,5 +1,12 @@
 #+title: Terminal and Shell Configuration
+#+OPTIONS: broken-links:auto h:6 toc:nil
 #+setupfile: ~/.doom.d/org-styles/darksun/darksun.theme
+#+TOC headlines 6
+
+* Content :noexport:
+:PROPERTIES:
+:TOC:      :include all :depth 3
+:END:
 
 * Alacritty
 #+begin_src yaml :tangle .config/alacritty/alacritty.yml
@@ -22,7 +29,7 @@ shell:
   args:
     - -l
     - -c
-    - 'tmux attach || tmux'
+    - 'tmux attach || echo no tmux running'
 
 window:
   padding:
