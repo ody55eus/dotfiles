@@ -85,7 +85,7 @@
       (:prefix ("t" . "toogle")
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
-       :desc "Toggle KeyCast Mode" "k" #'keycast-mode
+       :desc "Toggle KeyCast Mode" "k" #'keycast-tab-bar-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        (:prefix ("SPC" . "Whitespaces")
@@ -252,6 +252,9 @@
 
 (setq calendar-week-start-day 1) ; Start the Week on Monday
 
+(setq tab-bar-close-button-show nil
+      tab-bar-new-button-show nil)
+
 (setq confirm-kill-emacs nil)           ;; Don't confirm every kill
 
 (setq
@@ -284,12 +287,6 @@
 (setq display-time-24hr-format t                ;; Display 24 Hrs rather than 12
       display-time-default-load-average nil)    ;; Do not display my CPU Load
 (display-time-mode 0)
-
-(add-to-list 'mode-line-misc-info '(:eval pomm-current-mode-line-string))
-(add-hook 'pomm-on-tick-hook 'pomm-update-mode-line-string)
-(add-hook 'pomm-on-tick-hook 'force-mode-line-update)
-(add-hook 'pomm-on-status-changed-hook 'pomm-update-mode-line-string)
-(add-hook 'pomm-on-status-changed-hook 'force-mode-line-update)
 
 (setq hl-todo-keyword-faces
       '(("TODO"   . "#cc0")
@@ -423,6 +420,8 @@ argument, query for word to search."
 
 (setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
 
+(setq org-modern-todo nil) ; Don't update TODO Tags
+
 (after! org
   (appendq! +ligatures-extra-symbols
             `(:checkbox      "☐"
@@ -519,7 +518,7 @@ argument, query for word to search."
   (setq org-image-actual-width nil) ; Set optional images
   (rainbow-mode 1)    ; Enable rainbow mode
   (emojify-mode 1)    ; Enable Emojis
-  (org-superstar-mode)
+  (org-modern-mode 1)
   )
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
 
@@ -1298,10 +1297,16 @@ Returns file content as a string."
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
 (setq dap-python-debugger 'debugpy)
 
-(setq python-shell-interpreter "/home/jp/.conda/envs/webserver/bin/python")
-(setq dap-python-executable python-shell-interpreter
-      treemacs-python-executable python-shell-interpreter
-      lsp-pyright-python-executable-cmd python-shell-interpreter)
+(setq jp/python
+       "/opt/miniconda3/bin/python"
+      ; (file-truename "~/.conda/envs/webserver/bin/python")
+      ; (file-truename "~/.conda/envs/webserver-old/bin/python")
+      ; (file-truename "~/.conda/envs/ /bin/python")
+      )
+(setq python-shell-interpreter jp/python
+      dap-python-executable jp/python
+      treemacs-python-executable jp/python
+      lsp-pyright-python-executable-cmd jp/python)
 
 (use-package company
   :after lsp-mode
@@ -1320,6 +1325,8 @@ Returns file content as a string."
 ;; NOTE: Set this to the folder where you keep your Git repos!
 (when (file-directory-p "~/Projects/Code")
   (setq projectile-project-search-path '("~/Projects/Code")))
+(when (file-directory-p "~/Projects/Doc")
+  (add-to-list 'projectile-project-search-path "~/Projects/Doc"))
 (setq projectile-switch-project-action #'projectile-dired)
 
 (setq projectile-completion-system 'vertico

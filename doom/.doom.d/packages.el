@@ -53,6 +53,7 @@
 (package! org-roam)             ; Extended org-mode for Zettelkasten principle.
 (package! org-ref)              ; References and citations
 (package! org-super-agenda)
+(package! org-modern)
 ;;(package! org-bullets)        ; Display nice bullets in org-mode (deprecated).
 (package! org-alert)            ; Enable org-mode notifications.
 (package! org-tree-slide)       ; Enable org-mode presentations.
@@ -127,7 +128,7 @@
 (package! helm-ag)              ; Ack and the_silver_searcher support
 
 (package! diminish)
-;;(package! beacon)               ; Highlight Cursor on big change
+(package! beacon)               ; Highlight Cursor on big change
 
 ;; Dictionaries
 ;;(package! synosaurus)           ; Thesaurus synonyms

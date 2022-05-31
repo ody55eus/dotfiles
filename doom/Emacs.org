@@ -355,6 +355,7 @@ Just comment/uncomment some lines to disable/enable features.
 (package! org-roam)             ; Extended org-mode for Zettelkasten principle.
 (package! org-ref)              ; References and citations
 (package! org-super-agenda)
+(package! org-modern)
 ;;(package! org-bullets)        ; Display nice bullets in org-mode (deprecated).
 (package! org-alert)            ; Enable org-mode notifications.
 (package! org-tree-slide)       ; Enable org-mode presentations.
@@ -429,7 +430,7 @@ Just comment/uncomment some lines to disable/enable features.
 (package! helm-ag)              ; Ack and the_silver_searcher support
 
 (package! diminish)
-;;(package! beacon)               ; Highlight Cursor on big change
+(package! beacon)               ; Highlight Cursor on big change
 
 ;; Dictionaries
 ;;(package! synosaurus)           ; Thesaurus synonyms
@@ -562,7 +563,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
       (:prefix ("t" . "toogle")
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
-       :desc "Toggle KeyCast Mode" "k" #'keycast-mode
+       :desc "Toggle KeyCast Mode" "k" #'keycast-tab-bar-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        (:prefix ("SPC" . "Whitespaces")
@@ -882,7 +883,7 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
       :n [mouse-9] #'better-jumper-jump-forward)
 #+end_src
 
-*** Resize Startup Window
+*** HOLD Resize Startup Window
 
 #+begin_src emacs-lisp
 
@@ -916,6 +917,11 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 
 #+end_src
 
+*** Tab Bar
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq tab-bar-close-button-show nil
+      tab-bar-new-button-show nil)
+#+end_src
 ** Doom Emacs Customization
 *** Confirm Leaving Emacs
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -964,8 +970,8 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 (display-time-mode 0)
 #+end_src
 
-**** Display Pomm Timer
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+**** HOLD Display Pomm Timer
+#+begin_src emacs-lisp
 (add-to-list 'mode-line-misc-info '(:eval pomm-current-mode-line-string))
 (add-hook 'pomm-on-tick-hook 'pomm-update-mode-line-string)
 (add-hook 'pomm-on-tick-hook 'force-mode-line-update)
@@ -1393,6 +1399,11 @@ argument, query for word to search."
 * Org Mode
 ** Visual Enhancements
 *** Pretty Text
+**** Org Modern
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq org-modern-todo nil) ; Don't update TODO Tags
+#+end_src
+
 **** Pretty Tables
 
 #+begin_src emacs-lisp
@@ -1536,7 +1547,7 @@ Set this value to ~nil~ to display them again.
   (setq org-image-actual-width nil) ; Set optional images
   (rainbow-mode 1)    ; Enable rainbow mode
   (emojify-mode 1)    ; Enable Emojis
-  (org-superstar-mode)
+  (org-modern-mode 1)
   )
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
 #+end_src
@@ -2739,13 +2750,20 @@ There are a number of other language servers for Python so if you find that =pyl
 (setq lsp-python-ms-python-executable-cmd "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
   #+end_src
 **** Linux
-Linux uses ~python3~:
+Linux uses Miniconda3:
   #+begin_src emacs-lisp :tangle (if (eq system-type 'gnu/linux) "./.doom.d/config.el" "no")
-(setq python-shell-interpreter "/home/jp/.conda/envs/webserver/bin/python")
-(setq dap-python-executable python-shell-interpreter
-      treemacs-python-executable python-shell-interpreter
-      lsp-pyright-python-executable-cmd python-shell-interpreter)
+(setq jp/python
+       "/opt/miniconda3/bin/python"
+      ; (file-truename "~/.conda/envs/webserver/bin/python")
+      ; (file-truename "~/.conda/envs/webserver-old/bin/python")
+      ; (file-truename "~/.conda/envs/ /bin/python")
+      )
+(setq python-shell-interpreter jp/python
+      dap-python-executable jp/python
+      treemacs-python-executable jp/python
+      lsp-pyright-python-executable-cmd jp/python)
 #+end_src
+
 **** PyEnv
 You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =pyvenv-activate= command should configure Emacs to cause =lsp-mode= and =dap-mode= to use the virtual environment when they are loaded, just select the path to your virtual environment before loading your project.
 
@@ -2813,6 +2831,8 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 ;; NOTE: Set this to the folder where you keep your Git repos!
 (when (file-directory-p "~/Projects/Code")
   (setq projectile-project-search-path '("~/Projects/Code")))
+(when (file-directory-p "~/Projects/Doc")
+  (add-to-list 'projectile-project-search-path "~/Projects/Doc"))
 (setq projectile-switch-project-action #'projectile-dired)
 
 (setq projectile-completion-system 'vertico
