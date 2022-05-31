@@ -1402,7 +1402,8 @@ argument, query for word to search."
 *** Pretty Text
 **** Org Modern
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq org-modern-todo nil) ; Don't update TODO Tags
+(setq org-modern-todo nil      ; Don't update TODO Tags
+      org-modern-priority nil) ; Don't update task priorities
 #+end_src
 
 **** Pretty Tables

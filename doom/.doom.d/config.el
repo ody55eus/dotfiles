@@ -421,7 +421,8 @@ argument, query for word to search."
 
 (setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
 
-(setq org-modern-todo nil) ; Don't update TODO Tags
+(setq org-modern-todo nil      ; Don't update TODO Tags
+      org-modern-priority nil) ; Don't update task priorities
 
 (after! org
   (appendq! +ligatures-extra-symbols
