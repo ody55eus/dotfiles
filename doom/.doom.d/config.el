@@ -216,8 +216,8 @@
 (setq doom-font (font-spec :family "JetBrains Mono" :size 16)
       doom-big-font (font-spec :family "JetBrains Mono" :size 22)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
-      doom-unicode-font (font-spec :family "JuliaMono" :size 16)
-      doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light :size 16))
+      doom-unicode-font (font-spec :family "JetBrains Mono" :size 16)
+      doom-serif-font (font-spec :family "JetBrains Mono" :weight 'light :size 16))
 
 (setq display-line-numbers-type 'relative)
 
