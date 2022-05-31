@@ -560,10 +560,11 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
       (:prefix ("s" . "search")
        :desc "Search/Insert BibTeX Cite" "c" #'helm-bibtex
        )
-      (:prefix ("t" . "toogle")
+      (:prefix ("t" . "toggle")
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle KeyCast Mode" "k" #'keycast-tab-bar-mode
+       :desc "Toggle Menu Bar" "m" #'menu-bar-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        (:prefix ("SPC" . "Whitespaces")
