@@ -563,7 +563,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
       (:prefix ("t" . "toggle")
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
-       :desc "Toggle KeyCast Mode" "k" #'keycast-tab-bar-mode
+       :desc "Toggle KeyCast Mode" "k" #'keycast-mode
        :desc "Toggle Menu Bar" "m" #'menu-bar-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
@@ -1282,12 +1282,38 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
     (if keycast-mode
         (add-hook 'pre-command-hook 'keycast--update t)
       (remove-hook 'pre-command-hook 'keycast--update))))
-(add-to-list 'global-mode-string '("" mode-line-keycast))
+
+(add-to-list 'global-mode-string '("" keycast-mode-line))
 
 #+end_src
 
 *** Avy
 Avy provides easy movement and actions in buffers. The following [[https://karthinks.com/software/avy-can-do-anything/][Blog post by Karthinks]] has a lot of awesome examples on how to use Avy.
+Keybindings to help manage text in buffers. To activate Avy, check the various =avy-= commands under (~SPC j~):
+| Key     | Action                   |
+|---------+--------------------------|
+| ~SPC j l~ | =evil-avy-goto-line=       |
+| ~SPC j c~ | =evil-avy-goto-char=       |
+| ~SPC j o~ | =evil-avy-goto-char-timer= |
+| ~SPC j O~ | =evil-avy-goto-char-2=     |
+| ~SPC j w~ | =evil-avy-goto-word-0=     |
+| ~SPC j W~ | =evil-avy-goto-subword-0=  |
+
+Before selecting the char/word/line/etc., you can press one of these keys to perform an action on your target:
+| Key | Action               |
+|-----+----------------------|
+| ~o~   | =-embark=              |
+| ~H~   | =-helpful=             |
+| ~=~   | =-define=              |
+| ~t~   | =-teleport=            |
+| ~T~   | =-teleport-whole-line= |
+| ~k~   | =-kill-stay=           |
+| ~K~   | =-kill-whole-line=     |
+| ~y~   | =-yank=                |
+| ~Y~   | =-yank-whole-line=     |
+| ~w~   | =-copy=                |
+| ~W~   | =-copy-whole-line=     |
+
 **** Mark to Char
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (require 'avy)
@@ -2763,7 +2789,8 @@ Linux uses Miniconda3:
 (setq python-shell-interpreter jp/python
       dap-python-executable jp/python
       treemacs-python-executable jp/python
-      lsp-pyright-python-executable-cmd jp/python)
+      lsp-pyright-python-executable-cmd jp/python
+      python-check-command (file-truename "~/.local/bin/epylint"))
 #+end_src
 
 **** PyEnv
@@ -2774,7 +2801,8 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
 (use-package pyvenv
   :after python-mode
   :config
-  (pyvenv-mode 1))
+  (pyvenv-mode 1)
+  (setq pyvenv-virtualenvwrapper-python jp/python))
 
 #+end_src
 

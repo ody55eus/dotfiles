@@ -85,7 +85,7 @@
       (:prefix ("t" . "toggle")
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
-       :desc "Toggle KeyCast Mode" "k" #'keycast-tab-bar-mode
+       :desc "Toggle KeyCast Mode" "k" #'keycast-mode
        :desc "Toggle Menu Bar" "m" #'menu-bar-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
@@ -328,7 +328,8 @@
     (if keycast-mode
         (add-hook 'pre-command-hook 'keycast--update t)
       (remove-hook 'pre-command-hook 'keycast--update))))
-(add-to-list 'global-mode-string '("" mode-line-keycast))
+
+(add-to-list 'global-mode-string '("" keycast-mode-line))
 
 (require 'avy)
 (defun avy-action-mark-to-char (pt)
