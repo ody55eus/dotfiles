@@ -5,7 +5,7 @@
 [user]
 	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
-	singingkey = CF2474B880
+	signingkey = 885B941B822133216D960E4CDE2AD6CF2474B880
 [gpg]
 	program = gpg
 [init]
@@ -19,6 +19,7 @@
 	excludesfile = ~/.config/git/ignore
 	attributesfile = ~/.config/git/attributes
 	pager = nvim -R
+	sshCommand = ssh
 [diff]
 	tool = ediff
 	guitool = ediff
@@ -40,7 +41,16 @@
 [safe]
 	directory = /home/jp/share/org
 	directory = /home/jp/share/notes
+	directory = /home/jp/share/Projects/Code/01_2fa_demo
+	directory = /home/jp/share/Projects/Doc/frontdesk-documentation
+	directory = /home/jp/share/Projects/Code/frontdesk
+	directory = /home/jp/share/Projects/Code/control-panel
+[gitlab]
+	user = ody55eus
+[commit]
+	gpgsign = true
 #+end_src
+
 * Git Attributes
 #+begin_src conf :tangle .config/git/attributes
 *.lisp	diff=lisp

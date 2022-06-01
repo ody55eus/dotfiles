@@ -40,6 +40,7 @@
 	directory = /home/jp/share/Projects/Code/01_2fa_demo
 	directory = /home/jp/share/Projects/Doc/frontdesk-documentation
 	directory = /home/jp/share/Projects/Code/frontdesk
+	directory = /home/jp/share/Projects/Code/control-panel
 [gitlab]
 	user = ody55eus
 [commit]
