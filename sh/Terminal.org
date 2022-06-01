@@ -3,10 +3,20 @@
 #+setupfile: ~/.doom.d/org-styles/darksun/darksun.theme
 #+TOC headlines 6
 
-* Content :noexport:
-:PROPERTIES:
-:TOC:      :include all :depth 3
-:END:
+* Content :noexport:toc:
+- [[#alacritty][Alacritty]]
+  - [[#theme-dracula][Theme Dracula]]
+- [[#bashrc][BashRC]]
+- [[#zsh][Zsh]]
+  - [[#zshrc-home-folder][ZshRC Home-Folder]]
+  - [[#zshrc-config][ZshRC Config]]
+  - [[#functionszsh][Functions.zsh]]
+  - [[#base-extensions][Base Extensions]]
+  - [[#macos-extensions][MacOS Extensions]]
+  - [[#linux-extensions][Linux Extensions]]
+  - [[#vim-improvements][Vim Improvements]]
+  - [[#oh-my-zsh-initialization][Oh-My-Zsh! Initialization]]
+- [[#bat][Bat]]
 
 * Alacritty
 #+begin_src yaml :tangle .config/alacritty/alacritty.yml
@@ -14,7 +24,7 @@ working_directory: '/home/jp'
 
 font:
   normal:
-    family: 'JuliaMono'
+    family: 'JetBrains Mono'
   style: Regular
   size: 12
 
@@ -28,8 +38,6 @@ shell:
   program: /bin/zsh
   args:
     - -l
-    - -c
-    - 'tmux attach || echo no tmux running'
 
 window:
   padding:
