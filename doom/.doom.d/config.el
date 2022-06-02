@@ -331,6 +331,9 @@
 
 (add-to-list 'global-mode-string '("" keycast-mode-line))
 
+;;(setq avy-keys '(97 115 100 102 103 104 106 107 108))
+(setq avy-keys '(?u ?i ?a ?e ?o ?s ?n ?r ?t))
+
 (require 'avy)
 (defun avy-action-mark-to-char (pt)
   (activate-mark)
@@ -374,8 +377,8 @@
     (avy-action-kill-whole-line pt)
     (save-excursion (yank)) t)
 
-(setf (alist-get ?t avy-dispatch-alist) 'avy-action-teleport
-      (alist-get ?T avy-dispatch-alist) 'avy-action-teleport-whole-line)
+(setf (alist-get ?m avy-dispatch-alist) 'avy-action-teleport
+      (alist-get ?M avy-dispatch-alist) 'avy-action-teleport-whole-line)
 
 (defun dictionary-search-dwim (&optional arg)
   "Search for definition of word at point. If region is active,
@@ -420,10 +423,27 @@ argument, query for word to search."
    (cdr (ring-ref avy-ring 0)))
   t)
 
-(setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
+(setf (alist-get ?x avy-dispatch-alist) 'avy-action-embark)
 
+(after! popper
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+          help-mode
+          compilation-mode))
+  (global-set-key (kbd "C-`") 'popper-toggle-latest)
+  (global-set-key (kbd "M-`") 'popper-cycle)
+  (global-set-key (kbd "C-M-`") 'popper-toggle-type)
+  (popper-mode +1))
+
+;;(9673 9675 10040 10047)
 (setq org-modern-todo nil      ; Don't update TODO Tags
-      org-modern-priority nil) ; Don't update task priorities
+      org-modern-block nil     ; #+BEGIN block/src/example etc.
+      org-modern-keyword nil   ; #+AUTHOR / #+TITLE / #+PROPERTIES etc.
+      org-modern-priority nil  ; Don't update task priorities
+      org-modern-star ["◉" "○" "✸" "✿"]  ; use pretty stars
+      )
 
 (after! org
   (appendq! +ligatures-extra-symbols
@@ -432,9 +452,9 @@ argument, query for word to search."
               :checkedbox    "☑"
               :list_property "∷"
               :results       "🠶"
-              :property      "☸"
-              :properties    "⚙"
-              :end           "∎"
+              :property      ""
+              :properties    ""
+              :end           ""
               :options       "⌥"
               :title         "𝙏"
               :subtitle      "𝙩"
@@ -1309,7 +1329,8 @@ Returns file content as a string."
 (setq python-shell-interpreter jp/python
       dap-python-executable jp/python
       treemacs-python-executable jp/python
-      lsp-pyright-python-executable-cmd jp/python)
+      lsp-pyright-python-executable-cmd jp/python
+      python-check-command (file-truename "~/.local/bin/epylint"))
 
 (use-package company
   :after lsp-mode

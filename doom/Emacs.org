@@ -417,7 +417,7 @@ Just comment/uncomment some lines to disable/enable features.
                                         ; Visual/Functional Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
-
+(package! popper)
 (package! embark)
 
 ;; Other Software Integrations
@@ -1302,11 +1302,11 @@ Keybindings to help manage text in buffers. To activate Avy, check the various =
 Before selecting the char/word/line/etc., you can press one of these keys to perform an action on your target:
 | Key | Action               |
 |-----+----------------------|
-| ~o~   | =-embark=              |
+| ~x~   | =-embark=              |
 | ~H~   | =-helpful=             |
 | ~=~   | =-define=              |
-| ~t~   | =-teleport=            |
-| ~T~   | =-teleport-whole-line= |
+| ~m~   | =-teleport=            |
+| ~M~   | =-teleport-whole-line= |
 | ~k~   | =-kill-stay=           |
 | ~K~   | =-kill-whole-line=     |
 | ~y~   | =-yank=                |
@@ -1314,7 +1314,13 @@ Before selecting the char/word/line/etc., you can press one of these keys to per
 | ~w~   | =-copy=                |
 | ~W~   | =-copy-whole-line=     |
 
-**** Mark to Char
+**** Home Row Keys for Avy
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+;;(setq avy-keys '(97 115 100 102 103 104 106 107 108))
+(setq avy-keys '(?u ?i ?a ?e ?o ?s ?n ?r ?t))
+#+end_src
+
+**** Mark to Char (default)
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (require 'avy)
 (defun avy-action-mark-to-char (pt)
@@ -1365,8 +1371,8 @@ Before selecting the char/word/line/etc., you can press one of these keys to per
     (avy-action-kill-whole-line pt)
     (save-excursion (yank)) t)
 
-(setf (alist-get ?t avy-dispatch-alist) 'avy-action-teleport
-      (alist-get ?T avy-dispatch-alist) 'avy-action-teleport-whole-line)
+(setf (alist-get ?m avy-dispatch-alist) 'avy-action-teleport
+      (alist-get ?M avy-dispatch-alist) 'avy-action-teleport-whole-line)
 #+end_src
 
 **** Search Dictionary
@@ -1420,16 +1426,44 @@ argument, query for word to search."
    (cdr (ring-ref avy-ring 0)))
   t)
 
-(setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
+(setf (alist-get ?x avy-dispatch-alist) 'avy-action-embark)
+#+end_src
+
+*** Popper
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(after! popper
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+          help-mode
+          compilation-mode))
+  (global-set-key (kbd "C-`") 'popper-toggle-latest)
+  (global-set-key (kbd "M-`") 'popper-cycle)
+  (global-set-key (kbd "C-M-`") 'popper-toggle-type)
+  (popper-mode +1))
 #+end_src
 
 * Org Mode
 ** Visual Enhancements
 *** Pretty Text
 **** Org Modern
+
+| Unicode Nr. |    Hex | Symbol |
+|-------------+--------+--------|
+|        9673 | 0x25c9 | ◉      |
+|        9675 | 0x25cb | ○      |
+|       10040 | 0x2738 | ✸      |
+|       10047 | 0x273f | ✿      |
+
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
+;;
 (setq org-modern-todo nil      ; Don't update TODO Tags
-      org-modern-priority nil) ; Don't update task priorities
+      org-modern-block nil     ; #+BEGIN block/src/example etc.
+      org-modern-keyword nil   ; #+AUTHOR / #+TITLE / #+PROPERTIES etc.
+      org-modern-priority nil  ; Don't update task priorities
+      org-modern-star ["◉" "○" "✸" "✿"]  ; use pretty stars
+      )
 #+end_src
 
 **** Pretty Tables
@@ -1451,9 +1485,9 @@ argument, query for word to search."
               :checkedbox    "☑"
               :list_property "∷"
               :results       "🠶"
-              :property      "☸"
-              :properties    "⚙"
-              :end           "∎"
+              :property      ""
+              :properties    ""
+              :end           ""
               :options       "⌥"
               :title         "𝙏"
               :subtitle      "𝙩"

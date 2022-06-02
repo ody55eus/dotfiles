@@ -115,7 +115,7 @@
                                         ; Visual/Functional Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
-
+(package! popper)
 (package! embark)
 
 ;; Other Software Integrations
