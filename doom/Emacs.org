@@ -1457,7 +1457,6 @@ argument, query for word to search."
 |       10047 | 0x273f | ✿      |
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-;;
 (setq org-modern-todo nil      ; Don't update TODO Tags
       org-modern-block nil     ; #+BEGIN block/src/example etc.
       org-modern-keyword nil   ; #+AUTHOR / #+TITLE / #+PROPERTIES etc.

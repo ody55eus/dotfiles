@@ -437,7 +437,6 @@ argument, query for word to search."
   (global-set-key (kbd "C-M-`") 'popper-toggle-type)
   (popper-mode +1))
 
-;;(9673 9675 10040 10047)
 (setq org-modern-todo nil      ; Don't update TODO Tags
       org-modern-block nil     ; #+BEGIN block/src/example etc.
       org-modern-keyword nil   ; #+AUTHOR / #+TITLE / #+PROPERTIES etc.
