@@ -54,7 +54,7 @@
 (package! org-ref)              ; References and citations
 (package! org-super-agenda)
 (package! org-modern)
-;;(package! org-bullets)        ; Display nice bullets in org-mode (deprecated).
+(package! org-appear)           ; Display markup symbols (*=~ etc.) on cursor-over
 (package! org-alert)            ; Enable org-mode notifications.
 (package! org-tree-slide)       ; Enable org-mode presentations.
 (package! org-superstar)        ; Alternative for org-bullets.
