@@ -167,5 +167,9 @@
   :recipe (:host github
            :repo "tarsius/keycast"))
 
+(package! emacs-rotate
+  :recipe (:host github
+           :repo "daichirata/emacs-rotate"))
+
 ;; MacOS Only
 (package! spotlight)

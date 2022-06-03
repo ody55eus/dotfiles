@@ -467,6 +467,10 @@ Just comment/uncomment some lines to disable/enable features.
 (package! keycast
   :recipe (:host github
            :repo "tarsius/keycast"))
+
+(package! emacs-rotate
+  :recipe (:host github
+           :repo "daichirata/emacs-rotate"))
 #+end_src
 
 #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/packages.el" "no")
@@ -2051,13 +2055,13 @@ The Task Keywords are noted with their keybindings in parentheses.
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
+                  "${title}\n")
          :unnarrowed t)
         ("j" "Projects" plain
          (function jp/read-newproject-template)
          :if-new (file+head
                   "Projects/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
+                  "${title}\n")
          :clock-in :clock-resume
          :unnarrowed t
          )
@@ -2065,7 +2069,7 @@ The Task Keywords are noted with their keybindings in parentheses.
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "People/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
+                  "${title}\n")
          :unnarrowed t
          )
         ("l" "Literature")
@@ -2073,21 +2077,21 @@ The Task Keywords are noted with their keybindings in parentheses.
          "%?\n\nSee also %a.\n* Links\n- %x\n* Notes\n"
          :if-new (file+head
                   "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
+                  "${title}\n")
          :unnarrowed t
          )
         ("lr" "Bibliography reference" plain
          "#+ROAM_KEY: %^{citekey}\n#+PROPERTY: type %^{entry-type}\n#+FILETAGS: %^{keywords}\n#+AUTHOR: %^{author}\n%?"
          :if-new (file+head
                   "References/${citekey}.org"
-                  "#+title: ${title}\n")
+                  "${title}\n")
          :unnarrowed t
          )
         ("p" "PC" plain
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "PC/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n#+date: %U")
+                  "${title}\n#+date: %U")
          :unnarrowed t
          )
         )
@@ -2103,20 +2107,20 @@ The Task Keywords are noted with their keybindings in parentheses.
                                         "%?\n\n* Citations\n#+begin_quote\n${body}\n#+end_quote"
                                         :if-new (file+head
                                                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "#+title: ${title}\n#+date: %U\n")
+                                                 "${title}\n#+date: %U\n")
                                         :unnarrowed t
                                         )
                                        ("l" "Literature References" plain
                                         "%?\n\n* Abstract\n#+begin_quote\n${body}\n#+end_quote"
                                         :if-new (file+head
                                                  "References/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "#+title: ${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
+                                                 "${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
                                         :unnarrowed t
                                         :empty-lines 1)
                                        ("w" "Web site" entry
                                         :target (file+head
                                                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "#+title: ${title}\n#+date: %U\n")
+                                                 "${title}\n#+date: %U\n")
                                         "* %a :website:\n\n%U %?\n\n#+begin_quote\n%:initial\n#+end_quote")
                                        )
       )
@@ -2137,14 +2141,14 @@ The daily / monthly review templates are inspired by [[https://github.com/benoit
          "* %?"
          :if-new (file+head
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
+                  "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
          :kill-buffer t
          )
         ("j" "Journal entry" entry
          "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d>\n"
+                  "%<%Y-%m-%d>\n"
                   ("Journal"))
          :kill-buffer t
          )
@@ -2152,7 +2156,7 @@ The daily / monthly review templates are inspired by [[https://github.com/benoit
          "* %?\n  %U\n  %a\n  %i"
          :if-new (file+head+olp
                   "%<%Y-%B>.org"
-                  "#+title: %<%Y-%B>\n"
+                  "%<%Y-%B>\n"
                   ("Log"))
          :kill-buffer t
          )
@@ -2160,19 +2164,19 @@ The daily / monthly review templates are inspired by [[https://github.com/benoit
          (file "~/.dotfiles/doom/.doom.d/templates/Meeting.org")
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
+                  "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
                   ("Meetings")))
         ("r" "Review")
         ("rd" "Daily Review" entry
          (file "~/.dotfiles/doom/.doom.d/templates/daily-review.org")
          :target (file+head
           "%<%Y-%m-%d>.org"
-          "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"))
+          "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"))
         ("rm" "Monthly Review" entry
          (file "~/.dotfiles/doom/.doom.d/templates/monthly-review.org")
          :if-new (file+head
                   "%<%Y-%B>.org"
-                  "#+title: %<%Y-%B>\n"))))
+                  "%<%Y-%B>\n"))))
 #+end_src
 
 *** TODO Custom Agenda View
@@ -2852,8 +2856,8 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 *** Keybindings for Dired
 **** Keybindings To Open Dired (Description)
 
-| COMMAND    | DESCRIPTION                          | KEYBINDING |
-|------------+--------------------------------------+------------|
+| COMMAND    | DESCRIPTION                        | KEYBINDING |
+|------------+------------------------------------+------------|
 | dired      | /Open dired file manager/            | SPC d d    |
 | dired-jump | /Jump to current directory in dired/ | SPC d j    |
 
@@ -2874,15 +2878,15 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 **** Keybindings Within Dired (Description)
 
-| COMMAND             | DESCRIPTION                                   | KEYBINDING |
-|---------------------+-----------------------------------------------+------------|
+| COMMAND             | DESCRIPTION                                 | KEYBINDING |
+|---------------------+---------------------------------------------+------------|
 | dired-view-file     | /View file in dired/                          | SPC d v    |
 | dired-up-directory  | /Go up in directory tree/                     | h          |
 | dired-find-file     | /Go down in directory tree (or open if file)/ | l          |
-| dired-next-line     | Move down to next line                        | j          |
-| dired-previous-line | Move up to previous line                      | k          |
-| dired-mark          | Mark file at point                            | m          |
-| dired-unmark        | Unmark file at point                          | u          |
+| dired-next-line     | Move down to next line                      | j          |
+| dired-previous-line | Move up to previous line                    | k          |
+| dired-mark          | Mark file at point                          | m          |
+| dired-unmark        | Unmark file at point                        | u          |
 
 **** Dired-Mode-Mapping
 
@@ -3061,16 +3065,19 @@ There are a number of other language servers for Python so if you find that =pyl
 **** MacOS
 - MacOS has different location thanks to Anaconda:
   #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/config.el" "no")
-(setq python-shell-interpreter "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
-(setq dap-python-executable "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
-(setq lsp-python-ms-python-executable-cmd "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
+(setq python-shell-interpreter "/opt/homebrew/Caskroom/miniforge/base/envs/ody/bin/python")
+(setq dap-python-executable python-shell-interpreter
+      treemacs-python-executable python-shell-interpreter
+      lsp-pyright-python-executable-cmd python-shell-interpreter)
   #+end_src
 
 **** Linux
 Linux uses ~python3~:
   #+begin_src emacs-lisp :tangle (if (eq system-type 'gnu/linux) "./.doom.d/config.el" "no")
-(setq python-shell-interpreter "python3")
-(setq dap-python-executable "python3")
+(setq python-shell-interpreter "/home/jp/.conda/envs/webserver/bin/python")
+(setq dap-python-executable python-shell-interpreter
+      treemacs-python-executable python-shell-interpreter
+      lsp-pyright-python-executable-cmd python-shell-interpreter)
   #+end_src
 
 **** PyEnv
@@ -3459,11 +3466,11 @@ Useful mu4e manual pages:
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (map! :map beancount-mode-map
-      (:leader
+      :leader
        (:prefix "m"
         :desc "Insert Date" :n "i" #'beancount-insert-date
         :desc "Query" :n "q" #'beancount-query
-        )))
+        ))
 #+end_src
 
 ** Scimax

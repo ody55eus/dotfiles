@@ -823,13 +823,13 @@ Returns file content as a string."
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
+                  "${title}\n")
          :unnarrowed t)
         ("j" "Projects" plain
          (function jp/read-newproject-template)
          :if-new (file+head
                   "Projects/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
+                  "${title}\n")
          :clock-in :clock-resume
          :unnarrowed t
          )
@@ -837,7 +837,7 @@ Returns file content as a string."
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "People/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
+                  "${title}\n")
          :unnarrowed t
          )
         ("l" "Literature")
@@ -845,21 +845,21 @@ Returns file content as a string."
          "%?\n\nSee also %a.\n* Links\n- %x\n* Notes\n"
          :if-new (file+head
                   "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
+                  "${title}\n")
          :unnarrowed t
          )
         ("lr" "Bibliography reference" plain
          "#+ROAM_KEY: %^{citekey}\n#+PROPERTY: type %^{entry-type}\n#+FILETAGS: %^{keywords}\n#+AUTHOR: %^{author}\n%?"
          :if-new (file+head
                   "References/${citekey}.org"
-                  "#+title: ${title}\n")
+                  "${title}\n")
          :unnarrowed t
          )
         ("p" "PC" plain
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "PC/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n#+date: %U")
+                  "${title}\n#+date: %U")
          :unnarrowed t
          )
         )
@@ -870,20 +870,20 @@ Returns file content as a string."
                                         "%?\n\n* Citations\n#+begin_quote\n${body}\n#+end_quote"
                                         :if-new (file+head
                                                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "#+title: ${title}\n#+date: %U\n")
+                                                 "${title}\n#+date: %U\n")
                                         :unnarrowed t
                                         )
                                        ("l" "Literature References" plain
                                         "%?\n\n* Abstract\n#+begin_quote\n${body}\n#+end_quote"
                                         :if-new (file+head
                                                  "References/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "#+title: ${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
+                                                 "${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
                                         :unnarrowed t
                                         :empty-lines 1)
                                        ("w" "Web site" entry
                                         :target (file+head
                                                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "#+title: ${title}\n#+date: %U\n")
+                                                 "${title}\n#+date: %U\n")
                                         "* %a :website:\n\n%U %?\n\n#+begin_quote\n%:initial\n#+end_quote")
                                        )
       )
@@ -893,14 +893,14 @@ Returns file content as a string."
          "* %?"
          :if-new (file+head
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
+                  "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
          :kill-buffer t
          )
         ("j" "Journal entry" entry
          "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d>\n"
+                  "%<%Y-%m-%d>\n"
                   ("Journal"))
          :kill-buffer t
          )
@@ -908,7 +908,7 @@ Returns file content as a string."
          "* %?\n  %U\n  %a\n  %i"
          :if-new (file+head+olp
                   "%<%Y-%B>.org"
-                  "#+title: %<%Y-%B>\n"
+                  "%<%Y-%B>\n"
                   ("Log"))
          :kill-buffer t
          )
@@ -916,19 +916,19 @@ Returns file content as a string."
          (file "~/.dotfiles/doom/.doom.d/templates/Meeting.org")
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
+                  "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
                   ("Meetings")))
         ("r" "Review")
         ("rd" "Daily Review" entry
          (file "~/.dotfiles/doom/.doom.d/templates/daily-review.org")
          :target (file+head
           "%<%Y-%m-%d>.org"
-          "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"))
+          "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"))
         ("rm" "Monthly Review" entry
          (file "~/.dotfiles/doom/.doom.d/templates/monthly-review.org")
          :if-new (file+head
                   "%<%Y-%B>.org"
-                  "#+title: %<%Y-%B>\n"))))
+                  "%<%Y-%B>\n"))))
 
 (setq org-agenda-custom-commands
       '(("d" "Dashboard"
@@ -1434,9 +1434,10 @@ Returns file content as a string."
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
 (setq dap-python-debugger 'debugpy)
 
-(setq python-shell-interpreter "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
-(setq dap-python-executable "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
-(setq lsp-python-ms-python-executable-cmd "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
+(setq python-shell-interpreter "/opt/homebrew/Caskroom/miniforge/base/envs/ody/bin/python")
+(setq dap-python-executable python-shell-interpreter
+      treemacs-python-executable python-shell-interpreter
+      lsp-pyright-python-executable-cmd python-shell-interpreter)
 
 ;; Anaconda Path
 (setq conda-env-home-directory "/opt/homebrew/Caskroom/miniforge/base"
@@ -1699,8 +1700,8 @@ Returns file content as a string."
       :ne "d" #'ledger-reconcile-delete)
 
 (map! :map beancount-mode-map
-      (:leader
+      :leader
        (:prefix "m"
         :desc "Insert Date" :n "i" #'beancount-insert-date
         :desc "Query" :n "q" #'beancount-query
-        )))
+        ))
