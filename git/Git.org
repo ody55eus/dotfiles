@@ -58,7 +58,9 @@
 *.org	diff=org
 #+end_src
 * Diff - Tool (ediff.sh)
-See also [[https://github.com/paulotome/emacstool][Paulotome/Emacstool]].
+:SOURCE:
+Original from [[https://github.com/paulotome/emacstool][Paulotome/Emacstool]].
+:END:
 #+begin_src sh :tangle .local/bin/ediff.sh :shebang #!/bin/sh
 ########
 #### taken from github.com/paulotome/emacstool
