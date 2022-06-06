@@ -1,5 +1,4 @@
 #!/usr/bin/env zsh
-
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -72,7 +71,7 @@ bindkey '^S' fzf-history-widget
 bindkey -r "^u"
 bindkey -r "^d"
 
-# FZF 
+# FZF
 # TODO update for mac
 [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
 [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh

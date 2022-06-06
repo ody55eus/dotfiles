@@ -12,10 +12,10 @@
 
 (defun jp/display-startup-time ()
   (message "Emacs loaded in %s with %d garbage collections."
-                  (format "%.2f seconds"
-                          (float-time
-                           (time-subtract after-init-time before-init-time)))
-                  gcs-done))
+           (format "%.2f seconds"
+                   (float-time
+                    (time-subtract after-init-time before-init-time)))
+           gcs-done))
 
 (add-hook 'emacs-startup-hook #'jp/display-startup-time)
 
@@ -31,6 +31,9 @@
       scroll-margin 2               ; Add a margin when scrolling vertically
       x-stretch-cursor t)           ; Stretch cursor to the glyph width
 (set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
+
+(add-to-list 'load-path (file-truename "~/.doom.d"))
+(require 'org-workflow)
 
 (map! :leader
       (:prefix ("b" . "buffer")
@@ -83,10 +86,11 @@
       (:prefix ("s" . "search")
        :desc "Search/Insert BibTeX Cite" "c" #'org-ref-cite-insert-helm
        )
-      (:prefix ("t" . "toogle")
+      (:prefix ("t" . "toggle")
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
-       :desc "Toggle KeyCast Mode" "k" #'keycast-tab-bar-mode
+       :desc "Toggle KeyCast Mode" "k" #'keycast-mode
+       :desc "Toggle Menu Bar" "m" #'menu-bar-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        (:prefix ("SPC" . "Whitespaces")
@@ -113,6 +117,7 @@
         :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
         :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
         :desc "Org Roam UI" :n "u" #'org-roam-ui-open
+        :desc "Jump to Date" :n "j" #'jp/org-roam-jump-menu/body
         )
        )
       ;; (:prefix-map ("TAB" . "workspace"))
@@ -211,7 +216,7 @@
       :ne "b" #'+vertico/switch-workspace-buffer
       :ne "B" #'counsel-switch-buffer)
 
-(setq doom-theme 'doom-vibrant)
+(setq doom-theme 'doom-outrun-electric)
 (custom-set-faces!
   '(doom-modeline-buffer-modified :foreground "DarkOrange")
   '(bold :inherit 'doom-modeline-highlight)
@@ -222,8 +227,8 @@
 (setq doom-font (font-spec :family "JetBrains Mono" :size 16)
       doom-big-font (font-spec :family "JetBrains Mono" :size 22)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
-      doom-unicode-font (font-spec :family "JuliaMono" :size 16)
-      doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light :size 16))
+      doom-unicode-font (font-spec :family "JetBrains Mono" :size 16)
+      doom-serif-font (font-spec :family "JetBrains Mono" :weight 'light :size 16))
 
 (setq display-line-numbers-type 'relative)
 
@@ -258,6 +263,11 @@
 
 (map! :n [mouse-8] #'better-jumper-jump-backward
       :n [mouse-9] #'better-jumper-jump-forward)
+
+(setq calendar-week-start-day 1) ; Start the Week on Monday
+
+(setq tab-bar-close-button-show nil
+      tab-bar-new-button-show nil)
 
 (setq confirm-kill-emacs nil)           ;; Don't confirm every kill
 
@@ -312,7 +322,7 @@
                                        :action org-agenda)
                                       ("Open Roam Agenda" :icon
                                        (all-the-icons-octicon "checklist"
-                                                               :face 'doom-dashboard-menu-title)
+                                                              :face 'doom-dashboard-menu-title)
                                        :action jp/org-roam-agenda)
                                       ("Recently opened files" :icon
                                        (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
@@ -364,7 +374,7 @@
 ;; Set custom font for epub
 (defun my-nov-font-setup ()
   (face-remap-add-relative 'variable-pitch :family "Roboto"
-                                           :height 1.0))
+                           :height 1.0))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 
 (after! keycast
@@ -374,7 +384,11 @@
     (if keycast-mode
         (add-hook 'pre-command-hook 'keycast--update t)
       (remove-hook 'pre-command-hook 'keycast--update))))
-(add-to-list 'global-mode-string '("" mode-line-keycast))
+
+(add-to-list 'global-mode-string '("" keycast-mode-line))
+
+;;(setq avy-keys '(97 115 100 102 103 104 106 107 108))
+(setq avy-keys '(?u ?i ?a ?e ?o ?s ?n ?r ?t))
 
 (require 'avy)
 (defun avy-action-mark-to-char (pt)
@@ -416,11 +430,11 @@
       (alist-get ?Y avy-dispatch-alist) 'avy-action-yank-whole-line)
 
 (defun avy-action-teleport-whole-line (pt)
-    (avy-action-kill-whole-line pt)
-    (save-excursion (yank)) t)
+  (avy-action-kill-whole-line pt)
+  (save-excursion (yank)) t)
 
-(setf (alist-get ?t avy-dispatch-alist) 'avy-action-teleport
-      (alist-get ?T avy-dispatch-alist) 'avy-action-teleport-whole-line)
+(setf (alist-get ?m avy-dispatch-alist) 'avy-action-teleport
+      (alist-get ?M avy-dispatch-alist) 'avy-action-teleport-whole-line)
 
 (defun dictionary-search-dwim (&optional arg)
   "Search for definition of word at point. If region is active,
@@ -465,865 +479,19 @@ argument, query for word to search."
    (cdr (ring-ref avy-ring 0)))
   t)
 
-(setf (alist-get ?o avy-dispatch-alist) 'avy-action-embark)
-
-(setq tab-bar-new-tab-choice "*scratch*")
-
-(setq tab-bar-close-button-show t
-      tab-bar-new-button-show t
-      tab-bar-button-relief 1)
-
-(custom-set-faces!
-  '(tab-bar :inherit 'default)
-  '(tab-bar-tab :inherit 'bold :foreground "LightGreen"))
-
-;; Don't turn on tab-bar-mode when tabs are created
-;(setq tab-bar-show nil)
-
-;; Get the current tab name for use in some other display
-(defun jp/current-tab-name ()
-  (alist-get 'name (tab-bar--current-tab)))
-
-(global-emojify-mode 1)
-
-(after! org
-  (appendq! +ligatures-extra-symbols
-            `(:checkbox      "☐"
-              :pending       "◼"
-              :checkedbox    "☑"
-              :list_property "∷"
-              :results       "🠶"
-              :property      "☸"
-              :properties    "⚙"
-              :end           "∎"
-              :options       "⌥"
-              :title         "𝙏"
-              :subtitle      "𝙩"
-              :author        "𝘼"
-              :date          "𝘿"
-              :latex_header  "⇥"
-              :latex_class   "🄲"
-              :beamer_header "↠"
-              :begin_quote   "❮"
-              :end_quote     "❯"
-              :begin_export  "⯮"
-              :end_export    "⯬"
-              :priority_a   ,(propertize "⚑" 'face 'all-the-icons-red)
-              :priority_b   ,(propertize "⬆" 'face 'all-the-icons-orange)
-              :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
-              :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
-              :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)
-              :em_dash       "—"))
-  (set-pretty-symbols! 'org-mode
-    :merge t
-    :name           "⁍"
-    :checkbox      "[ ]"
-    :pending       "[-]"
-    :checkedbox    "[X]"
-    :list_property "::"
-    :results       "#+RESULTS:"
-    :property      "#+PROPERTY:"
-    :property      ":PROPERTIES:"
-    :end           ":END:"
-    :options       "#+OPTIONS:"
-    :title         "#+TITLE:"
-    :subtitle      "#+SUBTITLE:"
-    :author        "#+AUTHOR:"
-    :date          "#+DATE:"
-    :latex_class   "#+LATEX_CLASS:"
-    :latex_header  "#+LATEX_HEADER:"
-    :beamer_header "#+BEAMER_HEADER:"
-    :begin_quote   "#+BEGIN_QUOTE"
-    :end_quote     "#+END_QUOTE"
-    :begin_export  "#+BEGIN_EXPORT"
-    :end_export    "#+END_EXPORT"
-    :priority_a    "[#A]"
-    :priority_b    "[#B]"
-    :priority_c    "[#C]"
-    :priority_d    "[#D]"
-    :priority_e    "[#E]"
-    :em_dash       "---")
-  )
-
-(after! org
-  (global-org-modern-mode 1)
-  (setq org-modern-todo nil) ; Don't prettify TODO Items
-  )
-
-(setq org-ellipsis " ▼ ")
-
-(setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
-
-(after! org
-  (setq org-priority-highest ?A
-        org-priority-lowest ?E
-        org-priority-faces
-        '((?A . 'all-the-icons-red)
-          (?B . 'all-the-icons-orange)
-          (?C . 'all-the-icons-yellow)
-          (?D . 'all-the-icons-green)
-          (?E . 'all-the-icons-blue))))
-
-(setq org-todo-keyword-faces '(
-                               ("PROJ" . "DarkGreen")
-                               ("EPIC" . (:foreground "DodgerBlue" :weight bold))
-                               ("TODO" . org-warning)
-                               ("IDEA" . (:foreground "BlueViolet"))
-                               ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
-                               ("PLAN" . (:foreground "Magenta1" :weight bold :underline t))
-                               ("ACTIVE" . (:foreground "Systemyellowcolor" :weight bold :slant italic :underline t))
-                               ("REVIEW" . (:foreground "Darkorange2" :weight bold :underline t))
-                               ("WAIT" . (:foreground "yellow4" :weight light :slant italic))
-                               ("HOLD" . (:foreground "red4"))
-                               ("KILL" . "red")
-                               ("CANCELLED" . (:foreground "red3" :weight bold :strike-through t))
-                               )
-      )
-
-(defun jp/org-mode-setup ()
-  (mixed-pitch-mode 1) ; Enable different Fonts
-  ;;(org-roam-setup) ; Enable org-roam-db-autosync
-  (setq org-image-actual-width nil) ; Set optional images
-  (rainbow-mode 1)    ; Enable rainbow mode
-  )
-(add-hook 'org-mode-hook #'jp/org-mode-setup)
-
-(defun jp/org-visual-fill-column ()
-  (setq visual-fill-column-width 120  ; Margin width
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1) ; Enable Margins
-  (org-indent-mode 1)  ; Indent text following current headline
-  (visual-line-mode 1)  ; also show entire lines
-  )
-
-(add-hook 'org-mode-hook #'jp/org-visual-fill-column)
-
-;; setting org headlines
-(custom-set-faces!
-   '(org-level-1 :inherit outline-1 :height 1.2)
-   '(org-level-2 :inherit outline-2 :height 1.1)
-   '(org-level-3 :inherit outline-3 :height 1.0)
-   '(org-level-4 :inherit outline-4 :height 1.0)
-   '(org-level-5 :inherit outline-5 :height 1.0)
-  )
-
-;; Make sure org-indent face is available
-(require 'org-indent)
-
-;; Ensure that anything that should be fixed-pitch in Org files appears that way
-(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
-(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
-
-(setq org-roam-v2-ack t); Disable Warning for org-roam v2
-(setq org-directory "~/org/"
-      org-agenda-files '("~/org/Agenda.org"
-                         "~/org/Tasks.org"
-                         "~/org/Habits.org"
-                         ;;"~/org/Emails.org"
-                         )
-      org-default-notes-file (concat org-directory "/Notes.org")
-      org-clock-sound "~/sounds/ding.wav")
-
-(setq auth-sources '((:source "~/.authinfo.gpg")))
-
-(defun jp/org-roam-select-prefix (prefix)
-  (org-roam-node-read
-   nil
-   (lambda (node)
-     (string-prefix-p
-      (concat org-roam-directory prefix)
-      (org-roam-node-file node))
-     )
-   ))
-
-(defun jp/org-roam-ignore-prefix (prefix)
-  (org-roam-node-read
-   nil
-   (lambda (node)
-     (not (string-prefix-p
-           (concat org-roam-directory prefix)
-           (org-roam-node-file node))
-          ))
-   ))
-
-(defun jp/org-roam-ignore-literature ()
-  (interactive)
-  (jp/org-roam-ignore-prefix "/Literature"))
-
-(defun jp/org-roam-select-literature ()
-  (interactive)
-  (jp/org-roam-select-prefix "/Literature"))
-
-(defun jp/org-roam-ignore-pc ()
-  (interactive)
-  (jp/org-roam-ignore-prefix "/PC"))
-
-(defun jp/org-roam-select-pc ()
-  (interactive)
-  (jp/org-roam-select-prefix "/PC"))
-
-(defun jp/org-roam-ignore-projects ()
-  (interactive)
-  (jp/org-roam-ignore-prefix "/Projects"))
-
-(defun jp/org-roam-select-projects ()
-  (interactive)
-  (jp/org-roam-select-prefix "/Projects"))
-
-(defun jp/org-roam-ignore-other ()
-  (interactive)
-  (jp/org-roam-ignore-prefix "/20"))
-
-(defun jp/org-roam-select-other ()
-  (interactive)
-  (jp/org-roam-select-prefix "/20"))
-
-(defun jp/org-roam-get-tagged (&optional tag)
-  (mapcar
-   #'org-roam-node-file
-   (seq-filter
-    (lambda (node)
-      (member tag (org-roam-node-tags node)))
-    (org-roam-node-list))))
-
-(defun jp/org-roam-agenda ()
-  (interactive)
-  (let ((org-agenda-files (jp/org-roam-get-tagged "Tasks")))
-  (org-agenda)))
-
-(setq org-templates-directory (concat doom-private-dir "/templates/"))
-(defun jp/read-template (template)
-  "Reading TEMPLATE as a file from org-templates-directory.
-Returns file content as a string."
-  (with-temp-buffer
-    (insert-file-contents (concat org-templates-directory template))
-    (buffer-string)))
-(defun jp/read-newproject-template ()
-  (jp/read-template "new-project.org"))
-(defun jp/read-dailyreview-template ()
-  (jp/read-template "daily-review.org"))
-(defun jp/read-weekly-template ()
-  (jp/read-template "weekly-review.org"))
-(defun jp/read-monthly-template ()
-  (jp/read-template "monthly-review.org"))
-(defun jp/read-meeting-template ()
-  (jp/read-template "Meeting.org"))
-(defun jp/read-script-template ()
-  (jp/read-template "script.org"))
-
-(defun jp/daily-review ()
-  (interactive)
-  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
-                                  (file "~/.doom.d/templates/daily-review.org")))))
-    (progn
-      (org-capture nil "d")
-      (org-capture-finalize t)
-      (org-speed-move-safe 'outline-up-heading)
-      (org-narrow-to-subtree)
-      (org-clock-in))))
-
-(defun jp/weekly-review ()
-  (interactive)
-  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
-                                  (file "~/.doom.d/templates/weekly-review.org")))))
-    (progn
-      (org-capture nil "d")
-      (org-capture-finalize t)
-      (org-speed-move-safe 'outline-up-heading)
-      (org-narrow-to-subtree)
-      (org-clock-in))))
-
-(defun jp/monthly-review ()
-  (interactive)
-  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
-                                  (file "~/.doom.d/templates/monthly-review.org")))))
-    (progn
-      (org-capture nil "d")
-      (org-capture-finalize t)
-      (org-speed-move-safe 'outline-up-heading)
-      (org-narrow-to-subtree)
-      (org-clock-in))))
-
-(defun jp/go-to-projects (&optional name head)
-  ""
-  (interactive)
-  (let* ((headline-regex (or head "* Projects"))
-         (node (jp/org-roam-select-projects)))
-    (org-roam-node-visit node)
-    ;;(org-roam-node-find-noselect node)
-    (widen)
-    (beginning-of-buffer)
-    (re-search-forward headline-regex)
-    (beginning-of-line)))
-
-(setq org-todo-keywords '(
-                          (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
-                                "DONE(d)")
-                          (sequence "BACKLOG(b)" "PLAN(P)" "ACTIVE(a)"
-                                    "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
-                                    "COMPLETED(c)" "KILL(k)" "CANCELLED(C)" "STOPPED(s@)")
-                        )
-      )
-
-(setq org-capture-templates '(
-                              ("a" "Agenda")
-                              ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
-                               "* TODO %?\n %i\n %a")
-                              ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
-                               "* TODO %?\n %i\n %a")
-                              ("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
-                               "* %?\n %x\n %i\n %a")
-                              ("M" "Meeting" entry
-                               (file+olp+datetree "~/org/Meetings.org")
-                               (function jp/read-meeting-template)
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("m" "Email Workflow")
-                              ("mf" "Follow Up" entry (file+olp "~/org/Mail.org" "Follow Up")
-                               "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote")
-                              ("mr" "Read Later" entry (file+olp "~/org/Mail.org" "Read Later")
-                               "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote%x")
-                              ("l" "Logbook Entries")
-                              ("ls" "Software" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %U %a%? :Software:"
-                               :clock-in :clock-resume)
-                              ("lh" "Hardware" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %U %a%? :Hardware:"
-                               :clock-in :clock-resume)
-                              ("lc" "Configuration" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %U %a%? :Configuration:"
-                               :clock-in :clock-resume)
-                              ("s" "Symptom Journal" entry (file+datetree "symptom-journal.org.gpg")
-                               "* ~%<%H:%M>~ - %? :symptom:\n"
-                               :time-prompt t
-                               :unnarrowed t)
-                              ("t" "Task Entries")
-                              ("tt" "Todo Task" entry (file+headline "~/org/Notes.org" "Tasks")
-                               "* TODO %?\n %i\n %a")
-                              ("te" "Epic Task" entry (file+headline "~/org/Notes.org" "Epic")
-                               "* EPIC %?\n %i\n %a")
-                              ("ti" "New Idea" entry (file+headline "~/org/Notes.org" "Ideas")
-                               "* IDEA %?\n %i\n %a")))
-
-(setq org-roam-capture-templates
-      '(("d" "default" plain
-         "%?\n\nSee also %a.\n"
-         :if-new (file+head
-                  "%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n")
-         :unnarrowed t)
-        ("j" "Projects" plain
-         (function jp/read-newproject-template)
-         :if-new (file+head
-                  "Projects/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n")
-         :clock-in :clock-resume
-         :unnarrowed t
-         )
-        ("i" "Individuum / Persona" plain
-         "%?\n\nSee also %a.\n"
-         :if-new (file+head
-                  "People/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n")
-         :unnarrowed t
-         )
-        ("l" "Literature")
-        ("ll" "Literature Note" plain
-         "%?\n\nSee also %a.\n* Links\n- %x\n* Notes\n"
-         :if-new (file+head
-                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n")
-         :unnarrowed t
-         )
-        ("lr" "Bibliography reference" plain
-         "#+ROAM_KEY: %^{citekey}\n#+PROPERTY: type %^{entry-type}\n#+FILETAGS: %^{keywords}\n#+AUTHOR: %^{author}\n%?"
-         :if-new (file+head
-                  "References/${citekey}.org"
-                  "${title}\n")
-         :unnarrowed t
-         )
-        ("p" "PC" plain
-         "%?\n\nSee also %a.\n"
-         :if-new (file+head
-                  "PC/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n#+date: %U")
-         :unnarrowed t
-         )
-        )
-      )
-
-(setq org-roam-capture-ref-templates '(
-                                       ("r" "Reference" plain
-                                        "%?\n\n* Citations\n#+begin_quote\n${body}\n#+end_quote"
-                                        :if-new (file+head
-                                                 "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "${title}\n#+date: %U\n")
-                                        :unnarrowed t
-                                        )
-                                       ("l" "Literature References" plain
-                                        "%?\n\n* Abstract\n#+begin_quote\n${body}\n#+end_quote"
-                                        :if-new (file+head
-                                                 "References/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
-                                        :unnarrowed t
-                                        :empty-lines 1)
-                                       ("w" "Web site" entry
-                                        :target (file+head
-                                                 "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "${title}\n#+date: %U\n")
-                                        "* %a :website:\n\n%U %?\n\n#+begin_quote\n%:initial\n#+end_quote")
-                                       )
-      )
-
-(setq org-roam-dailies-capture-templates
-      '(("d" "default" entry
-         "* %?"
-         :if-new (file+head
-                  "%<%Y-%m-%d>.org"
-                  "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
-         :kill-buffer t
-         )
-        ("j" "Journal entry" entry
-         "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
-         :if-new (file+head+olp
-                  "%<%Y-%m-%d>.org"
-                  "%<%Y-%m-%d>\n"
-                  ("Journal"))
-         :kill-buffer t
-         )
-        ("l" "Monthly Log" entry
-         "* %?\n  %U\n  %a\n  %i"
-         :if-new (file+head+olp
-                  "%<%Y-%B>.org"
-                  "%<%Y-%B>\n"
-                  ("Log"))
-         :kill-buffer t
-         )
-        ("m" "meeting" entry
-         (file "~/.dotfiles/doom/.doom.d/templates/Meeting.org")
-         :if-new (file+head+olp
-                  "%<%Y-%m-%d>.org"
-                  "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
-                  ("Meetings")))
-        ("r" "Review")
-        ("rd" "Daily Review" entry
-         (file "~/.dotfiles/doom/.doom.d/templates/daily-review.org")
-         :target (file+head
-          "%<%Y-%m-%d>.org"
-          "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"))
-        ("rm" "Monthly Review" entry
-         (file "~/.dotfiles/doom/.doom.d/templates/monthly-review.org")
-         :if-new (file+head
-                  "%<%Y-%B>.org"
-                  "%<%Y-%B>\n"))))
-
-(setq org-agenda-custom-commands
-      '(("d" "Dashboard"
-         ((agenda "" ((org-deadline-warning-days 20)))
-          (todo "BACKLOG"
-                ((org-agenda-overriding-header "Backlog Tasks")))
-          (todo "ACTIVE" ((org-agenda-overriding-header "Active Tasks")))
-          (todo "REVIEW" ((org-agenda-overriding-header "Active Reviews")))
-          (todo "EPIC" ((org-agenda-overriding-header "Active Epics")))))
-
-        ("T" "All Todo Tasks"
-         ((todo "TODO"
-                ((org-agenda-overriding-header "Todo Tasks")))))
-
-        ("W" "Work Tasks" tags-todo "+work")
-
-        ;; Low-effort next actions
-        ("E" tags-todo "+TODO=\"EPIC\"+Effort<15&+Effort>0"
-         ((org-agenda-overriding-header "Low Effort Tasks")
-          (org-agenda-max-todos 20)
-          (org-agenda-files org-agenda-files)))
-
-        ("w" "Workflow Status"
-         ((todo "WAIT"
-                ((org-agenda-overriding-header "Waiting on External")
-                 (org-agenda-files org-agenda-files)))
-          (todo "REVIEW"
-                ((org-agenda-overriding-header "In Review")
-                 (org-agenda-files org-agenda-files)))
-          (todo "PLAN"
-                ((org-agenda-overriding-header "In Planning")
-                 (org-agenda-todo-list-sublevels nil)
-                 (org-agenda-files org-agenda-files)))
-          (todo "BACKLOG"
-                ((org-agenda-overriding-header "Project Backlog")
-                 (org-agenda-todo-list-sublevels nil)
-                 (org-agenda-files org-agenda-files)))
-          (todo "READY"
-                ((org-agenda-overriding-header "Ready for Work")
-                 (org-agenda-files org-agenda-files)))
-          (todo "ACTIVE"
-                ((org-agenda-overriding-header "Active Projects")
-                 (org-agenda-files org-agenda-files)))
-          (todo "COMPLETED"
-                ((org-agenda-overriding-header "Completed Projects")
-                 (org-agenda-files org-agenda-files)))
-          (todo "CANC"
-                ((org-agenda-overriding-header "Cancelled Projects")
-                 (org-agenda-files org-agenda-files)))))
-        ("h" "Daily habits"
-         ((agenda ""))
-         ((org-agenda-show-log t)
-          (org-agenda-ndays 14)
-          (org-agenda-log-mode-items '(state))
-          (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
-        ;; other commands here
-        ))
-
-(setq org-tag-alist
-      '((:startgroup)
-         ; Put mutually exclusive tags here
-         (:endgroup)
-         ("@sys" . ?S)
-         ("@home" . ?H)
-         ("@work" . ?W)
-         ("planning" . ?p)
-         ("publish" . ?P)
-         ("batch" . ?b)
-         ("note" . ?n)
-         ("idea" . ?i)))
-
-(setq org-lowest-priority ?E) ;; Priorities A to E
-
-(setq org-refile-targets
-      '(("Archive.org" :maxlevel . 1)
-        ("Tasks.org" :maxlevel . 1)))
-
-(setq org-archive-location ".archive/%s::")
-
-;; Save Org buffers after refiling!
-(advice-add 'org-refile :after 'org-save-all-org-buffers)
-
-(add-to-list 'org-modules 'org-habit)
-
-;; (setq org-latex-to-pdf-process '("texi2dvi --pdf --clean --verbose --batch %f"))
-
-(require 'ox-latex)
-(unless (boundp 'org-latex-classes)
-  (setq org-latex-classes nil))
-
-;; Define Koma Article Class
-(add-to-list 'org-latex-classes
-             '("koma-article"
-               "\\documentclass{scrartcl}"
-               ("\\section{%s}" . "\\section*{%s}")))
-
-;; Define Review of Scientific Instruments Class
-(add-to-list 'org-latex-classes
-             '("aip-rsi"
-               "\\documentclass[
-                aip, % AIP Journals
-                rsi, % Review of Scientific Instruments
-                amsmath,amssymb, % Basic Math Packages
-                preprint, % or reprint
-                ]{revtex4-2}
-\\include{structure}
-[NO-DEFAULT-PACKAGES]
-[NO-EXTRA]
-[NO-PACKAGES]
-
-%% Apr 2021: AIP requests that the corresponding
-%% email to be moved after the affiliations
-\\makeatletter
-\\def\\@email#1#2{%
- \\endgroup
- \\patchcmd{\\titleblock@produce}
-  {\\frontmatter@RRAPformat}
-  {\\frontmatter@RRAPformat{\\produce@RRAP{*#1\\href{mailto:#2}{#2}}}\\frontmatter@RRAPformat}
-  {}{}
-}%
-\\makeatother"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ))
-
-(defun org-export-latex-no-toc (depth)
-  (when depth
-    (format "%% Org-mode is exporting headings to %s levels.\n"
-            depth)))
-(setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
-
-(add-to-list 'org-latex-classes
-             '("letter"
-               "\\documentclass[
-    fontsize=12pt,
-    % Satzspiegel
-    DIV=13,
-    paper=a4,
-    enlargefirstpage=on,
-    pagenumber=headright,
-    %---------------------------------------------------------------------------
-    % Layout
-    headsepline=on,
-    parskip=half,
-    %---------------------------------------------------------------------------
-    % Briefkopf und Anschrift
-    %fromalign=location,
-    fromphone=off,
-    fromrule=off,
-    fromfax=off,
-    fromemail=on,
-    fromurl=on,
-    fromlogo=off,
-    addrfield=on,
-    backaddress=off,
-    subject=beforeopening,
-    locfield=narrow,
-    foldmarks=on,
-    numericaldate=off,
-    refline=narrow,
-    draft=off
-          ]{scrlttr2}
-[NO-DEFAULT-PACKAGES]
-[NO-EXTRA]
-[NO-PACKAGES]
-\\usepackage[T1]{fontenc}
-\\usepackage[utf8]{inputenc}
-\\usepackage{url}
-\\usepackage{graphicx}
-\\usepackage{uniinput}
-% Fonts
-\\setkomafont{fromname}{\\sffamily}
-\\setkomafont{fromaddress}{\\sffamily}
-\\setkomafont{pagenumber}{\\sffamily}
-\\setkomafont{subject}{\\mdseries \\bfseries}
-\\setkomafont{backaddress}{\\mdseries}
-\\usepackage{mathptmx}%% Schrift Times
-"
-               ("" . "")
-               )
-             )
-
-(add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
-(add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
-
-(setq plantuml-default-exec-mode 'jar)
-
-(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
-      org-roam-dailies-directory (file-truename "~/ZK/daily")
-      org-attach-id-dir (concat org-roam-directory "/.attachments")
-      org-id-locations-file "~/ZK/.orgids"
-      org-roam-completion-everywhere nil
-      org-roam-completion-system 'default
-      org-roam-db-location "~/.emacs.d/org-roam.db"
-      ;;org-roam-graph-executable "neato" ; or "dot" (default)
-      )
-
-(setq org-roam-mode-section-functions
-      (list #'org-roam-backlinks-section
-            #'org-roam-reflinks-section
-            #'org-roam-unlinked-references-section
-            ))
-
-(use-package! websocket
-    :after org-roam)
-
-(use-package! org-roam-ui
-    :after org-roam ;; or :after org
-;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-;;         a hookable mode anymore, you're advised to pick something yourself
-;;         if you don't care about startup time, use
-;;    :hook (after-init . org-roam-ui-mode)
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
-
-(after! org
-  (custom-set-faces!
-    '(org-document-title :height 1.2)))
-
-;; Enable org protocol for links (org-roam://...)
-(defun jp/load-protocol ()
-  (condition-case nil
-      (require 'org-protocol)
-    (error nil))
-  (require 'org-protocol)
-  (require 'org-roam-protocol)
-  (require 'org-protocol-capture-html))
-
-(jp/load-protocol)
-
-(after! delve
-  (setq delve-dashboard-tags '("entry"))
-  (add-hook #'delve-mode-hook #'delve-compact-view-mode)
-  (delve-global-minor-mode)
-  (evil-define-key* '(normal insert) delve-mode-map
-    (kbd "<return>") #'delve--key--insert-query-or-pile
-    (kbd "<tab>") #'delve--key--tab
-    (kbd "gr") #'delve--key--toggle-preview
-    (kbd "sm") #'delve--key--sort
-    (kbd "<right>") #'delve--key--insert-fromlink
-    (kbd "<left>")  #'delve--key--insert-backlink
-    (kbd "c") #'delve--key--collect-into-pile
-    (kbd "q") #'delve-kill-all-delve-buffers
-    (kbd "t") #' delve--key--add-tags))
-
-(require 'org-alert)
-
-(setq +org-msg-accent-color "#1a5fb4"
-      org-msg-greeting-fmt "\nHi %s,\n\n"
-      org-msg-signature "\n\n#+begin_signature\nAll the best,\\\\\n@@html:<b>@@Jonathan@@html:</b>@@\n#+end_signature")
-(map! :map org-msg-edit-mode-map
-      :after org-msg
-      :n "G" #'org-msg-goto-body)
-
-(with-eval-after-load 'org
-  ;; This is needed as of Org 9.2
-  (require 'org-tempo)
-
-  (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
-  (add-to-list 'org-structure-template-alist '("uml" . "src plantuml :file uml.png"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
-  (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
-  (add-to-list 'org-structure-template-alist '("py" . "src python"))
-  (add-to-list 'org-structure-template-alist '("go" . "src go"))
-  (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
-  (add-to-list 'org-structure-template-alist '("json" . "src json")))
-
-;; Enable Special Blocks in Org-Mode
-(add-hook #'org-mode-hook #'org-special-block-extras-mode)
-
-;; Use short names like ‘defblock’ instead of the fully qualified name
-;; ‘org-special-block-extras--defblock’
-;; (org-special-block-extras-short-names)
-
-(defun jp/presentation-setup()
-  ;;(setq text-scale-mode-amount 3)
-  ;;(text-scale-mode 1)
-  (org-display-inline-images)
-  (org-tree-slide-activate-message "Presentation started!")
-  (org-tree-slide-deactivate-message "Presentation finished!")
-  (org-tree-slide-header t)
-  (org-tree-slide-breadcrumbs " // ")
-  )
-
-(defun jp/presentation-end()
-  ;;(text-scale-mode 0)
-  )
-
-(add-hook #'org-tree-slide-play #'jp/presentation-setup)
-(add-hook #'org-tree-slide-stop #'jp/presentation-end)
-
-;; Enable PlantUML Diagrams
-(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-;; Jar Configuration
-(setq org-plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
-(setq plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
-(setq plantuml-default-exec-mode 'jar)
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((R . t)
-   (python . t)
-   (ipython . t)
-   (jupyter . t)
-   (sqlite . t)
-   (LaTeX . t)
-   (plantuml . t)
-   (emacs-lisp . t)))
-
-(setq org-babel-tangle-comment-format-beg ""
-      org-babel-tangle-comment-format-end "")
-
-(defconst jp/bib-libraries (list
-                            (concat org-roam-directory "/BibTeX/Library.bib")
-                            (concat org-roam-directory "/BibTeX/Master.bib")
-                            "~/Projects/Method-Paper/bibliography.bib"))
-(defconst jp/main-bib-library (nth 0 jp/bib-libraries))
-(defconst jp/main-pdfs-library-paths `("~/nc/Library/BibTeX/")) ; PDFs directories in a list
-(defconst jp/main-pdfs-library-path (nth 0 jp/main-pdfs-library-paths)) ; Main PDFs directory
-(defconst jp/bib-notes-dir (concat org-roam-directory "/References/")) ; I use org-roam to manage all my notes, including bib notes.
-
-
-(after! org-roam
-  (require 'org-ref)) ; optional: if Org Ref is not loaded anywhere else, load it here
-
-;; Helm Autocompletion
-(autoload 'helm-bibtex "helm-bibtex" "" t)
-
-;; Ivy Autocompletion
-;;(autoload 'ivy-bibtex "ivy-bibtex" "" t)
-;; ivy-bibtex requires ivy's `ivy--regex-ignore-order` regex builder, which
-;; ignores the order of regexp tokens when searching for matching candidates.
-;; Add something like this to your init file:
-;; (setq ivy-re-builders-alist
-;;       '((ivy-bibtex . ivy--regex-ignore-order)
-;;         (t . ivy--regex-plus)))
-
-(setq bibtex-file-path (file-name-directory jp/main-bib-library)
-      bibtex-completion-bibliography jp/bib-libraries
-      bibtex-completion-library-path jp/main-pdfs-library-paths
-      bibtex-completion-notes-path jp/bib-notes-dir
-      bibtex-dialect 'biblatex
-      org-cite-global-bibliography jp/bib-libraries
-      org-cite-insert-processor 'org-ref
-      org-cite-follow-processor 'org-ref
-      org-cite-activate-processor 'org-ref
-      org-cite-export-processors '((latex biblatex)
-                                   (t csl))
-      citar-open-note-function 'orb-citar-edit-note
-      citar-notes-paths (list (file-name-directory jp/bib-notes-dir))
-      orb-preformat-keywords '("citekey" "title" "url" "author-or-editor" "keywords" "file")
-      orb-process-file-keyword t
-      orb-file-field-extensions '("pdf"))
-
-(require 'oc-biblatex)
-(require 'oc-csl)
-(require 'citar)
-
-(use-package! citar
-  :hook (doom-after-init-modules . citar-refresh)
-  :config
-  ;; This will add watches for the global bib files and in addition add a hook to LaTeX-mode-hook and org-mode-hook to add watches for local bibliographic files.
-  (citar-filenotify-setup '(LaTeX-mode-hook org-mode-hook))
-  (require 'citar-org)
-  (setq citar-bibliography jp/bib-libraries
-        citar-library-paths jp/main-pdfs-library-paths
-        citar-file-extensions '("pdf" "org" "md")
-        citar-file-open-function #'find-file)
-  (defun jp/citar-full-names (names)
-    "Transform names like LastName, FirstName to FirstName LastName."
-    (when (stringp names)
-      (mapconcat
-       (lambda (name)
-         (if (eq 1 (length name))
-             (split-string name " ")
-           (let ((split-name (split-string name ", ")))
-             (cl-concatenate 'string (nth 1 split-name) " " (nth 0 split-name)))))
-       (split-string names " and ") ", ")))
-  (setq citar-display-transform-functions
-        '((t . citar-clean-string)
-          (("author" "editor") . jp/citar-full-names)))
-  (setq citar-templates
-        '((main . "${author editor:55}     ${date year issued:4}     ${title:55}")
-          (suffix . "  ${tags keywords keywords:40}")
-          (preview . "${author editor} ${title}, ${journal publisher container-title collection-title booktitle} ${volume} (${year issued date}).\n")
-          (note . "#+title: Notes on ${author editor}, ${title}")))
-  ;; use consult-completing-read for enhanced interface
-  (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple))
-
-(setq org-noter-notes-search-path (list jp/bib-notes-dir))
+(setf (alist-get ?x avy-dispatch-alist) 'avy-action-embark)
+
+(after! popper
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+          help-mode
+          compilation-mode))
+  (global-set-key (kbd "C-`") 'popper-toggle-latest)
+  (global-set-key (kbd "M-`") 'popper-cycle)
+  (global-set-key (kbd "C-M-`") 'popper-toggle-type)
+  (popper-mode +1))
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired
@@ -1427,6 +595,7 @@ Returns file content as a string."
 (defun jp/python-mode-hook()
   (require 'lsp-pyright)
   (require 'dap-python)
+  (modify-syntax-entry ?_ "w") ; treat underscore (_) as word-breaking character
   (lsp-deferred))
 
 (add-hook 'python-mode-hook #'jp/python-mode-hook)
@@ -1434,10 +603,17 @@ Returns file content as a string."
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
 (setq dap-python-debugger 'debugpy)
 
-(setq python-shell-interpreter "/opt/homebrew/Caskroom/miniforge/base/envs/ody/bin/python")
-(setq dap-python-executable python-shell-interpreter
-      treemacs-python-executable python-shell-interpreter
-      lsp-pyright-python-executable-cmd python-shell-interpreter)
+(defvar jp/python
+      "/opt/homebrew/Caskroom/miniforge/base/envs/ody/bin/python"
+      ; "/opt/miniconda3/bin/python"
+      ; (file-truename "~/.conda/envs/webserver/bin/python")
+      ; (file-truename "~/.conda/envs/webserver-old/bin/python")
+      ; (file-truename "~/.conda/envs/ /bin/python")
+      "Python binary path.")
+(setq python-shell-interpreter jp/python)
+(setq dap-python-executable jp/python
+      treemacs-python-executable jp/python
+      lsp-pyright-python-executable-cmd jp/python)
 
 ;; Anaconda Path
 (setq conda-env-home-directory "/opt/homebrew/Caskroom/miniforge/base"
@@ -1494,7 +670,13 @@ Returns file content as a string."
 
     (eshell-git-prompt-use-theme 'powerline))
 
-;; Optional Magit Configuration
+(after! magit
+  (remove-hook 'server-switch-hook 'magit-commit-diff)
+)
+
+;; Magit Configuration to enable gpg to sign keys
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+(setq exec-path (append exec-path '("/usr/local/bin")))
 
 ;; Tell Emacs where to find mu4e (only necessary if manual compiled)
 (pcase system-type

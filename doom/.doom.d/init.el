@@ -22,13 +22,13 @@
        :completion
        (company
         +childframe
-       )           ; the ultimate code completion backend
+        )           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        (ivy
-       ;; +fuzzy              ; Enables fuzzy completion for Ivy searches
+        ;; +fuzzy              ; Enables fuzzy completion for Ivy searches
         +prescient            ; Enables prescient filtering and sorting for Ivy searches.
-       ;; +childframe         ; display in a floating window
+        ;; +childframe         ; display in a floating window
         +icons)               ; a search engine for love and life
        (vertico +icons)           ; the search engine of the future
 
@@ -50,7 +50,7 @@
        (popup +defaults)  ; tame sudden yet inevitable temporary windows
        ;;tabs             ; a tab bar for Emacs
        treemacs           ; a project drawer, like neotree but cooler
-       ;;unicode          ; extended unicode support for various languages
+       unicode          ; extended unicode support for various languages
        vc-gutter          ; vcs diff in the fringe
        vi-tilde-fringe    ; fringe tildes to mark beyond EOB
        window-select      ; visually switch windows
@@ -161,7 +161,7 @@
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org               ; organize your plain life in plain text
-        ;+pretty                     ; yessss my pretties! (nice unicode symbols)
+        ;;+pretty                     ; yessss my pretties! (nice unicode symbols)
         +dragndrop                  ; drag & drop files/images into org buffers
         ;;+hugo                     ; use Emacs for hugo blogging
         +noter                      ; enhanced PDF notetaking

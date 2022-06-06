@@ -1,7 +1,7 @@
 [user]
 	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
-    signingKey = 0x01B6FB927AAEC59B
+	signingkey = 2361DFC839413E7A84B2152B01B6FB927AAEC59B
 [gpg]
 	program = gpg
 [init]
@@ -15,11 +15,7 @@
 	excludesfile = ~/.config/git/ignore
 	attributesfile = ~/.config/git/attributes
 	pager = nvim -R
-[commit]
-	gpgSign = true
-[tag]
-	gpgSign = true
-
+	sshCommand = ssh
 [diff]
 	tool = ediff
 	guitool = ediff
@@ -38,3 +34,14 @@
     trueExitCode = true
 [color]
 	pager = no
+[safe]
+	directory = /home/jp/share/org
+	directory = /home/jp/share/notes
+	directory = /home/jp/share/Projects/Code/01_2fa_demo
+	directory = /home/jp/share/Projects/Doc/frontdesk-documentation
+	directory = /home/jp/share/Projects/Code/frontdesk
+	directory = /home/jp/share/Projects/Code/control-panel
+[gitlab]
+	user = ody55eus
+[commit]
+	gpgsign = true

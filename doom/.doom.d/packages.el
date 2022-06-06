@@ -58,6 +58,7 @@
 (package! org-roam)             ; Extended org-mode for Zettelkasten principle.
 (package! org-ref)              ; References and citations
 (package! org-super-agenda)
+(package! org-appear)           ; Display markup symbols (*=~ etc.) on cursor-over
 (package! org-alert)            ; Enable org-mode notifications.
 (package! org-tree-slide)       ; Enable org-mode presentations.
 (package! org-modern)           ; Alternative for org-bullets and org-superstar.
@@ -121,12 +122,14 @@
 (package! emojify)              ; Convert ☺ into emoji's.
 
 ;; Functional Enhancements
+(package! popper)
 (package! embark)
+
+;; Other Software Integrations
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
-(package! calfw)  ; fancy calendar
 (package! company-ledger)
 (package! diminish)
 (package! beacon)               ; Highlight Cursor on big change
@@ -136,7 +139,13 @@
 (package! elfeed-score)
 
 ;; Thesaurus synonyms
-;(package! synosaurus)
+                                        ;(package! synosaurus)
+(package! calfw)
+(package! calfw-org)
+(package! helm-ag)              ; Ack and the_silver_searcher support
+
+;; Dictionaries
+;;(package! synosaurus)           ; Thesaurus synonyms
 (package! powerthesaurus)
 
 ;; Language Server
@@ -148,9 +157,9 @@
 (package! lsp-latex)
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
-(package! pomm
-  :recipe (:host github
-           :repo "SqrtMinusOne/pomm.el"))
+;; (package! pomm
+;;   :recipe (:host github
+;;            :repo "SqrtMinusOne/pomm.el"))
 
 (package! beancount-mode
   :recipe (:host github

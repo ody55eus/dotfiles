@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 # Function to source files if they exist
 function zsh_add_file() {
     [ -f "$ZDOTDIR/$1" ] && source "$ZDOTDIR/$1"
@@ -5,7 +6,7 @@ function zsh_add_file() {
 
 function zsh_add_plugin() {
     PLUGIN_NAME=$(echo $1 | cut -d "/" -f 2)
-    if [ -d "$ZDOTDIR/plugins/$PLUGIN_NAME" ]; then 
+    if [ -d "$ZDOTDIR/plugins/$PLUGIN_NAME" ]; then
         # For plugins
         zsh_add_file "plugins/$PLUGIN_NAME/$PLUGIN_NAME.plugin.zsh" || \
         zsh_add_file "plugins/$PLUGIN_NAME/$PLUGIN_NAME.zsh"
@@ -17,7 +18,7 @@ function zsh_add_plugin() {
 
 function zsh_add_completion() {
     PLUGIN_NAME=$(echo $1 | cut -d "/" -f 2)
-    if [ -d "$ZDOTDIR/plugins/$PLUGIN_NAME" ]; then 
+    if [ -d "$ZDOTDIR/plugins/$PLUGIN_NAME" ]; then
         # For completions
         completion_file_list=$(ls -R $ZDOTDIR/plugins/$PLUGIN_NAME/**/_*)
         completion_file_path=${completion_file_list:1}
@@ -32,7 +33,7 @@ function zsh_add_completion() {
     if [ "$2" = true ] && compinit "${completion_file:1}"
 }
 
-function zsh_load_config() {   
+function zsh_load_config() {
     CONF_DIR="$ZDOTDIR/$1"
     # Load all of the config files in ~/oh-my-zsh that end in .zsh
     # TIP: Add files you don't want in git to .gitignore
