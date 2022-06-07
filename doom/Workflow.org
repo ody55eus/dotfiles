@@ -559,7 +559,7 @@ The Task Keywords are noted with their keybindings in parentheses.
 (setq org-todo-keywords '(
                           (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
                                 "DONE(d)")
-                          (sequence "BACKLOG(b)" "PLAN(P)" "ACTIVE(a)"
+                          (sequence "BACKLOG(b)" "NEXT(n)" "PLAN(P)" "ACTIVE(a)"
                                     "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
                                     "COMPLETED(c)" "KILL(k)" "CANCELLED(C)" "STOPPED(s@)")
                         )
@@ -1141,6 +1141,7 @@ This Configuration runs on start end finish of presentations:
 (setq plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
 (setq plantuml-default-exec-mode 'jar)
 #+end_src
+
 *** OrgBabel Languages
 #+begin_src emacs-lisp
 (org-babel-do-load-languages
@@ -1151,6 +1152,7 @@ This Configuration runs on start end finish of presentations:
    (plantuml . t)
    (emacs-lisp . t)))
 #+end_src
+
 *** Turn Tangle Comments off
 Since Emacs 28 OrgBabel tangle creates comments like ="[[%link][%source-name]]"= to indicate the source of tangled code. The following lines deactivate this behavior:
 #+begin_src emacs-lisp
@@ -1275,7 +1277,7 @@ To ignore this error, remove the following lines from [[file:~/.emacs.d/modules/
 #+begin_src emacs-lisp
 
 (setq org-agenda-window-setup 'current-window)
-(setq org-agenda-span 10)
+(setq org-agenda-span 'day)
 (setq org-agenda-start-day "0d")
 (setq org-agenda-start-with-log-mode t)
 
@@ -1409,6 +1411,10 @@ The following blocks are being migrated over from my Org Mode configuration in [
                   ((org-agenda-overriding-header "Project Backlog")
                    (org-agenda-todo-list-sublevels nil)
                    (org-agenda-files org-agenda-files)))
+            (todo "NEXT"
+                  ((org-agenda-overriding-header "Next Tasks")
+                   (org-agenda-todo-list-sublevels nil)
+                   (org-agenda-files org-agenda-files)))
             (todo "READY"
                   ((org-agenda-overriding-header "Ready for Work")
                    (org-agenda-files org-agenda-files)))
@@ -1428,7 +1434,7 @@ The following blocks are being migrated over from my Org Mode configuration in [
             (org-agenda-files org-agenda-files)))
 
           ;; Low-effort next actions
-          ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
+          ("l" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
            ((org-agenda-overriding-header "Low Effort Tasks")
             (org-agenda-max-todos 20)
             (org-agenda-files org-agenda-files)))))

@@ -389,7 +389,7 @@ Returns file content as a string."
 (setq org-todo-keywords '(
                           (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
                                 "DONE(d)")
-                          (sequence "BACKLOG(b)" "PLAN(P)" "ACTIVE(a)"
+                          (sequence "BACKLOG(b)" "NEXT(n)" "PLAN(P)" "ACTIVE(a)"
                                     "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
                                     "COMPLETED(c)" "KILL(k)" "CANCELLED(C)" "STOPPED(s@)")
                         )
@@ -895,7 +895,7 @@ Returns file content as a string."
 (setq org-noter-notes-search-path '("~/ZK/References"))
 
 (setq org-agenda-window-setup 'current-window)
-(setq org-agenda-span 10)
+(setq org-agenda-span 'day)
 (setq org-agenda-start-day "0d")
 (setq org-agenda-start-with-log-mode t)
 
