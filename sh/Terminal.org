@@ -340,7 +340,6 @@ bindkey '^e' edit-command-line
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
 
-colorscript -r
 #+end_src
 
 ** Functions.zsh
@@ -552,11 +551,6 @@ alias sudo='sudo '
 alias week='date +%V'
 
 
-# IP addresses
-alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
-alias localip="ipconfig getifaddr en0"
-alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
-
 # URL-encode strings
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
 
@@ -583,7 +577,7 @@ export PATH="$HOME/.emacs.d/bin":$PATH
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='nvim'
   ### "nvim" as manpager
-  export MANPAGER="nvim --remote -c 'Man!' -o -"
+  export MANPAGER="nvim -c 'Man!' -o -"
 
   ### "less" as manpager
   # export MANPAGER='less -M'
@@ -591,7 +585,7 @@ else
   export EDITOR="emacsclient -t -a 'nvim'"                 # $EDITOR use Emacs in terminal
   export VISUAL="emacsclient -c -a emacs"              # $VISUAL use Emacs in GUI mode
   ### "nvim" as manpager
-  export MANPAGER="nvim --remote -c 'Man!' -o -"
+  export MANPAGER="nvim -c 'Man!' -o -"
   # Emacs to view man pages
   # export MANPAGER="emacsclient -nw -e \"(let ((Man-notify-method 'bully)) (man \\\"\$1\\\"))\""
 fi
@@ -789,6 +783,8 @@ if [[ -f /etc/debian-release ]]; then
   alias update='sudo apt update && sudo apt upgrade -y && ~/.emacs.d/bin/doom upgrade; ~/.emacs.d/bin/doom build; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
 elif [[ -f /etc/arch-release ]]; then
   alias update='yay -Syu && ~/.emacs.d/bin/doom upgrade; ~/.emacs.d/bin/doom build;  npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
+elif -d /gnu/store ; then
+  alias update='guix pull && guix package -u'
 fi
 #+end_src
 
@@ -797,7 +793,7 @@ fi
 #+begin_src sh :tangle .config/zsh/linux/exports.zsh :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
 # Speedy keys
 # kbdrate -d 200 -r 30
-xset r rate 200 50
+# xset r rate 200 50
 #+end_src
 
 *** Dircolors
