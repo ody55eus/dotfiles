@@ -79,7 +79,7 @@
       org-modern-priority nil  ; Don't update task priorities
       org-modern-star ["◉" "○" "✸" "✿"]  ; use pretty stars
       )
-  (global-org-modern-mode 1))
+  )
 
 (after! org
   (appendq! +ligatures-extra-symbols
@@ -168,8 +168,9 @@
   (setq org-image-actual-width nil) ; Set optional images
   (rainbow-mode 1)    ; Enable rainbow mode
   (emojify-mode 1)    ; Enable Emojis
-  (org-modern-mode 1) ; prettify org buffers
   (org-appear-mode 1) ; re-appear markup signs =*~
+  
+    (org-modern-mode 1)
   )
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
 
@@ -824,6 +825,8 @@ Returns file content as a string."
    (python . t)
    (LaTeX . t)
    (plantuml . t)
+   (scheme . t)
+   (guile . t)
    (emacs-lisp . t)))
 
 (setq org-babel-tangle-comment-format-beg ""
