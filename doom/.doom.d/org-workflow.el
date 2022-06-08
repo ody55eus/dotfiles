@@ -390,7 +390,6 @@ Returns file content as a string."
   (add-to-list 'org-agenda-files (jp/org-path "Habits.org")))
 
 (add-hook! 'org-roam-db-autosync-mode-hook #'jp/org-roam-refresh-agenda-list)
-(add-hook! 'emacs-startup-hook #'jp/org-roam-refresh-agenda-list)
 
 (setq org-todo-keywords '(
                           (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"

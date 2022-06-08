@@ -521,7 +521,6 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
   (add-to-list 'org-agenda-files (jp/org-path "Habits.org")))
 
 (add-hook! 'org-roam-db-autosync-mode-hook #'jp/org-roam-refresh-agenda-list)
-(add-hook! 'emacs-startup-hook #'jp/org-roam-refresh-agenda-list)
 #+end_src
 
 * Workflow Configuration
