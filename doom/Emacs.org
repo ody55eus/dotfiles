@@ -48,7 +48,7 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq user-full-name "Jonathan Pieper"
-      user-mail-address "ody55eus@mailbox.org"
+      user-mail-address "jpieper@acg-gmbh.de"
       epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 #+end_src
@@ -418,6 +418,7 @@ Just comment/uncomment some lines to disable/enable features.
 (package! embark)
 
 ;; Other Software Integrations
+(package! guix)
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)

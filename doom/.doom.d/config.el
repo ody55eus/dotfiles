@@ -257,8 +257,6 @@
 ;; Set up the visible bell
 (setq visible-bell t)
 
-(setq alert-default-style 'osx-notifier)
-
 (menu-bar-mode 1)
 
 (map! :n [mouse-8] #'better-jumper-jump-backward
@@ -604,16 +602,16 @@ argument, query for word to search."
 (setq dap-python-debugger 'debugpy)
 
 (defvar jp/python
-      "/opt/homebrew/Caskroom/miniforge/base/envs/ody/bin/python"
-      ; "/opt/miniconda3/bin/python"
+       "/opt/miniconda3/bin/python"
       ; (file-truename "~/.conda/envs/webserver/bin/python")
       ; (file-truename "~/.conda/envs/webserver-old/bin/python")
       ; (file-truename "~/.conda/envs/ /bin/python")
       "Python binary path.")
-(setq python-shell-interpreter jp/python)
-(setq dap-python-executable jp/python
+(setq python-shell-interpreter jp/python
+      dap-python-executable jp/python
       treemacs-python-executable jp/python
-      lsp-pyright-python-executable-cmd jp/python)
+      lsp-pyright-python-executable-cmd jp/python
+      python-check-command (file-truename "~/.local/bin/epylint"))
 
 ;; Anaconda Path
 (setq conda-env-home-directory "/opt/homebrew/Caskroom/miniforge/base"
