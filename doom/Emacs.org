@@ -31,6 +31,7 @@
   - [[#mail-in-emacs-with-mu4e][Mail in Emacs with mu4e]]
   - [[#password-save][Password Save]]
   - [[#deft][Deft]]
+  - [[#finances][Finances]]
   - [[#hold-scimax][HOLD Scimax]]
 
 * About this Configuration
@@ -47,7 +48,7 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq user-full-name "Jonathan Pieper"
-      user-mail-address "jpieper@acg-gmbh.de"
+      user-mail-address "ody55eus@mailbox.org"
       epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 #+end_src
@@ -85,15 +86,15 @@ Just comment/uncomment some lines to disable/enable features.
        ;;layout            ; auie,ctsrnm is the superior home row
 
        :completion
-       ;;(company
-       ;; +childframe
-       ;; )           ; the ultimate code completion backend
+       (company
+        +childframe
+        )           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        (ivy
-       ;; +fuzzy              ; Enables fuzzy completion for Ivy searches
+        ;; +fuzzy              ; Enables fuzzy completion for Ivy searches
         +prescient            ; Enables prescient filtering and sorting for Ivy searches.
-       ;; +childframe         ; display in a floating window
+        ;; +childframe         ; display in a floating window
         +icons)               ; a search engine for love and life
        (vertico +icons)           ; the search engine of the future
 
@@ -340,39 +341,23 @@ Just comment/uncomment some lines to disable/enable features.
 ** Load Packages
 
 #+begin_src emacs-lisp :tangle ./.doom.d/packages.el
-
-(package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
-(package! org-roam)             ; Extended org-mode for Zettelkasten principle.
-(package! org-ref)              ; References and citations
-(package! org-super-agenda)
-(package! org-modern)
-(package! org-appear)           ; Display markup symbols (*=~ etc.) on cursor-over
-(package! org-alert)            ; Enable org-mode notifications.
-(package! org-tree-slide)       ; Enable org-mode presentations.
-(package! org-superstar)        ; Alternative for org-bullets.
-(package! org-pdfview)          ; Allows to annotate pdf in org-mode.
-(package! org-download)
-(package! org-journal)
-;;(package! org-pretty-tags)
-;; (package! org-pretty-table-mode
-;;   :recipe (:host github :repo "Fuco1/org-pretty-table"))
-
-(package! org-roam-bibtex
-  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
-(package! helm-bibtex)
-(package! ivy-bibtex)
-
 ;; Use latest version!
 (unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
 
-;; Org Roam UI (frontend for exploring and interacting org-roam)
-(package! websocket)
-(package! org-roam-ui
-  :recipe (:host github
-           :repo "org-roam/org-roam-ui"
-           :files ("*.el" "out")))
-
+;; Org Enhancements
+(package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
+(package! org-roam)             ; Extended org-mode for Zettelkasten principle.
+(package! org-ref)              ; References and citations
+(package! org-super-agenda)
+(package! org-appear)           ; Display markup symbols (*=~ etc.) on cursor-over
+(package! org-alert)            ; Enable org-mode notifications.
+(package! org-tree-slide)       ; Enable org-mode presentations.
+(package! org-modern)           ; Alternative for org-bullets and org-superstar.
+(package! org-pdfview)          ; Allows to annotate pdf in org-mode.
+(package! org-download)
+(package! org-journal)
+(package! org-sidebar)
 (package! org-protocol-capture-html
   :recipe (:host github
            :repo "alphapapa/org-protocol-capture-html"
@@ -381,15 +366,35 @@ Just comment/uncomment some lines to disable/enable features.
   :recipe (:host github
            :repo "alhassy/org-special-block-extras"))
 
+;; Org Roam
+(package! org-transclusion)
+(package! vulpea)
+(package! delve
+  :recipe (:repo "publicimageltd/delve"
+           :host github))
+
+;; Bibliography
+(package! org-roam-bibtex
+  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(package! helm-bibtex)
+(package! citar)
+
+;; Org Roam UI (frontend for exploring and interacting org-roam)
+(package! websocket)
+(package! org-roam-ui
+  :recipe (:host github
+           :repo "org-roam/org-roam-ui"
+           :files ("*.el" "out")))
+
 ;; PlantUML
 (package! ob-napkin)            ; PlantUML in Org Babel
 (package! plantuml-mode)        ; PlantUML Diagrams
 
-                                        ; Org Exports
+;; Org Exports (ox-*)
 (package! ox-twbs)      ; HTML Twitter Bootstrap
 (package! ox-rst)       ; ReStructured Text (ReST, RST)
 
-                                        ; Support for other File Types
+;; Support for other File Types
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 
@@ -404,9 +409,11 @@ Just comment/uncomment some lines to disable/enable features.
            :repo "seanfarley/emacs-bitwarden"
            :files ("bitwarden.el")))
 
-                                        ; Visual/Functional Enhancements
+; Visual Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
+
+;; Functional Enhancements
 (package! popper)
 (package! embark)
 
@@ -415,12 +422,19 @@ Just comment/uncomment some lines to disable/enable features.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
+(package! company-ledger)
+(package! diminish)
+(package! beacon)               ; Highlight Cursor on big change
+
+;; Feed Reader
+(package! elfeed)
+(package! elfeed-score)
+
+;; Thesaurus synonyms
+                                        ;(package! synosaurus)
 (package! calfw)
 (package! calfw-org)
 (package! helm-ag)              ; Ack and the_silver_searcher support
-
-(package! diminish)
-(package! beacon)               ; Highlight Cursor on big change
 
 ;; Dictionaries
 ;;(package! synosaurus)           ; Thesaurus synonyms
@@ -439,7 +453,16 @@ Just comment/uncomment some lines to disable/enable features.
 ;;   :recipe (:host github
 ;;            :repo "SqrtMinusOne/pomm.el"))
 
-                                        ; Packages to share my keybindings when streaming
+(package! beancount-mode
+  :recipe (:host github
+           :repo "beancount/beancount-mode"
+           :files ("beancount.el")))
+
+(package! mu4e-dashboard
+  :recipe (:host github
+           :repo "rougier/mu4e-dashboard"))
+
+; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
 (package! keycast
   :recipe (:host github
@@ -448,6 +471,11 @@ Just comment/uncomment some lines to disable/enable features.
 (package! emacs-rotate
   :recipe (:host github
            :repo "daichirata/emacs-rotate"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/packages.el" "no")
+;; MacOS Only
+(package! spotlight)
 #+end_src
 
 * Emacs Startup
@@ -502,14 +530,15 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
 
 * UI Configuration
 ** Keybindings
+
 *** Basic Keybindings for =leader= (~SPC-<Key>~)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
       (:prefix ("b" . "buffer")
-       :desc "Consult buffer" :n "j" #'consult-buffer
-       :desc "Consult buffer other window" :n "J" #'consult-buffer-other-window
+       :desc "Consult buffer" :n "o" #'consult-buffer
+       :desc "Consult buffer other window" :n "j" #'consult-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
        :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
@@ -528,6 +557,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
       ;;  (:prefix ("d" . "date"))
       ;;  )
       (:prefix ("o" . "open")
+       :desc "spotlight" "s" #'spotlight
        (:prefix ("j" . "jp")
         :desc "jp/org-roam-agenda" "a" #'jp/org-roam-agenda
         :desc "jp/enable-bitwarden" "b" #'jp/enable-bitwarden
@@ -554,7 +584,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
       (:prefix ("s" . "search")
-       :desc "Search/Insert BibTeX Cite" "c" #'helm-bibtex
+       :desc "Search/Insert BibTeX Cite" "c" #'org-ref-cite-insert-helm
        )
       (:prefix ("t" . "toggle")
        :desc "Toggle line highlight local" "h" #'hl-line-mode
@@ -581,10 +611,12 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
         :desc "Insert BibTeX Note Link" "b" #'orb-insert-link
         :desc "BibTeX Note Actions" "B" #'orb-note-actions
         :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
+        :desc "Delve" :n "D" #'delve
         :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
         :desc "Find org-roam Node" :n "f" #'org-roam-node-find
         :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
         :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
+        :desc "Org Roam UI" :n "u" #'org-roam-ui-open
         :desc "Jump to Date" :n "j" #'jp/org-roam-jump-menu/body
         )
        )
@@ -601,8 +633,8 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 Changing some keybindings from their defaults to better fit with Doom Emacs, and to avoid conflicts with my window managers which sometimes use the control key in their keybindings.  By default, Doom Emacs does not use ~SPC-e~ for anything, so I choose to use the format ~SPC-e~ plus ~key~ for these (I also use ~SPC-e~ for ~eww~ keybindings).
 
-| COMMAND         | DESCRIPTION                                  | KEYBINDING |
-|-----------------+----------------------------------------------+------------|
+| COMMAND         | DESCRIPTION                                    | KEYBINDING |
+|-----------------+------------------------------------------------+------------|
 | eval-buffer     | /Evaluate elisp in buffer/                     | SPC e b    |
 | eval-defun      | /Evaluate the defun containing or after point/ | SPC e d    |
 | eval-expression | /Evaluate an elisp expression/                 | SPC e e    |
@@ -735,12 +767,19 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 
 (setq doom-theme 'doom-outrun-electric)
 (custom-set-faces!
-  '(doom-modeline-buffer-modified :foreground "DarkOrange"))
+  '(doom-modeline-buffer-modified :foreground "DarkOrange")
+  '(bold :inherit 'doom-modeline-highlight)
+  ;; '(highlight :background "DarkBlue")
+  ;; '(mode-line-highlight :background "DarkBlue")
+  )
 
 #+end_src
 
 ** Font Face Configuration
 *** New Configuration
+:PROPERTIES:
+:LOCATION: https://tecosaur.github.io/emacs-config/config.html
+:END:
 :Source:
 Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 :END:
@@ -888,20 +927,20 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 (defun jp/set-frame-size-according-to-resolution ()
   (interactive)
   (if window-system
-  (progn
-    ;; use 120 char wide window for largeish displays
-    ;; and smaller 80 column windows for smaller displays
-    ;; pick whatever numbers make sense for you
-    (if (> (x-display-pixel-width) 1280)
-           (add-to-list 'default-frame-alist (cons 'width 177))
-           (add-to-list 'default-frame-alist (cons 'width 100)))
-    ;; for the height, subtract a couple hundred pixels
-    ;; from the screen height (for panels, menubars and
-    ;; whatnot), then divide by the height of a char to
-    ;; get the height we want
-    (add-to-list 'default-frame-alist
-         (cons 'height (/ (- (x-display-pixel-height) 120)
-                             (frame-char-height)))))))
+      (progn
+        ;; use 120 char wide window for largeish displays
+        ;; and smaller 80 column windows for smaller displays
+        ;; pick whatever numbers make sense for you
+        (if (> (x-display-pixel-width) 1280)
+            (add-to-list 'default-frame-alist (cons 'width 177))
+          (add-to-list 'default-frame-alist (cons 'width 100)))
+        ;; for the height, subtract a couple hundred pixels
+        ;; from the screen height (for panels, menubars and
+        ;; whatnot), then divide by the height of a char to
+        ;; get the height we want
+        (add-to-list 'default-frame-alist
+                     (cons 'height (/ (- (x-display-pixel-height) 120)
+                                      (frame-char-height)))))))
 
 (jp/set-frame-size-according-to-resolution)
 
@@ -945,7 +984,8 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
   :custom
   (doom-modeline-height 16)
   (doom-modeline-bar-width 4)
-  (doom-modeline-lsp nil)
+  (doom-modeline-lsp t)
+  (doom-modeline-display-default-persp-name t)
   (doom-modeline-modal-icon t)
   (doom-modeline-minor-modes nil)
   (doom-modeline-major-mode-icon t)
@@ -976,10 +1016,80 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 (add-hook 'pomm-on-status-changed-hook 'pomm-update-mode-line-string)
 (add-hook 'pomm-on-status-changed-hook 'force-mode-line-update)
 #+end_src
+**** TODO Define Modeline
+Possible Values (as stored in =doom-modeline-fn-alist=):
+| Doom Modeline Segment             | Associated Function                                      |
+|-----------------------------------+----------------------------------------------------------|
+| =follow=                          | ~doom-modeline-segment--follow~                          |
+| =grip=                            | ~doom-modeline-segment--grip~                            |
+| =git-timemachine=                 | ~doom-modeline-segment--git-timemachine~                 |
+| =helm-follow=                     | ~doom-modeline-segment--helm-follow~                     |
+| =helm-prefix-argument=            | ~doom-modeline-segment--helm-prefix-argument~            |
+| =helm-help=                       | ~doom-modeline-segment--helm-help~                       |
+| =helm-number=                     | ~doom-modeline-segment--helm-number~                     |
+| =helm-buffer-id=                  | ~doom-modeline-segment--helm-buffer-id~                  |
+| =package=                         | ~doom-modeline-segment--package~                         |
+| =battery=                         | ~doom-modeline-segment--battery~                         |
+| =irc=                             | ~doom-modeline-segment--irc~                             |
+| =irc-buffers=                     | ~doom-modeline-segment--irc-buffers~                     |
+| =gnus=                            | ~doom-modeline-segment--gnus~                            |
+| =mu4e=                            | ~doom-modeline-segment--mu4e~                            |
+| =pdf-pages=                       | ~doom-modeline-segment--pdf-pages~                       |
+| =debug=                           | ~doom-modeline-segment--debug~                           |
+| =github=                          | ~doom-modeline-segment--github~                          |
+| =lsp=                             | ~doom-modeline-segment--lsp~                             |
+| =repl=                            | ~doom-modeline-segment--repl~                            |
+| =info-nodes=                      | ~doom-modeline-segment--info-nodes~                      |
+| =input-method=                    | ~doom-modeline-segment--input-method~                    |
+| =objed-state=                     | ~doom-modeline-segment--objed-state~                     |
+| =modals=                          | ~doom-modeline-segment--modals~                          |
+| =parrot=                          | ~doom-modeline-segment--parrot~                          |
+| =buffer-position=                 | ~doom-modeline-segment--buffer-position~                 |
+| =misc-info=                       | ~doom-modeline-segment--misc-info~                       |
+| =persp-name=                      | ~doom-modeline-segment--persp-name~                      |
+| =workspace-name=                  | ~doom-modeline-segment--workspace-name~                  |
+| =window-number=                   | ~doom-modeline-segment--window-number~                   |
+| =hud=                             | ~doom-modeline-segment--hud~                             |
+| =bar=                             | ~doom-modeline-segment--bar~                             |
+| =media-info=                      | ~doom-modeline-segment--media-info~                      |
+| =buffer-size=                     | ~doom-modeline-segment--buffer-size~                     |
+| =matches=                         | ~doom-modeline-segment--matches~                         |
+| =selection-info=                  | ~doom-modeline-segment--selection-info~                  |
+| =word-count=                      | ~doom-modeline-segment--word-count~                      |
+| =checker=                         | ~doom-modeline-segment--checker~                         |
+| =vcs=                             | ~doom-modeline-segment--vcs~                             |
+| =minor-modes=                     | ~doom-modeline-segment--minor-modes~                     |
+| =process=                         | ~doom-modeline-segment--process~                         |
+| =major-mode=                      | ~doom-modeline-segment--major-mode~                      |
+| =remote-host=                     | ~doom-modeline-segment--remote-host~                     |
+| =indent-info=                     | ~doom-modeline-segment--indent-info~                     |
+| =buffer-encoding=                 | ~doom-modeline-segment--buffer-encoding~                 |
+| =buffer-default-directory-simple= | ~doom-modeline-segment--buffer-default-directory-simple~ |
+| =buffer-default-directory=        | ~doom-modeline-segment--buffer-default-directory~        |
+| =buffer-info-simple=              | ~doom-modeline-segment--buffer-info-simple~              |
+| =buffer-info=                     | ~doom-modeline-segment--buffer-info~                     |
+
+#+begin_src emacs-lisp
+(after! doom-modeline
+  (doom-modeline-def-modeline 'jp
+    '(bar matches buffer-info remote-host buffer-position parrot selection-info)
+    '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs "  ")))
+#+end_src
 
 *** Doom Dashboard
 
-#+begin_src emacs-lisp
+| Key | Function                                    |
+|-----+---------------------------------------------|
+| f   | ~find-file~                                   |
+| r   | ~consult-recent-file~                         |
+| p   | ~jp/go-to-projects~                           |
+| c   | ~jp/go-to-config~                             |
+| i   | ~jp/go-to-inbox~                              |
+| .   | ~(cmd! (doom-project-find-file "~/.config/"))~ |
+| b   | ~+vertico/switch-workspace-buffer~            |
+| B   | ~counsel-switch-buffer~                       |
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq +doom-dashboard-menu-sections '(("Reload last session" :icon
                                        (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
                                        :when
@@ -992,13 +1102,15 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
                                           (desktop-full-file-name))))
                                        :face
                                        (:inherit
-                                        (doom-dashboard-menu-title bold)
+                                        (doom-dashboard-menu-title bold))
                                        :action doom/quickload-session)
                                       ("Open org-agenda" :icon
                                        (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
-                                       :when
-                                       (fboundp 'org-agenda)
                                        :action org-agenda)
+                                      ("Open Roam Agenda" :icon
+                                       (all-the-icons-octicon "checklist"
+                                                              :face 'doom-dashboard-menu-title)
+                                       :action jp/org-roam-agenda)
                                       ("Recently opened files" :icon
                                        (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
                                        :action recentf-open-files)
@@ -1013,14 +1125,12 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
                                        :when
                                        (file-directory-p doom-private-dir)
                                        :action doom/open-private-config)
-                                      ("Open documentation" :icon
-                                       (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
-                                       :action doom/help)
-                                      ("Open Roam Agenda"
-                                       :icon
-                                       (all-the-icons-octicon "checklist"
-                                                               :face 'doom-dashboard-menu-title)
-                                       :action jp/org-ram-agenda))
+                                      ("Switch Workspace Buffer" :icon
+                                       (all-the-icons-octicon "file-symlink-file" :face 'doom-dashboard-menu-title)
+                                       :action +vertico/switch-workspace-buffer)
+                                      ("Switch Buffer" :icon
+                                       (all-the-icons-octicon "file-symlink-directory" :face 'doom-dashboard-menu-title)
+                                       :action counsel-switch-buffer)))
 
 #+end_src
 
@@ -1030,7 +1140,7 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq hl-todo-keyword-faces
-      '(("TODO"   . "#cc0")
+      '(("TODO"   . "#c0c")
         ("FIXME"  . "#990000")
         ("NOTE"   . "#009999")
         ("REVIEW"   . "#990099")
@@ -1070,7 +1180,7 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 ;; Set custom font for epub
 (defun my-nov-font-setup ()
   (face-remap-add-relative 'variable-pitch :family "Roboto"
-                                           :height 1.0))
+                           :height 1.0))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 #+end_src
 
@@ -1086,24 +1196,24 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
 
 (defface svg-tag-note-face
   '((t :foreground "black" :background "white" :box "black"
-       :family "Roboto Mono" :weight light :height 140))
+       :family "JuliaMono" :weight light :height 140))
   "Face for note tag" :group nil)
 
 (defface svg-tag-keyboard-face
   '((t :foreground "#333333" :background "#f9f9f9" :box "#333333"
-       :family "Roboto Mono" :weight light :height 140))
+       :family "JuliaMono" :weight light :height 140))
   "Face for keyboard bindings tag" :group nil)
 
 (defface svg-tag-org-face
   '((t :foreground "#333333" :background "#fffff0" :box "#333333"
-       :family "Roboto Mono" :weight light :height 140))
+       :family "JuliaMono" :weight light :height 140))
   "Face for keyboard bindings tag" :group nil)
 
 (setq svg-tag-todo
-  (svg-tag-make "TODO" nil 1 1 2))
+      (svg-tag-make "TODO" nil 1 1 2))
 
 (setq svg-tag-note
-  (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 2))
+      (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 2))
 
 (defun svg-tag-round (text)
   (svg-tag-make (substring text 1 -1) 'svg-tag-note-face 1 1 12))
@@ -1152,61 +1262,61 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
 (defface svg-tag-org-face
   '((t :foreground "#333333" :background "white"
        :box (:line-width 1 :color "black" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Default face for svg tag" :group nil)
 
 (defface svg-tag-note-face
   '((t :foreground "#333333" :background "#FFFFFF"
        :box (:line-width 1 :color "#333333" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Default face for svg tag" :group nil)
 
 (defface svg-tag-todo-face
   '((t :foreground "#ffffff" :background "#FFAB91"
        :box (:line-width 1 :color "#FFAB91" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Face for TODO  svg tag" :group nil)
 
 (defface svg-tag-next-face
   '((t :foreground "white" :background "#673AB7"
        :box (:line-width 1 :color "#673AB7" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Face for NEXT svg tag" :group nil)
 
 (defface svg-tag-done-face
   '((t :foreground "white" :background "#B0BEC5"
        :box (:line-width 1 :color "#B0BEC5" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Face for DONE  svg tag" :group nil)
 
 (defface svg-tag-org-tag-face
   '((t :foreground "#ffffff" :background "#FFAB91"
        :box (:line-width 1 :color "#FFAB91" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Face for TODO  svg tag" :group nil)
 
 (defface svg-tag-date-active-face
   '((t :foreground "white" :background "#673AB7"
        :box (:line-width 1 :color "#673AB7" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Face for active date svg tag" :group nil)
 
 (defface svg-tag-time-active-face
   '((t :foreground "#673AB7" :background "#ffffff"
        :box (:line-width 1 :color "#673AB7" :style nil)
-       :family "Roboto Mono" :weight light :height 140))
+       :family "JuliaMono" :weight light :height 140))
   "Face for active time svg tag" :group nil)
 
 (defface svg-tag-date-inactive-face
   '((t :foreground "#ffffff" :background "#B0BEC5"
        :box (:line-width 1 :color "#B0BEC5" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Face for inactive date svg tag" :group nil)
 
 (defface svg-tag-time-inactive-face
   '((t :foreground "#B0BEC5" :background "#ffffff"
        :box (:line-width 2 :color "#B0BEC5" :style nil)
-       :family "Roboto Mono" :weight light :height 140))
+       :family "JuliaMono" :weight light :height 140))
   "Face for inactive time svg tag" :group nil)
 
 (setq svg-tag-org-todo (svg-tag-make "TODO" 'svg-tag-todo-face 1 1 2))
@@ -1365,8 +1475,8 @@ Before selecting the char/word/line/etc., you can press one of these keys to per
 **** Teleport Lines
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defun avy-action-teleport-whole-line (pt)
-    (avy-action-kill-whole-line pt)
-    (save-excursion (yank)) t)
+  (avy-action-kill-whole-line pt)
+  (save-excursion (yank)) t)
 
 (setf (alist-get ?m avy-dispatch-alist) 'avy-action-teleport
       (alist-get ?M avy-dispatch-alist) 'avy-action-teleport-whole-line)
@@ -1443,6 +1553,9 @@ argument, query for word to search."
 
 * TODO Additional Packages
 ** Dired (File Manager)
+:PROPERTIES:
+:LOCATION: https://gitlab.com/dwt1/dotfiles
+:END:
 
 :SOURCE:
 Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
@@ -1548,6 +1661,9 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 #+end_src
 
 ** Languages (IDE using Language Server)
+:PROPERTIES:
+:LOCATION: https://github.com/daviwil/emacs-from-scratch.git
+:END:
 
 :SOURCE:
 Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
@@ -1673,22 +1789,32 @@ There are a number of other language servers for Python so if you find that =pyl
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
 (setq dap-python-debugger 'debugpy)
 #+end_src
+
 **** MacOS
 - MacOS has different location thanks to Anaconda:
   #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/config.el" "no")
-(setq python-shell-interpreter "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
-(setq dap-python-executable "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
-(setq lsp-python-ms-python-executable-cmd "/opt/homebrew/Caskroom/miniforge/base/envs/labbook/bin/python")
+(defvar jp/python
+      "/opt/homebrew/Caskroom/miniforge/base/envs/ody/bin/python"
+      ; "/opt/miniconda3/bin/python"
+      ; (file-truename "~/.conda/envs/webserver/bin/python")
+      ; (file-truename "~/.conda/envs/webserver-old/bin/python")
+      ; (file-truename "~/.conda/envs/ /bin/python")
+      "Python binary path.")
+(setq python-shell-interpreter jp/python)
+(setq dap-python-executable jp/python
+      treemacs-python-executable jp/python
+      lsp-pyright-python-executable-cmd jp/python)
   #+end_src
+
 **** Linux
 Linux uses Miniconda3:
   #+begin_src emacs-lisp :tangle (if (eq system-type 'gnu/linux) "./.doom.d/config.el" "no")
-(setq jp/python
+(defvar jp/python
        "/opt/miniconda3/bin/python"
       ; (file-truename "~/.conda/envs/webserver/bin/python")
       ; (file-truename "~/.conda/envs/webserver-old/bin/python")
       ; (file-truename "~/.conda/envs/ /bin/python")
-      )
+      "Python binary path.")
 (setq python-shell-interpreter jp/python
       dap-python-executable jp/python
       treemacs-python-executable jp/python
@@ -1707,6 +1833,15 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
   (pyvenv-mode 1)
   (setq pyvenv-virtualenvwrapper-python jp/python))
 
+#+end_src
+
+**** Anaconda
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; Anaconda Path
+(setq conda-env-home-directory "/opt/homebrew/Caskroom/miniforge/base"
+      conda-anaconda-home conda-env-home-directory)
 #+end_src
 
 *** TODO TypeScript (deactivated)
@@ -1764,12 +1899,9 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 ;; NOTE: Set this to the folder where you keep your Git repos!
 (when (file-directory-p "~/Projects/Code")
   (setq projectile-project-search-path '("~/Projects/Code")))
-(when (file-directory-p "~/Projects/Doc")
-  (add-to-list 'projectile-project-search-path "~/Projects/Doc"))
 (setq projectile-switch-project-action #'projectile-dired)
 
-(setq projectile-completion-system 'vertico
-      projectile-globally-ignored-directories '("/home/jp/share/notes/.attachments" "^flow-typed$" "^node_modules$" "~/.emacs.d/.local/" "^\\.idea$" "^\\.vscode$" "^\\.ensime_cache$" "^\\.eunit$" "^\\.git$" "^\\.hg$" "^\\.fslckout$" "^_FOSSIL_$" "^\\.bzr$" "^_darcs$" "^\\.pijul$" "^\\.tox$" "^\\.svn$" "^\\.stack-work$" "^\\.ccls-cache$" "^\\.cache$" "^\\.clangd$" "\\.git$"))
+(setq projectile-completion-system 'vertico)
 
 #+end_src
 
@@ -2052,7 +2184,42 @@ Useful mu4e manual pages:
 
 ** Deft
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq deft-directory "~/share/org")
+(setq deft-directory "~/org")
+#+end_src
+
+** Finances
+*** Ledger (Financial Support)
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq jp/decrypt-ledger "")
+(with-eval-after-load 'company
+  (add-to-list 'company-backends 'company-ledger))
+
+(setq ledger-reconcile-default-commodity "€")
+
+(setq ledger-reports
+ '(("bal"            "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal")
+   ("bal this month" "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal -p %(month) -S amount")
+   ("bal this year"  "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal -p 'this year'")
+   ("net worth"      "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal Assets Liabilities")
+   ("reg"        "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f %(ledger-file) reg")
+   ("account"        "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f %(ledger-file) reg %(account)")))
+
+(map! :map ledger-reconcile-mode-map
+      :ne "q" #'ledger-reconcile-quit
+      :ne "a" #'ledger-reconcile-add
+      :ne "d" #'ledger-reconcile-delete)
+#+end_src
+
+*** Beancount
+[[https://beancount.github.io/docs/][Beancount]] is a CLI Tool written in Python to manage finances.
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(map! :map beancount-mode-map
+      :leader
+       (:prefix "m"
+        :desc "Insert Date" :n "i" #'beancount-insert-date
+        :desc "Query" :n "q" #'beancount-query
+        ))
 #+end_src
 
 ** HOLD Scimax

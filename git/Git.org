@@ -5,6 +5,7 @@
 [user]
 	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
+	signingkey = 2361DFC839413E7A84B2152B01B6FB927AAEC59B
 [gpg]
 	program = gpg
 [init]

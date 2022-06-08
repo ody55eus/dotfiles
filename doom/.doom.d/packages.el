@@ -49,38 +49,23 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
-(package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
-(package! org-roam)             ; Extended org-mode for Zettelkasten principle.
-(package! org-ref)              ; References and citations
-(package! org-super-agenda)
-(package! org-modern)
-(package! org-appear)           ; Display markup symbols (*=~ etc.) on cursor-over
-(package! org-alert)            ; Enable org-mode notifications.
-(package! org-tree-slide)       ; Enable org-mode presentations.
-(package! org-superstar)        ; Alternative for org-bullets.
-(package! org-pdfview)          ; Allows to annotate pdf in org-mode.
-(package! org-download)
-(package! org-journal)
-;;(package! org-pretty-tags)
-;; (package! org-pretty-table-mode
-;;   :recipe (:host github :repo "Fuco1/org-pretty-table"))
-
-(package! org-roam-bibtex
-  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
-(package! helm-bibtex)
-(package! ivy-bibtex)
-
 ;; Use latest version!
 (unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
 
-;; Org Roam UI (frontend for exploring and interacting org-roam)
-(package! websocket)
-(package! org-roam-ui
-  :recipe (:host github
-           :repo "org-roam/org-roam-ui"
-           :files ("*.el" "out")))
-
+;; Org Enhancements
+(package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
+(package! org-roam)             ; Extended org-mode for Zettelkasten principle.
+(package! org-ref)              ; References and citations
+(package! org-super-agenda)
+(package! org-appear)           ; Display markup symbols (*=~ etc.) on cursor-over
+(package! org-alert)            ; Enable org-mode notifications.
+(package! org-tree-slide)       ; Enable org-mode presentations.
+(package! org-modern)           ; Alternative for org-bullets and org-superstar.
+(package! org-pdfview)          ; Allows to annotate pdf in org-mode.
+(package! org-download)
+(package! org-journal)
+(package! org-sidebar)
 (package! org-protocol-capture-html
   :recipe (:host github
            :repo "alphapapa/org-protocol-capture-html"
@@ -89,15 +74,35 @@
   :recipe (:host github
            :repo "alhassy/org-special-block-extras"))
 
+;; Org Roam
+(package! org-transclusion)
+(package! vulpea)
+(package! delve
+  :recipe (:repo "publicimageltd/delve"
+           :host github))
+
+;; Bibliography
+(package! org-roam-bibtex
+  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(package! helm-bibtex)
+(package! citar)
+
+;; Org Roam UI (frontend for exploring and interacting org-roam)
+(package! websocket)
+(package! org-roam-ui
+  :recipe (:host github
+           :repo "org-roam/org-roam-ui"
+           :files ("*.el" "out")))
+
 ;; PlantUML
 (package! ob-napkin)            ; PlantUML in Org Babel
 (package! plantuml-mode)        ; PlantUML Diagrams
 
-                                        ; Org Exports
+;; Org Exports (ox-*)
 (package! ox-twbs)      ; HTML Twitter Bootstrap
 (package! ox-rst)       ; ReStructured Text (ReST, RST)
 
-                                        ; Support for other File Types
+;; Support for other File Types
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 
@@ -112,9 +117,11 @@
            :repo "seanfarley/emacs-bitwarden"
            :files ("bitwarden.el")))
 
-                                        ; Visual/Functional Enhancements
+; Visual Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
+
+;; Functional Enhancements
 (package! popper)
 (package! embark)
 
@@ -123,12 +130,19 @@
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
+(package! company-ledger)
+(package! diminish)
+(package! beacon)               ; Highlight Cursor on big change
+
+;; Feed Reader
+(package! elfeed)
+(package! elfeed-score)
+
+;; Thesaurus synonyms
+                                        ;(package! synosaurus)
 (package! calfw)
 (package! calfw-org)
 (package! helm-ag)              ; Ack and the_silver_searcher support
-
-(package! diminish)
-(package! beacon)               ; Highlight Cursor on big change
 
 ;; Dictionaries
 ;;(package! synosaurus)           ; Thesaurus synonyms
@@ -147,7 +161,16 @@
 ;;   :recipe (:host github
 ;;            :repo "SqrtMinusOne/pomm.el"))
 
-                                        ; Packages to share my keybindings when streaming
+(package! beancount-mode
+  :recipe (:host github
+           :repo "beancount/beancount-mode"
+           :files ("beancount.el")))
+
+(package! mu4e-dashboard
+  :recipe (:host github
+           :repo "rougier/mu4e-dashboard"))
+
+; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
 (package! keycast
   :recipe (:host github
@@ -156,3 +179,6 @@
 (package! emacs-rotate
   :recipe (:host github
            :repo "daichirata/emacs-rotate"))
+
+;; MacOS Only
+(package! spotlight)

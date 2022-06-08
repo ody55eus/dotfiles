@@ -20,15 +20,15 @@
        ;;layout            ; auie,ctsrnm is the superior home row
 
        :completion
-       ;;(company
-       ;; +childframe
-       ;; )           ; the ultimate code completion backend
+       (company
+        +childframe
+        )           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        (ivy
-       ;; +fuzzy              ; Enables fuzzy completion for Ivy searches
+        ;; +fuzzy              ; Enables fuzzy completion for Ivy searches
         +prescient            ; Enables prescient filtering and sorting for Ivy searches.
-       ;; +childframe         ; display in a floating window
+        ;; +childframe         ; display in a floating window
         +icons)               ; a search engine for love and life
        (vertico +icons)           ; the search engine of the future
 

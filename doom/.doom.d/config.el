@@ -37,8 +37,8 @@
 
 (map! :leader
       (:prefix ("b" . "buffer")
-       :desc "Consult buffer" :n "j" #'consult-buffer
-       :desc "Consult buffer other window" :n "J" #'consult-buffer-other-window
+       :desc "Consult buffer" :n "o" #'consult-buffer
+       :desc "Consult buffer other window" :n "j" #'consult-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
        :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
@@ -57,6 +57,7 @@
       ;;  (:prefix ("d" . "date"))
       ;;  )
       (:prefix ("o" . "open")
+       :desc "spotlight" "s" #'spotlight
        (:prefix ("j" . "jp")
         :desc "jp/org-roam-agenda" "a" #'jp/org-roam-agenda
         :desc "jp/enable-bitwarden" "b" #'jp/enable-bitwarden
@@ -83,7 +84,7 @@
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
       (:prefix ("s" . "search")
-       :desc "Search/Insert BibTeX Cite" "c" #'helm-bibtex
+       :desc "Search/Insert BibTeX Cite" "c" #'org-ref-cite-insert-helm
        )
       (:prefix ("t" . "toggle")
        :desc "Toggle line highlight local" "h" #'hl-line-mode
@@ -110,10 +111,12 @@
         :desc "Insert BibTeX Note Link" "b" #'orb-insert-link
         :desc "BibTeX Note Actions" "B" #'orb-note-actions
         :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
+        :desc "Delve" :n "D" #'delve
         :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
         :desc "Find org-roam Node" :n "f" #'org-roam-node-find
         :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
         :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
+        :desc "Org Roam UI" :n "u" #'org-roam-ui-open
         :desc "Jump to Date" :n "j" #'jp/org-roam-jump-menu/body
         )
        )
@@ -215,7 +218,11 @@
 
 (setq doom-theme 'doom-outrun-electric)
 (custom-set-faces!
-  '(doom-modeline-buffer-modified :foreground "DarkOrange"))
+  '(doom-modeline-buffer-modified :foreground "DarkOrange")
+  '(bold :inherit 'doom-modeline-highlight)
+  ;; '(highlight :background "DarkBlue")
+  ;; '(mode-line-highlight :background "DarkBlue")
+  )
 
 (setq doom-font (font-spec :family "JetBrains Mono" :size 16)
       doom-big-font (font-spec :family "JetBrains Mono" :size 22)
@@ -250,6 +257,8 @@
 ;; Set up the visible bell
 (setq visible-bell t)
 
+(setq alert-default-style 'osx-notifier)
+
 (menu-bar-mode 1)
 
 (map! :n [mouse-8] #'better-jumper-jump-backward
@@ -274,7 +283,8 @@
   :custom
   (doom-modeline-height 16)
   (doom-modeline-bar-width 4)
-  (doom-modeline-lsp nil)
+  (doom-modeline-lsp t)
+  (doom-modeline-display-default-persp-name t)
   (doom-modeline-modal-icon t)
   (doom-modeline-minor-modes nil)
   (doom-modeline-major-mode-icon t)
@@ -293,8 +303,50 @@
       display-time-default-load-average nil)    ;; Do not display my CPU Load
 (display-time-mode 0)
 
+(setq +doom-dashboard-menu-sections '(("Reload last session" :icon
+                                       (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
+                                       :when
+                                       (cond
+                                        ((featurep! :ui workspaces)
+                                         (file-exists-p
+                                          (expand-file-name persp-auto-save-fname persp-save-dir)))
+                                        ((require 'desktop nil t)
+                                         (file-exists-p
+                                          (desktop-full-file-name))))
+                                       :face
+                                       (:inherit
+                                        (doom-dashboard-menu-title bold))
+                                       :action doom/quickload-session)
+                                      ("Open org-agenda" :icon
+                                       (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+                                       :action org-agenda)
+                                      ("Open Roam Agenda" :icon
+                                       (all-the-icons-octicon "checklist"
+                                                              :face 'doom-dashboard-menu-title)
+                                       :action jp/org-roam-agenda)
+                                      ("Recently opened files" :icon
+                                       (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
+                                       :action recentf-open-files)
+                                      ("Open project" :icon
+                                       (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+                                       :action projectile-switch-project)
+                                      ("Jump to bookmark" :icon
+                                       (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
+                                       :action bookmark-jump)
+                                      ("Open private configuration" :icon
+                                       (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+                                       :when
+                                       (file-directory-p doom-private-dir)
+                                       :action doom/open-private-config)
+                                      ("Switch Workspace Buffer" :icon
+                                       (all-the-icons-octicon "file-symlink-file" :face 'doom-dashboard-menu-title)
+                                       :action +vertico/switch-workspace-buffer)
+                                      ("Switch Buffer" :icon
+                                       (all-the-icons-octicon "file-symlink-directory" :face 'doom-dashboard-menu-title)
+                                       :action counsel-switch-buffer)))
+
 (setq hl-todo-keyword-faces
-      '(("TODO"   . "#cc0")
+      '(("TODO"   . "#c0c")
         ("FIXME"  . "#990000")
         ("NOTE"   . "#009999")
         ("REVIEW"   . "#990099")
@@ -322,7 +374,7 @@
 ;; Set custom font for epub
 (defun my-nov-font-setup ()
   (face-remap-add-relative 'variable-pitch :family "Roboto"
-                                           :height 1.0))
+                           :height 1.0))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 
 (after! keycast
@@ -378,8 +430,8 @@
       (alist-get ?Y avy-dispatch-alist) 'avy-action-yank-whole-line)
 
 (defun avy-action-teleport-whole-line (pt)
-    (avy-action-kill-whole-line pt)
-    (save-excursion (yank)) t)
+  (avy-action-kill-whole-line pt)
+  (save-excursion (yank)) t)
 
 (setf (alist-get ?m avy-dispatch-alist) 'avy-action-teleport
       (alist-get ?M avy-dispatch-alist) 'avy-action-teleport-whole-line)
@@ -551,17 +603,21 @@ argument, query for word to search."
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
 (setq dap-python-debugger 'debugpy)
 
-(setq jp/python
-       "/opt/miniconda3/bin/python"
+(defvar jp/python
+      "/opt/homebrew/Caskroom/miniforge/base/envs/ody/bin/python"
+      ; "/opt/miniconda3/bin/python"
       ; (file-truename "~/.conda/envs/webserver/bin/python")
       ; (file-truename "~/.conda/envs/webserver-old/bin/python")
       ; (file-truename "~/.conda/envs/ /bin/python")
-      )
-(setq python-shell-interpreter jp/python
-      dap-python-executable jp/python
+      "Python binary path.")
+(setq python-shell-interpreter jp/python)
+(setq dap-python-executable jp/python
       treemacs-python-executable jp/python
-      lsp-pyright-python-executable-cmd jp/python
-      python-check-command (file-truename "~/.local/bin/epylint"))
+      lsp-pyright-python-executable-cmd jp/python)
+
+;; Anaconda Path
+(setq conda-env-home-directory "/opt/homebrew/Caskroom/miniforge/base"
+      conda-anaconda-home conda-env-home-directory)
 
 (use-package company
   :after lsp-mode
@@ -580,12 +636,9 @@ argument, query for word to search."
 ;; NOTE: Set this to the folder where you keep your Git repos!
 (when (file-directory-p "~/Projects/Code")
   (setq projectile-project-search-path '("~/Projects/Code")))
-(when (file-directory-p "~/Projects/Doc")
-  (add-to-list 'projectile-project-search-path "~/Projects/Doc"))
 (setq projectile-switch-project-action #'projectile-dired)
 
-(setq projectile-completion-system 'vertico
-      projectile-globally-ignored-directories '("/home/jp/share/notes/.attachments" "^flow-typed$" "^node_modules$" "~/.emacs.d/.local/" "^\\.idea$" "^\\.vscode$" "^\\.ensime_cache$" "^\\.eunit$" "^\\.git$" "^\\.hg$" "^\\.fslckout$" "^_FOSSIL_$" "^\\.bzr$" "^_darcs$" "^\\.pijul$" "^\\.tox$" "^\\.svn$" "^\\.stack-work$" "^\\.ccls-cache$" "^\\.cache$" "^\\.clangd$" "\\.git$"))
+(setq projectile-completion-system 'vertico)
 
   (defun jp/configure-eshell ()
     ;; Save command history when commands are entered
@@ -807,4 +860,30 @@ argument, query for word to search."
           (plist-get entry :secret)))
   (bitwarden-auth-source-enable))
 
-(setq deft-directory "~/share/org")
+(setq deft-directory "~/org")
+
+(setq jp/decrypt-ledger "")
+(with-eval-after-load 'company
+  (add-to-list 'company-backends 'company-ledger))
+
+(setq ledger-reconcile-default-commodity "€")
+
+(setq ledger-reports
+ '(("bal"            "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal")
+   ("bal this month" "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal -p %(month) -S amount")
+   ("bal this year"  "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal -p 'this year'")
+   ("net worth"      "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal Assets Liabilities")
+   ("reg"        "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f %(ledger-file) reg")
+   ("account"        "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f %(ledger-file) reg %(account)")))
+
+(map! :map ledger-reconcile-mode-map
+      :ne "q" #'ledger-reconcile-quit
+      :ne "a" #'ledger-reconcile-add
+      :ne "d" #'ledger-reconcile-delete)
+
+(map! :map beancount-mode-map
+      :leader
+       (:prefix "m"
+        :desc "Insert Date" :n "i" #'beancount-insert-date
+        :desc "Query" :n "q" #'beancount-query
+        ))
