@@ -79,7 +79,7 @@
       org-modern-priority nil  ; Don't update task priorities
       org-modern-star ["◉" "○" "✸" "✿"]  ; use pretty stars
       )
-  (global-org-modern-mode 1))
+  )
 
 (after! org
   (appendq! +ligatures-extra-symbols
@@ -168,8 +168,9 @@
   (setq org-image-actual-width nil) ; Set optional images
   (rainbow-mode 1)    ; Enable rainbow mode
   (emojify-mode 1)    ; Enable Emojis
-  (org-modern-mode 1) ; prettify org buffers
   (org-appear-mode 1) ; re-appear markup signs =*~
+  
+    (org-modern-mode 1)
   )
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
 
@@ -388,7 +389,7 @@ Returns file content as a string."
 (setq org-todo-keywords '(
                           (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
                                 "DONE(d)")
-                          (sequence "BACKLOG(b)" "PLAN(P)" "ACTIVE(a)"
+                          (sequence "BACKLOG(b)" "NEXT(n)" "PLAN(P)" "ACTIVE(a)"
                                     "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
                                     "COMPLETED(c)" "KILL(k)" "CANCELLED(C)" "STOPPED(s@)")
                         )
@@ -823,6 +824,8 @@ Returns file content as a string."
    (python . t)
    (LaTeX . t)
    (plantuml . t)
+   (scheme . t)
+   (guile . t)
    (emacs-lisp . t)))
 
 (setq org-babel-tangle-comment-format-beg ""
@@ -894,7 +897,7 @@ Returns file content as a string."
 (setq org-noter-notes-search-path '("~/ZK/References"))
 
 (setq org-agenda-window-setup 'current-window)
-(setq org-agenda-span 10)
+(setq org-agenda-span 'day)
 (setq org-agenda-start-day "0d")
 (setq org-agenda-start-with-log-mode t)
 
