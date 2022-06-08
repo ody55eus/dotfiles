@@ -72,6 +72,26 @@
 
 (setq auth-sources '((:source "~/.authinfo.gpg")))
 
+(defhydra jp/org-roam-jump-menu (:hint nil)
+  "
+  ^Dailies^        ^Capture^       ^Jump^
+  ^^^^^^^^-------------------------------------------------
+  _t_: today       _T_: today       _m_: current month
+  _r_: tomorrow    _R_: tomorrow    _e_: current year
+  _y_: yesterday   _Y_: yesterday   ^ ^
+  _d_: date        ^ ^              ^ ^
+  "
+  ("t" org-roam-dailies-goto-today)
+  ("r" org-roam-dailies-goto-tomorrow)
+  ("y" org-roam-dailies-goto-yesterday)
+  ("d" org-roam-dailies-goto-date)
+  ("T" org-roam-dailies-capture-today)
+  ("R" org-roam-dailies-capture-tomorrow)
+  ("Y" org-roam-dailies-capture-yesterday)
+  ("m" jp/org-roam-goto-month)
+  ("e" jp/org-roam-goto-year)
+  ("c" nil "cancel"))
+
 (after! org
   (setq org-modern-todo nil      ; Don't update TODO Tags
       org-modern-block nil     ; #+BEGIN block/src/example etc.
@@ -256,7 +276,9 @@
    #'org-roam-node-file
    (seq-filter
     (lambda (node)
-      (member tag (org-roam-node-tags node)))
+      (and
+     (member tag-name (org-roam-node-tags node))
+     (eq (org-roam-node-level node) 0)))
     (org-roam-node-list))))
 
 (defun jp/org-roam-filter-by-tag (tag-name)
@@ -273,7 +295,7 @@
 
 (defun jp/org-roam-agenda ()
   (interactive)
-  (let ((org-agenda-files (jp/org-roam-get-tagged "Project")))
+  (let ((org-agenda-files (jp/org-roam-list-notes-by-tag "Project")))
     (org-agenda)))
 
 (setq org-templates-directory (concat doom-private-dir "/templates/"))
@@ -359,29 +381,13 @@ Returns file content as a string."
                                                       "#+title: %<%Y>\n#+filetags: Project\n")
                                    :unnarrowed t))))
 
-(defhydra jp/org-roam-jump-menu (:hint nil)
-  "
-  ^Dailies^        ^Capture^       ^Jump^
-  ^^^^^^^^-------------------------------------------------
-  _t_: today       _T_: today       _m_: current month
-  _r_: tomorrow    _R_: tomorrow    _e_: current year
-  _y_: yesterday   _Y_: yesterday   ^ ^
-  _d_: date        ^ ^              ^ ^
-  "
-  ("t" org-roam-dailies-goto-today)
-  ("r" org-roam-dailies-goto-tomorrow)
-  ("y" org-roam-dailies-goto-yesterday)
-  ("d" org-roam-dailies-goto-date)
-  ("T" org-roam-dailies-capture-today)
-  ("R" org-roam-dailies-capture-tomorrow)
-  ("Y" org-roam-dailies-capture-yesterday)
-  ("m" jp/org-roam-goto-month)
-  ("e" jp/org-roam-goto-year)
-  ("c" nil "cancel"))
-
 (defun jp/org-roam-refresh-agenda-list ()
   (interactive)
-  (setq org-agenda-files (jp/org-roam-list-notes-by-tag "Project")))
+  (setq org-agenda-files (jp/org-roam-list-notes-by-tag "Project"))
+  (dolist (node (jp/org-roam-list-notes-by-tag "Tasks"))
+    (add-to-list 'org-agenda-files node))
+  (add-to-list 'org-agenda-files (jp/org-path "Agenda.org"))
+  (add-to-list 'org-agenda-files (jp/org-path "Habits.org")))
 
 (add-hook! 'org-roam-db-autosync-mode-hook #'jp/org-roam-refresh-agenda-list)
 (add-hook! 'emacs-startup-hook #'jp/org-roam-refresh-agenda-list)
@@ -895,9 +901,10 @@ Returns file content as a string."
 (setq org-noter-notes-search-path '("~/ZK/References"))
 
 (setq org-agenda-window-setup 'current-window)
-(setq org-agenda-span 10)
+(setq org-agenda-span 'day)
 (setq org-agenda-start-day "0d")
 (setq org-agenda-start-with-log-mode t)
+(setq org-agenda-log-mode-items '(closed clock status))
 
 ;; Make done tasks show up in the agenda log
 (setq org-log-done 'time)
