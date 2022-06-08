@@ -20,7 +20,7 @@
 
 * Alacritty
 #+begin_src yaml :tangle .config/alacritty/alacritty.yml
-working_directory: '/home/jp'
+working_directory: '/home/jpi'
 
 font:
   normal:
@@ -33,11 +33,6 @@ cursor:
     shape: Beam
   unfocused_hollow: false
   thickness: 0.15
-
-shell:
-  program: /bin/zsh
-  args:
-    - -l
 
 window:
   padding:
@@ -783,8 +778,6 @@ if [[ -f /etc/debian-release ]]; then
   alias update='sudo apt update && sudo apt upgrade -y && ~/.emacs.d/bin/doom upgrade; ~/.emacs.d/bin/doom build; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
 elif [[ -f /etc/arch-release ]]; then
   alias update='yay -Syu && ~/.emacs.d/bin/doom upgrade; ~/.emacs.d/bin/doom build;  npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
-elif -d /gnu/store ; then
-  alias update='guix pull && guix package -u'
 fi
 #+end_src
 

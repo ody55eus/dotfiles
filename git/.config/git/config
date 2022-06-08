@@ -1,7 +1,6 @@
 [user]
 	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
-	signingkey = 885B941B822133216D960E4CDE2AD6CF2474B880
 [gpg]
 	program = gpg
 [init]
@@ -43,5 +42,3 @@
 	directory = /home/jp/share/Projects/Code/control-panel
 [gitlab]
 	user = ody55eus
-[commit]
-	gpgsign = true

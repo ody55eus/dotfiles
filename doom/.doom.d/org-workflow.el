@@ -186,8 +186,8 @@
 (require 'org-indent)
 
 ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
+;;(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
+;;(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
 (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
@@ -384,7 +384,6 @@ Returns file content as a string."
   (setq org-agenda-files (jp/org-roam-list-notes-by-tag "Project")))
 
 (add-hook! 'org-roam-db-autosync-mode-hook #'jp/org-roam-refresh-agenda-list)
-(add-hook! 'emacs-startup-hook #'jp/org-roam-refresh-agenda-list)
 
 (setq org-todo-keywords '(
                           (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
