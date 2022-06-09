@@ -20,6 +20,11 @@ key_bindings:
   - {key: Right, mods: Alt, chars: "\x1BF"}
   - {key: Left, mods: Alt, chars: "\x1BB"}
 
+shell:
+  program: /run/current-system/profile/bin/zsh
+  args:
+    - -l
+
 colors:
   # Default colors
   primary:

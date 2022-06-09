@@ -12,9 +12,9 @@ export ZSH=$HOME/.config/zsh/ohmyzsh
 # Adjust the prompt depending on whether we're in 'guix environment'.
 if [ -n "$GUIX_ENVIRONMENT" ]
 then
-    ZSH_THEME="simple"
-else
     ZSH_THEME="mh"
+else
+    ZSH_THEME="powerlevel10k"
 fi
 
 # Set list of themes to pick from when loading at random
