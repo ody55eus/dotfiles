@@ -5,6 +5,7 @@
 
 * Content :noexport:toc:
 - [[#alacritty][Alacritty]]
+  - [[#startup-zsh][Startup Zsh]]
   - [[#theme-dracula][Theme Dracula]]
 - [[#bashrc][BashRC]]
 - [[#zsh][Zsh]]
@@ -42,6 +43,24 @@ key_bindings:
   - {key: Right, mods: Alt, chars: "\x1BF"}
   - {key: Left, mods: Alt, chars: "\x1BB"}
 #+end_src
+
+** Startup Zsh
+*** GNU/GUIX
+#+begin_src yaml :tangle (if (getenv "GUIX_LOCPATH") ".config/alacritty/alacritty.yml" "no")
+shell:
+  program: /run/current-system/profile/bin/zsh
+  args:
+    - -l
+#+end_src
+
+*** Arch Linux
+#+begin_src yaml :tangle (if (f-file-p "/etc/arch-release") ".config/alacritty/alacritty.yml" "no")
+shell:
+  program: /bin/zsh
+  args:
+    - -l
+#+end_src
+
 
 ** Theme Dracula
 #+begin_src yaml :tangle .config/alacritty/alacritty.yml
@@ -226,6 +245,14 @@ if ! shopt -oq posix; then
   elif [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
   fi
+fi
+
+# Adjust the prompt depending on whether we're in 'guix environment'.
+if [ -n "$GUIX_ENVIRONMENT" ]
+then
+    PS1='\u@\h \w [env]\$ '
+else
+    PS1='\u@\h \w\$ '
 fi
 #+end_src
 
@@ -842,9 +869,9 @@ export ZSH=$HOME/.config/zsh/ohmyzsh
 # Adjust the prompt depending on whether we're in 'guix environment'.
 if [ -n "$GUIX_ENVIRONMENT" ]
 then
-    ZSH_THEME="simple"
-else
     ZSH_THEME="mh"
+else
+    ZSH_THEME="powerlevel10k"
 fi
 
 # Set list of themes to pick from when loading at random
