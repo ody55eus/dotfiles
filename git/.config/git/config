@@ -35,11 +35,11 @@
 [color]
 	pager = no
 [safe]
-	directory = /home/jp/share/org
-	directory = /home/jp/share/notes
-	directory = /home/jp/share/Projects/Code/01_2fa_demo
-	directory = /home/jp/share/Projects/Doc/frontdesk-documentation
-	directory = /home/jp/share/Projects/Code/frontdesk
-	directory = /home/jp/share/Projects/Code/control-panel
+	directory = /home/jpi/share/org
+	directory = /home/jpi/share/notes
+	directory = /home/jpi/share/Projects/Code/01_2fa_demo
+	directory = /home/jpi/share/Projects/Doc/frontdesk-documentation
+	directory = /home/jpi/share/Projects/Code/frontdesk
+	directory = /home/jpi/share/Projects/Code/control-panel
 [gitlab]
 	user = ody55eus

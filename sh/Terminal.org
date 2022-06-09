@@ -46,9 +46,18 @@ key_bindings:
 
 ** Startup Zsh
 *** GNU/GUIX
-#+begin_src yaml :tangle (if (getenv "GUIX_LOCPATH") ".config/alacritty/alacritty.yml" "no")
+
+#+NAME: zsh
+#+begin_src sh :noweb yes
+which zsh
+#+end_src
+
+#+RESULTS: zsh
+: /home/jpi/.guix-profile/bin/zsh
+
+#+begin_src yaml :noweb yes :tangle (if (getenv "GUIX_LOCPATH") ".config/alacritty/alacritty.yml" "no")
 shell:
-  program: /run/current-system/profile/bin/zsh
+  program: <<zsh()>>
   args:
     - -l
 #+end_src
@@ -60,7 +69,6 @@ shell:
   args:
     - -l
 #+end_src
-
 
 ** Theme Dracula
 #+begin_src yaml :tangle .config/alacritty/alacritty.yml

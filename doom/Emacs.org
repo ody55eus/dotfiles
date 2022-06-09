@@ -1794,12 +1794,18 @@ There are a number of other language servers for Python so if you find that =pyl
 **** MacOS
 - MacOS has different location thanks to Anaconda:
   #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/config.el" "no")
+(defvar jp/guix/pythonpath (getenv "GUIX_PYTHONPATH")
+  "Absolute Python Library Path (e.g. /.../lib/python3.9/site-packages)")
 (defvar jp/python
-      "/opt/homebrew/Caskroom/miniforge/base/envs/ody/bin/python"
+  (if jp/guix/pythonpath
+      (concat (ivy--parent-dir (ivy--parent-dir (ivy--parent-dir jp/guix/pythonpath))) "bin/python3")
+      "/gnu/store/x77rq0rqdw20f1bpiznvlkgw1h1r4q98-profile/bin/python3"
+      ; "/opt/homebrew/Caskroom/miniforge/base/envs/ody/bin/python"
       ; "/opt/miniconda3/bin/python"
       ; (file-truename "~/.conda/envs/webserver/bin/python")
       ; (file-truename "~/.conda/envs/webserver-old/bin/python")
       ; (file-truename "~/.conda/envs/ /bin/python")
+      )
       "Python binary path.")
 (setq python-shell-interpreter jp/python)
 (setq dap-python-executable jp/python
