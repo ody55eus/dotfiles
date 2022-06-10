@@ -155,4 +155,9 @@ then
     PS1='\u@\h \w [env]\$ '
 else
     PS1='\u@\h \w\$ '
+
+    export GUIX_PROFILE=$HOME/.guix-profile
+    export GUIX_EXTRA=$HOME/.guix-extra
+    export GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+    export GUIX_LOCPATH=${GUIX_PROFILE}/lib/locale
 fi

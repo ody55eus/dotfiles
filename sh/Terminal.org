@@ -261,6 +261,11 @@ then
     PS1='\u@\h \w [env]\$ '
 else
     PS1='\u@\h \w\$ '
+
+    export GUIX_PROFILE=$HOME/.guix-profile
+    export GUIX_EXTRA=$HOME/.guix-extra
+    export GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+    export GUIX_LOCPATH=${GUIX_PROFILE}/lib/locale
 fi
 #+end_src
 
@@ -274,6 +279,11 @@ export ZDOTDIR=$HOME/.config/zsh
 export XDG_CONFIG_HOME=$HOME/.config
 export XDG_CACHE_HOME=$HOME/.cache
 export XDG_DATA_HOME=$HOME/.local/share
+
+export GUIX_PROFILE=$HOME/.guix-profile
+export GUIX_EXTRA=$HOME/.guix-extra
+export GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+export GUIX_LOCPATH=${GUIX_PROFILE}/lib/locale
 
 source $ZDOTDIR/zshrc
 #+end_src
@@ -369,7 +379,6 @@ bindkey '^e' edit-command-line
 
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
-
 #+end_src
 
 ** Functions.zsh
@@ -974,7 +983,7 @@ source $ZSH/oh-my-zsh.sh
 #+end_src
 
 * Bat
-#+BEGIN_SRC conf :tangle .config/bat/config
+#+BEGIN_SRC conf :tangle .config/bat/config :mkdirp yes
 # This is `bat`s configuration file. Each line either contains a comment or
 # a command-line option that you want to pass to `bat` by default. You can
 # run `bat --help` to get a list of all possible configuration options.

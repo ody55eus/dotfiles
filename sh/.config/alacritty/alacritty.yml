@@ -21,7 +21,7 @@ key_bindings:
   - {key: Left, mods: Alt, chars: "\x1BB"}
 
 shell:
-  program: /home/jpi/.guix-profile/bin/zsh
+  program: /home/jp/.guix-home/profile/bin/zsh
   args:
     - -l
 
