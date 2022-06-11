@@ -1,25 +1,14 @@
 * Daily Review
+** Cleaning [0/3]
 - [ ] Clear Physical Desktop / Inbox / Notebook
 - [ ] Clear Downloads and Desktop Folders
-  #+BEGIN_SRC emacs-lisp
-  (dired "~/Downloads/")
-  (dired "~/Desktop/")
-  (image-dired "~/Desktop/")
-  #+END_SRC
 - [ ] Clear Email Inboxes
-  #+BEGIN_SRC emacs-lisp
- (jp/go-to-inbox)
-  #+END_SRC
+** Reflecting [0/1]
 - [ ] Capture any remaining open loops as tasks
   + [ ] Schedule + refile tasks in [[file:~/org/Notes.org][Org Mode Notes]], [[https://nc.ody5.de/][NextCloud]]
   + [ ] Refile Fleeting notes
-    #+begin_src emacs-lisp
-    (jp/org-roam-select-literature)
-    (jp/org-roam-select-projects)
-    (jp/org-roam-select-pc)
-    (jp/org-roam-select-other)
-    #+end_src
   + [ ] Sort Zettelkasten
+** Planning [0/2]
 - [ ] Schedule today's tasks (immersive -> process, deep -> shallow):
   #+BEGIN_SRC emacs-lisp
     (progn

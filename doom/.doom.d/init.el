@@ -21,13 +21,14 @@
 
        :completion
        (company
-        ;;+childframe
+        +childframe
         )           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        (ivy
-        +fuzzy
-       ;; +childframe         ; display in a floating window
+        ;; +fuzzy              ; Enables fuzzy completion for Ivy searches
+        +prescient            ; Enables prescient filtering and sorting for Ivy searches.
+        ;; +childframe         ; display in a floating window
         +icons)               ; a search engine for love and life
        (vertico +icons)           ; the search engine of the future
 
@@ -36,9 +37,9 @@
        doom               ; what makes DOOM look the way it does
        doom-dashboard     ; a nifty splash screen for Emacs
        ;;doom-quit        ; DOOM quit-message prompts when you quit Emacs
-       (emoji +unicode)   ; 🙂
-       hl-todo            ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
-       ;;hydra
+       ;;(emoji +unicode)   ; 🙂
+       ;;hl-todo            ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
+       hydra
        indent-guides      ; highlighted indent columns
        (ligatures +extra) ; ligatures and symbols to make your code pretty again
        ;;minimap          ; show a map of the code on the side
@@ -49,7 +50,7 @@
        (popup +defaults)  ; tame sudden yet inevitable temporary windows
        ;;tabs             ; a tab bar for Emacs
        treemacs           ; a project drawer, like neotree but cooler
-       ;;unicode          ; extended unicode support for various languages
+       unicode          ; extended unicode support for various languages
        vc-gutter          ; vcs diff in the fringe
        vi-tilde-fringe    ; fringe tildes to mark beyond EOB
        window-select      ; visually switch windows
@@ -160,7 +161,7 @@
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org               ; organize your plain life in plain text
-        +pretty                     ; yessss my pretties! (nice unicode symbols)
+        ;;+pretty                     ; yessss my pretties! (nice unicode symbols)
         +dragndrop                  ; drag & drop files/images into org buffers
         ;;+hugo                     ; use Emacs for hugo blogging
         +noter                      ; enhanced PDF notetaking
@@ -186,7 +187,7 @@
        (ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
-       ;;(scheme +guile)   ; a fully conniving family of lisps
+       (scheme +guile)   ; a fully conniving family of lisps
        sh                ; she sells {ba,z,fi}sh shells on the C xor
        ;;sml
        ;;solidity          ; do you need a blockchain? No.

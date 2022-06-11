@@ -19,12 +19,9 @@
 - [ ] Empty Your Head: New projects, tasks, waiting-fors, someday/maybes?
 ** Get Current [0/9]
 - [ ] Review Previous and Upcoming Calendar Data:
-  #+BEGIN_SRC emacs-lisp
-  (my-org-agenda-longer-open-loops)
-  #+END_SRC
 - [ ] Review Action Lists:
   #+BEGIN_SRC emacs-lisp
-  (let ((org-agenda-files '("~/src/notes/todo.org")))
+  (let ((org-agenda-files '("~/share/org/Tasks.org")))
     (org-agenda "TODO" "T")
     (beginend-org-agenda-mode-goto-beginning))
   #+END_SRC
@@ -33,22 +30,10 @@
   (org-agenda "WAITING" "T")
   #+END_SRC
 - [ ] Review Project (and Larger Outcome) Lists:
-  #+BEGIN_SRC emacs-lisp
-  (project-overview)
-  (project-deadline-overview)
-  #+END_SRC
 - [ ] Review Stuck Projects:
-  #+BEGIN_SRC emacs-lisp
-  (my-org-agenda-list-stuck-projects)
-  #+END_SRC
 - [ ] Archive completed or inactive projects.
 - [ ] Update Budget
 - [ ] Review Any Relevant Checklists
 ** Get Creative [0/5]
-- [ ] Review [[file:~/org/somedaymaybe.org][Someday Maybe List]]
-- [ ] Use RandomNote
-  #+BEGIN_SRC emacs-lisp
-  (randomnote-osx)
-  #+END_SRC
 - [ ] Be Creative and Courageous: Are there any new, wonderful, harebrained, creative, thought-provoking, risk-taking ideas you can capture and add into your system, or “external brain”?
 - [ ] Clock out.

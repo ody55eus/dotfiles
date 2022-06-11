@@ -7,3 +7,8 @@
 /sh/.config/zsh/.zsh_sessions
 /sh/.config/zsh/.zcompdump-*
 /keyboard/.config/karabiner/automatic_backups/
+/vim/.vim/swaps/*
+/doom/.local/
+/doom/.doom.d/custom.el
+/doom/.doom.d/misc/
+*.pyc

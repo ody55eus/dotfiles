@@ -1,0 +1,1612 @@
+#+TITLE: Org Mode Workflow
+#+PROPERTY: header-args:emacs-lisp :tangle .doom.d/org-workflow.el
+
+:SOURCE:
+Adapted from [[https://github.com/daviwil/dotfiles/blob/master/Workflow.org][daviwil/dotfiles/Workflow.org]]
+:END:
+
+This file contains the description and configuration of the productivity workflow I use with Org Mode.
+
+* Table of Contents
+:PROPERTIES:
+:TOC:      :include all :ignore this
+:END:
+:CONTENTS:
+- [[#principles][Principles]]
+  - [[#dont-look-at-org-files-to-find-the-next-task-use-the-agenda-view][Don't look at Org files to find the next task, use the agenda view]]
+  - [[#ensure-sufficient-metadata-on-tasks-for-effective-filtering][Ensure sufficient metadata on tasks for effective filtering]]
+  - [[#keep-a-daily-log-of-work-being-done][Keep a daily log of work being done]]
+- [[#tasks][Tasks]]
+  - [[#figure-out-how-to-refile-tasks-to-an-org-capture-target][Figure out how to refile tasks to an org-capture target]]
+- [[#file-paths][File Paths]]
+- [[#workflow-states][Workflow States]]
+- [[#tags][Tags]]
+- [[#agendas][Agendas]]
+- [[#clocking][Clocking]]
+- [[#capture-templates][Capture Templates]]
+- [[#old-configuration][Old Configuration]]
+  - [[#agenda][Agenda]]
+  - [[#tags][Tags]]
+  - [[#tasks][Tasks]]
+  - [[#capture-templates][Capture Templates]]
+- [[#module-setup][Module Setup]]
+:END:
+
+* Principles
+
+- Don't look at Org files to find the next task, *use the agenda view*
+- Ensure sufficient metadata on tasks for effective filtering
+- Keep a *daily log* of work being done
+
+* Directories and Files
+
+The location where my =Notes= folder lives changes in some cases
+
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+
+  (setq org-directory
+          "~/ZK")
+
+  ;; (setq org-agenda-files `(,org-directory))
+  (defun jp/org-path (path)
+    (expand-file-name path org-directory))
+
+  (setq org-default-notes-file (jp/org-path "Notes.org"))
+
+  (with-eval-after-load 'org-roam
+    (defun jp/org-roam-project-finalize-hook ()
+      "Adds the captured project file to `org-agenda-files' if the
+  capture was not aborted."
+      ;; Remove the hook since it was added temporarily
+      (remove-hook 'org-capture-after-finalize-hook #'jp/org-roam-project-finalize-hook)
+
+      ;; Add project file to the agenda list if the capture was confirmed
+      (unless org-note-abort
+        (with-current-buffer (org-capture-get :buffer)
+          (add-to-list 'org-agenda-files (buffer-file-name)))))
+
+    (defun jp/org-roam-find-project ()
+      (interactive)
+      ;; Add the project file to the agenda after capture is finished
+      (add-hook 'org-capture-after-finalize-hook #'jp/org-roam-project-finalize-hook)
+
+      ;; Select a project file to open, creating it if necessary
+      (org-roam-node-find
+       nil
+       nil
+       (jp/org-roam-filter-by-tag "Project")
+       :templates
+       '(("p" "project" plain "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
+          :unnarrowed t))))
+
+    (defun jp/org-roam-capture-inbox ()
+      (interactive)
+      (org-roam-capture- :node (org-roam-node-create)
+                         :templates '(("i" "inbox" plain "* %?"
+                                       :if-new (file+head "Inbox.org" "#+title: Inbox\n")))))
+
+    (defun jp/org-roam-copy-todo-to-today ()
+      (interactive)
+      (let ((org-refile-keep t) ;; Set this to nil to delete the original!
+            (org-roam-dailies-capture-templates
+             '(("t" "tasks" entry "%?"
+                :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
+            (org-after-refile-insert-hook #'save-buffer)
+            today-file
+            pos)
+        (save-window-excursion
+          (org-roam-dailies--capture (current-time) t)
+          (setq today-file (buffer-file-name))
+          (setq pos (point)))
+
+        ;; Only refile if the target file is different than the current file
+        (unless (equal (file-truename today-file)
+                       (file-truename (buffer-file-name)))
+          (org-refile nil nil (list "Tasks" today-file nil pos)))))
+
+    ;; (add-to-list 'org-after-todo-state-change-hook
+    ;;              (lambda ()
+    ;;                (when (equal org-state "DONE")
+    ;;                  (jp/org-roam-copy-todo-to-today))))
+    )
+
+#+end_src
+
+#+begin_src emacs-lisp
+
+(setq org-roam-v2-ack t  ; Disable Warning for org-roam v2
+      org-default-notes-file (jp/org-path "Notes.org"))
+
+(setq auth-sources '((:source "~/.authinfo.gpg")))
+
+#+end_src
+
+* Hydra
+** Daily Jumps
+#+begin_src emacs-lisp
+(defhydra jp/org-roam-jump-menu (:hint nil)
+  "
+  ^Dailies^        ^Capture^       ^Jump^
+  ^^^^^^^^-------------------------------------------------
+  _t_: today       _T_: today       _m_: current month
+  _r_: tomorrow    _R_: tomorrow    _e_: current year
+  _y_: yesterday   _Y_: yesterday   ^ ^
+  _d_: date        ^ ^              ^ ^
+  "
+  ("t" org-roam-dailies-goto-today)
+  ("r" org-roam-dailies-goto-tomorrow)
+  ("y" org-roam-dailies-goto-yesterday)
+  ("d" org-roam-dailies-goto-date)
+  ("T" org-roam-dailies-capture-today)
+  ("R" org-roam-dailies-capture-tomorrow)
+  ("Y" org-roam-dailies-capture-yesterday)
+  ("m" jp/org-roam-goto-month)
+  ("e" jp/org-roam-goto-year)
+  ("c" nil "cancel"))
+#+end_src
+
+* Visual Enhancements
+** Pretty Text
+*** Org Modern
+
+Using the following star symbols:
+
+| Unicode Nr. | Hex  | Symbol |
+|-------------+------+--------|
+|        9673 | 25c9 | ◉      |
+|        9675 | 25cb | ○      |
+|       10040 | 2738 | ✸      |
+|       10047 | 273f | ✿      |
+
+#+begin_src emacs-lisp
+(after! org
+  (setq org-modern-todo nil      ; Don't update TODO Tags
+      org-modern-block nil     ; #+BEGIN block/src/example etc.
+      org-modern-keyword nil   ; #+AUTHOR / #+TITLE / #+PROPERTIES etc.
+      org-modern-priority nil  ; Don't update task priorities
+      org-modern-star ["◉" "○" "✸" "✿"]  ; use pretty stars
+      )
+  )
+#+end_src
+
+To activate globally in all org buffers, execute =global-org-modern-mode=:
+
+#+begin_src emacs-lisp :tangle no
+(global-org-modern-mode 1)
+#+end_src
+
+We don't want it activated in ~org-agenda-mode~, so we only trigger it after ~org-mode~:
+#+begin_src emacs-lisp :tangle no :noweb-ref org-activations
+
+  (org-modern-mode 1)
+#+end_src
+
+*** Set pretty code symbols
+
+#+begin_src emacs-lisp
+(after! org
+  (appendq! +ligatures-extra-symbols
+            `(:checkbox      "☐"
+              :pending       "◼"
+              :checkedbox    "☑"
+              :list_property "∷"
+              :results       "🠶"
+              :property      ""
+              :properties    ""
+              :end           ""
+              :options       "⌥"
+              :title         "𝙏"
+              :subtitle      "𝙩"
+              :author        "𝘼"
+              :date          "𝘿"
+              :latex_header  "⇥"
+              :latex_class   "🄲"
+              :beamer_header "↠"
+              :begin_quote   "❮"
+              :end_quote     "❯"
+              :begin_export  "⯮"
+              :end_export    "⯬"
+              :priority_a   ,(propertize "⚑" 'face 'all-the-icons-red)
+              :priority_b   ,(propertize "⬆" 'face 'all-the-icons-orange)
+              :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
+              :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
+              :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)
+              :em_dash       "—"))
+  (set-pretty-symbols! 'org-mode
+    :merge t
+    :name           "⁍"
+    :checkbox      "[ ]"
+    :pending       "[-]"
+    :checkedbox    "[X]"
+    :list_property "::"
+    :results       "#+RESULTS:"
+    :property      "#+PROPERTY:"
+    :property      ":PROPERTIES:"
+    :end           ":END:"
+    :options       "#+OPTIONS:"
+    :title         "#+TITLE:"
+    :subtitle      "#+SUBTITLE:"
+    :author        "#+AUTHOR:"
+    :date          "#+DATE:"
+    :latex_class   "#+LATEX_CLASS:"
+    :latex_header  "#+LATEX_HEADER:"
+    :beamer_header "#+BEAMER_HEADER:"
+    :begin_quote   "#+BEGIN_QUOTE"
+    :end_quote     "#+END_QUOTE"
+    :begin_export  "#+BEGIN_EXPORT"
+    :end_export    "#+END_EXPORT"
+    :priority_a    "[#A]"
+    :priority_b    "[#B]"
+    :priority_c    "[#C]"
+    :priority_d    "[#D]"
+    :priority_e    "[#E]"
+    :em_dash       "---")
+  (setq org-ellipsis " ▼ ")
+  (setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
+  )
+#+end_src
+
+** Priorities
+#+begin_src emacs-lisp
+(after! org
+  (setq org-priority-highest ?A
+        org-priority-lowest ?E
+        org-priority-faces
+        '((?A . 'all-the-icons-red)
+          (?B . 'all-the-icons-orange)
+          (?C . 'all-the-icons-yellow)
+          (?D . 'all-the-icons-green)
+          (?E . 'all-the-icons-blue))))
+#+end_src
+
+** Visual Fill Column (add spaces and center text)
+
+#+begin_src emacs-lisp
+
+(defun jp/org-visual-fill-column ()
+  (setq visual-fill-column-width 120  ; Margin width
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1) ; Enable Margins
+  (visual-line-mode 1)  ; also show entire lines
+  )
+
+(add-hook 'org-mode-hook #'jp/org-visual-fill-column)
+
+#+end_src
+
+** Font Configuration
+*** Activate Fonts and Colors in Org Mode
+#+begin_src emacs-lisp :noweb yes
+(defun jp/org-mode-setup ()
+  (org-indent-mode 1)  ; Indent text following current headline
+  (mixed-pitch-mode 1) ; Enable different Fonts
+  ;;(org-roam-setup) ; Enable org-roam-db-autosync
+  (setq org-image-actual-width nil) ; Set optional images
+  (rainbow-mode 1)    ; Enable rainbow mode
+  (emojify-mode 1)    ; Enable Emojis
+  (org-appear-mode 1) ; re-appear markup signs =*~
+  <<org-activations>>
+  )
+(add-hook 'org-mode-hook #'jp/org-mode-setup)
+#+end_src
+
+*** Text Size Org Headlines
+
+#+begin_src emacs-lisp
+;; setting org headlines
+(custom-set-faces!
+   '(org-level-1 :inherit outline-1 :height 1.2)
+   '(org-level-2 :inherit outline-2 :height 1.1)
+   '(org-level-3 :inherit outline-3 :height 1.0)
+   '(org-level-4 :inherit outline-4 :height 1.0)
+   '(org-level-5 :inherit outline-5 :height 1.0)
+  )
+  #+end_src
+
+*** Setting Text Fonts for Mixed Fixed Pitch
+
+#+begin_src emacs-lisp
+
+;; Make sure org-indent face is available
+(require 'org-indent)
+
+;; Ensure that anything that should be fixed-pitch in Org files appears that way
+;;(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 80 :inherit 'fixed-pitch)
+;;(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 80 :inherit 'fixed-pitch)
+(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
+
+#+end_src
+
+* Self-written functions
+** Select Org Roam Notes
+*** Select by Folder Prefix
+:Source:
+These extra functions are inspired by the System Crafters live stream of September 3rd 2021:
+https://systemcrafters.net/live-streams/september-03-2021/
+:END:
+#+begin_src emacs-lisp
+(defun jp/org-roam-select-prefix (prefix)
+  (org-roam-node-read
+   nil
+   (lambda (node)
+     (string-prefix-p
+      (concat org-roam-directory prefix)
+      (org-roam-node-file node))
+     )
+   ))
+
+(defun jp/org-roam-ignore-prefix (prefix)
+  (org-roam-node-read
+   nil
+   (lambda (node)
+     (not (string-prefix-p
+           (concat org-roam-directory prefix)
+           (org-roam-node-file node))
+          ))
+   ))
+
+(defun jp/org-roam-ignore-literature ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/Literature"))
+
+(defun jp/org-roam-select-literature ()
+  (interactive)
+  (jp/org-roam-select-prefix "/Literature"))
+
+(defun jp/org-roam-ignore-pc ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/PC"))
+
+(defun jp/org-roam-select-pc ()
+  (interactive)
+  (jp/org-roam-select-prefix "/PC"))
+
+(defun jp/org-roam-ignore-projects ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/Projects"))
+
+(defun jp/org-roam-select-projects ()
+  (interactive)
+  (jp/org-roam-select-prefix "/Projects"))
+
+(defun jp/org-roam-ignore-other ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/20"))
+
+(defun jp/org-roam-select-other ()
+  (interactive)
+  (jp/org-roam-select-prefix "/20"))
+#+end_src
+
+*** Select by Assigned Tags
+#+begin_src emacs-lisp
+(defun jp/org-roam-get-tagged (&optional tag)
+  (mapcar
+   #'org-roam-node-file
+   (seq-filter
+    (lambda (node)
+      (and
+     (member tag-name (org-roam-node-tags node))
+     (eq (org-roam-node-level node) 0)))
+    (org-roam-node-list))))
+
+(defun jp/org-roam-filter-by-tag (tag-name)
+  (lambda (node)
+    (and
+     (member tag-name (org-roam-node-tags node))
+     (eq (org-roam-node-level node) 0))))
+
+(defun jp/org-roam-list-notes-by-tag (tag-name)
+  (mapcar #'org-roam-node-file
+          (seq-filter
+           (jp/org-roam-filter-by-tag tag-name)
+           (org-roam-node-list))))
+
+(defun jp/org-roam-agenda ()
+  (interactive)
+  (let ((org-agenda-files (jp/org-roam-list-notes-by-tag "Project")))
+    (org-agenda)))
+
+#+end_src
+
+** Reading  a File from Template
+:Source:
+Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]] (see [[https://github.com/benoitj/dotfiles/tree/main/dot_config/emacs.local/templates][dot_config/emacs.local/templates]] and [[https://github.com/benoitj/dotfiles/blob/main/dot_config/doom/%2Borg.el#L28][dot_config/doom/+org.el (Lines 28ff)]]).
+:END:
+#+begin_src emacs-lisp
+(setq org-templates-directory (concat doom-private-dir "/templates/"))
+(defun jp/read-template (template)
+  "Reading TEMPLATE as a file from org-templates-directory.
+Returns file content as a string."
+  (with-temp-buffer
+    (insert-file-contents (concat org-templates-directory template))
+    (buffer-string)))
+(defun jp/read-newproject-template ()
+  (jp/read-template "new-project.org"))
+(defun jp/read-dailyreview-template ()
+  (jp/read-template "daily-review.org"))
+(defun jp/read-weekly-template ()
+  (jp/read-template "weekly-review.org"))
+(defun jp/read-monthly-template ()
+  (jp/read-template "monthly-review.org"))
+(defun jp/read-meeting-template ()
+  (jp/read-template "Meeting.org"))
+(defun jp/read-script-template ()
+  (jp/read-template "script.org"))
+#+end_src
+
+** Regular Reviews
+:Source:
+Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
+:END:
+#+begin_src emacs-lisp
+
+(defun jp/daily-review ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "~/share/notes/daily/reviews.org")
+                                  (file "~/.doom.d/templates/daily-review.org")))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
+
+(defun jp/weekly-review ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "~/share/notes/daily/reviews.org")
+                                  (file "~/.doom.d/templates/weekly-review.org")))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
+
+(defun jp/monthly-review ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "~/share/notes/daily/reviews.org")
+                                  (file "~/.doom.d/templates/monthly-review.org")))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
+#+end_src
+
+** Project Management
+#+begin_src emacs-lisp
+(defun jp/go-to-projects (&optional name head)
+  ""
+  (interactive)
+  (let* ((headline-regex (or head "* Projects"))
+         (node (jp/org-roam-select-projects)))
+    (org-roam-node-visit node)
+    ;;(org-roam-node-find-noselect node)
+    (widen)
+    (beginning-of-buffer)
+    (re-search-forward headline-regex)
+    (beginning-of-line)))
+  #+end_src
+
+** Daily
+#+begin_src emacs-lisp
+(defun jp/org-roam-goto-month ()
+  (interactive)
+  (org-roam-capture- :goto (when (org-roam-node-from-title-or-alias (format-time-string "%Y-%B")) '(4))
+                     :node (org-roam-node-create)
+                     :templates '(("m" "month" plain "\n* Goals\n\n%?* Summary\n\n"
+                                   :if-new (file+head "%<%Y-%B>.org"
+                                                      "#+title: %<%Y-%B>\n#+filetags: Project\n")
+                                   :unnarrowed t))))
+
+(defun jp/org-roam-goto-year ()
+  (interactive)
+  (org-roam-capture- :goto (when (org-roam-node-from-title-or-alias (format-time-string "%Y")) '(4))
+                     :node (org-roam-node-create)
+                     :templates '(("y" "year" plain "\n* Goals\n\n%?* Summary\n\n"
+                                   :if-new (file+head "%<%Y>.org"
+                                                      "#+title: %<%Y>\n#+filetags: Project\n")
+                                   :unnarrowed t))))
+
+#+end_src
+
+* Org Agenda
+** Update Agenda List
+#+begin_src emacs-lisp
+(defun jp/org-roam-refresh-agenda-list ()
+  (interactive)
+  (setq org-agenda-files (jp/org-roam-list-notes-by-tag "Project"))
+  (dolist (node (jp/org-roam-list-notes-by-tag "Tasks"))
+    (add-to-list 'org-agenda-files node))
+  (add-to-list 'org-agenda-files (jp/org-path "Agenda.org"))
+  (add-to-list 'org-agenda-files (jp/org-path "Habits.org")))
+
+(add-hook! 'org-roam-db-autosync-mode-hook #'jp/org-roam-refresh-agenda-list)
+#+end_src
+
+* Workflow Configuration
+** Task Keywords
+The Task Keywords are noted with their keybindings in parentheses.
+
+|-----------------+-------------------------------------|
+| Special Symbols | Meaning                             |
+|-----------------+-------------------------------------|
+| =@=               | Append Note when set to this State. |
+| =!=               | Add Timestamp to Logbook.           |
+|-----------------+-------------------------------------|
+
+|---------+----------------------------------------------------------------------------------|
+| Seq 1   | Description                                                            @tasks    |
+|---------+----------------------------------------------------------------------------------|
+| ~PROJ(p)~ | Bigger ongoing Projects.                                                         |
+| ~EPIC(e)~ | Epic Tasks: A specific problem with a pre-defined reachable goal.                |
+| ~TODO(t)~ | Single tasks to accomplish in reasonable time (/Hint/: Set effort to range tasks). |
+| ~IDEA(i)~ | Small ideas that could grow into something beautiful. (optional)                 |
+|---------+----------------------------------------------------------------------------------|
+| ~DONE(d)~ | Finished Tasks                                                                   |
+|---------+----------------------------------------------------------------------------------|
+
+|--------------+------------------------------------------------------------------------|
+| Seq 2        | Description                                                   @backlog |
+|--------------+------------------------------------------------------------------------|
+| ~BACKLOG(b)~   | Tasks that are on the back of my head, if nothing else holds priority. |
+|--------------+------------------------------------------------------------------------|
+| ~PLAN(p)~      | Planning Phase                                                (#Max=5) |
+| ~ACTIVE(a)~    | Active Tasks                                                  (#Max=5) |
+| ~REVIEW(r)~    | .                                                             (#Max=5) |
+| ~WAIT(w@/!)~   | Waiting on external influences (*Explain and Log this*).        (#Max=∞) |
+| ~HOLD(h)~      | Holding back until my time is free again.                     (#Max=∞) |
+|--------------+------------------------------------------------------------------------|
+| ~COMPLETED(c)~ |                                                                        |
+| ~KILL(k)~      |                                                                        |
+| ~STOPPED(s@)~  | Stopped a task. *Explain this*.                                          |
+|--------------+------------------------------------------------------------------------|
+
+#+begin_src emacs-lisp
+
+(setq org-todo-keywords '(
+                          (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
+                                "DONE(d)")
+                          (sequence "BACKLOG(b)" "NEXT(n)" "PLAN(P)" "ACTIVE(a)"
+                                    "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
+                                    "COMPLETED(c)" "KILL(k)" "CANCELLED(C)" "STOPPED(s@)")
+                        )
+      )
+
+#+end_src
+
+** TODO Capture Templates
+
+- [[https://orgmode.org/manual/Template-elements.html#Template-elements][Org-Mode Template Elements→]]
+- [[https://www.orgroam.com/manual.html#The-Templating-System][Org-Roam Templating System→]]
+
+*** TODO Org Capture Templates
+
+#+begin_src emacs-lisp
+
+(setq org-capture-templates '(
+                              ("a" "Agenda")
+                              ("ah" "Programming" entry (file+headline "~/share/org/Agenda.org" "Programming")
+                               "* TODO %?\n %i\n %a")
+                              ("ai" "Important" entry (file+headline "~/share/org/Agenda.org" "Important")
+                               "* TODO %?\n %i\n %a")
+                              ("as" "Sys" entry (file+headline "~/share/org/Agenda.org" "Sys")
+                               "* TODO %?\n %i\n %a")
+                              ("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
+                               "* %?\n %x\n %i\n %a")
+                              ("M" "Meeting" entry
+                               (file+olp+datetree "~/share/org/Meetings.org")
+                               (function jp/read-meeting-template)
+                               :clock-in :clock-resume
+                               :empty-lines 1)
+                              ("m" "Email Workflow")
+                              ("mf" "Follow Up" entry (file+olp "~/share/org/Mail.org" "Follow Up")
+                               "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote")
+                              ("mr" "Read Later" entry (file+olp "~/share/org/Mail.org" "Read Later")
+                               "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote%x")
+                              ("l" "Logbook Entries")
+                              ("ls" "Software" entry
+                               (file+olp+datetree "~/share/org/Logbook.org")
+                               "\n* %U %a%? :Software:"
+                               :clock-in :clock-resume)
+                              ("lh" "Hardware" entry
+                               (file+olp+datetree "~/share/org/Logbook.org")
+                               "\n* %U %a%? :Hardware:"
+                               :clock-in :clock-resume)
+                              ("lc" "Configuration" entry
+                               (file+olp+datetree "~/share/org/Logbook.org")
+                               "\n* %U %a%? :Configuration:"
+                               :clock-in :clock-resume)
+                              ("s" "Create Scripts")
+                              ("ss" "shell" entry
+                               (file+headline "~/share/org/scripts/%<%Y%m%d%H%M%S>.org" "Scripts")
+                               (function jp/read-script-template)
+                               :clock-in :clock-resume
+                               :empty-lines 1)
+                              ("f" "Fleeting Note" entry (file+headline "~/share/org/Notes.org" "Tasks")
+                               "* %?\n %x\n %i\n %a")
+                              ("p" "Privat" entry (file+datetree "privat.org.gpg")
+                               "* ~%<%H:%M>~ - %?\n"
+                               :time-prompt t
+                               :unnarrowed t)
+                              ("t" "Task Entries")
+                              ("tt" "Todo Task" entry (file+headline "~/share/org/Notes.org" "Tasks")
+                               "* TODO %?\n %i\n %a")
+                              ("te" "Epic Task" entry (file+headline "~/share/org/Notes.org" "Epic")
+                               "* EPIC %?\n %i\n %a")
+                              ("ti" "New Idea" entry (file+headline "~/share/org/Notes.org" "Ideas")
+                               "* IDEA %?\n %i\n %a")))
+
+#+end_src
+
+*** TODO Org Roam Capture Templates
+- Add some custom permanent notes templates.
+
+#+begin_src emacs-lisp
+
+(setq org-roam-capture-templates
+      '(("d" "default" plain
+         "%?\n\nSee also %a.\n"
+         :if-new (file+head
+                  "%<%Y%m%d%H%M%S>-${slug}.org"
+                  "${title}\n")
+         :unnarrowed t)
+        ("j" "Projects" plain
+         (function jp/read-newproject-template)
+         :if-new (file+head
+                  "Projects/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "${title}\n")
+         :clock-in :clock-resume
+         :unnarrowed t
+         )
+        ("i" "Individuum / Persona" plain
+         "%?\n\nSee also %a.\n"
+         :if-new (file+head
+                  "People/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "${title}\n")
+         :unnarrowed t
+         )
+        ("l" "Literature")
+        ("ll" "Literature Note" plain
+         "%?\n\nSee also %a.\n* Links\n- %x\n* Notes\n"
+         :if-new (file+head
+                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "${title}\n")
+         :unnarrowed t
+         )
+        ("lr" "Bibliography reference" plain
+         "#+ROAM_KEY: %^{citekey}\n#+PROPERTY: type %^{entry-type}\n#+FILETAGS: %^{keywords}\n#+AUTHOR: %^{author}\n%?"
+         :if-new (file+head
+                  "References/${citekey}.org"
+                  "${title}\n")
+         :unnarrowed t
+         )
+        ("p" "PC" plain
+         "%?\n\nSee also %a.\n"
+         :if-new (file+head
+                  "PC/%<%Y%m%d%H%M%S>-${slug}.org"
+                  "${title}\n#+date: %U")
+         :unnarrowed t
+         )
+        )
+      )
+
+#+end_src
+
+*** Org Roam Capture Ref Templates (Capture Websites)
+
+#+begin_src emacs-lisp
+(setq org-roam-capture-ref-templates '(
+                                       ("r" "Reference" plain
+                                        "%?\n\n* Citations\n#+begin_quote\n${body}\n#+end_quote"
+                                        :if-new (file+head
+                                                 "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                 "${title}\n#+date: %U\n")
+                                        :unnarrowed t
+                                        )
+                                       ("l" "Literature References" plain
+                                        "%?\n\n* Abstract\n#+begin_quote\n${body}\n#+end_quote"
+                                        :if-new (file+head
+                                                 "References/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                 "${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
+                                        :unnarrowed t
+                                        :empty-lines 1)
+                                       ("w" "Web site" entry
+                                        :target (file+head
+                                                 "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
+                                                 "${title}\n#+date: %U\n")
+                                        "* %a :website:\n\n%U %?\n\n#+begin_quote\n%:initial\n#+end_quote")
+                                       )
+      )
+
+#+end_src
+
+*** TODO Org Roam Dailies Capture Templates
+- Add some custom floating notes templates.
+- Add org protocol templates
+
+:Source:
+The daily / monthly review templates are inspired by [[https://github.com/benoitj/dotfiles/tree/main/dot_config/emacs.local/templates][Benoit Joly's templates]].
+:END:
+
+#+begin_src emacs-lisp
+(setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         "* %?"
+         :if-new (file+head
+                  "%<%Y-%m-%d>.org"
+                  "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
+         :kill-buffer t
+         )
+        ("j" "Journal entry" entry
+         "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
+         :if-new (file+head+olp
+                  "%<%Y-%m-%d>.org"
+                  "%<%Y-%m-%d>\n"
+                  ("Journal"))
+         :kill-buffer t
+         )
+        ("l" "Monthly Log" entry
+         "* %?\n  %U\n  %a\n  %i"
+         :if-new (file+head+olp
+                  "%<%Y-%B>.org"
+                  "%<%Y-%B>\n"
+                  ("Log"))
+         :kill-buffer t
+         )
+        ("m" "meeting" entry
+         (file "~/.dotfiles/doom/.doom.d/templates/Meeting.org")
+         :if-new (file+head+olp
+                  "%<%Y-%m-%d>.org"
+                  "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
+                  ("Meetings")))
+        ("r" "Review")
+        ("rd" "Daily Review" entry
+         (file "~/.dotfiles/doom/.doom.d/templates/daily-review.org")
+         :target (file+head
+          "%<%Y-%m-%d>.org"
+          "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"))
+        ("rm" "Monthly Review" entry
+         (file "~/.dotfiles/doom/.doom.d/templates/monthly-review.org")
+         :if-new (file+head
+                  "%<%Y-%B>.org"
+                  "%<%Y-%B>\n"))))
+#+end_src
+
+** Custom Agenda View
+
+#+begin_src emacs-lisp
+
+(setq org-agenda-custom-commands
+      '(("d" "Dashboard"
+         ((agenda "" ((org-deadline-warning-days 20)))
+          (todo "BACKLOG"
+                ((org-agenda-overriding-header "Backlog Tasks")))
+          (todo "ACTIVE" ((org-agenda-overriding-header "Active Tasks")))
+          (todo "REVIEW" ((org-agenda-overriding-header "Active Reviews")))
+          (todo "EPIC" ((org-agenda-overriding-header "Active Epics")))))
+
+        ;; Low-effort next actions
+        ("E" tags-todo "+TODO=\"EPIC\"+Effort<15&+Effort>0"
+         ((org-agenda-overriding-header "Low Effort Tasks")
+          (org-agenda-max-todos 20)
+          (org-agenda-files org-agenda-files)))
+
+        ("w" "Workflow Status"
+         ((todo "WAIT"
+                ((org-agenda-overriding-header "Waiting on External")
+                 (org-agenda-files org-agenda-files)))
+          (todo "REVIEW"
+                ((org-agenda-overriding-header "In Review")
+                 (org-agenda-files org-agenda-files)))
+          (todo "PLAN"
+                ((org-agenda-overriding-header "In Planning")
+                 (org-agenda-todo-list-sublevels nil)
+                 (org-agenda-files org-agenda-files)))
+          (todo "BACKLOG"
+                ((org-agenda-overriding-header "Project Backlog")
+                 (org-agenda-todo-list-sublevels nil)
+                 (org-agenda-files org-agenda-files)))
+          (todo "READY"
+                ((org-agenda-overriding-header "Ready for Work")
+                 (org-agenda-files org-agenda-files)))
+          (todo "ACTIVE"
+                ((org-agenda-overriding-header "Active Projects")
+                 (org-agenda-files org-agenda-files)))
+          (todo "COMPLETED"
+                ((org-agenda-overriding-header "Completed Projects")
+                 (org-agenda-files org-agenda-files)))
+          (todo "CANC"
+                ((org-agenda-overriding-header "Cancelled Projects")
+                 (org-agenda-files org-agenda-files)))))
+        ("h" "Daily habits"
+         ((agenda ""))
+         ((org-agenda-show-log t)
+          (org-agenda-ndays 14)
+          (org-agenda-log-mode-items '(state))
+          (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
+        ;; other commands here
+
+        ("D" "Dashboard 2"
+         ((agenda "" ((org-deadline-warning-days 7)))
+          (tags-todo "+PRIORITY=\"A\""
+                     ((org-agenda-overriding-header "High Priority")))
+          (tags-todo "+followup" ((org-agenda-overriding-header "Needs Follow Up")))
+          (todo "NEXT"
+                ((org-agenda-overriding-header "Next Actions")
+                 (org-agenda-max-todos nil)))
+          (todo "ACTIVE" ((org-agenda-overriding-header "Active Tasks")))
+          (todo "EPIC" ((org-agenda-overriding-header "Active Epics")))
+          (todo "BACKLOG"
+                ((org-agenda-overriding-header "Backlog")
+                 (org-agenda-max-todos 99)))
+          (todo "REVIEW" ((org-agenda-overriding-header "Active Reviews")))))
+
+        ("n" "Next Tasks"
+         ((agenda "" ((org-deadline-warning-days 7)))
+          (todo "NEXT"
+                ((org-agenda-overriding-header "Next Tasks")))))))
+#+end_src
+
+** Tasks
+*** Task Tags
+
+#+begin_src emacs-lisp
+
+(setq org-tag-alist
+      '((:startgroup)
+        ; Put mutually exclusive tags here
+        (:endgroup)
+        ("@sys" . ?S)
+        ("@home" . ?H)
+        ("@work" . ?W)
+        ("planning" . ?p)
+        ("publish" . ?P)
+        ("batch" . ?b)
+        ("note" . ?n)
+        ("next" . ?n)
+        ("followup" . ?f)
+        ("recurring" . ?r)
+        ("idea" . ?i)))
+
+#+end_src
+
+*** Task Priorities
+
+#+begin_src emacs-lisp
+
+(setq org-lowest-priority ?E) ;; Priorities A to E
+
+#+end_src
+
+** Refile Targets
+
+#+begin_src emacs-lisp
+
+(setq org-refile-targets
+      '(("Archive.org" :maxlevel . 1)
+        ("Tasks.org" :maxlevel . 1)))
+
+#+end_src
+
+** Archive Location
+
+#+begin_src emacs-lisp
+
+(setq org-archive-location ".archive/%s::")
+
+#+end_src
+
+** Enable Auto-Save after Refile
+
+#+begin_src emacs-lisp
+
+;; Save Org buffers after refiling!
+(advice-add 'org-refile :after 'org-save-all-org-buffers)
+
+#+end_src
+
+** Enable Org Habits
+
+#+begin_src emacs-lisp
+
+(add-to-list 'org-modules 'org-habit)
+
+#+end_src
+
+* Org Publish (Exporting org files)
+** LaTeX
+
+See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online Documentation]] for LaTeX Export for Org Mode.
+
+ | LATEX_CLASS  | Document Class | Description                      |
+ |--------------+----------------+----------------------------------|
+ | =koma-article= | =scrartcl=       | Normal article                   |
+ | =aip-rst=      | =revtex4-2=      | Paper Template for AIP Journals: |
+ |              |                | Review of Scientific Instruments |
+
+#+begin_src emacs-lisp :results none
+;; (setq org-latex-to-pdf-process '("texi2dvi --pdf --clean --verbose --batch %f"))
+
+(require 'ox-latex)
+(unless (boundp 'org-latex-classes)
+  (setq org-latex-classes nil))
+
+;; Define Koma Article Class
+(add-to-list 'org-latex-classes
+             '("koma-article"
+               "\\documentclass{scrartcl}"
+               ("\\section{%s}" . "\\section*{%s}")))
+
+;; Define Review of Scientific Instruments Class
+(add-to-list 'org-latex-classes
+             '("aip-rsi"
+               "\\documentclass[
+                aip, % AIP Journals
+                rsi, % Review of Scientific Instruments
+                amsmath,amssymb, % Basic Math Packages
+                preprint, % or reprint
+                ]{revtex4-2}
+\\include{structure}
+[NO-DEFAULT-PACKAGES]
+[NO-EXTRA]
+[NO-PACKAGES]
+
+%% Apr 2021: AIP requests that the corresponding
+%% email to be moved after the affiliations
+\\makeatletter
+\\def\\@email#1#2{%
+ \\endgroup
+ \\patchcmd{\\titleblock@produce}
+  {\\frontmatter@RRAPformat}
+  {\\frontmatter@RRAPformat{\\produce@RRAP{*#1\\href{mailto:#2}{#2}}}\\frontmatter@RRAPformat}
+  {}{}
+}%
+\\makeatother"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ))
+
+(defun org-export-latex-no-toc (depth)
+  (when depth
+    (format "%% Org-mode is exporting headings to %s levels.\n"
+            depth)))
+(setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
+#+end_src
+*** Letters with Org-Mode
+#+begin_src emacs-lisp :results none
+(add-to-list 'org-latex-classes
+      '("letter"
+         "\\documentclass[
+    fontsize=12pt,
+    % Satzspiegel
+    DIV=13,
+    paper=a4,
+    enlargefirstpage=on,
+    pagenumber=headright,
+    %---------------------------------------------------------------------------
+    % Layout
+    headsepline=on,
+    parskip=half,
+    %---------------------------------------------------------------------------
+    % Briefkopf und Anschrift
+    %fromalign=location,
+    fromphone=off,
+    fromrule=off,
+    fromfax=off,
+    fromemail=on,
+    fromurl=on,
+    fromlogo=off,
+    addrfield=on,
+    backaddress=off,
+    subject=beforeopening,
+    locfield=narrow,
+    foldmarks=on,
+    numericaldate=off,
+    refline=narrow,
+    draft=off
+          ]{scrlttr2}
+\\include{structure}
+[NO-DEFAULT-PACKAGES]
+[NO-EXTRA]
+[NO-PACKAGES]
+\\usepackage[T1]{fontenc}
+\\usepackage[utf8]{inputenc}
+\\usepackage{url}
+\\usepackage{graphicx}
+\\usepackage{uniinput}
+% Fonts
+\\setkomafont{fromname}{\\sffamily}
+\\setkomafont{fromaddress}{\\sffamily}
+\\setkomafont{pagenumber}{\\sffamily}
+\\setkomafont{subject}{\\mdseries \\bfseries}
+\\setkomafont{backaddress}{\\mdseries}
+\\usepackage{mathptmx}%% Schrift Times
+"
+         ("\\textbf{%s}" . "\\textbf*{%s}")
+         ("\\textbf{%s}" . "\\textbf*{%s}")
+         ))
+#+end_src
+** HTML
+#+begin_src emacs-lisp
+(add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
+(add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
+#+end_src
+
+** PlantUML
+#+begin_src emacs-lisp
+(setq plantuml-default-exec-mode 'jar)
+#+end_src
+
+* Additional Org Packages
+** Org Alert
+#+begin_src emacs-lisp
+(require 'org-alert)
+#+end_src
+
+** Org Msg
+Doom does a fantastic stuff with the defaults with this, so we only make a few minor tweaks.
+#+begin_src emacs-lisp
+(setq +org-msg-accent-color "#1a5fb4"
+      org-msg-greeting-fmt "\nHi %s,\n\n"
+      org-msg-signature "\n\n#+begin_signature\nAll the best,\\\\\n@@html:<b>@@Jonathan@@html:</b>@@\n#+end_signature")
+(map! :map org-msg-edit-mode-map
+      :after org-msg
+      :n "G" #'org-msg-goto-body)
+#+end_src
+
+** Org Tempo
+:SOURCE:
+Description by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
+:END:
+
+This enables auto completion to easily create OrgBabel code blocks in org mode!
+
+Org-tempo is a package that allows for '<s' followed by TAB to expand to a begin_src tag.  Other expansions available include:
+
+| Typing the below + TAB | Expands to ...                          |
+|------------------------+-----------------------------------------|
+| <a                     | '#+BEGIN_EXPORT ascii' … '#+END_EXPORT  |
+| <c                     | '#+BEGIN_CENTER' … '#+END_CENTER'       |
+| <C                     | '#+BEGIN_COMMENT' … '#+END_COMMENT'     |
+| <e                     | '#+BEGIN_EXAMPLE' … '#+END_EXAMPLE'     |
+| <E                     | '#+BEGIN_EXPORT' … '#+END_EXPORT'       |
+| <h                     | '#+BEGIN_EXPORT html' … '#+END_EXPORT'  |
+| <l                     | '#+BEGIN_EXPORT latex' … '#+END_EXPORT' |
+| <q                     | '#+BEGIN_QUOTE' … '#+END_QUOTE'         |
+| <s                     | '#+BEGIN_SRC' … '#+END_SRC'             |
+| <v                     | '#+BEGIN_VERSE' … '#+END_VERSE'         |
+
+#+begin_src emacs-lisp
+
+(with-eval-after-load 'org
+  ;; This is needed as of Org 9.2
+  (require 'org-tempo)
+
+  (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
+  (add-to-list 'org-structure-template-alist '("uml" . "src plantuml :file uml.png"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
+  (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("go" . "src go"))
+  (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+  (add-to-list 'org-structure-template-alist '("json" . "src json")))
+
+#+end_src
+
+** TODO Org Special Block Extras
+
+Templating System to export org documents into LaTeX, HTML, etc. with individual templates.
+See [[https://github.com/alhassy/org-special-block-extras][Maintainer (upstream)]] for further information.
+
+#+begin_src emacs-lisp
+;; Enable Special Blocks in Org-Mode
+(add-hook #'org-mode-hook #'org-special-block-extras-mode)
+
+;; Use short names like ‘defblock’ instead of the fully qualified name
+;; ‘org-special-block-extras--defblock’
+;; (org-special-block-extras-short-names)
+#+end_src
+
+** Org Tree Slide (Presentations)
+Make sure the package =org-tree-slide= is loaded (put this into your =packages.el=):
+
+#+begin_src emacs-lisp :tangle no
+(package! org-tree-slide)
+#+end_src
+
+This Configuration runs on start end finish of presentations:
+
+#+begin_src emacs-lisp
+(defun jp/presentation-setup()
+  ;;(setq text-scale-mode-amount 3)
+  ;;(text-scale-mode 1)
+  (org-display-inline-images)
+  (org-tree-slide-activate-message "Presentation started!")
+  (org-tree-slide-deactivate-message "Presentation finished!")
+  (org-tree-slide-header t)
+  (org-tree-slide-breadcrumbs " // ")
+  )
+
+(defun jp/presentation-end()
+  ;;(text-scale-mode 0)
+  )
+
+(add-hook #'org-tree-slide-play #'jp/presentation-setup)
+(add-hook #'org-tree-slide-stop #'jp/presentation-end)
+
+#+end_src
+
+** Babel (Programming Languages in Org)
+*** PlantUML
+#+begin_src emacs-lisp
+;; Enable PlantUML Diagrams
+(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+;; Jar Configuration
+(setq org-plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
+(setq plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
+(setq plantuml-default-exec-mode 'jar)
+#+end_src
+
+*** OrgBabel Languages
+#+begin_src emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((R . t)
+   (python . t)
+   (LaTeX . t)
+   (plantuml . t)
+   (scheme . t)
+   (guile . t)
+   (emacs-lisp . t)))
+#+end_src
+
+*** Turn Tangle Comments off
+Since Emacs 28 OrgBabel tangle creates comments like ="[[%link][%source-name]]"= to indicate the source of tangled code. The following lines deactivate this behavior:
+#+begin_src emacs-lisp
+(setq org-babel-tangle-comment-format-beg ""
+      org-babel-tangle-comment-format-end "")
+#+end_src
+
+** TODO BibTeX (Literature Management)
+
+My BibTeX configuration is based on [[https://github.com/org-roam/org-roam-bibtex/blob/master/README.md#doom-emacs][Org Roam BibTeX README]].
+The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org][manual]] provides some additional information.
+
+#+begin_src emacs-lisp
+
+(use-package! org-roam-bibtex
+  :after org-roam
+  :config
+  (require 'org-ref)) ; optional: if Org Ref is not loaded anywhere else, load it here
+
+;; Helm Autocompletion
+(autoload 'helm-bibtex "helm-bibtex" "" t)
+
+;; Ivy Autocompletion
+;;(autoload 'ivy-bibtex "ivy-bibtex" "" t)
+;; ivy-bibtex requires ivy's `ivy--regex-ignore-order` regex builder, which
+;; ignores the order of regexp tokens when searching for matching candidates.
+;; Add something like this to your init file:
+;; (setq ivy-re-builders-alist
+;;       '((ivy-bibtex . ivy--regex-ignore-order)
+;;         (t . ivy--regex-plus)))
+
+(setq bibtex-file-path (concat org-roam-directory "/BibTeX/")
+      bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib"
+                                       "~/ZK/BibTeX/Master.bib"
+                                       "~/Projects/Method-Paper/bibliography.bib")
+      bibtex-completion-library-path '("~/nc/Library/BibTeX/")
+      bibtex-completion-notes-path "~/ZK/References/")
+#+end_src
+
+* Org-Roam (Zettelkasten)
+** Require Org-Protocol
+
+#+begin_src emacs-lisp
+
+(require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
+(require 'org-roam-protocol)
+(require 'org-protocol-capture-html)
+
+#+end_src
+
+*** Note from <2022-06-03 Fri>
+Doom Emacs has some problems with ~org-protocol~ on Emacs version > 28.
+To ignore this error, remove the following lines from [[file:~/.emacs.d/modules/lang/org/config.el]]
+
+#+begin_src emacs-lisp :tangle no
+  ;; Disable built-in, clumsy advice
+  (after! org-protocol
+    (ad-disable-advice 'server-visit-files 'before 'org-protocol-detect-protocol-server))
+#+end_src
+
+** Files and Basic Variables
+
+#+begin_src emacs-lisp
+
+(setq org-roam-directory org-directory   ; Set org-roam directory
+      org-roam-dailies-directory (jp/org-path "daily")
+      org-attach-id-dir (jp/org-path ".attachments")
+      org-id-locations-file (doom-path ".orgids")
+      org-roam-completion-everywhere nil
+      org-roam-completion-system 'default
+      org-roam-db-location (doom-path "org-roam.db")
+      ;;org-roam-graph-executable "neato" ; or "dot" (default)
+      )
+
+#+end_src
+
+** Org-Roam Buffer (Side-Window)
+
+#+begin_src emacs-lisp
+(setq org-roam-mode-section-functions
+      (list #'org-roam-backlinks-section
+            #'org-roam-reflinks-section
+            #'org-roam-unlinked-references-section
+            ))
+#+end_src
+
+** Org-Roam UI
+
+#+begin_src emacs-lisp
+
+(use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;    :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+
+#+end_src
+
+**** Resize Document Title
+#+begin_src emacs-lisp
+(after! org
+  (custom-set-faces!
+    '(org-document-title :height 1.2)))
+#+end_src
+* Org-Noter (Annotating PDF Documents)
+[[https://github.com/weirdNox/org-noter][org-noter]] is an annotation extension to sync text annotations to PDF documents. It allows to store all text notes inside a folder and link to the corresponding PDF.
+#+begin_src emacs-lisp
+(setq org-noter-notes-search-path '("~/ZK/References"))
+#+end_src
+
+* Agendas
+
+#+begin_src emacs-lisp
+
+(setq org-agenda-window-setup 'current-window)
+(setq org-agenda-span 'day)
+(setq org-agenda-start-day "0d")
+(setq org-agenda-start-with-log-mode t)
+(setq org-agenda-log-mode-items '(closed clock status))
+
+;; Make done tasks show up in the agenda log
+(setq org-log-done 'time)
+(setq org-log-into-drawer t)
+
+(setq org-datetree-add-timestamp 'inactive)
+(setq org-habit-graph-column 60)
+(setq org-fontify-whole-heading-line t)
+
+(setq org-columns-default-format "%20CATEGORY(Category) %65ITEM(Task) %TODO %6Effort(Estim){:}  %6CLOCKSUM(Clock) %TAGS")
+
+
+
+#+end_src
+
+* Clocking
+
+I like to use =org-timer-set-timer= to set a countdown timer for a task based on the "effort" value I set on it.  Since Org doesn't seem to automatically clock the task when I set a timer, this hook will take care of that.
+
+#+begin_src emacs-lisp
+
+  (add-hook 'org-timer-set-hook #'org-clock-in)
+
+#+end_src
+
+* Capture Templates
+
+#+begin_src emacs-lisp
+
+  (defun jp/get-todays-journal-file-name ()
+    "Gets the journal file name for today's date"
+    (interactive)
+    (let* ((journal-file-name
+             (expand-file-name
+               (format-time-string "%Y/%Y-%2m-%B.org")
+               (jp/org-path "Journal/")))
+           (journal-year-dir (file-name-directory journal-file-name)))
+      (if (not (file-directory-p journal-year-dir))
+        (make-directory journal-year-dir))
+      journal-file-name))
+
+
+  (defun jp/on-org-capture ()
+    ;; Don't show the confirmation header text
+    (setq header-line-format nil)
+
+    ;; Control how some buffers are handled
+    (let ((template (org-capture-get :key t)))
+      (pcase template
+        ("jj" (delete-other-windows)))))
+
+  (add-hook 'org-capture-mode-hook 'jp/on-org-capture)
+
+  (setq org-capture-templates
+    `(("t" "Tasks")
+      ("tt" "Task" entry (file ,(jp/org-path "Inbox.org"))
+           "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+      ("ts" "Clocked Entry Subtask" entry (clock)
+           "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+
+      ("j" "Journal Entries")
+      ("je" "General Entry" entry
+           (file+olp+datetree ,(jp/org-path "Journal.org"))
+           "\n* %<%I:%M %p> - %^{Title} \n\n%?\n\n"
+           :tree-type week
+           :clock-in :clock-resume
+           :empty-lines 1)
+      ("jt" "Task Entry" entry
+           (file+olp+datetree ,(jp/org-path "Journal.org"))
+           "\n* %<%I:%M %p> - Task Notes: %a\n\n%?\n\n"
+           :tree-type week
+           :clock-in :clock-resume
+           :empty-lines 1)
+      ("jj" "Journal" entry
+           (file+olp+datetree ,(jp/org-path "Journal.org"))
+           "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
+           :tree-type week
+           :clock-in :clock-resume
+           :empty-lines 1)))
+
+#+end_src
+
+* Old Configuration
+
+The following blocks are being migrated over from my Org Mode configuration in [[file:Emacs.org][Emacs.org]].  I've disabled tangling for them so that they don't get written out to =workflow.el= in favor of my new configuration above.
+
+** Agenda
+
+#+begin_src emacs-lisp :tangle no
+
+  ;; Configure custom agenda views
+  (setq org-agenda-custom-commands
+        `(("d" "Dashboard"
+           ((agenda "" ((org-deadline-warning-days 7)))
+            (todo "FLOW" ((org-agenda-overriding-header "Workflow Tasks")))
+            (tags-todo "+PRIORITY=\"A\""
+                       ((org-agenda-overriding-header "High Priority")))
+            (todo "NEXT"
+                  ((org-agenda-overriding-header "Next Tasks")))
+            (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))
+            (todo "TODO"
+                  ((org-agenda-overriding-header "Unprocessed Inbox Tasks")
+                   (org-agenda-files '(,(jp/org-path "Inbox.org")))
+                   (org-agenda-text-search-extra-files nil)))))
+
+          ("n" "Next Tasks"
+           ((todo "NEXT"
+                  ((org-agenda-overriding-header "Next Tasks")))))
+
+          ("p" "Active Projects"
+           ((agenda "")
+            (todo "ACTIVE"
+                  ((org-agenda-overriding-header "Active Projects")
+                   (org-agenda-max-todos 5)
+                   (org-agenda-files org-agenda-files)))))
+
+          ("w" "Workflow Status"
+           ((todo "WAIT"
+                  ((org-agenda-overriding-header "Waiting on External")
+                   (org-agenda-files org-agenda-files)))
+            (todo "REVIEW"
+                  ((org-agenda-overriding-header "In Review")
+                   (org-agenda-files org-agenda-files)))
+            (todo "PLAN"
+                  ((org-agenda-overriding-header "In Planning")
+                   (org-agenda-todo-list-sublevels nil)
+                   (org-agenda-files org-agenda-files)))
+            (todo "BACKLOG"
+                  ((org-agenda-overriding-header "Project Backlog")
+                   (org-agenda-todo-list-sublevels nil)
+                   (org-agenda-files org-agenda-files)))
+            (todo "NEXT"
+                  ((org-agenda-overriding-header "Next Tasks")
+                   (org-agenda-todo-list-sublevels nil)
+                   (org-agenda-files org-agenda-files)))
+            (todo "READY"
+                  ((org-agenda-overriding-header "Ready for Work")
+                   (org-agenda-files org-agenda-files)))
+            (todo "ACTIVE"
+                  ((org-agenda-overriding-header "Active Projects")
+                   (org-agenda-files org-agenda-files)))
+            (todo "COMPLETED"
+                  ((org-agenda-overriding-header "Completed Projects")
+                   (org-agenda-files org-agenda-files)))
+            (todo "CANC"
+                  ((org-agenda-overriding-header "Cancelled Projects")
+                   (org-agenda-files org-agenda-files)))))
+
+          ;; Projects on hold
+          ("h" tags-todo "+LEVEL=2/+HOLD"
+           ((org-agenda-overriding-header "On-hold Projects")
+            (org-agenda-files org-agenda-files)))
+
+          ;; Low-effort next actions
+          ("l" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
+           ((org-agenda-overriding-header "Low Effort Tasks")
+            (org-agenda-max-todos 20)
+            (org-agenda-files org-agenda-files)))))
+
+  (use-package org-super-agenda
+    :after org
+    :config
+    (org-super-agenda-mode 1)
+    (setq org-super-agenda-groups
+          '(;; Each group has an implicit boolean OR operator between its selectors.
+            (:name "Today"  ; Optionally specify section name
+                   :time-grid t  ; Items that appear on the time grid
+                   :todo "NEXT")  ; Items that have this TODO keyword
+            (:name "Important"
+                   ;; Single arguments given alone
+                   :priority "A")
+            )))
+
+#+end_src
+
+** Tags
+
+#+begin_src emacs-lisp :tangle no
+
+  ;; Configure common tags
+  (setq org-tag-alist
+    '((:startgroup)
+       ; Put mutually exclusive tags here
+       (:endgroup)
+       ("@home" . ?H)
+       ("@work" . ?W)
+       ("batch" . ?b)
+       ("next" . ?n)
+       ("followup" . ?f)
+       ("recurring" . ?r)))
+
+  ;; Configure task state change tag triggers
+  ;; (setq org-todo-state-tags-triggers
+  ;;   (quote (("CANC" ("cancelled" . t))
+  ;;           ("WAIT" ("waiting" . t))
+  ;;           ("HOLD" ("waiting") ("onhold" . t))
+  ;;           (done ("waiting") ("onhold"))
+  ;;           ("TODO" ("waiting") ("cancelled") ("onhold"))
+  ;;           ("DONE" ("waiting") ("cancelled") ("onhold")))))
+
+#+end_src
+
+** Tags
+
+Tags are used to filter all tasks to find anything actionable in a particular context.  I use the =@home= and =@work= tags for explicit contexts and then the rest are used for filtering tasks for agenda views.
+
+- =followup= - Someone is waiting on me to follow up on this task, it should be prioritized above others
+- =batch= - The task can be batched with others (low effort)
+
+#+begin_src emacs-lisp :tangle no
+
+  ;; Configure common tags
+  (setq org-tag-alist
+    '((:startgroup)
+       ; Put mutually exclusive tags here
+       (:endgroup)
+       ("@home" . ?H)
+       ("@work" . ?W)
+       ("batch" . ?b)
+       ("followup" . ?f)))
+
+#+end_src
+
+** Tasks
+
+#+begin_src emacs-lisp :tangle no
+
+  ;; Configure TODO settings
+  (setq org-datetree-add-timestamp 'inactive)
+  (setq org-habit-graph-column 60)
+  (setq org-fontify-whole-heading-line t)
+  (setq org-todo-keywords
+    '((sequence "TODO(t)" "NEXT(n)" "PROC" "FLOW(f)" "|" "DONE(d!)")
+      (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")
+      (sequence "GOAL(g)" "|" "ACHIEVED(v)" "MAINTAIN(m)")))
+
+#+end_src
+
+** Capture Templates
+
+Information on template expansion can be found in the [[https://orgmode.org/manual/Template-expansion.html#Template-expansion][Org manual]].
+
+#+begin_src emacs-lisp :tangle no
+
+  (defun jp/read-file-as-string (path)
+    (with-temp-buffer
+      (insert-file-contents path)
+      (buffer-string)))
+
+  (setq org-capture-templates
+    `(("t" "Tasks / Projects")
+      ("tt" "Task" entry (file+olp ,(jp/org-path "Projects.org") "Projects" "Inbox")
+           "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+      ("ts" "Clocked Entry Subtask" entry (clock)
+           "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+      ("tp" "New Project" entry (file+olp ,(jp/org-path "Projects.org") "Projects" "Inbox")
+           "* PLAN %?\n  %U\n  %a\n  %i" :empty-lines 1)
+
+      ("j" "Journal Entries")
+      ("jj" "Journal" entry
+           (file+olp+datetree ,(jp/get-todays-journal-file-name))
+           ;"\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
+           ,(jp/read-file-as-string "~/Notes/Templates/Daily.org")
+           :clock-in :clock-resume
+           :empty-lines 1)
+      ("jm" "Meeting" entry
+           (file+olp+datetree ,(jp/get-todays-journal-file-name))
+           "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
+           :clock-in :clock-resume
+           :empty-lines 1)
+      ("jt" "Thinking" entry
+           (file+olp+datetree ,(jp/get-todays-journal-file-name))
+           "\n* %<%I:%M %p> - %^{Topic} :thoughts:\n\n%?\n\n"
+           :clock-in :clock-resume
+           :empty-lines 1)
+      ("jc" "Clocked Entry Notes" entry
+           (file+olp+datetree ,(jp/get-todays-journal-file-name))
+           "* %<%I:%M %p> - %K :notes:\n\n%?"
+           :empty-lines 1)
+      ("jg" "Clocked General Task" entry
+           (file+olp+datetree ,(jp/get-todays-journal-file-name))
+           "* %<%I:%M %p> - %^{Task description} %^g\n\n%?"
+           :clock-in :clock-resume
+           :empty-lines 1)
+
+      ("w" "Workflows")
+      ("we" "Checking Email" entry (file+olp+datetree ,(jp/get-todays-journal-file-name))
+           "* Checking Email :email:\n\n%?" :clock-in :clock-resume :empty-lines 1)
+
+      ("m" "Metrics Capture")
+      ("mw" "Weight" table-line (file+headline "~/Notes/Metrics.org" "Weight")
+       "| %U | %^{Weight} | %^{Notes} |" :kill-buffer)
+      ("mp" "Blood Pressure" table-line (file+headline "~/Notes/Metrics.org" "Blood Pressure")
+       "| %U | %^{Systolic} | %^{Diastolic} | %^{Notes}" :kill-buffer)))
+
+#+end_src
+
+* Module Setup
+
+This Org file produces a file called =jp-workflow.el= which gets loaded up in =init.el=; export it as a feature so that it can be loaded with =require=.
+
+#+begin_src emacs-lisp
+
+(provide 'org-workflow)
+
+#+end_src

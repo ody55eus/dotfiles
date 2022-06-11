@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 alias zsh-update-plugins="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
 
 # Text Editor
@@ -61,8 +62,8 @@ alias gpg-check="gpg --keyserver-options auto-key-retrieve --verify"
 alias gpg-retrieve="gpg --keyserver-options auto-key-retrieve --receive-keys"
 
 # Displays the keybiding number of pressed keys.
-# use with 
-# $ xmodmap -e 'keycode 108 = 
+# use with
+# $ xmodmap -e 'keycode 108 =
 AWK_CMD='/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }'
 alias show-keybindings="xev | awk -F'[ )]+' '"${AWK_CMD}"'"
 
@@ -105,7 +106,7 @@ case "$(uname -s)" in
      # echo 'MS Windows'
      ;;
    *)
-     # echo 'Other OS' 
+     # echo 'Other OS'
      ;;
 esac
 
@@ -115,11 +116,6 @@ alias sudo='sudo '
 # Get week number
 alias week='date +%V'
 
-
-# IP addresses
-alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
-alias localip="ipconfig getifaddr en0"
-alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 
 # URL-encode strings
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env zsh
 HISTFILE="$ZDOTDIR"/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=500000
@@ -12,7 +12,7 @@ export PATH="$HOME/.emacs.d/bin":$PATH
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='nvim'
   ### "nvim" as manpager
-  export MANPAGER="nvim -c 'set ft=man' -"
+  export MANPAGER="nvim -c 'Man!' -o -"
 
   ### "less" as manpager
   # export MANPAGER='less -M'
@@ -20,7 +20,7 @@ else
   export EDITOR="emacsclient -t -a 'nvim'"                 # $EDITOR use Emacs in terminal
   export VISUAL="emacsclient -c -a emacs"              # $VISUAL use Emacs in GUI mode
   ### "nvim" as manpager
-  export MANPAGER="nvim -c 'set ft=man' -"
+  export MANPAGER="nvim -c 'Man!' -o -"
   # Emacs to view man pages
   # export MANPAGER="emacsclient -nw -e \"(let ((Man-notify-method 'bully)) (man \\\"\$1\\\"))\""
 fi

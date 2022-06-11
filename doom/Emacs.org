@@ -1,5 +1,5 @@
 #+TITLE: Doom Emacs Configuration
-#+STARTUP: fold
+#+AUTHOR: Jonathan Pieper
 
 * Table of Contents :TOC:noexport:
 - [[#about-this-configuration][About this Configuration]]
@@ -14,31 +14,25 @@
   - [[#improve-startup-performance][Improve Startup Performance]]
   - [[#start-emacs-as-server][Start Emacs as Server!]]
   - [[#default-variables][Default Variables]]
+  - [[#additional-configuration-files][Additional Configuration Files]]
 - [[#ui-configuration][UI Configuration]]
-  - [[#keybindings-leader-spc-key][Keybindings (=:leader= ~SPC-<Key>~)]]
+  - [[#keybindings][Keybindings]]
   - [[#color-theme][Color Theme]]
   - [[#font-face-configuration][Font Face Configuration]]
   - [[#basic-emacs-ui-enhancements][Basic Emacs UI Enhancements]]
   - [[#doom-emacs-customization][Doom Emacs Customization]]
-  - [[#open-bufferlist-when-splitting-windows][Open Bufferlist when splitting windows]]
   - [[#additional-packages][Additional Packages]]
-- [[#org-mode][Org Mode]]
-  - [[#visual-enhancements][Visual Enhancements]]
-  - [[#self-written-functions][Self-written functions]]
-  - [[#ui-configuration-1][UI Configuration]]
-  - [[#workflow-configuration][Workflow Configuration]]
-  - [[#org-publish-exporting-org-files][Org Publish (Exporting org files)]]
-  - [[#additional-org-packages][Additional Org Packages]]
-  - [[#org-roam-zettelkasten][Org-Roam (Zettelkasten)]]
 - [[#additional-packages-1][Additional Packages]]
   - [[#dired-file-manager][Dired (File Manager)]]
   - [[#languages-ide-using-language-server][Languages (IDE using Language Server)]]
   - [[#projectile][Projectile]]
   - [[#eshell][Eshell]]
-  - [[#hold-magit][HOLD Magit]]
+  - [[#magit][Magit]]
   - [[#mail-in-emacs-with-mu4e][Mail in Emacs with mu4e]]
   - [[#password-save][Password Save]]
   - [[#deft][Deft]]
+  - [[#finances][Finances]]
+  - [[#hold-scimax][HOLD Scimax]]
 
 * About this Configuration
 Make this file run (slightly) faster with lexical binding (see [[https://nullprogram.com/blog/2016/12/22/][this blog post]] for more info).
@@ -54,9 +48,8 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq user-full-name "Jonathan Pieper"
-      user-mail-address "ody55eus@mailbox.org"
+      user-mail-address "jpieper@acg-gmbh.de"
       epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
-
 
 #+end_src
 
@@ -94,13 +87,14 @@ Just comment/uncomment some lines to disable/enable features.
 
        :completion
        (company
-        ;;+childframe
+        +childframe
         )           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        (ivy
-        +fuzzy
-       ;; +childframe         ; display in a floating window
+        ;; +fuzzy              ; Enables fuzzy completion for Ivy searches
+        +prescient            ; Enables prescient filtering and sorting for Ivy searches.
+        ;; +childframe         ; display in a floating window
         +icons)               ; a search engine for love and life
        (vertico +icons)           ; the search engine of the future
 
@@ -109,9 +103,9 @@ Just comment/uncomment some lines to disable/enable features.
        doom               ; what makes DOOM look the way it does
        doom-dashboard     ; a nifty splash screen for Emacs
        ;;doom-quit        ; DOOM quit-message prompts when you quit Emacs
-       (emoji +unicode)   ; 🙂
-       hl-todo            ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
-       ;;hydra
+       ;;(emoji +unicode)   ; 🙂
+       ;;hl-todo            ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
+       hydra
        indent-guides      ; highlighted indent columns
        (ligatures +extra) ; ligatures and symbols to make your code pretty again
        ;;minimap          ; show a map of the code on the side
@@ -122,7 +116,7 @@ Just comment/uncomment some lines to disable/enable features.
        (popup +defaults)  ; tame sudden yet inevitable temporary windows
        ;;tabs             ; a tab bar for Emacs
        treemacs           ; a project drawer, like neotree but cooler
-       ;;unicode          ; extended unicode support for various languages
+       unicode          ; extended unicode support for various languages
        vc-gutter          ; vcs diff in the fringe
        vi-tilde-fringe    ; fringe tildes to mark beyond EOB
        window-select      ; visually switch windows
@@ -233,7 +227,7 @@ Just comment/uncomment some lines to disable/enable features.
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org               ; organize your plain life in plain text
-        +pretty                     ; yessss my pretties! (nice unicode symbols)
+        ;;+pretty                     ; yessss my pretties! (nice unicode symbols)
         +dragndrop                  ; drag & drop files/images into org buffers
         ;;+hugo                     ; use Emacs for hugo blogging
         +noter                      ; enhanced PDF notetaking
@@ -259,7 +253,7 @@ Just comment/uncomment some lines to disable/enable features.
        (ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
-       ;;(scheme +guile)   ; a fully conniving family of lisps
+       (scheme +guile)   ; a fully conniving family of lisps
        sh                ; she sells {ba,z,fi}sh shells on the C xor
        ;;sml
        ;;solidity          ; do you need a blockchain? No.
@@ -347,37 +341,23 @@ Just comment/uncomment some lines to disable/enable features.
 ** Load Packages
 
 #+begin_src emacs-lisp :tangle ./.doom.d/packages.el
-
-(package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
-(package! org-roam)             ; Extended org-mode for Zettelkasten principle.
-(package! org-ref)              ; References and citations
-(package! org-super-agenda)
-;;(package! org-bullets)        ; Display nice bullets in org-mode (deprecated).
-(package! org-alert)            ; Enable org-mode notifications.
-(package! org-tree-slide)       ; Enable org-mode presentations.
-(package! org-superstar)        ; Alternative for org-bullets.
-(package! org-pdfview)          ; Allows to annotate pdf in org-mode.
-(package! org-download)
-(package! org-journal)
-(package! org-pretty-tags)
-(package! org-pretty-table-mode
-  :recipe (:host github :repo "Fuco1/org-pretty-table"))
-
-
 ;; Use latest version!
 (unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
 
-;; Org Roam UI (frontend for exploring and interacting org-roam)
-(package! websocket)
-(package! org-roam-ui
-  :recipe (:host github
-           :repo "org-roam/org-roam-ui"
-           :files ("*.el" "out")))
-
-(package! org-roam-bibtex
-  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
-
+;; Org Enhancements
+(package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
+(package! org-roam)             ; Extended org-mode for Zettelkasten principle.
+(package! org-ref)              ; References and citations
+(package! org-super-agenda)
+(package! org-appear)           ; Display markup symbols (*=~ etc.) on cursor-over
+(package! org-alert)            ; Enable org-mode notifications.
+(package! org-tree-slide)       ; Enable org-mode presentations.
+(package! org-modern)           ; Alternative for org-bullets and org-superstar.
+(package! org-pdfview)          ; Allows to annotate pdf in org-mode.
+(package! org-download)
+(package! org-journal)
+(package! org-sidebar)
 (package! org-protocol-capture-html
   :recipe (:host github
            :repo "alphapapa/org-protocol-capture-html"
@@ -386,58 +366,117 @@ Just comment/uncomment some lines to disable/enable features.
   :recipe (:host github
            :repo "alhassy/org-special-block-extras"))
 
+;; Org Roam
+(package! org-transclusion)
+(package! vulpea)
+(package! delve
+  :recipe (:repo "publicimageltd/delve"
+           :host github))
+
+;; Bibliography
+(package! org-roam-bibtex
+  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(package! helm-bibtex)
+(package! citar)
+
+;; Org Roam UI (frontend for exploring and interacting org-roam)
+(package! websocket)
+(package! org-roam-ui
+  :recipe (:host github
+           :repo "org-roam/org-roam-ui"
+           :files ("*.el" "out")))
+
 ;; PlantUML
 (package! ob-napkin)            ; PlantUML in Org Babel
 (package! plantuml-mode)        ; PlantUML Diagrams
 
-                                        ; Org Exports
+;; Org Exports (ox-*)
 (package! ox-twbs)      ; HTML Twitter Bootstrap
 (package! ox-rst)       ; ReStructured Text (ReST, RST)
 
-                                        ; Support for other File Types
+;; Support for other File Types
 (package! pdf-tools)            ; Additional pdf tools.
 (package! nov)                  ; View epub files.
 
-(package! telega
-  :recipe (:host github
-           :repo "zevlg/telega.el"
-           :branch "master"
-           :files (:defaults "contrib" "etc" "server" "Makefile")))
+;; (package! telega
+;;   :recipe (:host github
+;;            :repo "zevlg/telega.el"
+;;            :branch "master"
+;;            :files (:defaults "contrib" "etc" "server" "Makefile")))
 
 (package! emacs-bitwarden       ; Password Manager
   :recipe (:host github
            :repo "seanfarley/emacs-bitwarden"
            :files ("bitwarden.el")))
 
-                                        ; Visual/Functional Enhancements
+; Visual Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
+
+;; Functional Enhancements
+(package! popper)
+(package! embark)
+
+;; Other Software Integrations
+(package! guix)
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
 (package! eshell-git-prompt)
+(package! company-ledger)
+(package! diminish)
+(package! beacon)               ; Highlight Cursor on big change
 
-(package! xkcd)
-;;(package! beacon)               ; Highlight Cursor on big change
+;; Feed Reader
+(package! elfeed)
+(package! elfeed-score)
 
+;; Thesaurus synonyms
+                                        ;(package! synosaurus)
+(package! calfw)
+(package! calfw-org)
+(package! helm-ag)              ; Ack and the_silver_searcher support
+
+;; Dictionaries
 ;;(package! synosaurus)           ; Thesaurus synonyms
+(package! powerthesaurus)
 
 ;; Language Server
 (package! lsp-mode)
 (package! lsp-ui)
 (package! lsp-treemacs)
-(package! lsp-ivy)
+;;(package! lsp-ivy)
 (package! lsp-pyright)          ; Python language server
 (package! lsp-latex)
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
+;; (package! pomm
+;;   :recipe (:host github
+;;            :repo "SqrtMinusOne/pomm.el"))
 
-                                        ; Packages to share my keybindings when streaming
+(package! beancount-mode
+  :recipe (:host github
+           :repo "beancount/beancount-mode"
+           :files ("beancount.el")))
+
+(package! mu4e-dashboard
+  :recipe (:host github
+           :repo "rougier/mu4e-dashboard"))
+
+; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
 (package! keycast
   :recipe (:host github
            :repo "tarsius/keycast"))
 
+(package! emacs-rotate
+  :recipe (:host github
+           :repo "daichirata/emacs-rotate"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/packages.el" "no")
+;; MacOS Only
+(package! spotlight)
 #+end_src
 
 * Emacs Startup
@@ -461,9 +500,11 @@ Just comment/uncomment some lines to disable/enable features.
 
 ** Start Emacs as Server!
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(server-start)  ; Start Emacs as Server!
+(require 'server)
+(if (not (server-running-p))
+    (server-start))  ; Start Emacs as Server!
 
 #+end_src
 
@@ -482,16 +523,23 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
 (set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
 #+end_src
 
+** Additional Configuration Files
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(add-to-list 'load-path (file-truename "~/.doom.d"))
+(require 'org-workflow)
+#+end_src
+
 * UI Configuration
-** Keybindings (=:leader= ~SPC-<Key>~)
-*** Basic Keybindings
+** Keybindings
+
+*** Basic Keybindings for =leader= (~SPC-<Key>~)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
       (:prefix ("b" . "buffer")
-       :desc "Counsel buffer" :n "j" #'counsel-switch-buffer
-       :desc "Counsel buffer other window" :n "J" #'counsel-switch-buffer-other-window
+       :desc "Consult buffer" :n "o" #'consult-buffer
+       :desc "Consult buffer other window" :n "j" #'consult-buffer-other-window
        :desc "List bookmarks" "L" #'list-bookmarks
        :desc "Save current bookmarks to bookmark file" "w" #'bookmark-save)
       ;; (:prefix-map ("c" . "code"))
@@ -510,6 +558,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
       ;;  (:prefix ("d" . "date"))
       ;;  )
       (:prefix ("o" . "open")
+       :desc "spotlight" "s" #'spotlight
        (:prefix ("j" . "jp")
         :desc "jp/org-roam-agenda" "a" #'jp/org-roam-agenda
         :desc "jp/enable-bitwarden" "b" #'jp/enable-bitwarden
@@ -536,12 +585,13 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
       (:prefix ("s" . "search")
-       :desc "Search/Insert BibTeX Cite" "c" #'helm-bibtex
+       :desc "Search/Insert BibTeX Cite" "c" #'org-ref-cite-insert-helm
        )
-      (:prefix ("t" . "toogle")
+      (:prefix ("t" . "toggle")
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle KeyCast Mode" "k" #'keycast-mode
+       :desc "Toggle Menu Bar" "m" #'menu-bar-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        (:prefix ("SPC" . "Whitespaces")
@@ -562,10 +612,13 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
         :desc "Insert BibTeX Note Link" "b" #'orb-insert-link
         :desc "BibTeX Note Actions" "B" #'orb-note-actions
         :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
+        :desc "Delve" :n "D" #'delve
         :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
         :desc "Find org-roam Node" :n "f" #'org-roam-node-find
         :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
         :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
+        :desc "Org Roam UI" :n "u" #'org-roam-ui-open
+        :desc "Jump to Date" :n "j" #'jp/org-roam-jump-menu/body
         )
        )
       ;; (:prefix-map ("TAB" . "workspace"))
@@ -573,7 +626,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
 
 #+end_src
 
-*** Evaluate Elisp Expressions (~SPC-e~)
+*** Evaluate Lisp Expressions (~SPC-e~)
 
 :SOURCE:
 Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
@@ -581,8 +634,8 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 Changing some keybindings from their defaults to better fit with Doom Emacs, and to avoid conflicts with my window managers which sometimes use the control key in their keybindings.  By default, Doom Emacs does not use ~SPC-e~ for anything, so I choose to use the format ~SPC-e~ plus ~key~ for these (I also use ~SPC-e~ for ~eww~ keybindings).
 
-| COMMAND         | DESCRIPTION                                  | KEYBINDING |
-|-----------------+----------------------------------------------+------------|
+| COMMAND         | DESCRIPTION                                    | KEYBINDING |
+|-----------------+------------------------------------------------+------------|
 | eval-buffer     | /Evaluate elisp in buffer/                     | SPC e b    |
 | eval-defun      | /Evaluate the defun containing or after point/ | SPC e d    |
 | eval-expression | /Evaluate an elisp expression/                 | SPC e e    |
@@ -627,14 +680,52 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 (map! :leader
       (:prefix ("j" . "jump")
        :desc "avy-goto-char" "c" #'avy-goto-char
-       :desc "avy-goto-char" "o" #'avy-goto-char-timer
+       :desc "avy-goto-char-timer" "o" #'avy-goto-char-timer
        :desc "avy-goto-char-2" "O" #'avy-goto-char-2
        :desc "avy-imenu" "I" #'avy-imenu
        :desc "evil-avy-goto-line" "l" #'evil-avy-goto-line
+       :desc "pomm" "p" #'pomm
        :desc "evil-avy-goto-word-0" "w" #'evil-avy-goto-word-0
        :desc "evil-avy-goto-subword-0" "W" #'evil-avy-goto-subword-0
        )
       )
+#+end_src
+
+*** Embark (~C-:~)
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(require 'embark)
+(global-set-key (kbd "C-:") 'embark-act)
+
+(eval-when-compile
+  (defmacro my/embark-ace-action (fn)
+    `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
+       (interactive)
+       (with-demoted-errors "%s"
+         (require 'ace-window)
+         (aw-switch-to-window (aw-select nil))
+         (call-interactively (symbol-function ',fn)))))
+
+  (defmacro my/embark-split-action (fn split-type)
+    `(defun ,(intern (concat "my/embark-"
+                             (symbol-name fn)
+                             "-"
+                             (car (last  (split-string
+                                          (symbol-name split-type) "-"))))) ()
+       (interactive)
+       (funcall #',split-type)
+       (call-interactively #',fn))))
+
+(define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
+(define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
+(define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
+
+(define-key embark-file-map     (kbd "2") (my/embark-split-action find-file split-window-below))
+(define-key embark-buffer-map   (kbd "2") (my/embark-split-action switch-to-buffer split-window-below))
+(define-key embark-bookmark-map (kbd "2") (my/embark-split-action bookmark-jump split-window-below))
+
+(define-key embark-file-map     (kbd "3") (my/embark-split-action find-file split-window-right))
+(define-key embark-buffer-map   (kbd "3") (my/embark-split-action switch-to-buffer split-window-right))
+(define-key embark-bookmark-map (kbd "3") (my/embark-split-action bookmark-jump split-window-right))
 #+end_src
 
 *** Keybindings (=CTRL= ~C-w~ Window)
@@ -675,14 +766,21 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(setq doom-theme 'doom-vibrant)
+(setq doom-theme 'doom-outrun-electric)
 (custom-set-faces!
-  '(doom-modeline-buffer-modified :foreground "DarkOrange"))
+  '(doom-modeline-buffer-modified :foreground "DarkOrange")
+  '(bold :inherit 'doom-modeline-highlight)
+  ;; '(highlight :background "DarkBlue")
+  ;; '(mode-line-highlight :background "DarkBlue")
+  )
 
 #+end_src
 
 ** Font Face Configuration
 *** New Configuration
+:PROPERTIES:
+:LOCATION: https://tecosaur.github.io/emacs-config/config.html
+:END:
 :Source:
 Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 :END:
@@ -690,8 +788,8 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 (setq doom-font (font-spec :family "JetBrains Mono" :size 16)
       doom-big-font (font-spec :family "JetBrains Mono" :size 22)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
-      doom-unicode-font (font-spec :family "JuliaMono" :size 16)
-      doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light :size 16))
+      doom-unicode-font (font-spec :family "JetBrains Mono" :size 16)
+      doom-serif-font (font-spec :family "JetBrains Mono" :weight 'light :size 16))
 #+end_src
 
 *** Old System Dependent
@@ -781,10 +879,10 @@ Other useful codes:
 | ·    |                 183 | b7   | MIDDLE DOT                            |
 | ¶    |                 182 | b6   | PILCROW SIGN                          |
 | ↵    |                8629 | 21b5 | DOWNWARDS ARROW WITH CORNER LEFTWARDS |
-| ↩   |                8617 | 21a9 | LEFTWARDS ARROW WITH HOOK             |
+| ↩    |                8617 | 21a9 | LEFTWARDS ARROW WITH HOOK             |
 | ⏎    |                9166 | 23ce | RETURN SYMBOL                         |
 | ▷    |                9655 | 25b7 | WHITE RIGHT POINTING TRIANGLE         |
-| ▶   |                9654 | 25b6 | BLACK RIGHT-POINTING TRIANGLE         |
+| ▶    |                9654 | 25b6 | BLACK RIGHT-POINTING TRIANGLE         |
 | →    |                8594 | 2192 | RIGHTWARDS ARROW                      |
 | ↦    |                8614 | 21a6 | RIGHTWARDS ARROW FROM BAR             |
 | ⇥    |                8677 | 21e5 | RIGHTWARDS ARROW TO BAR               |
@@ -803,6 +901,11 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 #+end_src
 
+*** Alert Styles
+#+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/config.el" "no")
+(setq alert-default-style 'osx-notifier)
+#+end_src
+
 *** Enable Menu Bar
 This allows you to see some basic actions (activates dropdown menus File, Edit, Options, etc.)
 
@@ -818,32 +921,45 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
       :n [mouse-9] #'better-jumper-jump-forward)
 #+end_src
 
-*** Resize Startup Window
+*** HOLD Resize Startup Window
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+begin_src emacs-lisp
 
 (defun jp/set-frame-size-according-to-resolution ()
   (interactive)
   (if window-system
-  (progn
-    ;; use 120 char wide window for largeish displays
-    ;; and smaller 80 column windows for smaller displays
-    ;; pick whatever numbers make sense for you
-    (if (> (x-display-pixel-width) 1280)
-           (add-to-list 'default-frame-alist (cons 'width 177))
-           (add-to-list 'default-frame-alist (cons 'width 100)))
-    ;; for the height, subtract a couple hundred pixels
-    ;; from the screen height (for panels, menubars and
-    ;; whatnot), then divide by the height of a char to
-    ;; get the height we want
-    (add-to-list 'default-frame-alist
-         (cons 'height (/ (- (x-display-pixel-height) 120)
-                             (frame-char-height)))))))
+      (progn
+        ;; use 120 char wide window for largeish displays
+        ;; and smaller 80 column windows for smaller displays
+        ;; pick whatever numbers make sense for you
+        (if (> (x-display-pixel-width) 1280)
+            (add-to-list 'default-frame-alist (cons 'width 177))
+          (add-to-list 'default-frame-alist (cons 'width 100)))
+        ;; for the height, subtract a couple hundred pixels
+        ;; from the screen height (for panels, menubars and
+        ;; whatnot), then divide by the height of a char to
+        ;; get the height we want
+        (add-to-list 'default-frame-alist
+                     (cons 'height (/ (- (x-display-pixel-height) 120)
+                                      (frame-char-height)))))))
 
 (jp/set-frame-size-according-to-resolution)
 
 #+end_src
 
+*** Configure Calendar
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+(setq calendar-week-start-day 1) ; Start the Week on Monday
+
+#+end_src
+
+*** Tab Bar
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq tab-bar-close-button-show nil
+      tab-bar-new-button-show nil)
+#+end_src
 ** Doom Emacs Customization
 *** Confirm Leaving Emacs
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -869,7 +985,8 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
   :custom
   (doom-modeline-height 16)
   (doom-modeline-bar-width 4)
-  (doom-modeline-lsp nil)
+  (doom-modeline-lsp t)
+  (doom-modeline-display-default-persp-name t)
   (doom-modeline-modal-icon t)
   (doom-modeline-minor-modes nil)
   (doom-modeline-major-mode-icon t)
@@ -889,12 +1006,91 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq display-time-24hr-format t                ;; Display 24 Hrs rather than 12
       display-time-default-load-average nil)    ;; Do not display my CPU Load
-(display-time-mode 1)
+(display-time-mode 0)
+#+end_src
+
+**** HOLD Display Pomm Timer
+#+begin_src emacs-lisp
+(add-to-list 'mode-line-misc-info '(:eval pomm-current-mode-line-string))
+(add-hook 'pomm-on-tick-hook 'pomm-update-mode-line-string)
+(add-hook 'pomm-on-tick-hook 'force-mode-line-update)
+(add-hook 'pomm-on-status-changed-hook 'pomm-update-mode-line-string)
+(add-hook 'pomm-on-status-changed-hook 'force-mode-line-update)
+#+end_src
+**** TODO Define Modeline
+Possible Values (as stored in =doom-modeline-fn-alist=):
+| Doom Modeline Segment             | Associated Function                                      |
+|-----------------------------------+----------------------------------------------------------|
+| =follow=                          | ~doom-modeline-segment--follow~                          |
+| =grip=                            | ~doom-modeline-segment--grip~                            |
+| =git-timemachine=                 | ~doom-modeline-segment--git-timemachine~                 |
+| =helm-follow=                     | ~doom-modeline-segment--helm-follow~                     |
+| =helm-prefix-argument=            | ~doom-modeline-segment--helm-prefix-argument~            |
+| =helm-help=                       | ~doom-modeline-segment--helm-help~                       |
+| =helm-number=                     | ~doom-modeline-segment--helm-number~                     |
+| =helm-buffer-id=                  | ~doom-modeline-segment--helm-buffer-id~                  |
+| =package=                         | ~doom-modeline-segment--package~                         |
+| =battery=                         | ~doom-modeline-segment--battery~                         |
+| =irc=                             | ~doom-modeline-segment--irc~                             |
+| =irc-buffers=                     | ~doom-modeline-segment--irc-buffers~                     |
+| =gnus=                            | ~doom-modeline-segment--gnus~                            |
+| =mu4e=                            | ~doom-modeline-segment--mu4e~                            |
+| =pdf-pages=                       | ~doom-modeline-segment--pdf-pages~                       |
+| =debug=                           | ~doom-modeline-segment--debug~                           |
+| =github=                          | ~doom-modeline-segment--github~                          |
+| =lsp=                             | ~doom-modeline-segment--lsp~                             |
+| =repl=                            | ~doom-modeline-segment--repl~                            |
+| =info-nodes=                      | ~doom-modeline-segment--info-nodes~                      |
+| =input-method=                    | ~doom-modeline-segment--input-method~                    |
+| =objed-state=                     | ~doom-modeline-segment--objed-state~                     |
+| =modals=                          | ~doom-modeline-segment--modals~                          |
+| =parrot=                          | ~doom-modeline-segment--parrot~                          |
+| =buffer-position=                 | ~doom-modeline-segment--buffer-position~                 |
+| =misc-info=                       | ~doom-modeline-segment--misc-info~                       |
+| =persp-name=                      | ~doom-modeline-segment--persp-name~                      |
+| =workspace-name=                  | ~doom-modeline-segment--workspace-name~                  |
+| =window-number=                   | ~doom-modeline-segment--window-number~                   |
+| =hud=                             | ~doom-modeline-segment--hud~                             |
+| =bar=                             | ~doom-modeline-segment--bar~                             |
+| =media-info=                      | ~doom-modeline-segment--media-info~                      |
+| =buffer-size=                     | ~doom-modeline-segment--buffer-size~                     |
+| =matches=                         | ~doom-modeline-segment--matches~                         |
+| =selection-info=                  | ~doom-modeline-segment--selection-info~                  |
+| =word-count=                      | ~doom-modeline-segment--word-count~                      |
+| =checker=                         | ~doom-modeline-segment--checker~                         |
+| =vcs=                             | ~doom-modeline-segment--vcs~                             |
+| =minor-modes=                     | ~doom-modeline-segment--minor-modes~                     |
+| =process=                         | ~doom-modeline-segment--process~                         |
+| =major-mode=                      | ~doom-modeline-segment--major-mode~                      |
+| =remote-host=                     | ~doom-modeline-segment--remote-host~                     |
+| =indent-info=                     | ~doom-modeline-segment--indent-info~                     |
+| =buffer-encoding=                 | ~doom-modeline-segment--buffer-encoding~                 |
+| =buffer-default-directory-simple= | ~doom-modeline-segment--buffer-default-directory-simple~ |
+| =buffer-default-directory=        | ~doom-modeline-segment--buffer-default-directory~        |
+| =buffer-info-simple=              | ~doom-modeline-segment--buffer-info-simple~              |
+| =buffer-info=                     | ~doom-modeline-segment--buffer-info~                     |
+
+#+begin_src emacs-lisp
+(after! doom-modeline
+  (doom-modeline-def-modeline 'jp
+    '(bar matches buffer-info remote-host buffer-position parrot selection-info)
+    '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs "  ")))
 #+end_src
 
 *** Doom Dashboard
 
-#+begin_src emacs-lisp
+| Key | Function                                    |
+|-----+---------------------------------------------|
+| f   | ~find-file~                                   |
+| r   | ~consult-recent-file~                         |
+| p   | ~jp/go-to-projects~                           |
+| c   | ~jp/go-to-config~                             |
+| i   | ~jp/go-to-inbox~                              |
+| .   | ~(cmd! (doom-project-find-file "~/.config/"))~ |
+| b   | ~+vertico/switch-workspace-buffer~            |
+| B   | ~counsel-switch-buffer~                       |
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq +doom-dashboard-menu-sections '(("Reload last session" :icon
                                        (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
                                        :when
@@ -907,13 +1103,15 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
                                           (desktop-full-file-name))))
                                        :face
                                        (:inherit
-                                        (doom-dashboard-menu-title bold)
+                                        (doom-dashboard-menu-title bold))
                                        :action doom/quickload-session)
                                       ("Open org-agenda" :icon
                                        (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
-                                       :when
-                                       (fboundp 'org-agenda)
                                        :action org-agenda)
+                                      ("Open Roam Agenda" :icon
+                                       (all-the-icons-octicon "checklist"
+                                                              :face 'doom-dashboard-menu-title)
+                                       :action jp/org-roam-agenda)
                                       ("Recently opened files" :icon
                                        (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
                                        :action recentf-open-files)
@@ -928,23 +1126,13 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
                                        :when
                                        (file-directory-p doom-private-dir)
                                        :action doom/open-private-config)
-                                      ("Open documentation" :icon
-                                       (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
-                                       :action doom/help)
-                                      ("Open Roam Agenda"
-                                       :icon
-                                       (all-the-icons-octicon "checklist"
-                                                               :face 'doom-dashboard-menu-title)
-                                       :action jp/org-ram-agenda))
+                                      ("Switch Workspace Buffer" :icon
+                                       (all-the-icons-octicon "file-symlink-file" :face 'doom-dashboard-menu-title)
+                                       :action +vertico/switch-workspace-buffer)
+                                      ("Switch Buffer" :icon
+                                       (all-the-icons-octicon "file-symlink-directory" :face 'doom-dashboard-menu-title)
+                                       :action counsel-switch-buffer)))
 
-#+end_src
-
-** Open Bufferlist when splitting windows
-This command runs ~counsel-switch-buffer~ after splitting a window. It automatically shows a preview of the selected buffer during selection.
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(defadvice! prompt-for-buffer (&rest _)
-  :after 'window-split
-  (counsel-switch-buffer))
 #+end_src
 
 ** Additional Packages
@@ -953,7 +1141,7 @@ This command runs ~counsel-switch-buffer~ after splitting a window. It automatic
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq hl-todo-keyword-faces
-      '(("TODO"   . "#cc0")
+      '(("TODO"   . "#c0c")
         ("FIXME"  . "#990000")
         ("NOTE"   . "#009999")
         ("REVIEW"   . "#990099")
@@ -993,7 +1181,7 @@ This command runs ~counsel-switch-buffer~ after splitting a window. It automatic
 ;; Set custom font for epub
 (defun my-nov-font-setup ()
   (face-remap-add-relative 'variable-pitch :family "Roboto"
-                                           :height 1.0))
+                           :height 1.0))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 #+end_src
 
@@ -1009,24 +1197,24 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
 
 (defface svg-tag-note-face
   '((t :foreground "black" :background "white" :box "black"
-       :family "Roboto Mono" :weight light :height 140))
+       :family "JuliaMono" :weight light :height 140))
   "Face for note tag" :group nil)
 
 (defface svg-tag-keyboard-face
   '((t :foreground "#333333" :background "#f9f9f9" :box "#333333"
-       :family "Roboto Mono" :weight light :height 140))
+       :family "JuliaMono" :weight light :height 140))
   "Face for keyboard bindings tag" :group nil)
 
 (defface svg-tag-org-face
   '((t :foreground "#333333" :background "#fffff0" :box "#333333"
-       :family "Roboto Mono" :weight light :height 140))
+       :family "JuliaMono" :weight light :height 140))
   "Face for keyboard bindings tag" :group nil)
 
 (setq svg-tag-todo
-  (svg-tag-make "TODO" nil 1 1 2))
+      (svg-tag-make "TODO" nil 1 1 2))
 
 (setq svg-tag-note
-  (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 2))
+      (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 2))
 
 (defun svg-tag-round (text)
   (svg-tag-make (substring text 1 -1) 'svg-tag-note-face 1 1 12))
@@ -1075,61 +1263,61 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
 (defface svg-tag-org-face
   '((t :foreground "#333333" :background "white"
        :box (:line-width 1 :color "black" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Default face for svg tag" :group nil)
 
 (defface svg-tag-note-face
   '((t :foreground "#333333" :background "#FFFFFF"
        :box (:line-width 1 :color "#333333" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Default face for svg tag" :group nil)
 
 (defface svg-tag-todo-face
   '((t :foreground "#ffffff" :background "#FFAB91"
        :box (:line-width 1 :color "#FFAB91" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Face for TODO  svg tag" :group nil)
 
 (defface svg-tag-next-face
   '((t :foreground "white" :background "#673AB7"
        :box (:line-width 1 :color "#673AB7" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Face for NEXT svg tag" :group nil)
 
 (defface svg-tag-done-face
   '((t :foreground "white" :background "#B0BEC5"
        :box (:line-width 1 :color "#B0BEC5" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Face for DONE  svg tag" :group nil)
 
 (defface svg-tag-org-tag-face
   '((t :foreground "#ffffff" :background "#FFAB91"
        :box (:line-width 1 :color "#FFAB91" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Face for TODO  svg tag" :group nil)
 
 (defface svg-tag-date-active-face
   '((t :foreground "white" :background "#673AB7"
        :box (:line-width 1 :color "#673AB7" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Face for active date svg tag" :group nil)
 
 (defface svg-tag-time-active-face
   '((t :foreground "#673AB7" :background "#ffffff"
        :box (:line-width 1 :color "#673AB7" :style nil)
-       :family "Roboto Mono" :weight light :height 140))
+       :family "JuliaMono" :weight light :height 140))
   "Face for active time svg tag" :group nil)
 
 (defface svg-tag-date-inactive-face
   '((t :foreground "#ffffff" :background "#B0BEC5"
        :box (:line-width 1 :color "#B0BEC5" :style nil)
-       :family "Roboto Mono" :weight regular :height 140))
+       :family "JuliaMono" :weight regular :height 140))
   "Face for inactive date svg tag" :group nil)
 
 (defface svg-tag-time-inactive-face
   '((t :foreground "#B0BEC5" :background "#ffffff"
        :box (:line-width 2 :color "#B0BEC5" :style nil)
-       :family "Roboto Mono" :weight light :height 140))
+       :family "JuliaMono" :weight light :height 140))
   "Face for inactive time svg tag" :group nil)
 
 (setq svg-tag-org-todo (svg-tag-make "TODO" 'svg-tag-todo-face 1 1 2))
@@ -1202,1051 +1390,173 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
     (if keycast-mode
         (add-hook 'pre-command-hook 'keycast--update t)
       (remove-hook 'pre-command-hook 'keycast--update))))
-(add-to-list 'global-mode-string '("" mode-line-keycast))
+
+(add-to-list 'global-mode-string '("" keycast-mode-line))
 
 #+end_src
 
-* Org Mode
-** Visual Enhancements
-*** Pretty Text
-**** Pretty Tables
+*** Avy
+Avy provides easy movement and actions in buffers. The following [[https://karthinks.com/software/avy-can-do-anything/][Blog post by Karthinks]] has a lot of awesome examples on how to use Avy.
+Keybindings to help manage text in buffers. To activate Avy, check the various =avy-= commands under (~SPC j~):
+| Key     | Action                   |
+|---------+--------------------------|
+| ~SPC j l~ | =evil-avy-goto-line=       |
+| ~SPC j c~ | =evil-avy-goto-char=       |
+| ~SPC j o~ | =evil-avy-goto-char-timer= |
+| ~SPC j O~ | =evil-avy-goto-char-2=     |
+| ~SPC j w~ | =evil-avy-goto-word-0=     |
+| ~SPC j W~ | =evil-avy-goto-subword-0=  |
+
+Before selecting the char/word/line/etc., you can press one of these keys to perform an action on your target:
+| Key | Action               |
+|-----+----------------------|
+| ~x~   | =-embark=              |
+| ~H~   | =-helpful=             |
+| ~=~   | =-define=              |
+| ~m~   | =-teleport=            |
+| ~M~   | =-teleport-whole-line= |
+| ~k~   | =-kill-stay=           |
+| ~K~   | =-kill-whole-line=     |
+| ~y~   | =-yank=                |
+| ~Y~   | =-yank-whole-line=     |
+| ~w~   | =-copy=                |
+| ~W~   | =-copy-whole-line=     |
+
+**** Home Row Keys for Avy
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(after! org
-  (+org-pretty-mode)
-  (org-pretty-table-mode)
-  )
+;;(setq avy-keys '(97 115 100 102 103 104 106 107 108))
+(setq avy-keys '(?u ?i ?a ?e ?o ?s ?n ?r ?t))
 #+end_src
-**** Set pretty code symbols
 
+**** Mark to Char (default)
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(after! org
-  (appendq! +ligatures-extra-symbols
-            `(:checkbox      "☐"
-              :pending       "◼"
-              :checkedbox    "☑"
-              :list_property "∷"
-              :results       "🠶"
-              :property      "☸"
-              :properties    "⚙"
-              :end           "∎"
-              :options       "⌥"
-              :title         "𝙏"
-              :subtitle      "𝙩"
-              :author        "𝘼"
-              :date          "𝘿"
-              :latex_header  "⇥"
-              :latex_class   "🄲"
-              :beamer_header "↠"
-              :begin_quote   "❮"
-              :end_quote     "❯"
-              :begin_export  "⯮"
-              :end_export    "⯬"
-              :priority_a   ,(propertize "⚑" 'face 'all-the-icons-red)
-              :priority_b   ,(propertize "⬆" 'face 'all-the-icons-orange)
-              :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
-              :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
-              :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)
-              :em_dash       "—"))
-  (set-pretty-symbols! 'org-mode
-    :merge t
-    :name           "⁍"
-    :checkbox      "[ ]"
-    :pending       "[-]"
-    :checkedbox    "[X]"
-    :list_property "::"
-    :results       "#+RESULTS:"
-    :property      "#+PROPERTY:"
-    :property      ":PROPERTIES:"
-    :end           ":END:"
-    :options       "#+OPTIONS:"
-    :title         "#+TITLE:"
-    :subtitle      "#+SUBTITLE:"
-    :author        "#+AUTHOR:"
-    :date          "#+DATE:"
-    :latex_class   "#+LATEX_CLASS:"
-    :latex_header  "#+LATEX_HEADER:"
-    :beamer_header "#+BEAMER_HEADER:"
-    :begin_quote   "#+BEGIN_QUOTE"
-    :end_quote     "#+END_QUOTE"
-    :begin_export  "#+BEGIN_EXPORT"
-    :end_export    "#+END_EXPORT"
-    :priority_a    "[#A]"
-    :priority_b    "[#B]"
-    :priority_c    "[#C]"
-    :priority_d    "[#D]"
-    :priority_e    "[#E]"
-    :em_dash       "---")
-  )
+(require 'avy)
+(defun avy-action-mark-to-char (pt)
+  (activate-mark)
+  (goto-char pt))
+
+(setf (alist-get ?  avy-dispatch-alist) 'avy-action-mark-to-char)
 #+end_src
 
-**** KILL Org Bullets (Deprecated)
-
-#+begin_src emacs-lisp
-
-(require 'org-bullets)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))) ; Enable org-mode bullets
-
-#+end_src
-
-**** Org Superstar
+**** Copy / Yank (Paste) / Kill (Cut) Lines
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(after! org
-  (org-superstar-mode)
-  )
+(defun avy-action-copy-whole-line (pt)
+  (save-excursion
+    (goto-char pt)
+    (cl-destructuring-bind (start . end)
+        (bounds-of-thing-at-point 'line)
+      (copy-region-as-kill start end)))
+  (select-window
+   (cdr
+    (ring-ref avy-ring 0)))
+  t)
+
+(defun avy-action-yank-whole-line (pt)
+  (avy-action-copy-whole-line pt)
+  (save-excursion (yank))
+  t)
+
+(defun avy-action-kill-whole-line (pt)
+  (save-excursion
+    (goto-char pt)
+    (kill-whole-line))
+  (select-window
+   (cdr
+    (ring-ref avy-ring 0)))
+  t)
+
+(setf (alist-get ?k avy-dispatch-alist) 'avy-action-kill-stay
+      (alist-get ?K avy-dispatch-alist) 'avy-action-kill-whole-line
+      (alist-get ?y avy-dispatch-alist) 'avy-action-yank
+      (alist-get ?w avy-dispatch-alist) 'avy-action-copy
+      (alist-get ?W avy-dispatch-alist) 'avy-action-copy-whole-line
+      (alist-get ?Y avy-dispatch-alist) 'avy-action-yank-whole-line)
 #+end_src
 
-**** Ellipsis symbol (folding)
-
+**** Teleport Lines
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(defun avy-action-teleport-whole-line (pt)
+  (avy-action-kill-whole-line pt)
+  (save-excursion (yank)) t)
 
-(setq org-ellipsis " ▼ ")
-
+(setf (alist-get ?m avy-dispatch-alist) 'avy-action-teleport
+      (alist-get ?M avy-dispatch-alist) 'avy-action-teleport-whole-line)
 #+end_src
 
-**** Hiding Emphasis Marker
-
-Hiding some emphasis marker (* / = )  when using them to /highlight/ *text*.
-Set this value to ~nil~ to display them again.
-
+**** Search Dictionary
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(defun dictionary-search-dwim (&optional arg)
+  "Search for definition of word at point. If region is active,
+search for contents of region instead. If called with a prefix
+argument, query for word to search."
+  (interactive "P")
+  (if arg
+      (dictionary-search nil)
+    (if (use-region-p)
+        (dictionary-search (buffer-substring-no-properties
+                            (region-beginning)
+                            (region-end)))
+      (if (thing-at-point 'word)
+          (dictionary-lookup-definition)
+        (dictionary-search-dwim '(4))))))
 
-(setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
+(defun avy-action-define (pt)
+  (save-excursion
+    (goto-char pt)
+    (dictionary-search-dwim))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
 
+(setf (alist-get ?= avy-dispatch-alist) 'avy-action-define)
 #+end_src
 
-*** Priorities
+**** Helpful Documentation
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(after! org
-  (setq org-priority-highest ?A
-        org-priority-lowest ?E
-        org-priority-faces
-        '((?A . 'all-the-icons-red)
-          (?B . 'all-the-icons-orange)
-          (?C . 'all-the-icons-yellow)
-          (?D . 'all-the-icons-green)
-          (?E . 'all-the-icons-blue))))
+(defun avy-action-helpful (pt)
+  (save-excursion
+    (goto-char pt)
+    (helpful-at-point))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(setf (alist-get ?H avy-dispatch-alist) 'avy-action-helpful)
 #+end_src
 
-*** Tasks
-**** Color and weight of keywords
+**** Embark
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq org-todo-keyword-faces '(
-                               ("PROJ" . "DarkGreen")
-                               ("EPIC" . (:foreground "DodgerBlue" :weight bold))
-                               ("TODO" . org-warning)
-                               ("IDEA" . (:foreground "BlueViolet"))
-                               ("BACKLOG" . (:foreground "GreenYellow" :weight normal :slant italic :underline t))
-                               ("PLAN" . (:foreground "Magenta1" :weight bold :underline t))
-                               ("ACTIVE" . (:foreground "Systemyellowcolor" :weight bold :slant italic :underline t))
-                               ("REVIEW" . (:foreground "Darkorange2" :weight bold :underline t))
-                               ("WAIT" . (:foreground "yellow4" :weight light :slant italic))
-                               ("HOLD" . (:foreground "red4"))
-                               ("KILL" . "red")
-                               ("CANCELLED" . (:foreground "red3" :weight bold :strike-through t))
-                               )
-      )
+(defun avy-action-embark (pt)
+  (save-excursion
+    (goto-char pt)
+    (embark-act))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(setf (alist-get ?x avy-dispatch-alist) 'avy-action-embark)
 #+end_src
 
-*** Default minor modes
-**** Fonts and Colors
+*** Popper
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(defun jp/org-mode-setup ()
-  (org-indent-mode 1)  ; Indent text following current headline
-  (mixed-pitch-mode 1) ; Enable different Fonts
-  ;;(org-roam-setup) ; Enable org-roam-db-autosync
-  (setq org-image-actual-width nil) ; Set optional images
-  (rainbow-mode 1)    ; Enable rainbow mode
-  )
-(add-hook 'org-mode-hook #'jp/org-mode-setup)
-#+end_src
-
-**** Visual Fill Column (add spaces and center text)
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(defun jp/org-visual-fill-column ()
-  (setq visual-fill-column-width 120  ; Margin width
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1) ; Enable Margins
-  (visual-line-mode 1)  ; also show entire lines
-  )
-
-(add-hook 'org-mode-hook #'jp/org-visual-fill-column)
-
-#+end_src
-
-*** Font Configuration
-**** Text Size Org Headlines
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-;; setting org headlines
-(custom-set-faces!
-   '(org-level-1 :inherit outline-1 :height 1.2)
-   '(org-level-2 :inherit outline-2 :height 1.1)
-   '(org-level-3 :inherit outline-3 :height 1.0)
-   '(org-level-4 :inherit outline-4 :height 1.0)
-   '(org-level-5 :inherit outline-5 :height 1.0)
-  )
-  #+end_src
-
-**** Setting Text Fonts for Mixed Fixed Pitch
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-;; Make sure org-indent face is available
-(require 'org-indent)
-
-;; Ensure that anything that should be fixed-pitch in Org files appears that way
-(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
-(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
-
-#+end_src
-
-*** Directories and Files
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-roam-v2-ack t); Disable Warning for org-roam v2
-(setq org-directory "~/org/"
-      org-agenda-files '("~/org/Agenda.org"
-                         "~/org/Tasks.org"
-                         "~/org/Habits.org"
-                         ;;"~/org/Emails.org"
-                         )
-      org-default-notes-file (concat org-directory "/Notes.org")
-      org-clock-sound "~/sounds/ding.wav")
-
-(setq auth-sources '((:source "~/.authinfo.gpg")))
-
-#+end_src
-
-** Self-written functions
-*** Select Org Roam Notes
-**** Select by Folder Prefix
-:Source:
-These extra functions are inspired by the System Crafters live stream of September 3rd 2021:
-https://systemcrafters.net/live-streams/september-03-2021/
-:END:
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(defun jp/org-roam-select-prefix (prefix)
-  (org-roam-node-read
-   nil
-   (lambda (node)
-     (string-prefix-p
-      (concat org-roam-directory prefix)
-      (org-roam-node-file node))
-     )
-   ))
-
-(defun jp/org-roam-ignore-prefix (prefix)
-  (org-roam-node-read
-   nil
-   (lambda (node)
-     (not (string-prefix-p
-           (concat org-roam-directory prefix)
-           (org-roam-node-file node))
-          ))
-   ))
-
-(defun jp/org-roam-ignore-literature ()
-  (interactive)
-  (jp/org-roam-ignore-prefix "/Literature"))
-
-(defun jp/org-roam-select-literature ()
-  (interactive)
-  (jp/org-roam-select-prefix "/Literature"))
-
-(defun jp/org-roam-ignore-pc ()
-  (interactive)
-  (jp/org-roam-ignore-prefix "/PC"))
-
-(defun jp/org-roam-select-pc ()
-  (interactive)
-  (jp/org-roam-select-prefix "/PC"))
-
-(defun jp/org-roam-ignore-projects ()
-  (interactive)
-  (jp/org-roam-ignore-prefix "/Projects"))
-
-(defun jp/org-roam-select-projects ()
-  (interactive)
-  (jp/org-roam-select-prefix "/Projects"))
-
-(defun jp/org-roam-ignore-other ()
-  (interactive)
-  (jp/org-roam-ignore-prefix "/20"))
-
-(defun jp/org-roam-select-other ()
-  (interactive)
-  (jp/org-roam-select-prefix "/20"))
-#+end_src
-
-**** Select by Assigned Tags
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(defun jp/org-roam-get-tagged (&optional tag)
-  (mapcar
-   #'org-roam-node-file
-   (seq-filter
-    (lambda (node)
-      (member tag (org-roam-node-tags node)))
-    (org-roam-node-list))))
-
-(defun jp/org-roam-agenda ()
-  (interactive)
-  (let ((org-agenda-files (jp/org-roam-get-tagged "Tasks")))
-  (org-agenda)))
-#+end_src
-
-*** Reading  a File from Template
-:Source:
-Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]] (see [[https://github.com/benoitj/dotfiles/tree/main/dot_config/emacs.local/templates][dot_config/emacs.local/templates]] and [[https://github.com/benoitj/dotfiles/blob/main/dot_config/doom/%2Borg.el#L28][dot_config/doom/+org.el (Lines 28ff)]]).
-:END:
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq org-templates-directory (concat doom-private-dir "/templates/"))
-(defun jp/read-template (template)
-  "Reading TEMPLATE as a file from org-templates-directory.
-Returns file content as a string."
-  (with-temp-buffer
-    (insert-file-contents (concat org-templates-directory template))
-    (buffer-string)))
-(defun jp/read-newproject-template ()
-  (jp/read-template "new-project.org"))
-(defun jp/read-dailyreview-template ()
-  (jp/read-template "daily-review.org"))
-(defun jp/read-weekly-template ()
-  (jp/read-template "weekly-review.org"))
-(defun jp/read-monthly-template ()
-  (jp/read-template "monthly-review.org"))
-(defun jp/read-meeting-template ()
-  (jp/read-template "Meeting.org"))
-(defun jp/read-script-template ()
-  (jp/read-template "script.org"))
-#+end_src
-
-*** Regular Reviews
-:Source:
-Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
-:END:
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(defun jp/daily-review ()
-  (interactive)
-  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
-                                  (file "~/.doom.d/templates/daily-review.org")))))
-    (progn
-      (org-capture nil "d")
-      (org-capture-finalize t)
-      (org-speed-move-safe 'outline-up-heading)
-      (org-narrow-to-subtree)
-      (org-clock-in))))
-
-(defun jp/weekly-review ()
-  (interactive)
-  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
-                                  (file "~/.doom.d/templates/weekly-review.org")))))
-    (progn
-      (org-capture nil "d")
-      (org-capture-finalize t)
-      (org-speed-move-safe 'outline-up-heading)
-      (org-narrow-to-subtree)
-      (org-clock-in))))
-
-(defun jp/monthly-review ()
-  (interactive)
-  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "~/ZK/daily/reviews.org")
-                                  (file "~/.doom.d/templates/monthly-review.org")))))
-    (progn
-      (org-capture nil "d")
-      (org-capture-finalize t)
-      (org-speed-move-safe 'outline-up-heading)
-      (org-narrow-to-subtree)
-      (org-clock-in))))
-#+end_src
-
-*** Project Management
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(defun jp/go-to-projects (&optional name head)
-  ""
-  (interactive)
-  (let* ((headline-regex (or head "* Projects"))
-         (node (jp/org-roam-select-projects)))
-    (org-roam-node-visit node)
-    ;;(org-roam-node-find-noselect node)
-    (widen)
-    (beginning-of-buffer)
-    (re-search-forward headline-regex)
-    (beginning-of-line)))
-  #+end_src
-
-** UI Configuration
-** Workflow Configuration
-*** Task Keywords
-The Task Keywords are noted with their keybindings in parentheses.
-
-|-----------------+-------------------------------------|
-| Special Symbols | Meaning                             |
-|-----------------+-------------------------------------|
-| =@=               | Append Note when set to this State. |
-| =!=               | Add Timestamp to Logbook.           |
-|-----------------+-------------------------------------|
-
-|---------+----------------------------------------------------------------------------------|
-| Seq 1   | Description                                                            @tasks    |
-|---------+----------------------------------------------------------------------------------|
-| ~PROJ(p)~ | Bigger ongoing Projects.                                                         |
-| ~EPIC(e)~ | Epic Tasks: A specific problem with a pre-defined reachable goal.                |
-| ~TODO(t)~ | Single tasks to accomplish in reasonable time (/Hint/: Set effort to range tasks). |
-| ~IDEA(i)~ | Small ideas that could grow into something beautiful. (optional)                 |
-|---------+----------------------------------------------------------------------------------|
-| ~DONE(d)~ | Finished Tasks                                                                   |
-|---------+----------------------------------------------------------------------------------|
-
-|--------------+------------------------------------------------------------------------|
-| Seq 2        | Description                                                   @backlog |
-|--------------+------------------------------------------------------------------------|
-| ~BACKLOG(b)~   | Tasks that are on the back of my head, if nothing else holds priority. |
-|--------------+------------------------------------------------------------------------|
-| ~PLAN(p)~      | Planning Phase                                                (#Max=5) |
-| ~ACTIVE(a)~    | Active Tasks                                                  (#Max=5) |
-| ~REVIEW(r)~    | .                                                             (#Max=5) |
-| ~WAIT(w@/!)~   | Waiting on external influences (*Explain and Log this*).        (#Max=∞) |
-| ~HOLD(h)~      | Holding back until my time is free again.                     (#Max=∞) |
-|--------------+------------------------------------------------------------------------|
-| ~COMPLETED(c)~ |                                                                        |
-| ~KILL(k)~      |                                                                        |
-| ~STOPPED(s@)~  | Stopped a task. *Explain this*.                                          |
-|--------------+------------------------------------------------------------------------|
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-todo-keywords '(
-                          (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
-                                "DONE(d)")
-                          (sequence "BACKLOG(b)" "PLAN(P)" "ACTIVE(a)"
-                                    "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
-                                    "COMPLETED(c)" "KILL(k)" "CANCELLED(C)" "STOPPED(s@)")
-                        )
-      )
-
-#+end_src
-
-*** TODO Capture Templates
-
-- [[https://orgmode.org/manual/Template-elements.html#Template-elements][Org-Mode Template Elements→]]
-- [[https://www.orgroam.com/manual.html#The-Templating-System][Org-Roam Templating System→]]
-
-**** TODO Org Capture Templates
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-capture-templates '(
-                              ("a" "Agenda")
-                              ("ah" "Home" entry (file+headline "~/org/Agenda.org" "Home")
-                               "* TODO %?\n %i\n %a")
-                              ("as" "Sys" entry (file+headline "~/org/Agenda.org" "Sys")
-                               "* TODO %?\n %i\n %a")
-                              ("M" "Meeting" entry
-                               (file+olp+datetree "~/org/Meetings.org")
-                               (function jp/read-meeting-template)
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("m" "Email Workflow")
-                              ("mf" "Follow Up" entry (file+olp "~/org/Mail.org" "Follow Up")
-                               "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote")
-                              ("mr" "Read Later" entry (file+olp "~/org/Mail.org" "Read Later")
-                               "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote%x")
-                              ("l" "Logbook Entries")
-                              ("ls" "Software" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %U %a%? :Software:"
-                               :clock-in :clock-resume)
-                              ("lh" "Hardware" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %U %a%? :Hardware:"
-                               :clock-in :clock-resume)
-                              ("lc" "Configuration" entry
-                               (file+olp+datetree "~/org/Logbook.org")
-                               "\n* %U %a%? :Configuration:"
-                               :clock-in :clock-resume)
-                              ("s" "Create Scripts")
-                              ("ss" "shell" entry
-                               (file+headline "~/org/scripts/%<%Y%m%d%H%M%S>.org" "Scripts")
-                               (function jp/read-script-template)
-                               :clock-in :clock-resume
-                               :empty-lines 1)
-                              ("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
-                               "* %?\n %x\n %i\n %a")
-                              ("t" "Task Entries")
-                              ("tt" "Todo Task" entry (file+headline "~/org/Notes.org" "Tasks")
-                               "* TODO %?\n %i\n %a")
-                              ("te" "Epic Task" entry (file+headline "~/org/Notes.org" "Epic")
-                               "* EPIC %?\n %i\n %a")
-                              ("ti" "New Idea" entry (file+headline "~/org/Notes.org" "Ideas")
-                               "* IDEA %?\n %i\n %a")))
-
-#+end_src
-
-**** TODO Org Roam Capture Templates
-- Add some custom permanent notes templates.
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-roam-capture-templates
-      '(("d" "default" plain
-         "%?\n\nSee also %a.\n"
-         :if-new (file+head
-                  "%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
-         :unnarrowed t)
-        ("j" "Projects" plain
-         (function jp/read-newproject-template)
-         :if-new (file+head
-                  "Projects/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
-         :clock-in :clock-resume
-         :unnarrowed t
-         )
-        ("i" "Individuum / Persona" plain
-         "%?\n\nSee also %a.\n"
-         :if-new (file+head
-                  "People/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
-         :unnarrowed t
-         )
-        ("l" "Literature")
-        ("ll" "Literature Note" plain
-         "%?\n\nSee also %a.\n* Links\n- %x\n* Notes\n"
-         :if-new (file+head
-                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n")
-         :unnarrowed t
-         )
-        ("lr" "Bibliography reference" plain
-         "#+ROAM_KEY: %^{citekey}\n#+PROPERTY: type %^{entry-type}\n#+FILETAGS: %^{keywords}\n#+AUTHOR: %^{author}\n%?"
-         :if-new (file+head
-                  "References/${citekey}.org"
-                  "#+title: ${title}\n")
-         :unnarrowed t
-         )
-        ("p" "PC" plain
-         "%?\n\nSee also %a.\n"
-         :if-new (file+head
-                  "PC/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+title: ${title}\n#+date: %U")
-         :unnarrowed t
-         )
-        )
-      )
-
-#+end_src
-
-**** Org Roam Capture Ref Templates (Capture Websites)
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq org-roam-capture-ref-templates '(
-                                       ("r" "Reference" plain
-                                        "%?\n\n* Citations\n#+begin_quote\n${body}\n#+end_quote"
-                                        :if-new (file+head
-                                                 "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "#+title: ${title}\n#+date: %U\n")
-                                        :unnarrowed t
-                                        )
-                                       ("l" "Literature References" plain
-                                        "%?\n\n* Abstract\n#+begin_quote\n${body}\n#+end_quote"
-                                        :if-new (file+head
-                                                 "References/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "#+title: ${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
-                                        :unnarrowed t
-                                        :empty-lines 1)
-                                       ("w" "Web site" entry
-                                        :target (file+head
-                                                 "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "#+title: ${title}\n#+date: %U\n")
-                                        "* %a :website:\n\n%U %?\n\n#+begin_quote\n%:initial\n#+end_quote")
-                                       )
-      )
-
-#+end_src
-
-**** TODO Org Roam Dailies Capture Templates
-- Add some custom floating notes templates.
-- Add org protocol templates
-
-:Source:
-The daily / monthly review templates are inspired by [[https://github.com/benoitj/dotfiles/tree/main/dot_config/emacs.local/templates][Benoit Joly's templates]].
-:END:
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-roam-dailies-capture-templates
-      '(("d" "default" entry
-         "* %?"
-         :if-new (file+head
-                  "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
-         :kill-buffer t
-         )
-        ("j" "Journal entry" entry
-         "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
-         :if-new (file+head+olp
-                  "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d>\n"
-                  ("Journal"))
-         :kill-buffer t
-         )
-        ("l" "Monthly Log" entry
-         "* %?\n  %U\n  %a\n  %i"
-         :if-new (file+head+olp
-                  "%<%Y-%B>.org"
-                  "#+title: %<%Y-%B>\n"
-                  ("Log"))
-         :kill-buffer t
-         )
-        ("m" "meeting" entry
-         (file "~/.dotfiles/.doom.d/templates/Meeting.org")
-         :if-new (file+head+olp
-                  "%<%Y-%m-%d>.org"
-                  "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
-                  ("Meetings")))
-        ("r" "Review")
-        ("rd" "Daily Review" entry
-         (file+head
-          "%<%Y-%m-%d>.org"
-          "#+title: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
-         (file "~/.dotfiles/doom/.doom.d/templates/daily-review.org"))
-        ("rm" "Monthly Review" entry
-         (file "~/.dotfiles/.doom.d/templates/monthly-review.org")
-         :if-new (file+head
-                  "%<%Y-%B>.org"
-                  "#+title: %<%Y-%B>\n"))))
-
-#+end_src
-
-*** TODO Custom Agenda View
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-agenda-custom-commands
-      '(("d" "Dashboard"
-         ((agenda "" ((org-deadline-warning-days 20)))
-          (todo "BACKLOG"
-                ((org-agenda-overriding-header "Backlog Tasks")))
-          (todo "ACTIVE" ((org-agenda-overriding-header "Active Tasks")))
-          (todo "REVIEW" ((org-agenda-overriding-header "Active Reviews")))
-          (todo "EPIC" ((org-agenda-overriding-header "Active Epics")))))
-
-        ("T" "All Todo Tasks"
-         ((todo "TODO"
-                ((org-agenda-overriding-header "Todo Tasks")))))
-
-        ("W" "Work Tasks" tags-todo "+work")
-
-        ;; Low-effort next actions
-        ("E" tags-todo "+TODO=\"EPIC\"+Effort<15&+Effort>0"
-         ((org-agenda-overriding-header "Low Effort Tasks")
-          (org-agenda-max-todos 20)
-          (org-agenda-files org-agenda-files)))
-
-        ("w" "Workflow Status"
-         ((todo "WAIT"
-                ((org-agenda-overriding-header "Waiting on External")
-                 (org-agenda-files org-agenda-files)))
-          (todo "REVIEW"
-                ((org-agenda-overriding-header "In Review")
-                 (org-agenda-files org-agenda-files)))
-          (todo "PLAN"
-                ((org-agenda-overriding-header "In Planning")
-                 (org-agenda-todo-list-sublevels nil)
-                 (org-agenda-files org-agenda-files)))
-          (todo "BACKLOG"
-                ((org-agenda-overriding-header "Project Backlog")
-                 (org-agenda-todo-list-sublevels nil)
-                 (org-agenda-files org-agenda-files)))
-          (todo "READY"
-                ((org-agenda-overriding-header "Ready for Work")
-                 (org-agenda-files org-agenda-files)))
-          (todo "ACTIVE"
-                ((org-agenda-overriding-header "Active Projects")
-                 (org-agenda-files org-agenda-files)))
-          (todo "COMPLETED"
-                ((org-agenda-overriding-header "Completed Projects")
-                 (org-agenda-files org-agenda-files)))
-          (todo "CANC"
-                ((org-agenda-overriding-header "Cancelled Projects")
-                 (org-agenda-files org-agenda-files)))))
-        ("h" "Daily habits"
-         ((agenda ""))
-         ((org-agenda-show-log t)
-          (org-agenda-ndays 14)
-          (org-agenda-log-mode-items '(state))
-          (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
-        ;; other commands here
-        ))
-
-#+end_src
-
-*** Task Tags
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-tag-alist
-      '((:startgroup)
-         ; Put mutually exclusive tags here
-         (:endgroup)
-         ("@sys" . ?S)
-         ("@home" . ?H)
-         ("@work" . ?W)
-         ("planning" . ?p)
-         ("publish" . ?P)
-         ("batch" . ?b)
-         ("note" . ?n)
-         ("idea" . ?i)))
-
-#+end_src
-
-*** Task Priorities
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-lowest-priority ?E) ;; Priorities A to E
-
-#+end_src
-
-*** Refile Targets
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-refile-targets
-      '(("Archive.org" :maxlevel . 1)
-        ("Tasks.org" :maxlevel . 1)))
-
-#+end_src
-
-*** Archive Location
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq org-archive-location ".archive/%s::")
-
-#+end_src
-
-*** Enable Auto-Save after Refile
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-;; Save Org buffers after refiling!
-(advice-add 'org-refile :after 'org-save-all-org-buffers)
-
-#+end_src
-
-*** Enable Org Habits
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(add-to-list 'org-modules 'org-habit)
-
-#+end_src
-
-** Org Publish (Exporting org files)
-*** LaTeX
-
-See also [[https://orgmode.org/worg/org-tutorials/org-latex-export.html][Online Documentation]] for LaTeX Export for Org Mode.
-
- | LATEX_CLASS  | Document Class | Description                      |
- |--------------+----------------+----------------------------------|
- | =koma-article= | =scrartcl=       | Normal article                   |
- | =aip-rst=      | =revtex4-2=      | Paper Template for AIP Journals: |
- |              |                | Review of Scientific Instruments |
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el :results none
-;; (setq org-latex-to-pdf-process '("texi2dvi --pdf --clean --verbose --batch %f"))
-
-(require 'ox-latex)
-(unless (boundp 'org-latex-classes)
-  (setq org-latex-classes nil))
-
-;; Define Koma Article Class
-(add-to-list 'org-latex-classes
-             '("koma-article"
-               "\\documentclass{scrartcl}"
-               ("\\section{%s}" . "\\section*{%s}")))
-
-;; Define Review of Scientific Instruments Class
-(add-to-list 'org-latex-classes
-             '("aip-rsi"
-               "\\documentclass[
-                aip, % AIP Journals
-                rsi, % Review of Scientific Instruments
-                amsmath,amssymb, % Basic Math Packages
-                preprint, % or reprint
-                ]{revtex4-2}
-\\include{structure}
-[NO-DEFAULT-PACKAGES]
-[NO-EXTRA]
-[NO-PACKAGES]
-
-%% Apr 2021: AIP requests that the corresponding
-%% email to be moved after the affiliations
-\\makeatletter
-\\def\\@email#1#2{%
- \\endgroup
- \\patchcmd{\\titleblock@produce}
-  {\\frontmatter@RRAPformat}
-  {\\frontmatter@RRAPformat{\\produce@RRAP{*#1\\href{mailto:#2}{#2}}}\\frontmatter@RRAPformat}
-  {}{}
-}%
-\\makeatother"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ))
-
-(defun org-export-latex-no-toc (depth)
-  (when depth
-    (format "%% Org-mode is exporting headings to %s levels.\n"
-            depth)))
-(setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
-#+end_src
-
-*** HTML
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(add-to-list 'org-link-abbrev-alist '("ody5" . "https://gitlab.ody5.de/"))
-(add-to-list 'org-link-abbrev-alist '("gitlab" . "https://gitlab.com/"))
-#+end_src
-
-*** PlantUML
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq plantuml-default-exec-mode 'jar)
-#+end_src
-
-** Additional Org Packages
-*** Org Alert
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(require 'org-alert)
-#+end_src
-
-*** Org Msg
-Doom does a fantastic stuff with the defaults with this, so we only make a few minor tweaks.
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq +org-msg-accent-color "#1a5fb4"
-      org-msg-greeting-fmt "\nHi %s,\n\n"
-      org-msg-signature "\n\n#+begin_signature\nAll the best,\\\\\n@@html:<b>@@Jonathan@@html:</b>@@\n#+end_signature")
-(map! :map org-msg-edit-mode-map
-      :after org-msg
-      :n "G" #'org-msg-goto-body)
-#+end_src
-
-*** Org Tempo
-:SOURCE:
-Description by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
-:END:
-
-This enables auto completion to easily create OrgBabel code blocks in org mode!
-
-Org-tempo is a package that allows for '<s' followed by TAB to expand to a begin_src tag.  Other expansions available include:
-
-| Typing the below + TAB | Expands to ...                      |
-|------------------------+-------------------------------------|
-| <a                     | '#+BEGIN_EXPORT ascii' … '#+END_EXPORT                      |
-| <c                     | '#+BEGIN_CENTER' … '#+END_CENTER'   |
-| <C                     | '#+BEGIN_COMMENT' … '#+END_COMMENT' |
-| <e                     | '#+BEGIN_EXAMPLE' … '#+END_EXAMPLE' |
-| <E                     | '#+BEGIN_EXPORT' … '#+END_EXPORT'   |
-| <h                     | '#+BEGIN_EXPORT html' … '#+END_EXPORT'           |
-| <l                     | '#+BEGIN_EXPORT latex' … '#+END_EXPORT'          |
-| <q                     | '#+BEGIN_QUOTE' … '#+END_QUOTE'     |
-| <s                     | '#+BEGIN_SRC' … '#+END_SRC'         |
-| <v                     | '#+BEGIN_VERSE' … '#+END_VERSE'     |
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(with-eval-after-load 'org
-  ;; This is needed as of Org 9.2
-  (require 'org-tempo)
-
-  (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
-  (add-to-list 'org-structure-template-alist '("uml" . "src plantuml :file uml.png"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
-  (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
-  (add-to-list 'org-structure-template-alist '("py" . "src python"))
-  (add-to-list 'org-structure-template-alist '("go" . "src go"))
-  (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
-  (add-to-list 'org-structure-template-alist '("json" . "src json")))
-
-#+end_src
-
-*** TODO Org Special Block Extras
-
-Templating System to export org documents into LaTeX, HTML, etc. with individual templates.
-See [[https://github.com/alhassy/org-special-block-extras][Maintainer (upstream)]] for further information.
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-;; Enable Special Blocks in Org-Mode
-(add-hook #'org-mode-hook #'org-special-block-extras-mode)
-
-;; Use short names like ‘defblock’ instead of the fully qualified name
-;; ‘org-special-block-extras--defblock’
-;; (org-special-block-extras-short-names)
-#+end_src
-
-*** Org Tree Slide (Presentations)
-Make sure the package =org-tree-slide= is loaded (put this into your =packages.el=):
-
-#+begin_src emacs-lisp
-(package! org-tree-slide)
-#+end_src
-
-This Configuration runs on start end finish of presentations:
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(defun jp/presentation-setup()
-  ;;(setq text-scale-mode-amount 3)
-  ;;(text-scale-mode 1)
-  (org-display-inline-images)
-  (org-tree-slide-activate-message "Presentation started!")
-  (org-tree-slide-deactivate-message "Presentation finished!")
-  (org-tree-slide-header t)
-  (org-tree-slide-breadcrumbs " // ")
-  )
-
-(defun jp/presentation-end()
-  ;;(text-scale-mode 0)
-  )
-
-(add-hook #'org-tree-slide-play #'jp/presentation-setup)
-(add-hook #'org-tree-slide-stop #'jp/presentation-end)
-
-#+end_src
-
-*** Babel (Programming Languages in Org)
-**** PlantUML
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-;; Enable PlantUML Diagrams
-(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-;; Jar Configuration
-(setq org-plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
-(setq plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
-(setq plantuml-default-exec-mode 'jar)
-#+end_src
-**** OrgBabel Languages
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((R . t)
-   (python . t)
-   (LaTeX . t)
-   (plantuml . t)
-   (emacs-lisp . t)))
-#+end_src
-**** Turn Tangle Comments off
-Since Emacs 28 OrgBabel tangle creates comments like ="[[%link][%source-name]]"= to indicate the source of tangled code. The following lines deactivate this behavior:
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq org-babel-tangle-comment-format-beg ""
-      org-babel-tangle-comment-format-end "")
-#+end_src
-
-*** TODO BibTeX (Literature Management)
-
-My BibTeX configuration is based on [[https://github.com/org-roam/org-roam-bibtex/blob/master/README.md#doom-emacs][Org Roam BibTeX README]].
-The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org][manual]] provides some additional information.
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(use-package! org-roam-bibtex
-  :after org-roam
-  :config
-  (require 'org-ref)) ; optional: if Org Ref is not loaded anywhere else, load it here
-
-;; Helm Autocompletion
-(autoload 'helm-bibtex "helm-bibtex" "" t)
-
-;; Ivy Autocompletion
-;;(autoload 'ivy-bibtex "ivy-bibtex" "" t)
-;; ivy-bibtex requires ivy's `ivy--regex-ignore-order` regex builder, which
-;; ignores the order of regexp tokens when searching for matching candidates.
-;; Add something like this to your init file:
-(setq ivy-re-builders-alist
-      '((ivy-bibtex . ivy--regex-ignore-order)
-        (t . ivy--regex-plus)))
-
-(setq bibtex-file-path (concat org-roam-directory "/BibTeX/")
-      bibtex-files '("Library.bib")
-      org-ref-default-bibliography '("~/ZK/BibTeX/Library.bib")
-      bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib")
-      bibtex-completion-library-path '("~/nc/Library/BibTeX/"))
-#+end_src
-
-** Org-Roam (Zettelkasten)
-*** Files and Basic Variables
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
-(require 'org-roam-protocol)
-(require 'org-protocol-capture-html)
-
-(setq org-roam-directory (file-truename "~/ZK")   ; Set org-roam directory
-      org-roam-dailies-directory (file-truename "~/ZK/daily")
-      org-attach-id-dir (concat org-roam-directory "/.attachments")
-      org-id-locations-file "~/ZK/.orgids"
-      org-roam-completion-everywhere nil
-      org-roam-completion-system 'default
-      ;;org-roam-graph-executable "neato" ; or "dot" (default)
-      )
-
-#+end_src
-
-*** Org-Roam Buffer (Side-Window)
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq org-roam-mode-section-functions
-      (list #'org-roam-backlinks-section
-            #'org-roam-reflinks-section
-            #'org-roam-unlinked-references-section
-            ))
-#+end_src
-
-*** Org-Roam UI
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(use-package! websocket
-    :after org-roam)
-
-(use-package! org-roam-ui
-    :after org-roam ;; or :after org
-;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-;;         a hookable mode anymore, you're advised to pick something yourself
-;;         if you don't care about startup time, use
-;;    :hook (after-init . org-roam-ui-mode)
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
-
-#+end_src
-
-***** Resize Document Title
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(after! org
-  (custom-set-faces!
-    '(org-document-title :height 1.2)))
+(after! popper
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+          help-mode
+          compilation-mode))
+  (global-set-key (kbd "C-`") 'popper-toggle-latest)
+  (global-set-key (kbd "M-`") 'popper-cycle)
+  (global-set-key (kbd "C-M-`") 'popper-toggle-type)
+  (popper-mode +1))
 #+end_src
 
 * TODO Additional Packages
 ** Dired (File Manager)
+:PROPERTIES:
+:LOCATION: https://gitlab.com/dwt1/dotfiles
+:END:
 
 :SOURCE:
 Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
@@ -2284,9 +1594,9 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
-      ;; (:prefix ("d" . "dired")
-      ;;  :desc "Open dired" "d" #'dired
-      ;;  :desc "Dired jump to current" "j" #'dired-jump)
+      (:prefix ("d" . "dired")
+       :desc "Open dired" "d" #'dired
+       :desc "Dired jump to current" "j" #'dired-jump)
       (:after dired
        (:map dired-mode-map
         :desc "Peep-dired image previews" "d p" #'peep-dired
@@ -2352,6 +1662,9 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 #+end_src
 
 ** Languages (IDE using Language Server)
+:PROPERTIES:
+:LOCATION: https://github.com/daviwil/emacs-from-scratch.git
+:END:
 
 :SOURCE:
 Adapted from [[https://github.com/daviwil/emacs-from-scratch.git][daviwil/emacs-from-scratch]].
@@ -2423,7 +1736,7 @@ Try these commands with =M-x=:
 - =lsp-ivy-workspace-symbol= - Search for a symbol name in the current project workspace
 - =lsp-ivy-global-workspace-symbol= - Search for a symbol name in all active project workspaces
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+begin_src emacs-lisp
 
   (use-package lsp-ivy
     :after lsp)
@@ -2457,7 +1770,7 @@ Try these commands with =M-x=:
 #+end_src
 
 *** Python
-
+**** General
 We use =lsp-mode= and =dap-mode= to provide a more complete development environment for Python in Emacs.  Check out the [[https://emacs-lsp.github.io/lsp-pyright][documentation of =lsp-pyright= ]]in the =lsp-mode= documentation for more details.
 
 Make sure you have the =lsp-pyright= language server installed before trying =lsp-mode=!
@@ -2469,27 +1782,73 @@ There are a number of other language servers for Python so if you find that =pyl
 (defun jp/python-mode-hook()
   (require 'lsp-pyright)
   (require 'dap-python)
+  (modify-syntax-entry ?_ "w") ; treat underscore (_) as word-breaking character
   (lsp-deferred))
 
 (add-hook 'python-mode-hook #'jp/python-mode-hook)
 
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
-(setq python-shell-interpreter "python3")
-(setq dap-python-executable "python3")
 (setq dap-python-debugger 'debugpy)
-
-
 #+end_src
 
+**** MacOS
+- MacOS has different location thanks to Anaconda:
+  #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/config.el" "no")
+(defvar jp/guix/pythonpath (getenv "GUIX_PYTHONPATH")
+  "Absolute Python Library Path (e.g. /.../lib/python3.9/site-packages)")
+(defvar jp/python
+  (if jp/guix/pythonpath
+      (concat (ivy--parent-dir (ivy--parent-dir (ivy--parent-dir jp/guix/pythonpath))) "bin/python3")
+      "/gnu/store/x77rq0rqdw20f1bpiznvlkgw1h1r4q98-profile/bin/python3"
+      ; "/opt/homebrew/Caskroom/miniforge/base/envs/ody/bin/python"
+      ; "/opt/miniconda3/bin/python"
+      ; (file-truename "~/.conda/envs/webserver/bin/python")
+      ; (file-truename "~/.conda/envs/webserver-old/bin/python")
+      ; (file-truename "~/.conda/envs/ /bin/python")
+      )
+      "Python binary path.")
+(setq python-shell-interpreter jp/python)
+(setq dap-python-executable jp/python
+      treemacs-python-executable jp/python
+      lsp-pyright-python-executable-cmd jp/python)
+  #+end_src
+
+**** Linux
+Linux uses Miniconda3:
+  #+begin_src emacs-lisp :tangle (if (eq system-type 'gnu/linux) "./.doom.d/config.el" "no")
+(defvar jp/python
+       "/opt/miniconda3/bin/python"
+      ; (file-truename "~/.conda/envs/webserver/bin/python")
+      ; (file-truename "~/.conda/envs/webserver-old/bin/python")
+      ; (file-truename "~/.conda/envs/ /bin/python")
+      "Python binary path.")
+(setq python-shell-interpreter jp/python
+      dap-python-executable jp/python
+      treemacs-python-executable jp/python
+      lsp-pyright-python-executable-cmd jp/python
+      python-check-command (file-truename "~/.local/bin/epylint"))
+#+end_src
+
+**** PyEnv
 You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =pyvenv-activate= command should configure Emacs to cause =lsp-mode= and =dap-mode= to use the virtual environment when they are loaded, just select the path to your virtual environment before loading your project.
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+begin_src emacs-lisp
 
 (use-package pyvenv
   :after python-mode
   :config
-  (pyvenv-mode 1))
+  (pyvenv-mode 1)
+  (setq pyvenv-virtualenvwrapper-python jp/python))
 
+#+end_src
+
+**** Anaconda
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+
+;; Anaconda Path
+(setq conda-env-home-directory "/opt/homebrew/Caskroom/miniforge/base"
+      conda-anaconda-home conda-env-home-directory)
 #+end_src
 
 *** TODO TypeScript (deactivated)
@@ -2611,11 +1970,17 @@ For more thoughts on Eshell, check out these articles by Pierre Neidhardt:
 
 #+end_src
 
-** HOLD Magit
+** Magit
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-;; Optional Magit Configuration
+(after! magit
+  (remove-hook 'server-switch-hook 'magit-commit-diff)
+)
+
+;; Magit Configuration to enable gpg to sign keys
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+(setq exec-path (append exec-path '("/usr/local/bin")))
 
 #+end_src
 
@@ -2827,4 +2192,48 @@ Useful mu4e manual pages:
 ** Deft
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq deft-directory "~/org")
+#+end_src
+
+** Finances
+*** Ledger (Financial Support)
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq jp/decrypt-ledger "")
+(with-eval-after-load 'company
+  (add-to-list 'company-backends 'company-ledger))
+
+(setq ledger-reconcile-default-commodity "€")
+
+(setq ledger-reports
+ '(("bal"            "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal")
+   ("bal this month" "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal -p %(month) -S amount")
+   ("bal this year"  "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal -p 'this year'")
+   ("net worth"      "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f - bal Assets Liabilities")
+   ("reg"        "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f %(ledger-file) reg")
+   ("account"        "gpg --decrypt %(ledger-file) 2>/dev/null | %(binary) -f %(ledger-file) reg %(account)")))
+
+(map! :map ledger-reconcile-mode-map
+      :ne "q" #'ledger-reconcile-quit
+      :ne "a" #'ledger-reconcile-add
+      :ne "d" #'ledger-reconcile-delete)
+#+end_src
+
+*** Beancount
+[[https://beancount.github.io/docs/][Beancount]] is a CLI Tool written in Python to manage finances.
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(map! :map beancount-mode-map
+      :leader
+       (:prefix "m"
+        :desc "Insert Date" :n "i" #'beancount-insert-date
+        :desc "Query" :n "q" #'beancount-query
+        ))
+#+end_src
+
+** HOLD Scimax
+#+begin_src emacs-lisp
+(setq scimax-dir (file-truename "~/build/scimax"))
+(add-to-list 'load-path (file-truename "~/build/scimax"))
+(require 'f)
+(require 'scimax)
+(scimax-update)
 #+end_src

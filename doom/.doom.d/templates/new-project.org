@@ -16,9 +16,6 @@ DEADLINE: %^t
   (nth 4 (org-heading-components))
   #+END_SRC
 
-  #+BEGIN_SRC shell :noweb t
-  osascript -e "tell application \"Evernote\" to create notebook \"<<headline()>>\""
-  #+END_SRC
 - [ ] Create Folder Structure
   + [ ] Local Git Repository
     #+begin_src shell :noweb t

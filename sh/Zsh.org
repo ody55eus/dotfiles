@@ -1,0 +1,32 @@
+#+TITLE: Shell Configuration
+#+AUTHOR: Jonathan Pieper
+#+STARTUP: fold
+
+* Table of Contents :TOC:noexport:
+- [[#zshrc][Zshrc]]
+  - [[#variables][Variables]]
+  - [[#loading-default-configuration][Loading Default Configuration]]
+  - [[#system-specific-options][System Specific Options]]
+
+* Zshrc
+The =~/.zshrc= file is loaded by default.
+** Variables
+These variables point to the correct configuration paths:
+#+begin_src sh :tangle ~/.zshrc :shebang #!/usr/bin/env zsh
+# zsh config dir
+export ZDOTDIR=$HOME/.config/zsh
+
+# XDG Paths
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_DATA_HOME=$HOME/.local/share
+#+end_src
+** Loading Default Configuration
+The default configuration is stored in the =$ZDOTDIR= folder:
+#+begin_src sh :tangle ~/.zshrc
+source $ZDOTDIR/zshrc
+#+end_src
+** System Specific Options
+#+begin_src sh :tangle (if (eq system-type 'darwin) "~/.zshrc" "no")
+export PATH=/opt/homebrew/opt/openjdk/bin:/opt/homebrew/opt/openjdk/bin:/opt/homebrew/Caskroom/miniforge/base/bin:/opt/homebrew/Caskroom/miniforge/base/condabin:/Users/jp/.emacs.d/bin:/Users/jp/.bin:/Users/jp/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin
+#+end_src

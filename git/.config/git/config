@@ -1,7 +1,9 @@
 [user]
 	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
-    signingkey = 0x01B6FB927AAEC59B
+	signingkey = 2361DFC839413E7A84B2152B01B6FB927AAEC59B
+[gpg]
+	program = gpg
 [init]
 	defaultBranch = main
 [gitlab "gitlab.ody5.de/api/v4"]
@@ -12,11 +14,8 @@
 [core]
 	excludesfile = ~/.config/git/ignore
 	attributesfile = ~/.config/git/attributes
-[commit]
-	gpgsign = true
-[tag]
-	gpgsign = true
-
+	pager = nvim -R
+	sshCommand = ssh
 [diff]
 	tool = ediff
 	guitool = ediff
@@ -33,3 +32,14 @@
 [mergetool "ediff"]
     cmd = ~/.local/bin/ediff.sh $LOCAL $REMOTE $MERGED $BASE
     trueExitCode = true
+[color]
+	pager = no
+[safe]
+	directory = /home/jpi/share/org
+	directory = /home/jpi/share/notes
+	directory = /home/jpi/share/Projects/Code/01_2fa_demo
+	directory = /home/jpi/share/Projects/Doc/frontdesk-documentation
+	directory = /home/jpi/share/Projects/Code/frontdesk
+	directory = /home/jpi/share/Projects/Code/control-panel
+[gitlab]
+	user = ody55eus
