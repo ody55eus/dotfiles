@@ -200,11 +200,16 @@
       "<down>"     #'evil-window-down
       "<up>"       #'evil-window-up
       "<right>"    #'evil-window-right
+      "H-<left>"     #'evil-window-left
+      "H-<down>"     #'evil-window-down
+      "H-<up>"       #'evil-window-up
+      "H-<right>"    #'evil-window-right
       ;; Swapping windows
       "C-<left>"       #'+evil/window-move-left
       "C-<down>"       #'+evil/window-move-down
       "C-<up>"         #'+evil/window-move-up
-      "C-<right>"      #'+evil/window-move-right)
+      "C-<right>"      #'+evil/window-move-right
+      )
 
 (map! :map +doom-dashboard-mode-map
       :ne "f" #'find-file
@@ -215,6 +220,26 @@
       :ne "." (cmd! (doom-project-find-file "~/.config/")) ; . for dotfiles
       :ne "b" #'+vertico/switch-workspace-buffer
       :ne "B" #'counsel-switch-buffer)
+
+(map! "H-<end>" "<end>")
+(map! "H-<home>" "<home>")
+(map! "H-<escape>" "<escape>")
+(map! "H-ü" "<escape>")
+(map! "H-<left>" "<left>")
+(map! "H-<right>" "<right>")
+(map! "H-<up>" "<up>")
+(map! "H-<down>" "<down>")
+(map! "H-<backspace>" "<backspace>")
+(map! "H-<delete>" "<delete>")
+(map! "H-<return>" "<return>")
+(map! "H-<undo>" "<undo>")
+(dolist (i '(0 1 2 3 4 5 6 7 8 9))
+        (general-define-key (format "H-<kp-%d>" i) (kbd (number-to-string i))))
+
+(map! "H-¿" #'jp/org-roam-refresh-agenda-list)
+(map! "H-¡" #'ivy-mode)
+(map! "H-:" #'embark-act)
+(map! "H-;" #'org-agenda)
 
 (setq doom-theme 'doom-outrun-electric)
 (custom-set-faces!

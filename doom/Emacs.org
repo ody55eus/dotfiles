@@ -221,7 +221,7 @@ Just comment/uncomment some lines to disable/enable features.
         +fold)                      ; fold the clutter away nicities
        ;;lean              ; for folks with too much to prove
        ledger            ; be audit you can be
-       ;;lua               ; one-based indices? one-based indices
+       lua               ; one-based indices? one-based indices
        markdown          ; writing docs for people to ignore
        nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
@@ -732,6 +732,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 :Source:
 Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecosaur]].
 :END:
+
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :map evil-window-map
@@ -741,11 +742,16 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
       "<down>"     #'evil-window-down
       "<up>"       #'evil-window-up
       "<right>"    #'evil-window-right
+      "H-<left>"     #'evil-window-left
+      "H-<down>"     #'evil-window-down
+      "H-<up>"       #'evil-window-up
+      "H-<right>"    #'evil-window-right
       ;; Swapping windows
       "C-<left>"       #'+evil/window-move-left
       "C-<down>"       #'+evil/window-move-down
       "C-<up>"         #'+evil/window-move-up
-      "C-<right>"      #'+evil/window-move-right)
+      "C-<right>"      #'+evil/window-move-right
+      )
 
 #+end_src
 
@@ -760,6 +766,33 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
       :ne "." (cmd! (doom-project-find-file "~/.config/")) ; . for dotfiles
       :ne "b" #'+vertico/switch-workspace-buffer
       :ne "B" #'counsel-switch-buffer)
+#+end_src
+
+*** Hyper Key
+**** Remapping Important Keys
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(map! "H-<end>" "<end>")
+(map! "H-<home>" "<home>")
+(map! "H-<escape>" "<escape>")
+(map! "H-ü" "<escape>")
+(map! "H-<left>" "<left>")
+(map! "H-<right>" "<right>")
+(map! "H-<up>" "<up>")
+(map! "H-<down>" "<down>")
+(map! "H-<backspace>" "<backspace>")
+(map! "H-<delete>" "<delete>")
+(map! "H-<return>" "<return>")
+(dolist (i '(0 1 2 3 4 5 6 7 8 9))
+        (general-define-key (format "H-<kp-%d>" i) (kbd (number-to-string i))))
+#+end_src
+
+**** Custom Functions
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(map! "H-¿" #'counsel-ag)
+(map! "H-¡" #'ivy-mode)
+(map! "H-:" #'embark-act)
+(map! "H-;" #'org-agenda)
+(map! "H-<undo>" #'jp/org-roam-refresh-agenda-list)
 #+end_src
 
 ** Color Theme

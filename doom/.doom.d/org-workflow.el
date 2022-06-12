@@ -1,7 +1,7 @@
   ;; -*- lexical-binding: t; -*-
 
   (setq org-directory
-          "~/ZK")
+          (file-truename "~/ZK"))
 
   ;; (setq org-agenda-files `(,org-directory))
   (defun jp/org-path (path)
@@ -207,8 +207,8 @@
 (require 'org-indent)
 
 ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-;;(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-;;(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
+;;(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 80 :inherit 'fixed-pitch)
+;;(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 80 :inherit 'fixed-pitch)
 (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)

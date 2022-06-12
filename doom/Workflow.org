@@ -46,7 +46,7 @@ The location where my =Notes= folder lives changes in some cases
   ;; -*- lexical-binding: t; -*-
 
   (setq org-directory
-          "~/ZK")
+          (file-truename "~/ZK"))
 
   ;; (setq org-agenda-files `(,org-directory))
   (defun jp/org-path (path)
