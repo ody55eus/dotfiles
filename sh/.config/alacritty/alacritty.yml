@@ -1,4 +1,4 @@
-working_directory: '/home/jpi'
+working_directory: None
 
 font:
   normal:
@@ -20,10 +20,6 @@ key_bindings:
   - {key: Right, mods: Alt, chars: "\x1BF"}
   - {key: Left, mods: Alt, chars: "\x1BB"}
 
-shell:
-  program: /home/jp/.guix-home/profile/bin/zsh
-  args:
-    - -l
 
 colors:
   # Default colors
