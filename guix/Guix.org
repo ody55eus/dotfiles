@@ -88,14 +88,14 @@ if [[ $# -eq 0 ]]; then
 fi
 
 for profile in $profiles; do
-  profileName=$(basename $profile)
-  profilePath=$GUIX_EXTRA_PROFILES/$profileName
+    profileName=$(basename $profile)
+    profilePath=$GUIX_EXTRA_PROFILES/$profileName
 
-  echo
-  echo -e "${GREEN}Updating profile:" $profilePath "${NC}"
-  echo
+    echo
+    echo -e "${GREEN}Updating profile:" $profilePath "${NC}"
+    echo
 
-  guix package --profile="$profilePath/$profileName" --manifest="$HOME/.config/guix/manifests/$profileName.scm"
+    guix package --profile="$profilePath/$profileName" --manifest="$HOME/.config/guix/manifests/$profileName.scm"
 done
 #+end_src
 
@@ -154,12 +154,325 @@ References:
  %default-channels)
 #+end_src
 
+* Applications
+** Desktop Tools
+*** Basic Desktop Tools
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"compton"
+"redshift"
+"gucharmap"
+"fontmanager"
+"brightnessctl"
+"xdg-utils"      ;; For xdg-open, etc
+"xdg-dbus-proxy" ;; For Flatpak
+"gtk+:bin"       ;; For gtk-launch
+"glib:bin"       ;; For gio-launch-desktop
+"shared-mime-info"
+
+#+end_src
+
+*** Browsers
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"icecat"
+"nyxt"
+
+#+end_src
+
+*** Audio Device Control
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"alsa-utils"
+"pavucontrol"
+
+#+end_src
+
+*** Media Players
+
+**** vlc
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"vlc"
+
+#+end_src
+
+**** mpv
+
+[[https://mpv.io/][mpv]] is a simple yet powerful video player.  Paired with [[http://ytdl-org.github.io/youtube-dl/][youtube-dl]] it can even stream YouTube videos.  [[https://github.com/hoyon/mpv-mpris][mpv-mpris]] allows playback control via [[https://github.com/altdesktop/playerctl][playerctl]].
+
+*.config/mpv/mpv.conf*
+
+#+begin_src conf
+
+# Configure playback quality
+vo=gpu
+hwdec=vaapi
+profile=gpu-hq
+scale=ewa_lanczossharp
+cscale=ewa_lanczossharp
+
+# Start the window in the upper right screen corner
+geometry=22%-30+20
+
+# Save video position on quit
+save-position-on-quit
+
+# Limit the resolution of YouTube videos
+ytdl=yes
+ytdl-format=bestvideo[height<=?720]+bestaudio/best
+
+# When playing audio files, display the album art
+audio-display=attachment
+
+# Keep the player open after the file finishes
+keep-open
+
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"mpv"
+"youtube-dl"
+"playerctl"
+
+#+end_src
+
+**** Codecs and Drivers
+
+These packages are needed to enable many video formats to be played in browsers and video players.  VAAPI drivers are also used to enable hardware-accelerated video decoding.
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"gstreamer"
+"gst-plugins-base"
+"gst-plugins-good"
+"gst-plugins-bad"
+"gst-plugins-ugly"
+"gst-libav"
+"intel-vaapi-driver"
+"libva-utils"
+
+#+end_src
+
+*** Image Viewers and Editors
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"feh"
+"gimp"
+"scrot"
+
+#+end_src
+
+*** Document Readers
+
+#+begin_src conf
+
+# Automatically adjust the document to full width
+set adjust-open width
+
+# Set the title to the filename
+set window-title-basename true
+
+# Larger scroll steps with j/k
+set scroll-step 150
+
+# Adjusting the document
+map [normal] E adjust_window best-fit
+map [fullscreen] E adjust_window best-fit
+map [normal] e adjust_window width
+map [fullscreen] e adjust_window width
+
+# Toggling the inverted colours
+map <C-i> recolor
+map <C-g> abort
+
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"zathura"
+"zathura-pdf-mupdf"
+
+#+end_src
+** System Tools
+*** Flatpak
+
+I use Flatpak and the [[https://flathub.org/home][Flathub]] repository to install applications that are otherwise difficult to install in Guix because of application frameworks, etc.
+
+*Applications to Install*
+
+#+begin_src sh
+
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --user --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+flatpak install --user flathub com.spotify.Client
+flatpak install --user flathub com.valvesoftware.Steam
+flatpak install --user flathub com.microsoft.Teams
+flatpak install --user flathub com.discordapp.Discord
+flatpak install --user flathub-beta com.obsproject.Studio
+
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"flatpak"
+
+#+end_src
+
+*** Printing
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"system-config-printer"
+
+#+end_src
+
+*** Fonts
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"font-ibm-plex"        ;; The fonts have been designed to work well in user interface (UI) environments as well as other mediums.
+"font-overpass"        ;; Overpass is a sans-serif typeface based on the U.S.  interstate highway road signage typefaces
+"font-juliamono"       ;; JuliaMono is a monospaced font for scientific and technical computing
+"font-jetbrains-mono"  ;; JetBrains Mono is a font family dedicated to developers
+
+#+end_src
+
+*** Programming Environments
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"texlive"
+"pandoc"
+
+#+end_src
+
+*** Mail
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"isync"
+"mu"
+
+#+end_src
+
+*** Emacs
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"emacs-next-pgtk-latest"
+
+#+end_src
+
+*** Command Line Interfaces (CLI)
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"alacritty"
+"direnv"
+"zsh"
+"tmux"
+"openssh"
+"git"
+"bat"
+"zip"
+"unzip"
+"ripgrep"
+"the-silver-searcher" ; ag
+"trash-cli"
+"glibc-locales"
+"nss-certs"
+
+#+end_src
+
+** System Services
+*** Window Manager
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"qtile"
+
+#+end_src
+
+*** Xorg Tools
+
+*Guix Packages*
+
+#+begin_src scheme
+
+"xev"
+"xset"
+"xrdb"
+"xhost"
+"xmodmap"
+"setxkbmap"
+"xrandr"
+"arandr"
+"xss-lock"
+"libinput"
+"xinput"
+
+#+end_src
+
+* Desktop Profile
+
+The =desktop.scm= manifest holds the list of packages that I use to configure my desktop environment.  The package names are pulled from the relevant sections titled *Guix Packages* in this file (=Desktop.org=).
+
+*.config/guix/manifests/desktop.scm:*
+
+#+NAME: manifest
+#+begin_src scheme :tangle ./guix/manifests/desktop.scm :noweb yes
+
+(specifications->manifest
+ '(
+   <<packages>>
+   ))
+
+#+end_src
+
 * Systems
 Configuring systems with Guix.
 
-Yes, all my machines are named after colors I like.
-
 ** Base configuration
+*** Overview
 The base configuration is shared between all the machines.
 
 While it's possible to make a single =.scm= file with base configuration and load it, I noticed that it produces more cryptic error messages whenever there is an error in the base file, so I opt-in for noweb.
@@ -169,74 +482,77 @@ While it's possible to make a single =.scm= file with base configuration and loa
 #+begin_example
 sudo -E guix system reconfigure ~/.config/guix/systems/[system].scm
 #+end_example
-
+*** Modules
 Common modules:
 #+begin_src scheme :tangle no :noweb-ref system-common
-(use-modules (gnu))
-(use-modules (gnu system nss))
-(use-modules (gnu packages bash))
-(use-modules ((gnu packages base) #:select (coreutils glibc)))
-(use-modules (gnu packages certs))
-(use-modules (gnu packages version-control))
-(use-modules (gnu packages vim))
-(use-modules (gnu packages gnome))
-(use-modules (gnu packages xorg))
-(use-modules (gnu packages wm))
-(use-modules (gnu packages openbox))
-(use-modules (gnu services docker))
-(use-modules (gnu services cups))
-(use-modules (gnu services virtualization))
-(use-modules (srfi srfi-1))
-(use-modules (guix channels))
-(use-modules (guix inferior))
-(use-modules (nongnu packages linux))
-(use-modules (nongnu system linux-initrd))
+(use-modules (gnu)
+             (gnu system nss)
+             (srfi srfi-1)
+             (guix channels)
+             (guix git-download)
+             (guix inferior))
+;; (use-modules (nongnu packages linux))
+;; (use-modules (nongnu system linux-initrd))
 
-(use-service-modules desktop networking ssh xorg nix)
-(use-package-modules ssh)
+(use-service-modules
+        cups
+        desktop
+        networking
+        ssh
+        xorg)
 #+end_src
 
 In principle, we could define a variable called =base-operating-system= and extend it in ancestors. However, then we would have to define mandatory fields like =host-name=, =bootloader= with dummy values. Since I'm already using noweb, there is little point.
 
+*** Kernel
 The following code will be inserted at the top of the =operating-system= definition.
 
-Use the full Linux kernel. I hope I'll be able to use Libre kernel somewhere later.
+Use the Libre Linux kernel. Maybe I'll need to use full kernel somewhere later.
 
 Inferior in the kernel is used to avoid recompilation. It looks like I can pin these to different commits than in my =channels.scm=
 #+begin_src scheme :tangle no :noweb-ref system-base
-(kernel
- (let*
-     ((channels
-       (list (channel
-              (name 'nonguix)
-              (url "https://gitlab.com/nonguix/nonguix")
-              (commit "393b8e0405f44835c498d7735a8ae9ff4682b07f"))
-             (channel
-              (name 'guix)
-              (url "https://git.savannah.gnu.org/git/guix.git")
-              (commit "4c812db049d5c9f2c438748e180f9486ad221b0a"))))
-      (inferior
-       (inferior-for-channels channels)))
-   (first (lookup-inferior-packages inferior "linux" "5.15.12"))))
+;; (kernel
+;;  (let*
+;;      ((channels
+;;        (list (channel
+;;               (name 'nonguix)
+;;               (url "https://gitlab.com/nonguix/nonguix")
+;;               (commit "393b8e0405f44835c498d7735a8ae9ff4682b07f"))
+;;              (channel
+;;               (name 'guix)
+;;               (url "https://git.savannah.gnu.org/git/guix.git")
+;;               (commit "4c812db049d5c9f2c438748e180f9486ad221b0a"))))
+;;       (inferior
+;;        (inferior-for-channels channels)))
+;;     (first (lookup-inferior-packages inferior "linux" "5.15.12")) ;; Pinning Kernel Version
+;;    ))
+;; Non-Free Kernel
 ;; (kernel linux)
-(initrd microcode-initrd)
-(firmware (list linux-firmware))
-(locale "en_US.utf8")
-(timezone "Europe/Moscow")
+;;(initrd microcode-initrd)
+;;(firmware (list linux-firmware))
 #+end_src
 
+*** Locale and Timezone
+
+#+begin_src scheme :tangle no :noweb-ref system-base
+(locale "en_US.utf8")
+(timezone "Europe/Berlin")
+#+end_src
+
+*** Keyboard-Layout
 Setting keyboard layout, switch with Alt+Shift.
 #+begin_src scheme :tangle no :noweb-ref system-base
 (keyboard-layout (keyboard-layout "de" "neo"))
 #+end_src
 
+*** User Accounts
 User accounts.
-#+begin_src scheme :tangle no :noweb-ref system-base
+#+begin_src scheme :tangle no :noweb-ref system-base-user
 (users (cons* (user-account
-               (name "jpi")
+               (name "jp")
                (comment "Jonathan Pieper")
                (group "users")
-               (home-directory "/home/jpi")
+               (home-directory "/home/jp")
                (supplementary-groups
                 '("wheel"  ;; sudo
                   "netdev" ;; network devices
@@ -252,20 +568,19 @@ User accounts.
 
 #+end_src
 
+*** Base Packages
 Base packages, necessary right after the installation.
-#+begin_src scheme :tangle no :noweb-ref system-base
+#+begin_src scheme :tangle no :noweb-ref system-base :noweb yes
 (packages
  (append
-  (list nss-certs
-	    git
-        i3-gaps
-        i3lock
-        openbox
-        xterm
-	    vim)
+  (specifications->manifest
+   '(
+     <<packages>>
+     ))
   %base-packages))
 #+end_src
 
+*** Base Services
 Default services for each machine:
 - override the default =%desktop-services= to add OpenVPN support
 - add nix service
@@ -273,76 +588,103 @@ Default services for each machine:
 - add CUPS service
 - add libvirt service
 - add a symlink to ELF interpreter to where most Linux binaries expect it
+**** GnuPG
+#+begin_src scheme
+(define %my-gpg-service
+  (list
+   (service
+    home-gnupg-service-type
+    (home-gnupg-configuration
+     (gpg-config
+      (home-gpg-configuration
+       (extra-config
+        `((keyid-format . long)
+          (personal-cipher-preferences . (AES256 AES192 AES))
+          (personal-digest-preferences . (SHA512 SHA384 SHA256))
+          (personal-compress-preferences . (ZLIB BZIP2 ZIP Uncompressed))
+          (default-preference-list . (SHA512 SHA384 SHA256
+                                             AES256 AES192 AES
+                                             ZLIB BZIP2 ZIP Uncompressed))
+          (cert-digest-algo . SHA512)
+          (s2k-digest-algo . SHA512)
+          (s2k-cipher-algo . AES256)
+          (charset . utf-8)
+
+          (with-subkey-fingerprint . #t)
+          (keyserver . "hkps://keyserver.ubuntu.com:443")
+          ;; (keyserver . "hkps://keys.openpgp.org")
+          ;; (keyserver . "hkps://pgp.mit.edu")
+          ;; (keyserver . "hkps://hkps.pool.sks-keyservers.net")
+          ;; (keyserver . "hkps://ha.pool.sks-keyservers.net")
+          ;; (keyserver . "hkps://pgp.ocf.berkeley.edu")
+          ))))
+     (gpg-agent-config
+      (home-gpg-agent-configuration
+       (ssh-agent? #t)
+       (ssh-keys '())
+       (pinentry-flavor 'qt)))))))
+
+#+end_src
+
+**** All Base Services
+
 #+begin_src scheme :tangle no :noweb-ref system-common
 (define %my-base-services
-  (cons*
-   (service openssh-service-type)
-   (screen-locker-service i3lock "i3lock")
-   (extra-special-file "/lib64/ld-linux-x86-64.so.2" (file-append glibc "/lib/ld-linux-x86-64.so.2"))
-   (service nix-service-type)
-   (service cups-service-type
-            (cups-configuration
-             (web-interface? #t)))
-   (service docker-service-type)
-   (service libvirt-service-type
-            (libvirt-configuration
-             (unix-sock-group "libvirt")
-             (tls-port "16555")))
-   (service virtlog-service-type)
-   (modify-services %desktop-services
-                    (network-manager-service-type
-                     config =>
-                     (network-manager-configuration
-                      (inherit config)
-                      (vpn-plugins (list network-manager-openvpn)))))))
+  (append
+   (cons*
+    (service openssh-service-type)
+    (service cups-service-type)
+    (modify-services %desktop-services
+                     (network-manager-service-type
+                      config =>
+                      (network-manager-configuration
+                       (inherit config)
+                       (vpn-plugins (list network-manager-openvpn))))))))
 
 #+end_src
 
 ** Putting it all Together
-*** TODO Desktop PC
-=hera= is my desktop PC.
+*** File Systems
 
-#+begin_src scheme :noweb yes :tangle ~/.config/guix/systems/hera.scm
-<<system-common>>
+#+NAME: file-systems
+| System    | Boot-Device | Swap-UUID                            | root | FS-UUID                              | FS-Type |
+|-----------+-------------+--------------------------------------+------+--------------------------------------+---------|
+| eumolos   | /dev/sda    | tbd                                  | /    | tbd                                  | ext4    |
+| hera      | /dev/sdb    | b6879df0-45fc-49cb-a091-a64fdbba2115 | /    | c2051dff-a06b-42f9-aed4-86383c41db69 | ext4    |
+| nasserver | /dev/sda    | tbd                                  | /    | tbd                                  | ext4    |
 
-(operating-system
- <<system-base>>
-
- (host-name "hera")
- (services (cons*
-            (set-xorg-configuration
-             (xorg-configuration
-              (keyboard-layout keyboard-layout)))
-            %my-base-services))
-
- (bootloader
-  (bootloader-configuration
-   (bootloader grub-efi-bootloader)
-   (target "/boot/efi")
-   (keyboard-layout keyboard-layout)))
-
- ;; (swap-devices
- ;;  (list (uuid "3a77c542-7d24-46ff-8123-f7398d1c2677")))
-
- ;; (file-systems
- ;;  (cons* (file-system
- ;;          (mount-point "/")
- ;;          (device (file-system-label "my-root"))
- ;;          (type "ext4"))
- ;;         (file-system
- ;;          (mount-point "/boot/efi")
- ;;          (device "/dev/sda1")
- ;;          (type "vfat"))
- ;;         %base-file-systems)))
+#+NAME: get-fs
+#+begin_src sh :var fs=file-systems field=1
+echo $fs | cut -f$field -d' '
 #+end_src
+
+#+RESULTS: get-fs
+: eumolos
+
+#+begin_src sh :noweb yes
+echo <<get-fs(field=6)>>
+#+end_src
+
+#+RESULTS:
+: ext4
+
 *** TODO Laptop
-=eumolos= is a HP 15s laptop.
+=eumolos= is a laptop.
 
-=%backlight-udev-rule= should enable members of =video= group change the display backlight. See the relevant page at [[https://wiki.archlinux.org/title/Backlight][Arch Wiki]].
+**** Importing Modules
+Using virtualization services that need extra imports:
 
-#+begin_src scheme :noweb yes :tangle ~/.config/guix/systems/eminence.scm
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/eumolos.scm
 <<system-common>>
+(use-service-modules
+        nix
+        docker
+        virtualization)
+#+end_src
 
+**** Display Backlight
+=%backlight-udev-rule= should enable members of =video= group change the display backlight. See the relevant page at [[https://wiki.archlinux.org/title/Backlight][Arch Wiki]].
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/eumolos.scm
 (define %backlight-udev-rule
   (udev-rule
    "90-backlight.rules"
@@ -351,15 +693,30 @@ Default services for each machine:
                   "\n"
                   "ACTION==\"add\", SUBSYSTEM==\"backlight\", "
                   "RUN+=\"/run/current-system/profile/bin/chmod g+w /sys/class/backlight/%k/brightness\"")))
+#+end_src
 
+**** Operating System
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/eumolos.scm
 (operating-system
  <<system-base>>
+ <<system-base-user>>
 
- (host-name "eumolos")
+ (host-name "<<get-fs(field=1)>>")
+#+end_src
+
+**** Services
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/eumolos.scm
  (services (cons*
             (set-xorg-configuration
              (xorg-configuration
               (keyboard-layout keyboard-layout)))
+            (service nix-service-type)
+            (service docker-service-type)
+            (service libvirt-service-type
+                    (libvirt-configuration
+                    (unix-sock-group "libvirt")
+                    (tls-port "16555")))
+            (service virtlog-service-type)
             (modify-services %my-base-services
                              (elogind-service-type
                               config =>
@@ -373,80 +730,226 @@ Default services for each machine:
                                (rules (cons %backlight-udev-rule
                                             (udev-configuration-rules config))))))))
 
- (bootloader
-  (bootloader-configuration
-   (bootloader grub-efi-bootloader)
-   (target "/boot/efi")
-   (keyboard-layout keyboard-layout)))
-
- ;; (swap-devices
- ;;  (list (uuid "f93cf3f6-7ee7-42ec-8ee2-f3d896fdf9b5")))
-
- ;; (file-systems
- ;;  (cons* (file-system
- ;;          (mount-point "/")
- ;;          (device
- ;;           (uuid "1d937704-bbeb-43b5-bc63-453886c426af"
- ;;                 'ext4))
- ;;          (type "ext4"))
- ;;         (file-system
- ;;          (mount-point "/boot/efi")
- ;;          (device (uuid "0031-3784" 'fat32))
- ;;          (type "vfat"))
- ;;         %base-file-systems)))
 #+end_src
 
-*** TODO nasserver
-=nasserver= is a PC.
+**** Bootloader
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/eumolos.scm
+ (bootloader
+  (bootloader-configuration
+   (bootloader grub-bootloader)
+   (targets (list "<<get-fs(field=2)>>"))
+   (keyboard-layout keyboard-layout)))
 
-=%backlight-udev-rule= should enable members of =video= group change the display backlight. See the relevant page at [[https://wiki.archlinux.org/title/Backlight][Arch Wiki]].
+#+end_src
 
-#+begin_src scheme :noweb yes :tangle ~/.config/guix/systems/azure.scm
+**** File-System
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/eumolos.scm
+ (swap-devices
+  (list (swap-space
+         (target (uuid "<<get-fs(field=3)>>")))))
+
+ (file-systems
+  (cons* (file-system
+          (mount-point "<<get-fs(field=4)>>")
+          (device
+           (uuid "<<get-fs(field=5)>>"
+                 '<<get-fs(field=6)>>))
+          (type "<<get-fs(field=6)>>"))
+         %base-file-systems)))
+#+end_src
+
+*** TODO Desktop PC
+=hera= is my desktop PC.
+
+**** Operating System
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/hera.scm
 <<system-common>>
-
-(define %backlight-udev-rule
-  (udev-rule
-   "90-backlight.rules"
-   (string-append "ACTION==\"add\", SUBSYSTEM==\"backlight\", "
-                  "RUN+=\"/run/current-system/profile/bin/chgrp video /sys/class/backlight/%k/brightness\""
-                  "\n"
-                  "ACTION==\"add\", SUBSYSTEM==\"backlight\", "
-                  "RUN+=\"/run/current-system/profile/bin/chmod g+w /sys/class/backlight/%k/brightness\"")))
 
 (operating-system
  <<system-base>>
+ <<system-base-user>>
 
- (host-name "azure")
+ (host-name "<<get-fs(field=7)>>")
+#+end_src
+
+**** Services
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/hera.scm
  (services (cons*
             (set-xorg-configuration
              (xorg-configuration
               (keyboard-layout keyboard-layout)))
-            (modify-services %my-base-services
-                             (elogind-service-type config =>
-                                                   (elogind-configuration (inherit config)
-                                                                          (handle-lid-switch-external-power 'suspend)))
-                             (udev-service-type config =>
-                                                (udev-configuration (inherit config)
-                                                                    (rules (cons %backlight-udev-rule
-                                                                                 (udev-configuration-rules config))))))))
+            %my-base-services))
 
+#+end_src
+
+**** Bootloader
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/hera.scm
  (bootloader
   (bootloader-configuration
-   (bootloader grub-efi-bootloader)
-   (target "/boot/efi")
+   (bootloader grub-bootloader)
+   (targets (list "<<get-fs(field=8)>>"))
    (keyboard-layout keyboard-layout)))
 
- ;; (swap-devices
- ;;  (list (uuid "4b2dedb3-b111-4e69-8c05-6daa2b072c76")))
+#+end_src
 
- ;; (file-systems
- ;;  (cons* (file-system
- ;;          (mount-point "/")
- ;;          (device (file-system-label "my-root"))
- ;;          (type "ext4"))
- ;;         (file-system
- ;;          (mount-point "/boot/efi")
- ;;          (device "/dev/sda1")
- ;;          (type "vfat"))
- ;;         %base-file-systems)))
+**** File-System
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/hera.scm
+ (swap-devices
+  (list (swap-space
+         (target (uuid "<<get-fs(field=9)>>")))))
+
+ (file-systems
+  (cons* (file-system
+          (mount-point "<<get-fs(field=10)>>")
+          (device
+           (uuid "<<get-fs(field=11)>>"
+                 '<<get-fs(field=12)>>))
+          (type "<<get-fs(field=12)>>"))
+         %base-file-systems)))
+#+end_src
+
+*** TODO nasserver
+=nasserver= is a PC with an additional Backup user to accept backup files.
+
+**** Operating System
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/nasserver.scm
+<<system-common>>
+
+(operating-system
+ <<system-base>>
+
+ (host-name "<<get-fs(field=13)>>")
+ (users (cons* (user-account
+                (name "jp")
+                (comment "Jonathan Pieper")
+                (group "users")
+                (home-directory "/home/jp")
+                (supplementary-groups
+                 '("wheel"  ;; sudo
+                   "netdev" ;; network devices
+                   "audio"
+                   "video"
+                   "input"
+                   "tty"
+                   "docker"
+                   "scanner"
+                   "libvirt"
+                   "lp")))
+               (user-account
+                (name "bkp")
+                (comment "Backup User")
+                (group "users")
+                (home-directory "/home/bkp")
+                (supplementary-groups
+                 '(
+                   "netdev" ;; network devices
+                   )))
+               %base-user-accounts))
+#+end_src
+
+**** Services
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/nasserver.scm
+ (services (cons*
+            (set-xorg-configuration
+             (xorg-configuration
+              (keyboard-layout keyboard-layout)))
+            %my-base-services))
+
+#+end_src
+
+**** Bootloader
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/nasserver.scm
+ (bootloader
+  (bootloader-configuration
+   (bootloader grub-bootloader)
+   (targets (list "<<get-fs(field=14)>>"))
+   (keyboard-layout keyboard-layout)))
+
+#+end_src
+
+**** File-System
+#+begin_src scheme :noweb yes :tangle .config/guix/systems/nasserver.scm
+ (swap-devices
+  (list (swap-space
+         (target (uuid "<<get-fs(field=15)>>")))))
+
+ (file-systems
+  (cons* (file-system
+          (mount-point "<<get-fs(field=16)>>")
+          (device
+           (uuid "<<get-fs(field=17)>>"
+                 '<<get-fs(field=18)>>))
+          (type "<<get-fs(field=18)>>"))
+         %base-file-systems)))
+#+end_src
+
+* Home Configuration
+** Terminal
+** Bash
+** Zsh
+* Guix Home
+#+begin_src scheme :tangle ./guix/home.scm :noweb yes
+(use-modules (gnu home)
+             (gnu home services)
+             (gnu home services shells)
+             (gnu services)
+             (guix gexp))
+
+(home-environment
+ (packages (list
+            <<manifest>>
+            ))
+ (services
+  (list (service
+         home-bash-service-type
+         (home-bash-configuration
+          (aliases
+           '(("l" . "ls -CF")
+             ("la" . "ls -A")
+             ("vi" . "nvim")
+             ("wget" . "wget -c")
+             ("lsd" . "ls -lAF | grep --color=never '^d'")
+             ("df" . "df -h")
+             ("psmem" . "ps aux | sort -nr -k 4 | head -5")
+             ("pscpu" . "ps aux | sort -nr -k 3 | head -5")
+             ("gpg-check" . "gpg --keyserver-options auto-key-retrieve --verify")
+             ("gpg-retrieve" . "gpg --keyserver-options auto-key-retrieve --receive-keys")
+             ("mergepdf" . "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=_merged.pdf")
+             ("path" . "echo -e ${PATH//:/\\n}")
+             ("ips" . "grep -o 'inet6\\? \\(addr:\\)\\?\\s\\?\\(\\(\\([0-9]\\+\\.\\)\\{3\\}[0-9]\\+\\)\\|[a-fA-F0-9:]\\+\\)' | awk '{ sub(/inet6? (addr:)? ?/, \\\"\\\"); print }'")
+             ("ll" . "ls -l")))
+          (bashrc
+           (list (local-file "./config/.bashrc" "bashrc")))))
+        (service
+         home-zsh-service-type
+         (home-zsh-configuration
+          (environment-variables
+           '(("ZDOTDIR" . "/home/jp/.config/zsh")
+             ("ZSH" . "/home/jp/.config/zsh/ohmyzsh")
+             ("HISTFILE" . "$ZDOTDIR/.zsh_history")
+             ("HISTSIZE" . "1000000")
+             ("SAVEHIST" . "500000")
+             ("MANWIDTH" . "999")
+             ("EDITOR" . "\"emacsclient -t -a 'nvim'\"")
+             ("VISUAL" . "\"emacsclient -c -a 'emacs'\"")
+             ("MANPAGER" . "\"nvim -c 'Man!' -o -\"")
+             ("PYTHONENCODING" . "UTF-8")
+             ("LANG" . "en_US.UTF-8")
+             ("LC_ALL" . "en_US.UTF-8")
+             ("GPG_TTY" . "$(tty)")
+             ("KEYTIMEOUT" . "1")
+             ))
+          (zshrc
+           (list (local-file "./config/.zshrc" "zshrc")
+                 (let ((commit "d41ca84af1271e8bfbe26f581cebe3b86521d0db")
+                   (origin
+                    (method git-fetch)
+                    (uri (git-reference
+                          (url "https://github.com/ohmyzsh/ohmyzsh.git/")
+                          (commit commit)))
+                    (file-name "ohmyzsh")
+                    (sha256
+                     (base32
+                      "0kj252ywhc0jw0j7mr3dwx4q5mi5rrlm4jlhc8mbx66ylfvxi9qg")))))
+                 )))))))
 #+end_src
