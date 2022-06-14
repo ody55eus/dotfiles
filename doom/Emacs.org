@@ -748,6 +748,13 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 
 #+end_src
 
+*** Evil Mode Bindings
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(unbind-key "K" evil-normal-state-map)
+(unbind-key "K" evil-visual-state-map)
+(map! :nv "gK"  #'+lookup/documentation)
+#+end_src
+
 *** Doom Dashboard
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (map! :map +doom-dashboard-mode-map

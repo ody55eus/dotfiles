@@ -206,6 +206,10 @@
       "C-<up>"         #'+evil/window-move-up
       "C-<right>"      #'+evil/window-move-right)
 
+(unbind-key "K" evil-normal-state-map)
+(unbind-key "K" evil-visual-state-map)
+(map! :nv "gK"  #'+lookup/documentation)
+
 (map! :map +doom-dashboard-mode-map
       :ne "f" #'find-file
       :ne "r" #'consult-recent-file
