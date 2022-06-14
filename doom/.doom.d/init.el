@@ -92,7 +92,7 @@
        :tools
        ;;ansible
        debugger          ; FIXME stepping through code, to help you add bugs
-       ;;direnv
+       direnv
        docker
        ;;editorconfig      ; let someone else argue about tabs vs spaces
        ein               ; tame Jupyter notebooks with emacs
@@ -105,7 +105,7 @@
        (magit            ; a git porcelain for Emacs
         +forge)          ; interface with git forges
        make              ; run make tasks from Emacs
-       ;;pass              ; password manager for nerds
+       (pass +auth)      ; password manager for nerds
        pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
        ;;rgb               ; creating color strings
