@@ -28,9 +28,19 @@
  mouse-yank-at-point t              ; Yank at point rather than pointer
  window-combination-resize t)       ; take new window space from all other windows (not just current)
 (setq tab-width 2                   ; Smaller width for tab characters
+      indent-tabs-mode nil          ; Do not use tabs to indent lines
       scroll-margin 2               ; Add a margin when scrolling vertically
       x-stretch-cursor t)           ; Stretch cursor to the glyph width
 (set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
+
+;;;; backups
+(setq backup-by-copying t
+      version-control t
+      vc-make-backup-files t
+      delete-old-versions 0
+      auto-save-include-big-deletions t
+      backup-directory-alist `((".*" . ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/backups")))
+      auto-save-file-name-transforms `((".*" ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/autosaves") t)))
 
 (add-to-list 'load-path (file-truename "~/.doom.d"))
 (require 'org-workflow)
