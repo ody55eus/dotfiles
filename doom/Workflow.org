@@ -213,7 +213,8 @@ We don't want it activated in ~org-agenda-mode~, so we only trigger it after ~or
               :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
               :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
               :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)
-              :em_dash       "—"))
+              ;; :em_dash       "—"
+              ))
   (set-pretty-symbols! 'org-mode
     :merge t
     :name           "⁍"
@@ -242,7 +243,8 @@ We don't want it activated in ~org-agenda-mode~, so we only trigger it after ~or
     :priority_c    "[#C]"
     :priority_d    "[#D]"
     :priority_e    "[#E]"
-    :em_dash       "---")
+    ;; :em_dash       "---"
+    )
   (setq org-ellipsis " ▼ ")
   (setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
   )
@@ -524,6 +526,13 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
 #+end_src
 
 * Org Agenda
+** Holidays
+#+begin_src emacs-lisp
+(setq calendar-holidays
+  (append holiday-general-holidays holiday-local-holidays
+          holiday-other-holidays holiday-christian-holidays
+          holiday-solar-holidays))
+#+end_src
 ** Update Agenda List
 #+begin_src emacs-lisp
 (defun jp/org-roam-refresh-agenda-list ()

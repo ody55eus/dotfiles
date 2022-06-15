@@ -155,8 +155,99 @@ References:
 #+end_src
 
 * Applications
-** Desktop Tools
-*** Basic Desktop Tools
+** Base Packages (System Basics)
+*** Audio Device Control
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref base-packages :noweb-sep ""
+
+"alsa-utils"
+"pavucontrol"
+
+#+end_src
+
+*** Printing
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref base-packages :noweb-sep ""
+
+"system-config-printer"
+
+#+end_src
+
+*** Fonts
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref base-packages :noweb-sep ""
+
+"font-ibm-plex"        ;; The fonts have been designed to work well in user interface (UI) environments as well as other mediums.
+"font-overpass"        ;; Overpass is a sans-serif typeface based on the U.S.  interstate highway road signage typefaces
+"font-juliamono"       ;; JuliaMono is a monospaced font for scientific and technical computing
+"font-jetbrains-mono"  ;; JetBrains Mono is a font family dedicated to developers
+
+#+end_src
+
+*** System Service Tools
+**** Command Line Interface Tools (CLI)
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref base-packages :noweb-sep ""
+
+"alacritty"
+"direnv"
+"zsh"
+"tmux"
+"openssh"
+"git"
+"pinentry"
+"bat"
+"zip"
+"unzip"
+"ripgrep"
+"the-silver-searcher" ; ag
+"trash-cli"
+"glibc-locales"
+"nss-certs"
+
+#+end_src
+
+**** Window Manager
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref base-packages :noweb-sep ""
+
+"awesome"
+
+#+end_src
+
+**** Xorg Tools
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref base-packages :noweb-sep ""
+
+"xev"
+"xset"
+"xrdb"
+"xhost"
+"xmodmap"
+"setxkbmap"
+"xrandr"
+"arandr"
+"xss-lock"
+"libinput"
+"xinput"
+
+#+end_src
+
+** User Applications
+*** Desktop Tools
+**** Basic Desktop Tools
 
 *Guix Packages*
 
@@ -175,7 +266,7 @@ References:
 
 #+end_src
 
-*** Browsers
+**** Browsers
 
 *Guix Packages*
 
@@ -186,20 +277,9 @@ References:
 
 #+end_src
 
-*** Audio Device Control
+**** Media Players
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-"alsa-utils"
-"pavucontrol"
-
-#+end_src
-
-*** Media Players
-
-**** vlc
+***** vlc
 
 *Guix Packages*
 
@@ -209,7 +289,7 @@ References:
 
 #+end_src
 
-**** mpv
+***** mpv
 
 [[https://mpv.io/][mpv]] is a simple yet powerful video player.  Paired with [[http://ytdl-org.github.io/youtube-dl/][youtube-dl]] it can even stream YouTube videos.  [[https://github.com/hoyon/mpv-mpris][mpv-mpris]] allows playback control via [[https://github.com/altdesktop/playerctl][playerctl]].
 
@@ -252,7 +332,7 @@ keep-open
 
 #+end_src
 
-**** Codecs and Drivers
+***** Codecs and Drivers
 
 These packages are needed to enable many video formats to be played in browsers and video players.  VAAPI drivers are also used to enable hardware-accelerated video decoding.
 
@@ -271,7 +351,7 @@ These packages are needed to enable many video formats to be played in browsers 
 
 #+end_src
 
-*** Image Viewers and Editors
+**** Image Viewers and Editors
 
 *Guix Packages*
 
@@ -283,7 +363,7 @@ These packages are needed to enable many video formats to be played in browsers 
 
 #+end_src
 
-*** Document Readers
+**** Document Readers
 
 #+begin_src conf
 
@@ -316,8 +396,9 @@ map <C-g> abort
 "zathura-pdf-mupdf"
 
 #+end_src
-** System Tools
-*** Flatpak
+
+*** System Tools
+**** Flatpak
 
 I use Flatpak and the [[https://flathub.org/home][Flathub]] repository to install applications that are otherwise difficult to install in Guix because of application frameworks, etc.
 
@@ -343,30 +424,7 @@ flatpak install --user flathub-beta com.obsproject.Studio
 
 #+end_src
 
-*** Printing
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-"system-config-printer"
-
-#+end_src
-
-*** Fonts
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-"font-ibm-plex"        ;; The fonts have been designed to work well in user interface (UI) environments as well as other mediums.
-"font-overpass"        ;; Overpass is a sans-serif typeface based on the U.S.  interstate highway road signage typefaces
-"font-juliamono"       ;; JuliaMono is a monospaced font for scientific and technical computing
-"font-jetbrains-mono"  ;; JetBrains Mono is a font family dedicated to developers
-
-#+end_src
-
-*** Programming Environments
+**** Programming Environments
 
 *Guix Packages*
 
@@ -377,7 +435,7 @@ flatpak install --user flathub-beta com.obsproject.Studio
 
 #+end_src
 
-*** Mail
+**** Mail
 
 *Guix Packages*
 
@@ -388,7 +446,7 @@ flatpak install --user flathub-beta com.obsproject.Studio
 
 #+end_src
 
-*** Emacs
+**** Emacs
 
 *Guix Packages*
 
@@ -398,57 +456,13 @@ flatpak install --user flathub-beta com.obsproject.Studio
 
 #+end_src
 
-*** Command Line Interfaces (CLI)
+***** Emacs Packages
 
 *Guix Packages*
 
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-"alacritty"
-"direnv"
-"zsh"
-"tmux"
-"openssh"
-"git"
-"bat"
-"zip"
-"unzip"
-"ripgrep"
-"the-silver-searcher" ; ag
-"trash-cli"
-"glibc-locales"
-"nss-certs"
-
-#+end_src
-
-** System Services
-*** Window Manager
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-"qtile"
-
-#+end_src
-
-*** Xorg Tools
-
-*Guix Packages*
-
-#+begin_src scheme
-
-"xev"
-"xset"
-"xrdb"
-"xhost"
-"xmodmap"
-"setxkbmap"
-"xrandr"
-"arandr"
-"xss-lock"
-"libinput"
-"xinput"
+#+begin_src scheme :noweb-ref emacs-packages :noweb-sep ""
+"emacs-evil"
+"emacs-magit"
 
 #+end_src
 
@@ -459,7 +473,7 @@ The =desktop.scm= manifest holds the list of packages that I use to configure my
 *.config/guix/manifests/desktop.scm:*
 
 #+NAME: manifest
-#+begin_src scheme :tangle ./guix/manifests/desktop.scm :noweb yes
+#+begin_src scheme :tangle ./home/manifests/desktop.scm :noweb yes
 
 (specifications->manifest
  '(
@@ -469,7 +483,7 @@ The =desktop.scm= manifest holds the list of packages that I use to configure my
 #+end_src
 
 * Systems
-Configuring systems with Guix.
+Configuring the entire operating system with Guix.
 
 ** Base configuration
 *** Overview
@@ -482,6 +496,7 @@ While it's possible to make a single =.scm= file with base configuration and loa
 #+begin_example
 sudo -E guix system reconfigure ~/.config/guix/systems/[system].scm
 #+end_example
+
 *** Modules
 Common modules:
 #+begin_src scheme :tangle no :noweb-ref system-common
@@ -495,11 +510,17 @@ Common modules:
 ;; (use-modules (nongnu system linux-initrd))
 
 (use-service-modules
-        cups
-        desktop
-        networking
-        ssh
-        xorg)
+ cups
+ desktop
+ networking
+ sound
+ ssh
+ docker
+ nix
+ virtualization
+ xorg)
+(use-package-modules gnome fonts)
+
 #+end_src
 
 In principle, we could define a variable called =base-operating-system= and extend it in ancestors. However, then we would have to define mandatory fields like =host-name=, =bootloader= with dummy values. Since I'm already using noweb, there is little point.
@@ -560,9 +581,35 @@ User accounts.
                   "video"
                   "input"
                   "tty"
-                  "docker"
                   "scanner"
-                  "libvirt"
+                  "lp")))
+              (user-account
+               (name "private")
+               (comment "Jonathan Pieper Privat")
+               (group "users")
+               (home-directory "/home/priv")
+               (supplementary-groups
+                '("wheel"  ;; sudo
+                  "netdev" ;; network devices
+                  "audio"
+                  "video"
+                  "input"
+                  "tty"
+                  "scanner"
+                  "lp")))
+              (user-account
+               (name "guest")
+               (comment "Gast")
+               (group "users")
+               (home-directory "/home/guest")
+               (supplementary-groups
+                '(
+                  "netdev" ;; network devices
+                  "audio"
+                  "video"
+                  "input"
+                  "tty"
+                  "scanner"
                   "lp")))
               %base-user-accounts))
 
@@ -571,13 +618,11 @@ User accounts.
 *** Base Packages
 Base packages, necessary right after the installation.
 #+begin_src scheme :tangle no :noweb-ref system-base :noweb yes
-(packages
- (append
-  (specifications->manifest
-   '(
-     <<packages>>
-     ))
-  %base-packages))
+(packages (append (map specification->package
+                       '(
+                         <<base-packages>>
+                         ))
+                  %base-packages))
 #+end_src
 
 *** Base Services
@@ -630,21 +675,33 @@ Default services for each machine:
 
 #+begin_src scheme :tangle no :noweb-ref system-common
 (define %my-base-services
-  (append
-   (cons*
-    (service openssh-service-type)
-    (service cups-service-type)
-    (modify-services %desktop-services
-                     (network-manager-service-type
-                      config =>
-                      (network-manager-configuration
-                       (inherit config)
-                       (vpn-plugins (list network-manager-openvpn))))))))
+  (append (list
+   (service openssh-service-type)
+   (service cups-service-type))
+   (modify-services %desktop-services
+                    (console-font-service-type
+                     config =>
+                     `(("tty1" . "LatGrkCyr-8x16")
+                       ("tty2" . ,(file-append
+                                   font-tamzen
+                                   "/share/kbd/consolefonts/TamzenForPowerline10x20.psf"))
+                       ("tty3" . ,(file-append
+                                   font-terminus
+                                   "/share/consolefonts/ter-132n")) ; for HDPI
+                       ("tty4" . ,(file-append
+                                   font-terminus
+                                   "/share/consolefonts/ter-132n"))
+                       ("tty5" . ,(file-append
+                                   font-terminus
+                                   "/share/consolefonts/ter-132n"))
+                       ("tty6" . ,(file-append
+                                   font-terminus
+                                   "/share/consolefonts/ter-132n")))))))
 
 #+end_src
 
-** Putting it all Together
-*** File Systems
+** Configuration for different Systems
+*** System Overview
 
 #+NAME: file-systems
 | System    | Boot-Device | Swap-UUID                            | root | FS-UUID                              | FS-Type |
@@ -774,11 +831,14 @@ Using virtualization services that need extra imports:
 
 **** Services
 #+begin_src scheme :noweb yes :tangle .config/guix/systems/hera.scm
- (services (cons*
+(services (append
+           (list
+            (service nix-service-type)
+            (service docker-service-type)
             (set-xorg-configuration
              (xorg-configuration
-              (keyboard-layout keyboard-layout)))
-            %my-base-services))
+              (keyboard-layout keyboard-layout))))
+           %my-base-services))
 
 #+end_src
 
@@ -849,7 +909,7 @@ Using virtualization services that need extra imports:
 
 **** Services
 #+begin_src scheme :noweb yes :tangle .config/guix/systems/nasserver.scm
- (services (cons*
+ (services (append
             (set-xorg-configuration
              (xorg-configuration
               (keyboard-layout keyboard-layout)))
@@ -887,8 +947,8 @@ Using virtualization services that need extra imports:
 ** Terminal
 ** Bash
 ** Zsh
-* Guix Home
-#+begin_src scheme :tangle ./guix/home.scm :noweb yes
+** Guix Home
+#+begin_src scheme :tangle ./home/home.scm :noweb yes
 (use-modules (gnu home)
              (gnu home services)
              (gnu home services shells)
@@ -897,7 +957,7 @@ Using virtualization services that need extra imports:
 
 (home-environment
  (packages (list
-            <<manifest>>
+            <<packages>>
             ))
  (services
   (list (service
@@ -942,14 +1002,35 @@ Using virtualization services that need extra imports:
           (zshrc
            (list (local-file "./config/.zshrc" "zshrc")
                  (let ((commit "d41ca84af1271e8bfbe26f581cebe3b86521d0db")
-                   (origin
-                    (method git-fetch)
-                    (uri (git-reference
-                          (url "https://github.com/ohmyzsh/ohmyzsh.git/")
-                          (commit commit)))
-                    (file-name "ohmyzsh")
-                    (sha256
-                     (base32
-                      "0kj252ywhc0jw0j7mr3dwx4q5mi5rrlm4jlhc8mbx66ylfvxi9qg")))))
+                       (origin
+                        (method git-fetch)
+                        (uri (git-reference
+                              (url "https://github.com/ohmyzsh/ohmyzsh.git/")
+                              (commit commit)))
+                        (file-name "ohmyzsh")
+                        (sha256
+                         (base32
+                          "0kj252ywhc0jw0j7mr3dwx4q5mi5rrlm4jlhc8mbx66ylfvxi9qg")))))
                  )))))))
+#+end_src
+
+* Makefile
+** Create Makefile
+#+begin_src makefile :tangle ./Makefile :noweb yes
+HOST=hera
+USER=jp
+all: system home
+#+end_src
+
+** Reconfigure System
+#+begin_src makefile :tangle ./Makefile :noweb yes
+system:
+		- guix system reconfigure .config/guix/systems/${HOST}.scm
+
+#+end_src
+
+** Reconfigure Home
+#+begin_src makefile :tangle ./Makefile :noweb yes
+home:
+		- guix home reconfigure .config/guix/home/${USER}.scm
 #+end_src

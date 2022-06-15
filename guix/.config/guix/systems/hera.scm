@@ -8,22 +8,40 @@
 ;; (use-modules (nongnu system linux-initrd))
 
 (use-service-modules
-        cups
-        desktop
-        networking
-        ssh
-        xorg)
+ cups
+ desktop
+ networking
+ sound
+ ssh
+ docker
+ nix
+ virtualization
+ xorg)
+(use-package-modules gnome fonts)
+
 (define %my-base-services
-  (append
-   (cons*
-    (service openssh-service-type)
-    (service cups-service-type)
-    (modify-services %desktop-services
-                     (network-manager-service-type
-                      config =>
-                      (network-manager-configuration
-                       (inherit config)
-                       (vpn-plugins (list network-manager-openvpn))))))))
+  (append (list
+   (service openssh-service-type)
+   (service cups-service-type))
+   (modify-services %desktop-services
+                    (console-font-service-type
+                     config =>
+                     `(("tty1" . "LatGrkCyr-8x16")
+                       ("tty2" . ,(file-append
+                                   font-tamzen
+                                   "/share/kbd/consolefonts/TamzenForPowerline10x20.psf"))
+                       ("tty3" . ,(file-append
+                                   font-terminus
+                                   "/share/consolefonts/ter-132n")) ; for HDPI
+                       ("tty4" . ,(file-append
+                                   font-terminus
+                                   "/share/consolefonts/ter-132n"))
+                       ("tty5" . ,(file-append
+                                   font-terminus
+                                   "/share/consolefonts/ter-132n"))
+                       ("tty6" . ,(file-append
+                                   font-terminus
+                                   "/share/consolefonts/ter-132n")))))))
 
 
 (operating-system
@@ -49,86 +67,51 @@
  (locale "en_US.utf8")
  (timezone "Europe/Berlin")
  (keyboard-layout (keyboard-layout "de" "neo"))
- (packages
-  (append
-   (specifications->manifest
-    '(
-      
-      "compton"
-      "redshift"
-      "gucharmap"
-      "fontmanager"
-      "brightnessctl"
-      "xdg-utils"      ;; For xdg-open, etc
-      "xdg-dbus-proxy" ;; For Flatpak
-      "gtk+:bin"       ;; For gtk-launch
-      "glib:bin"       ;; For gio-launch-desktop
-      "shared-mime-info"
-      
-      "icecat"
-      "nyxt"
-      
-      "alsa-utils"
-      "pavucontrol"
-      
-      "vlc"
-      
-      "mpv"
-      "youtube-dl"
-      "playerctl"
-      
-      "gstreamer"
-      "gst-plugins-base"
-      "gst-plugins-good"
-      "gst-plugins-bad"
-      "gst-plugins-ugly"
-      "gst-libav"
-      "intel-vaapi-driver"
-      "libva-utils"
-      
-      "feh"
-      "gimp"
-      "scrot"
-      
-      "zathura"
-      "zathura-pdf-mupdf"
-      
-      "flatpak"
-      
-      "system-config-printer"
-      
-      "font-ibm-plex"        ;; The fonts have been designed to work well in user interface (UI) environments as well as other mediums.
-      "font-overpass"        ;; Overpass is a sans-serif typeface based on the U.S.  interstate highway road signage typefaces
-      "font-juliamono"       ;; JuliaMono is a monospaced font for scientific and technical computing
-      "font-jetbrains-mono"  ;; JetBrains Mono is a font family dedicated to developers
-      
-      "texlive"
-      "pandoc"
-      
-      "isync"
-      "mu"
-      
-      "emacs-next-pgtk-latest"
-      
-      "alacritty"
-      "direnv"
-      "zsh"
-      "tmux"
-      "openssh"
-      "git"
-      "bat"
-      "zip"
-      "unzip"
-      "ripgrep"
-      "the-silver-searcher" ; ag
-      "trash-cli"
-      "glibc-locales"
-      "nss-certs"
-      
-      "qtile"
-      
-      ))
-   %base-packages))
+ (packages (append (map specification->package
+                        '(
+                          
+                          "alsa-utils"
+                          "pavucontrol"
+                          
+                          "system-config-printer"
+                          
+                          "font-ibm-plex"        ;; The fonts have been designed to work well in user interface (UI) environments as well as other mediums.
+                          "font-overpass"        ;; Overpass is a sans-serif typeface based on the U.S.  interstate highway road signage typefaces
+                          "font-juliamono"       ;; JuliaMono is a monospaced font for scientific and technical computing
+                          "font-jetbrains-mono"  ;; JetBrains Mono is a font family dedicated to developers
+                          
+                          "alacritty"
+                          "direnv"
+                          "zsh"
+                          "tmux"
+                          "openssh"
+                          "git"
+                          "pinentry"
+                          "bat"
+                          "zip"
+                          "unzip"
+                          "ripgrep"
+                          "the-silver-searcher" ; ag
+                          "trash-cli"
+                          "glibc-locales"
+                          "nss-certs"
+                          
+                          "awesome"
+                          
+                          "xev"
+                          "xset"
+                          "xrdb"
+                          "xhost"
+                          "xmodmap"
+                          "setxkbmap"
+                          "xrandr"
+                          "arandr"
+                          "xss-lock"
+                          "libinput"
+                          "xinput"
+                          
+                          ))
+                   %base-packages))
  (users (cons* (user-account
                 (name "jp")
                 (comment "Jonathan Pieper")
@@ -141,20 +124,49 @@
                    "video"
                    "input"
                    "tty"
-                   "docker"
                    "scanner"
-                   "libvirt"
+                   "lp")))
+               (user-account
+                (name "private")
+                (comment "Jonathan Pieper Privat")
+                (group "users")
+                (home-directory "/home/priv")
+                (supplementary-groups
+                 '("wheel"  ;; sudo
+                   "netdev" ;; network devices
+                   "audio"
+                   "video"
+                   "input"
+                   "tty"
+                   "scanner"
+                   "lp")))
+               (user-account
+                (name "guest")
+                (comment "Gast")
+                (group "users")
+                (home-directory "/home/guest")
+                (supplementary-groups
+                 '(
+                   "netdev" ;; network devices
+                   "audio"
+                   "video"
+                   "input"
+                   "tty"
+                   "scanner"
                    "lp")))
                %base-user-accounts))
  
 
  (host-name "hera")
 
- (services (cons*
+(services (append
+           (list
+            (service nix-service-type)
+            (service docker-service-type)
             (set-xorg-configuration
              (xorg-configuration
-              (keyboard-layout keyboard-layout)))
-            %my-base-services))
+              (keyboard-layout keyboard-layout))))
+           %my-base-services))
 
  (bootloader
   (bootloader-configuration

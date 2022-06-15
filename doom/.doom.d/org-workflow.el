@@ -128,7 +128,8 @@
               :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
               :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
               :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)
-              :em_dash       "—"))
+              ;; :em_dash       "—"
+              ))
   (set-pretty-symbols! 'org-mode
     :merge t
     :name           "⁍"
@@ -157,7 +158,8 @@
     :priority_c    "[#C]"
     :priority_d    "[#D]"
     :priority_e    "[#E]"
-    :em_dash       "---")
+    ;; :em_dash       "---"
+    )
   (setq org-ellipsis " ▼ ")
   (setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
   )
@@ -381,6 +383,11 @@ Returns file content as a string."
                                    :if-new (file+head "%<%Y>.org"
                                                       "#+title: %<%Y>\n#+filetags: Project\n")
                                    :unnarrowed t))))
+
+(setq calendar-holidays
+  (append holiday-general-holidays holiday-local-holidays
+          holiday-other-holidays holiday-christian-holidays
+          holiday-solar-holidays))
 
 (defun jp/org-roam-refresh-agenda-list ()
   (interactive)

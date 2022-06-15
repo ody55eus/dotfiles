@@ -4,7 +4,7 @@
 ;; This Configuration File is managed by ~/Emacs.org. See additional comments there.
 
 (setq user-full-name "Jonathan Pieper"
-      user-mail-address "jpieper@acg-gmbh.de"
+      user-mail-address "ody55eus@mailbox.org"
       epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 ;; The default is 800 kilobytes.  Measured in bytes.
@@ -28,6 +28,7 @@
  mouse-yank-at-point t              ; Yank at point rather than pointer
  window-combination-resize t)       ; take new window space from all other windows (not just current)
 (setq tab-width 2                   ; Smaller width for tab characters
+      undo-limit 80000000                         ; Raise undo-limit to 80Mb
       scroll-margin 2               ; Add a margin when scrolling vertically
       x-stretch-cursor t)           ; Stretch cursor to the glyph width
 (set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
@@ -211,16 +212,6 @@
       "C-<right>"      #'+evil/window-move-right
       )
 
-(map! :map +doom-dashboard-mode-map
-      :ne "f" #'find-file
-      :ne "r" #'consult-recent-file
-      :ne "p" #'jp/go-to-projects
-      :ne "c" #'jp/go-to-config
-      :ne "i" #'jp/go-to-inbox
-      :ne "." (cmd! (doom-project-find-file "~/.config/")) ; . for dotfiles
-      :ne "b" #'+vertico/switch-workspace-buffer
-      :ne "B" #'counsel-switch-buffer)
-
 (map! "H-<end>" "<end>")
 (map! "H-<home>" "<home>")
 (map! "H-<escape>" "<escape>")
@@ -232,14 +223,14 @@
 (map! "H-<backspace>" "<backspace>")
 (map! "H-<delete>" "<delete>")
 (map! "H-<return>" "<return>")
-(map! "H-<undo>" "<undo>")
 (dolist (i '(0 1 2 3 4 5 6 7 8 9))
         (general-define-key (format "H-<kp-%d>" i) (kbd (number-to-string i))))
 
-(map! "H-¿" #'jp/org-roam-refresh-agenda-list)
+(map! "H-¿" #'counsel-ag)
 (map! "H-¡" #'ivy-mode)
 (map! "H-:" #'embark-act)
 (map! "H-;" #'org-agenda)
+(map! "H-<undo>" #'jp/org-roam-refresh-agenda-list)
 
 (setq doom-theme 'doom-outrun-electric)
 (custom-set-faces!
@@ -295,7 +286,7 @@
 (setq confirm-kill-emacs nil)           ;; Don't confirm every kill
 
 (setq
- evil-want-fine-undo t                  ;; Undo Emacs Style
+ evil-want-fine-undo t                  ;; Undo Emacs Style. By default while in insert all changes are one big blob.
  evil-vsplit-window-right t             ;; Split windows the other way around
  evil-split-window-below t)
 
@@ -326,6 +317,22 @@
       display-time-default-load-average nil)    ;; Do not display my CPU Load
 (display-time-mode 0)
 
+(map! :map +doom-dashboard-mode-map
+      :ne "f" #'find-file
+      :ne "r" #'consult-recent-file
+      :ne "p" #'jp/go-to-projects
+      :ne "c" #'jp/go-to-config
+      :ne "i" #'jp/go-to-inbox
+      :ne "." (cmd! (doom-project-find-file "~/.config/")) ; . for dotfiles
+      :desc "Notes (roam)" :ne "n" #'org-roam-node-find
+      :desc "Open dotfile" :ne "d" (cmd! (doom-project-find-file "~/.dotfiles/"))
+      :desc "IBuffer" :ne "i" #'ibuffer
+      :desc "ivy-mode" :ne "I" #'ivy-mode
+      :desc "Previous buffer" :ne "p" #'previous-buffer
+      :desc "Set theme" :ne "t" #'consult-theme
+      :ne "b" #'+vertico/switch-workspace-buffer
+      :ne "B" #'counsel-switch-buffer)
+
 (setq +doom-dashboard-menu-sections '(("Reload last session" :icon
                                        (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
                                        :when
@@ -343,10 +350,18 @@
                                       ("Open org-agenda" :icon
                                        (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
                                        :action org-agenda)
-                                      ("Open Roam Agenda" :icon
-                                       (all-the-icons-octicon "checklist"
+                                      ("Open Roam Notes" :icon
+                                       (all-the-icons-octicon "search"
                                                               :face 'doom-dashboard-menu-title)
-                                       :action jp/org-roam-agenda)
+                                       :action org-roam-node-find)
+                                      ("Open IBuffer" :icon
+                                       (all-the-icons-octicon "list-unordered"
+                                                              :face 'doom-dashboard-menu-title)
+                                       :action ibuffer)
+                                      ("Refresh Agenda Files" :icon
+                                       (all-the-icons-octicon "database"
+                                                              :face 'doom-dashboard-menu-title)
+                                       :action jp/org-roam-refresh-agenda-list)
                                       ("Recently opened files" :icon
                                        (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
                                        :action recentf-open-files)

@@ -3,10 +3,20 @@
 This repository contains my personal computer configuration. These files customize my system for my personal needs. They can provide useful insights for anyone who might find them helpful in customizing their own dotfiles.
 
 * Disclaimer
-I explicitly *do not advice* anyone to blindly use these files *without reading and understanding* them.
+I explicitly *do not advice* anyone to copy entire files *without reading and understanding* them.
+I encurage you to read and find some helpful lines to copy and paste into your own configuration.
+
+* Overview
+- [[file:desktop/Desktop.org][Desktop]]
+  + [[file:desktop/Email-Settings.org][E-Mail]]
+- [[file:sh/Terminal.org][Terminals and Shells]]
+- [[file:doom/Emacs.org][Emacs]] and [[file:doom/Workflow.org][Org Mode]]
+- [[file:keyboard/Keyboard.org][Keyboard (Neo Layout)]]
+- [[file:guix/Guix.org][GNU/Guix]]
 
 * Deployment
-These files are managed using [[https://www.gnu.org/software/stow/][GNU Stow]]. This allows me to clone the repository into =~/.dotfiles= and deploy symbolic links in my home folder.
+** Stow
+These files are used to be managed by [[https://www.gnu.org/software/stow/][GNU Stow]]. This allows me to clone the repository into =~/.dotfiles= and deploy symbolic links in my home folder. The [[file:Deployment.org][deployment script]] installs additional plugins and the [[file:install_powerlevel_theme.sh][Powerlevel10k zsh theme is installed by a shell script]].
 #+begin_src sh
 git clone https://gitlab.com/ody55eus/dotfiles.git .dotfiles
 cd .dotfiles
@@ -19,5 +29,27 @@ stow tmux     # tmux for shell sessions
 stow vim      # as alternative text editor
 #+end_src
 
+** Guix
+In the future, I am going to migrate the existing configuration files to [[file:guix/Guix.org][Guix]] where they can thrive better that before.
+
 * License
-My personal code is licensed using the [[./LICENSE][CC0/Public Domain]] license. Some parts of these configuration files are marked to originate from other sources. Please follow the respective links to find out if these parts are licensed using a different license (e.g. [[https://github.com/daviwil][David Wilson]] licensed his [[https://github.com/daviwil/dotfiles][dotfiles]] under the [[https://github.com/daviwil/dotfiles/blob/master/LICENSE][GPLv3]] License and I procured his permission to reuse and publish his [[https://github.com/daviwil/emacs-from-scratch][unlicensed Emacs-from-scratch code]]).
+Copyright (C) 2022 Jonathan Pieper
+
+Strictly speaking contains this repository configuration files which are (similar to data) not license-able.
+Nevertheless, these ever-changing configuration files will always contain some programming code to help make my life easier.
+This code is licensed under the conditions of the [[./LICENSE][GNU General Public License (GPLv3)]] license.
+Some parts of these configuration files are marked to originate from other sources (see also [[./CREDITS][CREDITS]]).
+Please follow the respective links to find out if these parts are licensed using a different license (e.g. [[https://github.com/daviwil][David Wilson]] licensed his [[https://github.com/daviwil/dotfiles][dotfiles]] under the [[https://github.com/daviwil/dotfiles/blob/master/LICENSE][GPLv3]] License and I procured his permission to reuse and publish his [[https://github.com/daviwil/emacs-from-scratch][unlicensed Emacs-from-scratch code]]).
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see http://www.gnu.org/licenses/.
