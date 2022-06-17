@@ -21,7 +21,7 @@
 
 * Alacritty
 #+begin_src yaml :tangle .config/alacritty/alacritty.yml
-working_directory: '/home/jpi'
+working_directory: None
 
 font:
   normal:
@@ -45,22 +45,30 @@ key_bindings:
 #+end_src
 
 ** Startup Zsh
+*** Determine zsh binary path
+#+NAME: zsh
+#+begin_src sh :noweb yes
+which zsh
+#+end_src
+
+#+RESULTS: zsh
+: /usr/bin/zsh
+
 *** GNU/GUIX
-#+begin_src yaml :tangle (if (getenv "GUIX_LOCPATH") ".config/alacritty/alacritty.yml" "no")
+#+begin_src yaml :noweb yes :tangle (if (getenv "GUIX_LOCPATH") ".config/alacritty/alacritty.yml" "no")
 shell:
-  program: /run/current-system/profile/bin/zsh
+  program: <<zsh()>>
   args:
     - -l
 #+end_src
 
 *** Arch Linux
-#+begin_src yaml :tangle (if (f-file-p "/etc/arch-release") ".config/alacritty/alacritty.yml" "no")
+#+begin_src yaml :noweb yes :tangle (if (f-file-p "/etc/arch-release") ".config/alacritty/alacritty.yml" "no")
 shell:
-  program: /bin/zsh
+  program: <<zsh()>>
   args:
     - -l
 #+end_src
-
 
 ** Theme Dracula
 #+begin_src yaml :tangle .config/alacritty/alacritty.yml
@@ -253,6 +261,13 @@ then
     PS1='\u@\h \w [env]\$ '
 else
     PS1='\u@\h \w\$ '
+    if [ -n "$GUIX_LOCPATH" ]
+    then
+        export GUIX_PROFILE=$HOME/.guix-profile
+        export GUIX_EXTRA=$HOME/.guix-extra
+        export GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+        export GUIX_LOCPATH=${GUIX_PROFILE}/lib/locale
+    fi
 fi
 #+end_src
 
@@ -266,6 +281,11 @@ export ZDOTDIR=$HOME/.config/zsh
 export XDG_CONFIG_HOME=$HOME/.config
 export XDG_CACHE_HOME=$HOME/.cache
 export XDG_DATA_HOME=$HOME/.local/share
+
+export GUIX_PROFILE=$HOME/.guix-profile
+export GUIX_EXTRA=$HOME/.guix-extra
+export GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+export GUIX_LOCPATH=${GUIX_PROFILE}/lib/locale
 
 source $ZDOTDIR/zshrc
 #+end_src
@@ -361,7 +381,6 @@ bindkey '^e' edit-command-line
 
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
-
 #+end_src
 
 ** Functions.zsh
@@ -966,7 +985,7 @@ source $ZSH/oh-my-zsh.sh
 #+end_src
 
 * Bat
-#+BEGIN_SRC conf :tangle .config/bat/config
+#+BEGIN_SRC conf :tangle .config/bat/config :mkdirp yes
 # This is `bat`s configuration file. Each line either contains a comment or
 # a command-line option that you want to pass to `bat` by default. You can
 # run `bat --help` to get a list of all possible configuration options.

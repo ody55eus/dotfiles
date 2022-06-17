@@ -1,4 +1,4 @@
-working_directory: '/home/jpi'
+working_directory: None
 
 font:
   normal:
@@ -21,7 +21,7 @@ key_bindings:
   - {key: Left, mods: Alt, chars: "\x1BB"}
 
 shell:
-  program: /run/current-system/profile/bin/zsh
+  program: /usr/bin/zsh
   args:
     - -l
 

@@ -603,12 +603,11 @@ argument, query for word to search."
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
 (setq dap-python-debugger 'debugpy)
 
+(defvar jp/guix/pythonpath (getenv "GUIX_PYTHONPATH")
+  "Absolute Python Library Path (e.g. /usr/share/lib/python3.9/site-packages)")
 (defvar jp/python
-       "/opt/miniconda3/bin/python"
-      ; (file-truename "~/.conda/envs/webserver/bin/python")
-      ; (file-truename "~/.conda/envs/webserver-old/bin/python")
-      ; (file-truename "~/.conda/envs/ /bin/python")
-      "Python binary path.")
+  (if jp/guix/pythonpath
+      (concat (ivy--parent-dir (ivy--parent-dir (ivy--parent-dir jp/guix/pythonpath))) "bin/python3")
 (setq python-shell-interpreter jp/python
       dap-python-executable jp/python
       treemacs-python-executable jp/python
