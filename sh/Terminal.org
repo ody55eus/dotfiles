@@ -143,7 +143,7 @@ fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
+    xterm-color|alacritty|*-256color) color_prompt=yes;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -291,6 +291,10 @@ source $ZDOTDIR/zshrc
 #+end_src
 
 ** ZshRC Config
+#+begin_src sh :tangle .config/zsh/.zshrc :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
+source $ZDOTDIR/zshrc
+#+END_SRC
+
 #+begin_src sh :tangle .config/zsh/zshrc :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
