@@ -32,7 +32,7 @@ shopt -s checkwinsize
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
+    xterm-color|alacritty|*-256color) color_prompt=yes;;
 esac
 
 # enable color support of ls, less and man, and also add handy aliases
@@ -91,9 +91,11 @@ then
     PS1='\u@\h \w [env]\$ '
 else
     PS1='\u@\h \w\$ '
-
-    export GUIX_PROFILE=$HOME/.guix-profile
-    export GUIX_EXTRA=$HOME/.guix-extra
-    export GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
-    export GUIX_LOCPATH=${GUIX_PROFILE}/lib/locale
+    if [ -n "$GUIX_LOCPATH" ]
+    then
+        export GUIX_PROFILE=$HOME/.guix-profile
+        export GUIX_EXTRA=$HOME/.guix-extra
+        export GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+        export GUIX_LOCPATH=${GUIX_PROFILE}/lib/locale
+    fi
 fi
