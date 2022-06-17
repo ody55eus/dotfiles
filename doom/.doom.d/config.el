@@ -648,6 +648,9 @@ argument, query for word to search."
 (defvar jp/python
   (if jp/guix/pythonpath
       (concat (ivy--parent-dir (ivy--parent-dir (ivy--parent-dir jp/guix/pythonpath))) "bin/python3")
+    (executable-find "python3")
+    )
+  "Python binary path.")
 (setq python-shell-interpreter jp/python
       dap-python-executable jp/python
       treemacs-python-executable jp/python
