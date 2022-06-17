@@ -1,6 +1,20 @@
 #+TITLE: Keyboard Configuration
 
-* Neo Layout On OS X
+* Overview
+I am using the [[https://neo-layout.org][Neo2 Keyboard Layout]].
+This Layout
+-
+* Installation
+** Linux
+Just use the keyboard layout german (~de~) with variant ~neo~ installed in every linux operating system.
+
+** Windows
+Download the reNeo.exe from the homepage and execute it while having your windows keyboard layout set to German(DE).
+
+** MacOS
+Download the layout definition from github:
 #+begin_src sh
 git clone https://github.com/jgosmann/neo2-layout-osx.git
 #+end_src
+
+To fully enable all features, you need to download the software Karabiner with my Neo2 extension of the original configuration.
