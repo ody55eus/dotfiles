@@ -45,8 +45,7 @@ key_bindings:
 #+end_src
 
 ** Startup Zsh
-*** GNU/GUIX
-
+*** Determine zsh binary path
 #+NAME: zsh
 #+begin_src sh :noweb yes
 which zsh
@@ -55,6 +54,7 @@ which zsh
 #+RESULTS: zsh
 : /usr/bin/zsh
 
+*** GNU/GUIX
 #+begin_src yaml :noweb yes :tangle (if (getenv "GUIX_LOCPATH") ".config/alacritty/alacritty.yml" "no")
 shell:
   program: <<zsh()>>
@@ -138,7 +138,7 @@ shopt -s checkwinsize
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
+    xterm-color|alacritty|*-256color) color_prompt=yes;;
 esac
 
 # enable color support of ls, less and man, and also add handy aliases
@@ -197,11 +197,13 @@ then
     PS1='\u@\h \w [env]\$ '
 else
     PS1='\u@\h \w\$ '
-
-    export GUIX_PROFILE=$HOME/.guix-profile
-    export GUIX_EXTRA=$HOME/.guix-extra
-    export GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
-    export GUIX_LOCPATH=${GUIX_PROFILE}/lib/locale
+    if [ -n "$GUIX_LOCPATH" ]
+    then
+        export GUIX_PROFILE=$HOME/.guix-profile
+        export GUIX_EXTRA=$HOME/.guix-extra
+        export GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+        export GUIX_LOCPATH=${GUIX_PROFILE}/lib/locale
+    fi
 fi
 #+end_src
 
@@ -225,6 +227,10 @@ source $ZDOTDIR/zshrc
 #+end_src
 
 ** ZshRC Config
+#+begin_src sh :tangle .config/zsh/.zshrc :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
+source $ZDOTDIR/zshrc
+#+END_SRC
+
 #+begin_src sh :tangle .config/zsh/zshrc :shebang #!/usr/bin/env zsh :tangle-mode (identity #o644)
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.

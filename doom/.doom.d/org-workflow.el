@@ -402,6 +402,7 @@ Returns file content as a string."
   (setq org-agenda-files (jp/org-roam-list-notes-by-tag "Project"))
   (dolist (node (jp/org-roam-list-notes-by-tag "Tasks"))
     (add-to-list 'org-agenda-files node))
+  (add-to-list 'org-agenda-files (concat (getenv "HOME") "/tmp/outlook.org"))
   (add-to-list 'org-agenda-files (jp/org-path "Agenda.org"))
   (add-to-list 'org-agenda-files (jp/org-path "Habits.org")))
 

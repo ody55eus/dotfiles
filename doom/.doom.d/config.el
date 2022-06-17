@@ -5,6 +5,8 @@
 
 (setq user-full-name "Jonathan Pieper"
       user-mail-address "ody55eus@mailbox.org"
+      calendar-longitude +8.8   ; 8.8  East
+      calendar-latitude  +50.1  ; 50.1 Nord
       epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 ;; The default is 800 kilobytes.  Measured in bytes.
@@ -386,16 +388,18 @@
                                        :action counsel-switch-buffer)))
 
 (setq hl-todo-keyword-faces
-      '(("TODO"   . "#c0c")
-        ("FIXME"  . "#990000")
-        ("NOTE"   . "#009999")
-        ("REVIEW"   . "#990099")
-        ("DEBUG"  . "#A020F0")
-        ("HACK"   . "#f60")
-        ("GOTCHA" . "#FF4500")
-        ("STUB"   . "#1E90FF")))
+      '(("TODO"   . "#cc00cc")     ;; TODO
+        ("FIXME"  . "#990000")    ;; FIXME
+        ("NOTE"   . "#009999")    ;; NOTE
+        ("REVIEW" . "#990099")    ;; REVIEW
+        ("DEBUG"  . "#A020F0")    ;; DEBUG
+        ("HACK"   . "#ff6600")       ;; HACK
+        ("GOTCHA" . "#FF4500")    ;; GOTCHA
+        ("STUB"   . "#1E90FF")))   ;; STUB
 
 (hl-todo-mode)          ; Enable highlight todos
+
+(setq ispell-program-name (executable-find "aspell"))
 
 (pdf-tools-install)
 
@@ -643,12 +647,14 @@ argument, query for word to search."
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
 (setq dap-python-debugger 'debugpy)
 
+(defvar jp/guix/pythonpath (getenv "GUIX_PYTHONPATH")
+  "Absolute Python Library Path (e.g. /usr/share/lib/python3.9/site-packages)")
 (defvar jp/python
-       "/opt/miniconda3/bin/python"
-      ; (file-truename "~/.conda/envs/webserver/bin/python")
-      ; (file-truename "~/.conda/envs/webserver-old/bin/python")
-      ; (file-truename "~/.conda/envs/ /bin/python")
-      "Python binary path.")
+  (if jp/guix/pythonpath
+      (concat (ivy--parent-dir (ivy--parent-dir (ivy--parent-dir jp/guix/pythonpath))) "bin/python3")
+    (executable-find "python3")
+    )
+  "Python binary path.")
 (setq python-shell-interpreter jp/python
       dap-python-executable jp/python
       treemacs-python-executable jp/python
