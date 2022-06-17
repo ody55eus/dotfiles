@@ -386,16 +386,18 @@
                                        :action counsel-switch-buffer)))
 
 (setq hl-todo-keyword-faces
-      '(("TODO"   . "#c0c")
-        ("FIXME"  . "#990000")
-        ("NOTE"   . "#009999")
-        ("REVIEW"   . "#990099")
-        ("DEBUG"  . "#A020F0")
-        ("HACK"   . "#f60")
-        ("GOTCHA" . "#FF4500")
-        ("STUB"   . "#1E90FF")))
+      '(("TODO"   . "#cc00cc")     ;; TODO
+        ("FIXME"  . "#990000")    ;; FIXME
+        ("NOTE"   . "#009999")    ;; NOTE
+        ("REVIEW" . "#990099")    ;; REVIEW
+        ("DEBUG"  . "#A020F0")    ;; DEBUG
+        ("HACK"   . "#ff6600")       ;; HACK
+        ("GOTCHA" . "#FF4500")    ;; GOTCHA
+        ("STUB"   . "#1E90FF")))   ;; STUB
 
 (hl-todo-mode)          ; Enable highlight todos
+
+(setq ispell-program-name (executable-find "aspell"))
 
 (pdf-tools-install)
 
