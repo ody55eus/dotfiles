@@ -5,6 +5,8 @@
 
 (setq user-full-name "Jonathan Pieper"
       user-mail-address "jpieper@acg-gmbh.de"
+      calendar-longitude +8.8   ; 8.8  East
+      calendar-latitude  +50.1  ; 50.1 Nord
       epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 ;; The default is 800 kilobytes.  Measured in bytes.
