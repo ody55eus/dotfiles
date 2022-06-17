@@ -1,1 +1,3 @@
-/gnu/store/9n8q5hx86xv66naaq1j1fqvn1n66ffk9-git-attributes
+*.lisp	diff=lisp
+*.el	diff=lisp
+*.org	diff=org
