@@ -610,7 +610,9 @@ See my [[file:Workflow.org][Org-Mode Workflow]] for more details.
         :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
         :desc "Delve" :n "D" #'delve
         :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
-        :desc "Find org-roam Node" :n "f" #'org-roam-node-find
+        :desc "Find org-roam Node" :n "F" #'org-roam-node-find
+        :desc "Find no priv Node" :n "f" #'jp/org-roam-ignore-priv
+        :desc "Find no acg Node" :n "q" #'jp/org-roam-ignore-acg
         :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
         :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
         :desc "Org Roam UI" :n "u" #'org-roam-ui-open

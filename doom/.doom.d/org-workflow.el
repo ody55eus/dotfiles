@@ -242,6 +242,14 @@
           ))
    ))
 
+(defun jp/org-roam-ignore-priv ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/ZK"))
+
+(defun jp/org-roam-ignore-acg ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/acg"))
+
 (defun jp/org-roam-ignore-literature ()
   (interactive)
   (jp/org-roam-ignore-prefix "/Literature"))
@@ -875,10 +883,10 @@ Returns file content as a string."
 (setq org-roam-directory org-directory   ; Set org-roam directory
       org-roam-dailies-directory (jp/org-path "daily")
       org-attach-id-dir (jp/org-path ".attachments")
-      org-id-locations-file (doom-path ".orgids")
+      org-id-locations-file (concat doom-cache-dir ".orgids")
       org-roam-completion-everywhere nil
       org-roam-completion-system 'default
-      org-roam-db-location (doom-path "org-roam.db")
+      org-roam-db-location (concat doom-cache-dir "org-roam.db")
       ;;org-roam-graph-executable "neato" ; or "dot" (default)
       )
 
