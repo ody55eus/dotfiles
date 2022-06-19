@@ -1,4 +1,4 @@
-working_directory: '/home/jp'
+working_directory: None
 
 font:
   normal:
@@ -11,11 +11,6 @@ cursor:
     shape: Beam
   unfocused_hollow: false
   thickness: 0.15
-
-shell:
-  program: /bin/zsh
-  args:
-    - -l
 
 window:
   padding:

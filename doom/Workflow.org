@@ -46,7 +46,7 @@ The location where my =Notes= folder lives changes in some cases
   ;; -*- lexical-binding: t; -*-
 
   (setq org-directory
-          "~/ZK")
+          (file-truename "~/ZK"))
 
   ;; (setq org-agenda-files `(,org-directory))
   (defun jp/org-path (path)
@@ -151,6 +151,8 @@ The location where my =Notes= folder lives changes in some cases
 ** Pretty Text
 *** Org Modern
 
+Using the following star symbols:
+
 | Unicode Nr. | Hex  | Symbol |
 |-------------+------+--------|
 |        9673 | 25c9 | ◉      |
@@ -166,7 +168,19 @@ The location where my =Notes= folder lives changes in some cases
       org-modern-priority nil  ; Don't update task priorities
       org-modern-star ["◉" "○" "✸" "✿"]  ; use pretty stars
       )
-  (global-org-modern-mode 1))
+  )
+#+end_src
+
+To activate globally in all org buffers, execute =global-org-modern-mode=:
+
+#+begin_src emacs-lisp :tangle no
+(global-org-modern-mode 1)
+#+end_src
+
+We don't want it activated in ~org-agenda-mode~, so we only trigger it after ~org-mode~:
+#+begin_src emacs-lisp :tangle no :noweb-ref org-activations
+
+  (org-modern-mode 1)
 #+end_src
 
 *** Set pretty code symbols
@@ -199,7 +213,8 @@ The location where my =Notes= folder lives changes in some cases
               :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
               :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
               :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)
-              :em_dash       "—"))
+              ;; :em_dash       "—"
+              ))
   (set-pretty-symbols! 'org-mode
     :merge t
     :name           "⁍"
@@ -228,7 +243,8 @@ The location where my =Notes= folder lives changes in some cases
     :priority_c    "[#C]"
     :priority_d    "[#D]"
     :priority_e    "[#E]"
-    :em_dash       "---")
+    ;; :em_dash       "---"
+    )
   (setq org-ellipsis " ▼ ")
   (setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
   )
@@ -264,7 +280,7 @@ The location where my =Notes= folder lives changes in some cases
 
 ** Font Configuration
 *** Activate Fonts and Colors in Org Mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb yes
 (defun jp/org-mode-setup ()
   (org-indent-mode 1)  ; Indent text following current headline
   (mixed-pitch-mode 1) ; Enable different Fonts
@@ -272,8 +288,8 @@ The location where my =Notes= folder lives changes in some cases
   (setq org-image-actual-width nil) ; Set optional images
   (rainbow-mode 1)    ; Enable rainbow mode
   (emojify-mode 1)    ; Enable Emojis
-  (org-modern-mode 1) ; prettify org buffers
   (org-appear-mode 1) ; re-appear markup signs =*~
+  <<org-activations>>
   )
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
 #+end_src
@@ -299,8 +315,8 @@ The location where my =Notes= folder lives changes in some cases
 (require 'org-indent)
 
 ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
+;;(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 80 :inherit 'fixed-pitch)
+;;(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 80 :inherit 'fixed-pitch)
 (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
@@ -341,6 +357,14 @@ https://systemcrafters.net/live-streams/september-03-2021/
            (org-roam-node-file node))
           ))
    ))
+
+(defun jp/org-roam-ignore-priv ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/ZK"))
+
+(defun jp/org-roam-ignore-acg ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/acg"))
 
 (defun jp/org-roam-ignore-literature ()
   (interactive)
@@ -510,6 +534,13 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
 #+end_src
 
 * Org Agenda
+** Holidays
+#+begin_src emacs-lisp
+(setq calendar-holidays
+  (append holiday-general-holidays holiday-local-holidays
+          holiday-other-holidays holiday-christian-holidays
+          holiday-solar-holidays))
+#+end_src
 ** Update Agenda List
 #+begin_src emacs-lisp
 (defun jp/org-roam-refresh-agenda-list ()
@@ -517,6 +548,7 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
   (setq org-agenda-files (jp/org-roam-list-notes-by-tag "Project"))
   (dolist (node (jp/org-roam-list-notes-by-tag "Tasks"))
     (add-to-list 'org-agenda-files node))
+  (add-to-list 'org-agenda-files (concat (getenv "HOME") "/tmp/outlook.org"))
   (add-to-list 'org-agenda-files (jp/org-path "Agenda.org"))
   (add-to-list 'org-agenda-files (jp/org-path "Habits.org")))
 
@@ -566,7 +598,7 @@ The Task Keywords are noted with their keybindings in parentheses.
 (setq org-todo-keywords '(
                           (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
                                 "DONE(d)")
-                          (sequence "BACKLOG(b)" "PLAN(P)" "ACTIVE(a)"
+                          (sequence "BACKLOG(b)" "NEXT(n)" "PLAN(P)" "ACTIVE(a)"
                                     "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
                                     "COMPLETED(c)" "KILL(k)" "CANCELLED(C)" "STOPPED(s@)")
                         )
@@ -1148,6 +1180,7 @@ This Configuration runs on start end finish of presentations:
 (setq plantuml-jar-path (concat (getenv "HOME") "/.emacs.d/.local/etc/plantuml.jar"))
 (setq plantuml-default-exec-mode 'jar)
 #+end_src
+
 *** OrgBabel Languages
 #+begin_src emacs-lisp
 (org-babel-do-load-languages
@@ -1156,8 +1189,11 @@ This Configuration runs on start end finish of presentations:
    (python . t)
    (LaTeX . t)
    (plantuml . t)
+   (scheme . t)
+   (guile . t)
    (emacs-lisp . t)))
 #+end_src
+
 *** Turn Tangle Comments off
 Since Emacs 28 OrgBabel tangle creates comments like ="[[%link][%source-name]]"= to indicate the source of tangled code. The following lines deactivate this behavior:
 #+begin_src emacs-lisp
@@ -1225,10 +1261,10 @@ To ignore this error, remove the following lines from [[file:~/.emacs.d/modules/
 (setq org-roam-directory org-directory   ; Set org-roam directory
       org-roam-dailies-directory (jp/org-path "daily")
       org-attach-id-dir (jp/org-path ".attachments")
-      org-id-locations-file (doom-path ".orgids")
+      org-id-locations-file (concat doom-cache-dir ".orgids")
       org-roam-completion-everywhere nil
       org-roam-completion-system 'default
-      org-roam-db-location (doom-path "org-roam.db")
+      org-roam-db-location (concat doom-cache-dir "org-roam.db")
       ;;org-roam-graph-executable "neato" ; or "dot" (default)
       )
 
@@ -1417,6 +1453,10 @@ The following blocks are being migrated over from my Org Mode configuration in [
                   ((org-agenda-overriding-header "Project Backlog")
                    (org-agenda-todo-list-sublevels nil)
                    (org-agenda-files org-agenda-files)))
+            (todo "NEXT"
+                  ((org-agenda-overriding-header "Next Tasks")
+                   (org-agenda-todo-list-sublevels nil)
+                   (org-agenda-files org-agenda-files)))
             (todo "READY"
                   ((org-agenda-overriding-header "Ready for Work")
                    (org-agenda-files org-agenda-files)))
@@ -1436,7 +1476,7 @@ The following blocks are being migrated over from my Org Mode configuration in [
             (org-agenda-files org-agenda-files)))
 
           ;; Low-effort next actions
-          ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
+          ("l" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
            ((org-agenda-overriding-header "Low Effort Tasks")
             (org-agenda-max-todos 20)
             (org-agenda-files org-agenda-files)))))

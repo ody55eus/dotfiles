@@ -126,6 +126,7 @@
 (package! embark)
 
 ;; Other Software Integrations
+(package! guix)
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)

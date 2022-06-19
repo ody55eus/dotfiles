@@ -2,27 +2,16 @@
 #+AUTHOR: Jonathan Pieper
 
 * Table of Contents :TOC:noexport:
-- [[#about-this-configuration][About this Configuration]]
-- [[#about-me][About Me]]
-- [[#initialization-initel][Initialization (init.el)]]
-  - [[#docstring][Docstring]]
-  - [[#enable-features][Enable Features]]
-- [[#package-installation-packagesel][Package Installation (packages.el)]]
-  - [[#docstring-1][Docstring]]
-  - [[#load-packages][Load Packages]]
-- [[#emacs-startup][Emacs Startup]]
-  - [[#improve-startup-performance][Improve Startup Performance]]
-  - [[#start-emacs-as-server][Start Emacs as Server!]]
-  - [[#default-variables][Default Variables]]
-  - [[#additional-configuration-files][Additional Configuration Files]]
-- [[#ui-configuration][UI Configuration]]
-  - [[#keybindings][Keybindings]]
-  - [[#color-theme][Color Theme]]
-  - [[#font-face-configuration][Font Face Configuration]]
-  - [[#basic-emacs-ui-enhancements][Basic Emacs UI Enhancements]]
-  - [[#doom-emacs-customization][Doom Emacs Customization]]
-  - [[#additional-packages][Additional Packages]]
-- [[#additional-packages-1][Additional Packages]]
+- [[#introduction][Introduction]]
+  - [[#about-this-configuration][About this Configuration]]
+  - [[#about-me][About Me]]
+  - [[#initialization-initel][Initialization (init.el)]]
+  - [[#package-installation-packagesel][Package Installation (packages.el)]]
+  - [[#emacs-startup][Emacs Startup]]
+- [[#workflow][Workflow]]
+  - [[#org-mode-workflow][Org Mode Workflow]]
+  - [[#ui-configuration][UI Configuration]]
+- [[#additional-packages][Additional Packages]]
   - [[#dired-file-manager][Dired (File Manager)]]
   - [[#languages-ide-using-language-server][Languages (IDE using Language Server)]]
   - [[#projectile][Projectile]]
@@ -34,7 +23,10 @@
   - [[#finances][Finances]]
   - [[#hold-scimax][HOLD Scimax]]
 
-* About this Configuration
+* Introduction
+Emacs is not just a text editor. It provides a full working environment to manipulate text files.
+
+** About this Configuration
 Make this file run (slightly) faster with lexical binding (see [[https://nullprogram.com/blog/2016/12/22/][this blog post]] for more info).
 #+begin_src emacs-lisp :comments no :tangle ./.doom.d/config.el
 ;;; config.el -*- lexical-binding: t; -*-
@@ -43,18 +35,20 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
 ;; This Configuration File is managed by ~/Emacs.org. See additional comments there.
 #+end_src
 
-* About Me
+** About Me
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq user-full-name "Jonathan Pieper"
       user-mail-address "ody55eus@mailbox.org"
+      calendar-longitude +8.8   ; 8.8  East
+      calendar-latitude  +50.1  ; 50.1 Nord
       epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 #+end_src
 
-* Initialization (init.el)
-** Docstring
+** Initialization (init.el)
+*** Docstring
 
 #+begin_src emacs-lisp :tangle ./.doom.d/init.el
 ;;; init.el -*- lexical-binding: t; -*-
@@ -74,7 +68,7 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
 ;;      directory (for easy access to its source code).
 #+end_src
 
-** Enable Features
+*** Enable Features
 
 Just comment/uncomment some lines to disable/enable features.
 
@@ -221,7 +215,7 @@ Just comment/uncomment some lines to disable/enable features.
         +fold)                      ; fold the clutter away nicities
        ;;lean              ; for folks with too much to prove
        ledger            ; be audit you can be
-       ;;lua               ; one-based indices? one-based indices
+       lua               ; one-based indices? one-based indices
        markdown          ; writing docs for people to ignore
        nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
@@ -253,7 +247,7 @@ Just comment/uncomment some lines to disable/enable features.
        (ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
-       ;;(scheme +guile)   ; a fully conniving family of lisps
+       (scheme +guile)   ; a fully conniving family of lisps
        sh                ; she sells {ba,z,fi}sh shells on the C xor
        ;;sml
        ;;solidity          ; do you need a blockchain? No.
@@ -282,8 +276,8 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+end_src
 
-* Package Installation (packages.el)
-** Docstring
+** Package Installation (packages.el)
+*** Docstring
 
 #+begin_src emacs-lisp :tangle ./.doom.d/packages.el
 ;; -*- no-byte-compile: t; -*-
@@ -338,7 +332,7 @@ Just comment/uncomment some lines to disable/enable features.
 ;(unpin! t)
 #+end_src
 
-** Load Packages
+*** Load Packages
 
 #+begin_src emacs-lisp :tangle ./.doom.d/packages.el
 ;; Use latest version!
@@ -418,6 +412,7 @@ Just comment/uncomment some lines to disable/enable features.
 (package! embark)
 
 ;; Other Software Integrations
+(package! guix)
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
@@ -478,8 +473,8 @@ Just comment/uncomment some lines to disable/enable features.
 (package! spotlight)
 #+end_src
 
-* Emacs Startup
-** Improve Startup Performance
+** Emacs Startup
+*** Improve Startup Performance
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -497,7 +492,7 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+end_src
 
-** Start Emacs as Server!
+*** Start Emacs as Server!
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -507,7 +502,7 @@ Just comment/uncomment some lines to disable/enable features.
 
 #+end_src
 
-** Default Variables
+*** Default Variables
 :Source:
 Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-settings][tecosaur]] and [[https://github.com/angrybacon/dotemacs/blob/master/dotemacs.org][angrybacon/dotemacs.org]].
 :END:
@@ -518,6 +513,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
  window-combination-resize t)       ; take new window space from all other windows (not just current)
 (setq tab-width 2                   ; Smaller width for tab characters
       indent-tabs-mode nil          ; Do not use tabs to indent lines
+      undo-limit 80000000                         ; Raise undo-limit to 80Mb
       scroll-margin 2               ; Add a margin when scrolling vertically
       x-stretch-cursor t)           ; Stretch cursor to the glyph width
 (set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
@@ -533,16 +529,19 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
 
 #+end_src
 
-** Additional Configuration Files
+* Workflow
+** Org Mode Workflow
+See my [[file:Workflow.org][Org-Mode Workflow]] for more details.
+*** Additional Configuration Files
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (add-to-list 'load-path (file-truename "~/.doom.d"))
 (require 'org-workflow)
 #+end_src
 
-* UI Configuration
-** Keybindings
+** UI Configuration
+*** Keybindings
 
-*** Basic Keybindings for =leader= (~SPC-<Key>~)
+**** Basic Keybindings for =leader= (~SPC-<Key>~)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -624,7 +623,9 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
         :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
         :desc "Delve" :n "D" #'delve
         :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
-        :desc "Find org-roam Node" :n "f" #'org-roam-node-find
+        :desc "Find org-roam Node" :n "F" #'org-roam-node-find
+        :desc "Find no priv Node" :n "f" #'jp/org-roam-ignore-priv
+        :desc "Find no acg Node" :n "q" #'jp/org-roam-ignore-acg
         :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
         :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
         :desc "Org Roam UI" :n "u" #'org-roam-ui-open
@@ -636,7 +637,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
 
 #+end_src
 
-*** Evaluate Lisp Expressions (~SPC-e~)
+**** Evaluate Lisp Expressions (~SPC-e~)
 
 :SOURCE:
 Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.com/dwt1/dotfiles][dwt1/dotfiles]])
@@ -664,7 +665,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 
 #+end_src
 
-*** TODO Lookup (~SPC-l~)
+**** TODO Lookup (~SPC-l~)
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
@@ -684,7 +685,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 
 #+end_src
 
-*** TODO Jump (~SPC-j~)
+**** TODO Jump (~SPC-j~)
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :leader
@@ -701,7 +702,7 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
       )
 #+end_src
 
-*** Embark (~C-:~)
+**** Embark (~C-:~)
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (require 'embark)
 (global-set-key (kbd "C-:") 'embark-act)
@@ -738,10 +739,11 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 (define-key embark-bookmark-map (kbd "3") (my/embark-split-action bookmark-jump split-window-right))
 #+end_src
 
-*** Keybindings (=CTRL= ~C-w~ Window)
+**** Keybindings (=CTRL= ~C-w~ Window)
 :Source:
 Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecosaur]].
 :END:
+
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (map! :map evil-window-map
@@ -751,11 +753,16 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
       "<down>"     #'evil-window-down
       "<up>"       #'evil-window-up
       "<right>"    #'evil-window-right
+      "H-<left>"     #'evil-window-left
+      "H-<down>"     #'evil-window-down
+      "H-<up>"       #'evil-window-up
+      "H-<right>"    #'evil-window-right
       ;; Swapping windows
       "C-<left>"       #'+evil/window-move-left
       "C-<down>"       #'+evil/window-move-down
       "C-<up>"         #'+evil/window-move-up
-      "C-<right>"      #'+evil/window-move-right)
+      "C-<right>"      #'+evil/window-move-right
+      )
 
 #+end_src
 
@@ -767,19 +774,40 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 #+end_src
 
 *** Doom Dashboard
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(map! :map +doom-dashboard-mode-map
-      :ne "f" #'find-file
-      :ne "r" #'consult-recent-file
-      :ne "p" #'jp/go-to-projects
-      :ne "c" #'jp/go-to-config
-      :ne "i" #'jp/go-to-inbox
-      :ne "." (cmd! (doom-project-find-file "~/.config/")) ; . for dotfiles
-      :ne "b" #'+vertico/switch-workspace-buffer
-      :ne "B" #'counsel-switch-buffer)
+**** Other (~g~ / ~z~)
+#+begin_src emacs-lisp
+(map! :nv "gr" #'org-babel-tangle)
+
 #+end_src
 
-** Color Theme
+**** Hyper Key
+***** Remapping Important Keys
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(map! "H-<end>" "<end>")
+(map! "H-<home>" "<home>")
+(map! "H-<escape>" "<escape>")
+(map! "H-ü" "<escape>")
+(map! "H-<left>" "<left>")
+(map! "H-<right>" "<right>")
+(map! "H-<up>" "<up>")
+(map! "H-<down>" "<down>")
+(map! "H-<backspace>" "<backspace>")
+(map! "H-<delete>" "<delete>")
+(map! "H-<return>" "<return>")
+(dolist (i '(0 1 2 3 4 5 6 7 8 9))
+        (general-define-key (format "H-<kp-%d>" i) (kbd (number-to-string i))))
+#+end_src
+
+***** Custom Functions
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(map! "H-¿" #'counsel-ag)
+(map! "H-¡" #'ivy-mode)
+(map! "H-:" #'embark-act)
+(map! "H-;" #'org-agenda)
+(map! "H-<undo>" #'jp/org-roam-refresh-agenda-list)
+#+end_src
+
+*** Color Theme
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -793,8 +821,8 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 
 #+end_src
 
-** Font Face Configuration
-*** New Configuration
+*** Font Face Configuration
+**** New Configuration
 :PROPERTIES:
 :LOCATION: https://tecosaur.github.io/emacs-config/config.html
 :END:
@@ -809,7 +837,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
       doom-serif-font (font-spec :family "JetBrains Mono" :weight 'light :size 16))
 #+end_src
 
-*** Old System Dependent
+**** Old System Dependent
 #+begin_src emacs-lisp
 
 
@@ -851,8 +879,8 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 
 #+end_src
 
-** Basic Emacs UI Enhancements
-*** Line Numbers
+*** Basic Emacs UI Enhancements
+**** Line Numbers
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -867,7 +895,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 
 #+end_src
 
-*** White Spaces
+**** White Spaces
 :Source:
 Inspired by [[http://ergoemacs.org/emacs/whitespace-mode.html][Xah]].
 :END:
@@ -907,7 +935,7 @@ Other useful codes:
 |------+---------------------+------+---------------------------------------|
 #+TBLFM: $3=$2 ;%x
 
-*** Visible Bell
+**** Visible Bell
 
 Disable the computer =beep= and activate a visual feedback instead.
 
@@ -918,12 +946,12 @@ Disable the computer =beep= and activate a visual feedback instead.
 
 #+end_src
 
-*** Alert Styles
+**** Alert Styles
 #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/config.el" "no")
 (setq alert-default-style 'osx-notifier)
 #+end_src
 
-*** Enable Menu Bar
+**** Enable Menu Bar
 This allows you to see some basic actions (activates dropdown menus File, Edit, Options, etc.)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -932,13 +960,13 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 
 #+end_src
 
-*** Enable Mouse (Backward, Forward) Buttons
+**** Enable Mouse (Backward, Forward) Buttons
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (map! :n [mouse-8] #'better-jumper-jump-backward
       :n [mouse-9] #'better-jumper-jump-forward)
 #+end_src
 
-*** HOLD Resize Startup Window
+**** HOLD Resize Startup Window
 
 #+begin_src emacs-lisp
 
@@ -964,7 +992,7 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 
 #+end_src
 
-*** Configure Calendar
+**** Configure Calendar
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -972,28 +1000,28 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 
 #+end_src
 
-*** Tab Bar
+**** Tab Bar
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq tab-bar-close-button-show nil
       tab-bar-new-button-show nil)
 #+end_src
-** Doom Emacs Customization
-*** Confirm Leaving Emacs
+*** Doom Emacs Customization
+**** Confirm Leaving Emacs
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq confirm-kill-emacs nil)           ;; Don't confirm every kill
 #+end_src
 
-*** Doom Evil Mode
+**** Doom Evil Mode
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq
- evil-want-fine-undo t                  ;; Undo Emacs Style
+ evil-want-fine-undo t                  ;; Undo Emacs Style. By default while in insert all changes are one big blob.
  evil-vsplit-window-right t             ;; Split windows the other way around
  evil-split-window-below t)
 #+end_src
 
-*** Doom Modeline
-**** Basic Configuration
+**** Doom Modeline
+***** Basic Configuration
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (use-package! doom-modeline
   :custom-face
@@ -1019,14 +1047,14 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
   (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding) (doom-modeline-buffer-state-icon t))
 #+end_src
 
-**** Display Time in Modeline
+***** Display Time in Modeline
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq display-time-24hr-format t                ;; Display 24 Hrs rather than 12
       display-time-default-load-average nil)    ;; Do not display my CPU Load
 (display-time-mode 0)
 #+end_src
 
-**** HOLD Display Pomm Timer
+***** HOLD Display Pomm Timer
 #+begin_src emacs-lisp
 (add-to-list 'mode-line-misc-info '(:eval pomm-current-mode-line-string))
 (add-hook 'pomm-on-tick-hook 'pomm-update-mode-line-string)
@@ -1034,7 +1062,7 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 (add-hook 'pomm-on-status-changed-hook 'pomm-update-mode-line-string)
 (add-hook 'pomm-on-status-changed-hook 'force-mode-line-update)
 #+end_src
-**** TODO Define Modeline
+***** TODO Define Modeline
 Possible Values (as stored in =doom-modeline-fn-alist=):
 | Doom Modeline Segment             | Associated Function                                      |
 |-----------------------------------+----------------------------------------------------------|
@@ -1094,7 +1122,9 @@ Possible Values (as stored in =doom-modeline-fn-alist=):
     '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs "  ")))
 #+end_src
 
-*** Doom Dashboard
+**** Doom Dashboard
+***** Keybindings
+
 
 | Key | Function                                    |
 |-----+---------------------------------------------|
@@ -1107,6 +1137,25 @@ Possible Values (as stored in =doom-modeline-fn-alist=):
 | b   | ~+vertico/switch-workspace-buffer~            |
 | B   | ~counsel-switch-buffer~                       |
 
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(map! :map +doom-dashboard-mode-map
+      :ne "f" #'find-file
+      :ne "r" #'consult-recent-file
+      :ne "p" #'jp/go-to-projects
+      :ne "c" #'jp/go-to-config
+      :ne "i" #'jp/go-to-inbox
+      :ne "." (cmd! (doom-project-find-file "~/.config/")) ; . for dotfiles
+      :desc "Notes (roam)" :ne "n" #'org-roam-node-find
+      :desc "Open dotfile" :ne "d" (cmd! (doom-project-find-file "~/.dotfiles/"))
+      :desc "IBuffer" :ne "i" #'ibuffer
+      :desc "ivy-mode" :ne "I" #'ivy-mode
+      :desc "Previous buffer" :ne "p" #'previous-buffer
+      :desc "Set theme" :ne "t" #'consult-theme
+      :ne "b" #'+vertico/switch-workspace-buffer
+      :ne "B" #'counsel-switch-buffer)
+#+end_src
+
+*****  Menu Sections
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq +doom-dashboard-menu-sections '(("Reload last session" :icon
                                        (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
@@ -1125,10 +1174,18 @@ Possible Values (as stored in =doom-modeline-fn-alist=):
                                       ("Open org-agenda" :icon
                                        (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
                                        :action org-agenda)
-                                      ("Open Roam Agenda" :icon
-                                       (all-the-icons-octicon "checklist"
+                                      ("Open Roam Notes" :icon
+                                       (all-the-icons-octicon "search"
                                                               :face 'doom-dashboard-menu-title)
-                                       :action jp/org-roam-agenda)
+                                       :action org-roam-node-find)
+                                      ("Open IBuffer" :icon
+                                       (all-the-icons-octicon "list-unordered"
+                                                              :face 'doom-dashboard-menu-title)
+                                       :action ibuffer)
+                                      ("Refresh Agenda Files" :icon
+                                       (all-the-icons-octicon "database"
+                                                              :face 'doom-dashboard-menu-title)
+                                       :action jp/org-roam-refresh-agenda-list)
                                       ("Recently opened files" :icon
                                        (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
                                        :action recentf-open-files)
@@ -1152,26 +1209,32 @@ Possible Values (as stored in =doom-modeline-fn-alist=):
 
 #+end_src
 
-** Additional Packages
-*** Highlight Todos
+*** Additional Packages
+**** Highlight Todos
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq hl-todo-keyword-faces
-      '(("TODO"   . "#c0c")
-        ("FIXME"  . "#990000")
-        ("NOTE"   . "#009999")
-        ("REVIEW"   . "#990099")
-        ("DEBUG"  . "#A020F0")
-        ("HACK"   . "#f60")
-        ("GOTCHA" . "#FF4500")
-        ("STUB"   . "#1E90FF")))
+      '(("TODO"   . "#cc00cc")     ;; TODO
+        ("FIXME"  . "#990000")    ;; FIXME
+        ("NOTE"   . "#009999")    ;; NOTE
+        ("REVIEW" . "#990099")    ;; REVIEW
+        ("DEBUG"  . "#A020F0")    ;; DEBUG
+        ("HACK"   . "#ff6600")       ;; HACK
+        ("GOTCHA" . "#FF4500")    ;; GOTCHA
+        ("STUB"   . "#1E90FF")))   ;; STUB
 
 (hl-todo-mode)          ; Enable highlight todos
 
 #+end_src
 
-*** PDF Tools
+**** Spell-Checking (aspell)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq ispell-program-name (executable-find "aspell"))
+#+end_src
+
+**** PDF Tools
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -1188,7 +1251,7 @@ Possible Values (as stored in =doom-modeline-fn-alist=):
 
 #+end_src
 
-*** nov.el (EPUB)
+**** nov.el (EPUB)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -1202,11 +1265,11 @@ Possible Values (as stored in =doom-modeline-fn-alist=):
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 #+end_src
 
-*** WAIT SVG Tag Mode
+**** WAIT SVG Tag Mode
 
 Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mode/issues/10][Issue on Github→]] for further information.
 
-**** Example 1
+***** Example 1
 
 #+begin_src emacs-lisp
 
@@ -1270,7 +1333,7 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
 
 #+end_src
 
-**** Example 2
+***** Example 2
 
 #+begin_src emacs-lisp
 ;; :tangle ./.doom.d/config.el
@@ -1392,7 +1455,7 @@ Not working with Doom Emacs yet. Follow [[https://github.com/rougier/svg-tag-mod
 
 #+end_src
 
-*** Keycast Mode
+**** Keycast Mode
 
 :Source:
 Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-627604064
@@ -1412,9 +1475,29 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
 
 #+end_src
 
-*** Avy
+**** Avy
+***** Keybindings
+****** Default (Evil-)Doom Keybindings
 Avy provides easy movement and actions in buffers. The following [[https://karthinks.com/software/avy-can-do-anything/][Blog post by Karthinks]] has a lot of awesome examples on how to use Avy.
-Keybindings to help manage text in buffers. To activate Avy, check the various =avy-= commands under (~SPC j~):
+Keybindings to help manage text in buffers.
+|-------+---------------------------------------|
+| Key   | Action                                |
+|-------+---------------------------------------|
+| ~g s s~ | =evil-avy-goto-char-2=                  |
+| ~g s k~ | =evilem-motion-previous-line=           |
+| ~g s j~ | =evilem-motion-next-line=               |
+| ~g s f~ | =evilem-motion-find-char=               |
+| ~g s F~ | =evilem-motion-find-char-backward=      |
+| ~g s b~ | =evilem-motion-backward-word-begin=     |
+| ~g s B~ | =evilem-motion-backward-WORD-begin=     |
+| ~g s (~ | =evilem-motion-backward-sentence-begin= |
+| ~g s )~ | =evilem-motion-forward-sentence-begin=  |
+| ~g s *~ | =evilem-motion-search-word-forward=     |
+|-------+---------------------------------------|
+
+****** Custom Keybindings
+Also check the various =avy-= commands under (~SPC j~):
+|---------+--------------------------|
 | Key     | Action                   |
 |---------+--------------------------|
 | ~SPC j l~ | =evil-avy-goto-line=       |
@@ -1423,8 +1506,11 @@ Keybindings to help manage text in buffers. To activate Avy, check the various =
 | ~SPC j O~ | =evil-avy-goto-char-2=     |
 | ~SPC j w~ | =evil-avy-goto-word-0=     |
 | ~SPC j W~ | =evil-avy-goto-subword-0=  |
+|---------+--------------------------|
 
+****** New Interactions before selecting
 Before selecting the char/word/line/etc., you can press one of these keys to perform an action on your target:
+|-----+----------------------|
 | Key | Action               |
 |-----+----------------------|
 | ~x~   | =-embark=              |
@@ -1438,14 +1524,15 @@ Before selecting the char/word/line/etc., you can press one of these keys to per
 | ~Y~   | =-yank-whole-line=     |
 | ~w~   | =-copy=                |
 | ~W~   | =-copy-whole-line=     |
+|-----+----------------------|
 
-**** Home Row Keys for Avy
+***** Home Row Keys for Avy
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 ;;(setq avy-keys '(97 115 100 102 103 104 106 107 108))
 (setq avy-keys '(?u ?i ?a ?e ?o ?s ?n ?r ?t))
 #+end_src
 
-**** Mark to Char (default)
+***** Mark to Char (default)
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (require 'avy)
 (defun avy-action-mark-to-char (pt)
@@ -1455,7 +1542,7 @@ Before selecting the char/word/line/etc., you can press one of these keys to per
 (setf (alist-get ?  avy-dispatch-alist) 'avy-action-mark-to-char)
 #+end_src
 
-**** Copy / Yank (Paste) / Kill (Cut) Lines
+***** Copy / Yank (Paste) / Kill (Cut) Lines
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defun avy-action-copy-whole-line (pt)
   (save-excursion
@@ -1490,7 +1577,7 @@ Before selecting the char/word/line/etc., you can press one of these keys to per
       (alist-get ?Y avy-dispatch-alist) 'avy-action-yank-whole-line)
 #+end_src
 
-**** Teleport Lines
+***** Teleport Lines
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defun avy-action-teleport-whole-line (pt)
   (avy-action-kill-whole-line pt)
@@ -1500,7 +1587,7 @@ Before selecting the char/word/line/etc., you can press one of these keys to per
       (alist-get ?M avy-dispatch-alist) 'avy-action-teleport-whole-line)
 #+end_src
 
-**** Search Dictionary
+***** Search Dictionary
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defun dictionary-search-dwim (&optional arg)
   "Search for definition of word at point. If region is active,
@@ -1528,7 +1615,7 @@ argument, query for word to search."
 (setf (alist-get ?= avy-dispatch-alist) 'avy-action-define)
 #+end_src
 
-**** Helpful Documentation
+***** Helpful Documentation
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defun avy-action-helpful (pt)
   (save-excursion
@@ -1541,7 +1628,7 @@ argument, query for word to search."
 (setf (alist-get ?H avy-dispatch-alist) 'avy-action-helpful)
 #+end_src
 
-**** Embark
+***** Embark
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defun avy-action-embark (pt)
   (save-excursion
@@ -1554,7 +1641,7 @@ argument, query for word to search."
 (setf (alist-get ?x avy-dispatch-alist) 'avy-action-embark)
 #+end_src
 
-*** Popper
+**** Popper
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (after! popper
   (setq popper-reference-buffers
@@ -1811,12 +1898,13 @@ There are a number of other language servers for Python so if you find that =pyl
 **** MacOS
 - MacOS has different location thanks to Anaconda:
   #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/config.el" "no")
+(defvar jp/guix/pythonpath (getenv "GUIX_PYTHONPATH")
+  "Absolute Python Library Path (e.g. /usr/share/lib/python3.9/site-packages)")
 (defvar jp/python
-      "/opt/homebrew/Caskroom/miniforge/base/envs/ody/bin/python"
-      ; "/opt/miniconda3/bin/python"
-      ; (file-truename "~/.conda/envs/webserver/bin/python")
-      ; (file-truename "~/.conda/envs/webserver-old/bin/python")
-      ; (file-truename "~/.conda/envs/ /bin/python")
+  (if jp/guix/pythonpath
+      (concat (ivy--parent-dir (ivy--parent-dir (ivy--parent-dir jp/guix/pythonpath))) "bin/python3")
+      "/opt/homebrew/conda/bin/python"
+      )
       "Python binary path.")
 (setq python-shell-interpreter jp/python)
 (setq dap-python-executable jp/python
@@ -1826,13 +1914,16 @@ There are a number of other language servers for Python so if you find that =pyl
 
 **** Linux
 Linux uses Miniconda3:
-  #+begin_src emacs-lisp :tangle (if (eq system-type 'gnu/linux) "./.doom.d/config.el" "no")
+
+#+begin_src emacs-lisp :tangle (if (eq system-type 'gnu/linux) "./.doom.d/config.el" "no")
+(defvar jp/guix/pythonpath (getenv "GUIX_PYTHONPATH")
+  "Absolute Python Library Path (e.g. /usr/share/lib/python3.9/site-packages)")
 (defvar jp/python
-       "/opt/miniconda3/bin/python"
-      ; (file-truename "~/.conda/envs/webserver/bin/python")
-      ; (file-truename "~/.conda/envs/webserver-old/bin/python")
-      ; (file-truename "~/.conda/envs/ /bin/python")
-      "Python binary path.")
+  (if jp/guix/pythonpath
+      (concat (ivy--parent-dir (ivy--parent-dir (ivy--parent-dir jp/guix/pythonpath))) "bin/python3")
+    (executable-find "python3")
+    )
+  "Python binary path.")
 (setq python-shell-interpreter jp/python
       dap-python-executable jp/python
       treemacs-python-executable jp/python

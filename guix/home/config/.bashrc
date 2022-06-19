@@ -8,6 +8,12 @@ case $- in
       *) return;;
 esac
 
+# Source the user profile file.
+if [[ -e $HOME/.bash_profile && $PROFILE_SOURCED == "" ]]; then
+    export PROFILE_SOURCED=1
+    source $HOME/.bash_profile
+fi
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -29,11 +35,6 @@ shopt -s checkwinsize
 
 # make less more friendly for non-text input files, see lesspipe(1)
 #[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color|alacritty|*-256color) color_prompt=yes;;
-esac
 
 # enable color support of ls, less and man, and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -91,11 +92,4 @@ then
     PS1='\u@\h \w [env]\$ '
 else
     PS1='\u@\h \w\$ '
-    if [ -n "$GUIX_LOCPATH" ]
-    then
-        export GUIX_PROFILE=$HOME/.guix-profile
-        export GUIX_EXTRA=$HOME/.guix-extra
-        export GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
-        export GUIX_LOCPATH=${GUIX_PROFILE}/lib/locale
-    fi
 fi

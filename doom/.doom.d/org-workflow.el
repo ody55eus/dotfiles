@@ -1,7 +1,7 @@
   ;; -*- lexical-binding: t; -*-
 
   (setq org-directory
-          "~/ZK")
+          (file-truename "~/ZK"))
 
   ;; (setq org-agenda-files `(,org-directory))
   (defun jp/org-path (path)
@@ -99,7 +99,7 @@
       org-modern-priority nil  ; Don't update task priorities
       org-modern-star ["◉" "○" "✸" "✿"]  ; use pretty stars
       )
-  (global-org-modern-mode 1))
+  )
 
 (after! org
   (appendq! +ligatures-extra-symbols
@@ -128,7 +128,8 @@
               :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
               :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
               :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)
-              :em_dash       "—"))
+              ;; :em_dash       "—"
+              ))
   (set-pretty-symbols! 'org-mode
     :merge t
     :name           "⁍"
@@ -157,7 +158,8 @@
     :priority_c    "[#C]"
     :priority_d    "[#D]"
     :priority_e    "[#E]"
-    :em_dash       "---")
+    ;; :em_dash       "---"
+    )
   (setq org-ellipsis " ▼ ")
   (setq org-hide-emphasis-markers t)      ; Hides *strong* /italic/ =highlight= marker
   )
@@ -188,8 +190,9 @@
   (setq org-image-actual-width nil) ; Set optional images
   (rainbow-mode 1)    ; Enable rainbow mode
   (emojify-mode 1)    ; Enable Emojis
-  (org-modern-mode 1) ; prettify org buffers
   (org-appear-mode 1) ; re-appear markup signs =*~
+  
+    (org-modern-mode 1)
   )
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
 
@@ -206,8 +209,8 @@
 (require 'org-indent)
 
 ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
-(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 110 :inherit 'fixed-pitch)
+;;(set-face-attribute 'org-block-begin-line nil :foreground "#999" :height 80 :inherit 'fixed-pitch)
+;;(set-face-attribute 'org-block-end-line nil :foreground "#999" :height 80 :inherit 'fixed-pitch)
 (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
@@ -238,6 +241,14 @@
            (org-roam-node-file node))
           ))
    ))
+
+(defun jp/org-roam-ignore-priv ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/ZK"))
+
+(defun jp/org-roam-ignore-acg ()
+  (interactive)
+  (jp/org-roam-ignore-prefix "/acg"))
 
 (defun jp/org-roam-ignore-literature ()
   (interactive)
@@ -381,11 +392,17 @@ Returns file content as a string."
                                                       "#+title: %<%Y>\n#+filetags: Project\n")
                                    :unnarrowed t))))
 
+(setq calendar-holidays
+  (append holiday-general-holidays holiday-local-holidays
+          holiday-other-holidays holiday-christian-holidays
+          holiday-solar-holidays))
+
 (defun jp/org-roam-refresh-agenda-list ()
   (interactive)
   (setq org-agenda-files (jp/org-roam-list-notes-by-tag "Project"))
   (dolist (node (jp/org-roam-list-notes-by-tag "Tasks"))
     (add-to-list 'org-agenda-files node))
+  (add-to-list 'org-agenda-files (concat (getenv "HOME") "/tmp/outlook.org"))
   (add-to-list 'org-agenda-files (jp/org-path "Agenda.org"))
   (add-to-list 'org-agenda-files (jp/org-path "Habits.org")))
 
@@ -394,7 +411,7 @@ Returns file content as a string."
 (setq org-todo-keywords '(
                           (sequence "TODO(t)" "EPIC(e)" "PROJ(p)" "|"
                                 "DONE(d)")
-                          (sequence "BACKLOG(b)" "PLAN(P)" "ACTIVE(a)"
+                          (sequence "BACKLOG(b)" "NEXT(n)" "PLAN(P)" "ACTIVE(a)"
                                     "REVIEW(r)" "WAIT(W@/!)" "HOLD(h)" "|"
                                     "COMPLETED(c)" "KILL(k)" "CANCELLED(C)" "STOPPED(s@)")
                         )
@@ -829,6 +846,8 @@ Returns file content as a string."
    (python . t)
    (LaTeX . t)
    (plantuml . t)
+   (scheme . t)
+   (guile . t)
    (emacs-lisp . t)))
 
 (setq org-babel-tangle-comment-format-beg ""
@@ -865,10 +884,10 @@ Returns file content as a string."
 (setq org-roam-directory org-directory   ; Set org-roam directory
       org-roam-dailies-directory (jp/org-path "daily")
       org-attach-id-dir (jp/org-path ".attachments")
-      org-id-locations-file (doom-path ".orgids")
+      org-id-locations-file (concat doom-cache-dir ".orgids")
       org-roam-completion-everywhere nil
       org-roam-completion-system 'default
-      org-roam-db-location (doom-path "org-roam.db")
+      org-roam-db-location (concat doom-cache-dir "org-roam.db")
       ;;org-roam-graph-executable "neato" ; or "dot" (default)
       )
 
