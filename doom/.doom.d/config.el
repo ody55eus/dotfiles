@@ -30,7 +30,7 @@
  mouse-yank-at-point t              ; Yank at point rather than pointer
  window-combination-resize t)       ; take new window space from all other windows (not just current)
 (setq tab-width 2                   ; Smaller width for tab characters
-      undo-limit 80000000                         ; Raise undo-limit to 80Mb
+      undo-limit 80000000           ; Raise undo-limit to 80Mb
       scroll-margin 2               ; Add a margin when scrolling vertically
       x-stretch-cursor t)           ; Stretch cursor to the glyph width
 (set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
