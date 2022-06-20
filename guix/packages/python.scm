@@ -69,6 +69,24 @@
 (use-modules (guix build-system trivial))
 (use-modules (srfi srfi-1))
 
+
+(define (search-patch file-name)
+  "Search the patch FILE-NAME.  Raise an error if not found."
+  (or (search-path (%patch-path) file-name)
+      (raise (formatted-message (G_ "~a: patch not found")
+                                file-name))))
+
+(define-syntax-rule (search-patches file-name ...)
+  "Return the list of absolute file names corresponding to each
+FILE-NAME found in %PATCH-PATH."
+  (list (search-patch file-name) ...))
+
+(define %patch-path
+  (make-parameter
+   (append
+    (list (string-append (getenv "HOME") "/.dotfiles/guix/packages/patches"))
+    (%patch-path))))
+
 ;; From guix repository commit:
 ;; d66146073def03d1a3d61607bc6b77997284904b
 (define-public python-3.6
