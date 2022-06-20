@@ -277,7 +277,7 @@
 ;; Set up the visible bell
 (setq visible-bell t)
 
-(menu-bar-mode 1)
+(menu-bar-mode -1)
 
 (map! :n [mouse-8] #'better-jumper-jump-backward
       :n [mouse-9] #'better-jumper-jump-forward)
