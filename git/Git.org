@@ -1,7 +1,12 @@
 #+title: Git
 
 * Gitconfig
-#+begin_src conf :tangle .config/git/config
+#+name: myhome
+#+begin_src emacs-lisp
+(getenv "HOME")
+#+end_src
+
+#+begin_src conf :tangle .config/git/config :noweb yes
 [user]
 	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
@@ -39,14 +44,13 @@
 [color]
 	pager = no
 [safe]
-	directory = /home/jp/share/org
-	directory = /home/jp/share/notes
-	directory = /home/jp/share/Projects/Code/01_2fa_demo
-	directory = /home/jp/share/Projects/Doc/frontdesk-documentation
-	directory = /home/jp/share/Projects/Code/frontdesk
-	directory = /home/jp/share/Projects/Code/control-panel
-[gitlab]
-	user = ody55eus
+	directory = <<myhome()>>/share/org
+	directory = <<myhome()>>/share/notes
+	directory = <<myhome()>>/share/notes/ZK
+	directory = <<myhome()>>/share/Projects/Code/01_2fa_demo
+	directory = <<myhome()>>/share/Projects/Doc/frontdesk-documentation
+	directory = <<myhome()>>/share/Projects/Code/frontdesk
+	directory = <<myhome()>>/share/Projects/Code/control-panel
 #+end_src
 
 * Git Attributes

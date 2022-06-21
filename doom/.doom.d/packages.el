@@ -139,7 +139,6 @@
 (package! elfeed)
 (package! elfeed-score)
 
-;; Thesaurus synonyms
                                         ;(package! synosaurus)
 (package! calfw)
 (package! calfw-org)
@@ -147,7 +146,8 @@
 
 ;; Dictionaries
 ;;(package! synosaurus)           ; Thesaurus synonyms
-(package! powerthesaurus)
+;;(package! powerthesaurus)
+;;(package! wordnut)
 
 ;; Language Server
 (package! lsp-mode)

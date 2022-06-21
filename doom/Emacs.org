@@ -41,6 +41,8 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
 
 (setq user-full-name "Jonathan Pieper"
       user-mail-address "ody55eus@mailbox.org"
+      calendar-longitude +8.8   ; 8.8  East
+      calendar-latitude  +50.1  ; 50.1 Nord
       epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 #+end_src
@@ -158,6 +160,7 @@ Just comment/uncomment some lines to disable/enable features.
        ;;gist              ; interacting with github gists
        (lookup              ; navigate your code and its documentation
         +dictionary         ; dictionary/thesaurus is nice
+        +offline            ; download with wordnut and synosaurus
         +docsets)           ; ...or in Dash docsets locally
        lsp               ; M-x vscode
        (magit            ; a git porcelain for Emacs
@@ -423,7 +426,6 @@ Just comment/uncomment some lines to disable/enable features.
 (package! elfeed)
 (package! elfeed-score)
 
-;; Thesaurus synonyms
                                         ;(package! synosaurus)
 (package! calfw)
 (package! calfw-org)
@@ -431,7 +433,8 @@ Just comment/uncomment some lines to disable/enable features.
 
 ;; Dictionaries
 ;;(package! synosaurus)           ; Thesaurus synonyms
-(package! powerthesaurus)
+;;(package! powerthesaurus)
+;;(package! wordnut)
 
 ;; Language Server
 (package! lsp-mode)
@@ -510,7 +513,7 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
  mouse-yank-at-point t              ; Yank at point rather than pointer
  window-combination-resize t)       ; take new window space from all other windows (not just current)
 (setq tab-width 2                   ; Smaller width for tab characters
-      undo-limit 80000000                         ; Raise undo-limit to 80Mb
+      undo-limit 80000000           ; Raise undo-limit to 80Mb
       scroll-margin 2               ; Add a margin when scrolling vertically
       x-stretch-cursor t)           ; Stretch cursor to the glyph width
 (set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
@@ -610,7 +613,9 @@ See my [[file:Workflow.org][Org-Mode Workflow]] for more details.
         :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
         :desc "Delve" :n "D" #'delve
         :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
-        :desc "Find org-roam Node" :n "f" #'org-roam-node-find
+        :desc "Find org-roam Node" :n "F" #'org-roam-node-find
+        :desc "Find no priv Node" :n "f" #'jp/org-roam-ignore-priv
+        :desc "Find no acg Node" :n "q" #'jp/org-roam-ignore-acg
         :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
         :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
         :desc "Org Roam UI" :n "u" #'org-roam-ui-open
@@ -928,12 +933,12 @@ Disable the computer =beep= and activate a visual feedback instead.
 (setq alert-default-style 'osx-notifier)
 #+end_src
 
-**** Enable Menu Bar
+**** Disable Menu Bar
 This allows you to see some basic actions (activates dropdown menus File, Edit, Options, etc.)
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(menu-bar-mode 1)
+(menu-bar-mode -1)
 
 #+end_src
 
@@ -1192,17 +1197,23 @@ Possible Values (as stored in =doom-modeline-fn-alist=):
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq hl-todo-keyword-faces
-      '(("TODO"   . "#c0c")
-        ("FIXME"  . "#990000")
-        ("NOTE"   . "#009999")
-        ("REVIEW"   . "#990099")
-        ("DEBUG"  . "#A020F0")
-        ("HACK"   . "#f60")
-        ("GOTCHA" . "#FF4500")
-        ("STUB"   . "#1E90FF")))
+      '(("TODO"   . "#cc00cc")     ;; TODO
+        ("FIXME"  . "#990000")    ;; FIXME
+        ("NOTE"   . "#009999")    ;; NOTE
+        ("REVIEW" . "#990099")    ;; REVIEW
+        ("DEBUG"  . "#A020F0")    ;; DEBUG
+        ("HACK"   . "#ff6600")       ;; HACK
+        ("GOTCHA" . "#FF4500")    ;; GOTCHA
+        ("STUB"   . "#1E90FF")))   ;; STUB
 
 (hl-todo-mode)          ; Enable highlight todos
 
+#+end_src
+
+**** Spell-Checking (aspell)
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq ispell-program-name (executable-find "aspell"))
 #+end_src
 
 **** PDF Tools
@@ -1870,16 +1881,11 @@ There are a number of other language servers for Python so if you find that =pyl
 - MacOS has different location thanks to Anaconda:
   #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/config.el" "no")
 (defvar jp/guix/pythonpath (getenv "GUIX_PYTHONPATH")
-  "Absolute Python Library Path (e.g. /.../lib/python3.9/site-packages)")
+  "Absolute Python Library Path (e.g. /usr/share/lib/python3.9/site-packages)")
 (defvar jp/python
   (if jp/guix/pythonpath
       (concat (ivy--parent-dir (ivy--parent-dir (ivy--parent-dir jp/guix/pythonpath))) "bin/python3")
-      "/gnu/store/x77rq0rqdw20f1bpiznvlkgw1h1r4q98-profile/bin/python3"
-      ; "/opt/homebrew/Caskroom/miniforge/base/envs/ody/bin/python"
-      ; "/opt/miniconda3/bin/python"
-      ; (file-truename "~/.conda/envs/webserver/bin/python")
-      ; (file-truename "~/.conda/envs/webserver-old/bin/python")
-      ; (file-truename "~/.conda/envs/ /bin/python")
+      "/opt/homebrew/conda/bin/python"
       )
       "Python binary path.")
 (setq python-shell-interpreter jp/python)
@@ -1890,13 +1896,16 @@ There are a number of other language servers for Python so if you find that =pyl
 
 **** Linux
 Linux uses Miniconda3:
-  #+begin_src emacs-lisp :tangle (if (eq system-type 'gnu/linux) "./.doom.d/config.el" "no")
+
+#+begin_src emacs-lisp :tangle (if (eq system-type 'gnu/linux) "./.doom.d/config.el" "no")
+(defvar jp/guix/pythonpath (getenv "GUIX_PYTHONPATH")
+  "Absolute Python Library Path (e.g. /usr/share/lib/python3.9/site-packages)")
 (defvar jp/python
-       "/opt/miniconda3/bin/python"
-      ; (file-truename "~/.conda/envs/webserver/bin/python")
-      ; (file-truename "~/.conda/envs/webserver-old/bin/python")
-      ; (file-truename "~/.conda/envs/ /bin/python")
-      "Python binary path.")
+  (if jp/guix/pythonpath
+      (concat (ivy--parent-dir (ivy--parent-dir (ivy--parent-dir jp/guix/pythonpath))) "bin/python3")
+    (executable-find "python3")
+    )
+  "Python binary path.")
 (setq python-shell-interpreter jp/python
       dap-python-executable jp/python
       treemacs-python-executable jp/python

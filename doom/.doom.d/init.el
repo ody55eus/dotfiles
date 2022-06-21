@@ -100,6 +100,7 @@
        ;;gist              ; interacting with github gists
        (lookup              ; navigate your code and its documentation
         +dictionary         ; dictionary/thesaurus is nice
+        +offline            ; download with wordnut and synosaurus
         +docsets)           ; ...or in Dash docsets locally
        lsp               ; M-x vscode
        (magit            ; a git porcelain for Emacs
