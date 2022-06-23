@@ -222,6 +222,11 @@
 (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
 
+(defun jp/org-roam-visit (node)
+ (if (org-roam-node-file node)
+        (org-roam-node-visit node nil)
+      (org-roam-node-find)))
+
 (defun jp/org-roam-select-prefix (prefix)
   (org-roam-node-read
    nil
@@ -244,43 +249,43 @@
 
 (defun jp/org-roam-ignore-priv ()
   (interactive)
-  (jp/org-roam-ignore-prefix "/ZK"))
+  (jp/org-roam-visit (jp/org-roam-ignore-prefix "/ZK")))
 
 (defun jp/org-roam-ignore-acg ()
   (interactive)
-  (jp/org-roam-ignore-prefix "/acg"))
+  (jp/org-roam-visit (jp/org-roam-ignore-prefix "/acg")))
 
 (defun jp/org-roam-ignore-literature ()
   (interactive)
-  (jp/org-roam-ignore-prefix "/Literature"))
+  (jp/org-roam-visit (jp/org-roam-ignore-prefix "/Literature")))
 
 (defun jp/org-roam-select-literature ()
   (interactive)
-  (jp/org-roam-select-prefix "/Literature"))
+  (jp/org-roam-visit (jp/org-roam-select-prefix "/Literature")))
 
 (defun jp/org-roam-ignore-pc ()
   (interactive)
-  (jp/org-roam-ignore-prefix "/PC"))
+  (jp/org-roam-visit (jp/org-roam-ignore-prefix "/PC")))
 
 (defun jp/org-roam-select-pc ()
   (interactive)
-  (jp/org-roam-select-prefix "/PC"))
+  (jp/org-roam-visit (jp/org-roam-select-prefix "/PC")))
 
 (defun jp/org-roam-ignore-projects ()
   (interactive)
-  (jp/org-roam-ignore-prefix "/Projects"))
+  (jp/org-roam-visit (jp/org-roam-ignore-prefix "/Projects")))
 
 (defun jp/org-roam-select-projects ()
   (interactive)
-  (jp/org-roam-select-prefix "/Projects"))
+  (jp/org-roam-visit (jp/org-roam-select-prefix "/Projects")))
 
 (defun jp/org-roam-ignore-other ()
   (interactive)
-  (jp/org-roam-ignore-prefix "/20"))
+  (jp/org-roam-visit (jp/org-roam-ignore-prefix "/20")))
 
 (defun jp/org-roam-select-other ()
   (interactive)
-  (jp/org-roam-select-prefix "/20"))
+  (jp/org-roam-visit (jp/org-roam-select-prefix "/20")))
 
 (defun jp/org-roam-get-tagged (&optional tag)
   (mapcar
