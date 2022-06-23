@@ -200,7 +200,7 @@ We don't want it activated in ~org-agenda-mode~, so we only trigger it after ~or
               :title         ""
               :subtitle      ""
               :author        ""
-              :date          ":date:"
+              :date          ""
               :latex_header  ""
               :latex_class   "🄲"
               :beamer_header ""
@@ -469,7 +469,7 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
 
 (defun jp/daily-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree (concat org-roam-dailies-directory "/reviews.org"))
+  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "daily/reviews.org")
                                   (file "~/.doom.d/templates/daily-review.org")))))
     (progn
       (org-capture nil "d")
@@ -480,8 +480,8 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
 
 (defun jp/weekly-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree (concat org-roam-dailies-directory "/reviews.org"))
-                                  (file "~/.doom.d/templates/weekly-review.org")))))
+  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "daily/reviews.org"))
+                                  (file "~/.doom.d/templates/weekly-review.org"))))
     (progn
       (org-capture nil "d")
       (org-capture-finalize t)
@@ -491,8 +491,8 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
 
 (defun jp/monthly-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree (concat org-roam-dailies-directory "/reviews.org"))
-                                  (file "~/.doom.d/templates/monthly-review.org")))))
+  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "daily/reviews.org"))
+                                  (file "~/.doom.d/templates/monthly-review.org"))))
     (progn
       (org-capture nil "d")
       (org-capture-finalize t)

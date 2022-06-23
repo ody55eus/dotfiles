@@ -115,7 +115,7 @@
               :title         ""
               :subtitle      ""
               :author        ""
-              :date          ":date:"
+              :date          ""
               :latex_header  ""
               :latex_class   "🄲"
               :beamer_header ""
@@ -332,7 +332,7 @@ Returns file content as a string."
 
 (defun jp/daily-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree (concat org-roam-dailies-directory "/reviews.org"))
+  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "daily/reviews.org")
                                   (file "~/.doom.d/templates/daily-review.org")))))
     (progn
       (org-capture nil "d")
@@ -343,8 +343,8 @@ Returns file content as a string."
 
 (defun jp/weekly-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree (concat org-roam-dailies-directory "/reviews.org"))
-                                  (file "~/.doom.d/templates/weekly-review.org")))))
+  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "daily/reviews.org"))
+                                  (file "~/.doom.d/templates/weekly-review.org"))))
     (progn
       (org-capture nil "d")
       (org-capture-finalize t)
@@ -354,8 +354,8 @@ Returns file content as a string."
 
 (defun jp/monthly-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree (concat org-roam-dailies-directory "/reviews.org"))
-                                  (file "~/.doom.d/templates/monthly-review.org")))))
+  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "daily/reviews.org"))
+                                  (file "~/.doom.d/templates/monthly-review.org"))))
     (progn
       (org-capture nil "d")
       (org-capture-finalize t)
