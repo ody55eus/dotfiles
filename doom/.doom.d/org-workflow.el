@@ -103,22 +103,22 @@
 
 (after! org
   (appendq! +ligatures-extra-symbols
-            `(:checkbox      "☐"
-              :pending       "◼"
-              :checkedbox    "☑"
+            `(:checkbox      ""
+              :pending       ""
+              :checkedbox    ""
               :list_property "∷"
-              :results       "🠶"
+              :results       ""
               :property      ""
               :properties    ""
               :end           ""
               :options       "⌥"
-              :title         "𝙏"
-              :subtitle      "𝙩"
-              :author        "𝘼"
-              :date          "𝘿"
-              :latex_header  "⇥"
+              :title         ""
+              :subtitle      ""
+              :author        ""
+              :date          ":date:"
+              :latex_header  ""
               :latex_class   "🄲"
-              :beamer_header "↠"
+              :beamer_header ""
               :begin_quote   "❮"
               :end_quote     "❯"
               :begin_export  "⯮"
@@ -275,10 +275,6 @@
   (interactive)
   (jp/org-roam-visit (jp/org-roam-ignore-prefix "/Projects")))
 
-(defun jp/org-roam-select-projects ()
-  (interactive)
-  (jp/org-roam-visit (jp/org-roam-select-prefix "/Projects")))
-
 (defun jp/org-roam-ignore-other ()
   (interactive)
   (jp/org-roam-visit (jp/org-roam-ignore-prefix "/20")))
@@ -336,7 +332,7 @@ Returns file content as a string."
 
 (defun jp/daily-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "~/share/notes/daily/reviews.org")
+  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree (concat org-roam-dailies-directory "/reviews.org"))
                                   (file "~/.doom.d/templates/daily-review.org")))))
     (progn
       (org-capture nil "d")
@@ -347,7 +343,7 @@ Returns file content as a string."
 
 (defun jp/weekly-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "~/share/notes/daily/reviews.org")
+  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree (concat org-roam-dailies-directory "/reviews.org"))
                                   (file "~/.doom.d/templates/weekly-review.org")))))
     (progn
       (org-capture nil "d")
@@ -358,7 +354,7 @@ Returns file content as a string."
 
 (defun jp/monthly-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "~/share/notes/daily/reviews.org")
+  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree (concat org-roam-dailies-directory "/reviews.org"))
                                   (file "~/.doom.d/templates/monthly-review.org")))))
     (progn
       (org-capture nil "d")
@@ -366,6 +362,9 @@ Returns file content as a string."
       (org-speed-move-safe 'outline-up-heading)
       (org-narrow-to-subtree)
       (org-clock-in))))
+
+(defun jp/org-roam-select-projects ()
+  (jp/org-roam-select-prefix "/Projects"))
 
 (defun jp/go-to-projects (&optional name head)
   ""
@@ -424,56 +423,56 @@ Returns file content as a string."
 
 (setq org-capture-templates '(
                               ("a" "Agenda")
-                              ("ah" "Programming" entry (file+headline "~/share/org/Agenda.org" "Programming")
+                              ("ah" "Programming" entry (file+headline (concat org-directory "/Agenda.org") "Programming")
                                "* TODO %?\n %i\n %a")
-                              ("ai" "Important" entry (file+headline "~/share/org/Agenda.org" "Important")
+                              ("ai" "Important" entry (file+headline (concat org-directory "/Agenda.org") "Important")
                                "* TODO %?\n %i\n %a")
-                              ("as" "Sys" entry (file+headline "~/share/org/Agenda.org" "Sys")
+                              ("as" "Sys" entry (file+headline (concat org-directory "/Agenda.org") "Sys")
                                "* TODO %?\n %i\n %a")
-                              ("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
+                              ("f" "Fleeting Note" entry (file+headline (concat org-directory "/Notes.org") "Tasks")
                                "* %?\n %x\n %i\n %a")
                               ("M" "Meeting" entry
-                               (file+olp+datetree "~/share/org/Meetings.org")
+                               (file+olp+datetree (concat org-directory "/Meetings.org")
                                (function jp/read-meeting-template)
                                :clock-in :clock-resume
                                :empty-lines 1)
                               ("m" "Email Workflow")
-                              ("mf" "Follow Up" entry (file+olp "~/share/org/Mail.org" "Follow Up")
+                              ("mf" "Follow Up" entry (file+olp (concat org-directory "/Mail.org") "Follow Up")
                                "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote")
-                              ("mr" "Read Later" entry (file+olp "~/share/org/Mail.org" "Read Later")
+                              ("mr" "Read Later" entry (file+olp (concat org-directory "/Mail.org") "Read Later")
                                "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote%x")
                               ("l" "Logbook Entries")
                               ("ls" "Software" entry
-                               (file+olp+datetree "~/share/org/Logbook.org")
+                               (file+olp+datetree (concat org-directory "/Logbook.org"))
                                "\n* %U %a%? :Software:"
                                :clock-in :clock-resume)
                               ("lh" "Hardware" entry
-                               (file+olp+datetree "~/share/org/Logbook.org")
+                               (file+olp+datetree (concat org-directory "/Logbook.org"))
                                "\n* %U %a%? :Hardware:"
                                :clock-in :clock-resume)
                               ("lc" "Configuration" entry
-                               (file+olp+datetree "~/share/org/Logbook.org")
+                               (file+olp+datetree (concat org-directory "/Logbook.org"))
                                "\n* %U %a%? :Configuration:"
                                :clock-in :clock-resume)
                               ("s" "Create Scripts")
                               ("ss" "shell" entry
-                               (file+headline "~/share/org/scripts/%<%Y%m%d%H%M%S>.org" "Scripts")
+                               (file+headline (concat org-directory "/scripts/%<%Y%m%d%H%M%S>.org") "Scripts")
                                (function jp/read-script-template)
                                :clock-in :clock-resume
                                :empty-lines 1)
-                              ("f" "Fleeting Note" entry (file+headline "~/share/org/Notes.org" "Tasks")
+                              ("f" "Fleeting Note" entry (file+headline (concat org-directory "/Notes.org") "Tasks")
                                "* %?\n %x\n %i\n %a")
-                              ("p" "Privat" entry (file+datetree "privat.org.gpg")
-                               "* ~%<%H:%M>~ - %?\n"
+                              ("p" "Privat" entry (file+datetree (concat (getenv "HOME") "/privat.org.gpg")
+                               "* ~%<%H:%M>~ - %?\n")
                                :time-prompt t
                                :unnarrowed t)
                               ("t" "Task Entries")
-                              ("tt" "Todo Task" entry (file+headline "~/share/org/Notes.org" "Tasks")
+                              ("tt" "Todo Task" entry (file+headline (concat org-directory "/Notes.org") "Tasks")
                                "* TODO %?\n %i\n %a")
-                              ("te" "Epic Task" entry (file+headline "~/share/org/Notes.org" "Epic")
+                              ("te" "Epic Task" entry (file+headline (concat org-directory "/Notes.org") "Epic")
                                "* EPIC %?\n %i\n %a")
-                              ("ti" "New Idea" entry (file+headline "~/share/org/Notes.org" "Ideas")
-                               "* IDEA %?\n %i\n %a")))
+                              ("ti" "New Idea" entry (file+headline (concat org-directory "/Notes.org") "Ideas")
+                               "* IDEA %?\n %i\n %a"))))
 
 (setq org-roam-capture-templates
       '(("d" "default" plain
