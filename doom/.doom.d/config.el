@@ -946,10 +946,3 @@ argument, query for word to search."
       :ne "q" #'ledger-reconcile-quit
       :ne "a" #'ledger-reconcile-add
       :ne "d" #'ledger-reconcile-delete)
-
-(map! :map beancount-mode-map
-      :leader
-       (:prefix "m"
-        :desc "Insert Date" :n "i" #'beancount-insert-date
-        :desc "Query" :n "q" #'beancount-query
-        ))

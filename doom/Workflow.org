@@ -553,7 +553,20 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
           holiday-solar-holidays))
 #+end_src
 
+** Am I at Home or at Work?
+
+#+begin_src emacs-lisp
+
+(if (or
+     (eq system-type 'darwin)
+     (and (eq system-type 'gnu/linux) (string-suffix-p "fritz.box" system-name)))
+  (defvar jp/home t)
+  (defvar jp/home nil))
+
+#+end_src
+
 ** Update Agenda List
+
 #+begin_src emacs-lisp
 (defun jp/org-roam-refresh-agenda-list ()
   (interactive)
@@ -562,7 +575,13 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
     (add-to-list 'org-agenda-files node))
   (add-to-list 'org-agenda-files (concat (getenv "HOME") "/tmp/outlook.org"))
   (add-to-list 'org-agenda-files (jp/org-path "Agenda.org"))
-  (add-to-list 'org-agenda-files (jp/org-path "Habits.org")))
+  (add-to-list 'org-agenda-files (jp/org-path "Habits.org"))
+  (if jp/home
+      (setq org-agenda-filter '("-@work" "-ACG")
+            org-agenda-tag-filter '("-@work" "-ACG"))
+      (setq org-agenda-filter '("-@home")
+            org-agenda-tag-filter '("-@home"))
+    ))
 
 (add-hook! 'org-roam-db-autosync-mode-hook #'jp/org-roam-refresh-agenda-list)
 #+end_src
@@ -897,20 +916,32 @@ The daily / monthly review templates are inspired by [[https://github.com/benoit
 #+begin_src emacs-lisp
 
 (setq org-tag-alist
-      '((:startgroup)
+      '((:startgrouptag . "Sys")
         ; Put mutually exclusive tags here
-        (:endgroup)
+        ("followup" . ?f)
+        ("recurring" . ?r)
+        ("batch" . ?b)
+        ("planning" . ?p)
+        ("publish" . ?P)
+        (:endgrouptag . "M")
+        (:startgroup . "Dev")
         ("@sys" . ?S)
         ("@home" . ?H)
         ("@work" . ?W)
-        ("planning" . ?p)
-        ("publish" . ?P)
-        ("batch" . ?b)
+        (:endgroup . "S")
+        (:startgroup "Basic")
+        ("@dev" . ?d)
         ("note" . ?n)
-        ("next" . ?n)
-        ("followup" . ?f)
-        ("recurring" . ?r)
-        ("idea" . ?i)))
+        ("idea" . ?i)
+        (:endgroup . "S")
+        (:startgroup . "Type")
+        ("ACG" . ?a)
+        (:endgroup . "S")
+        (:startgroup . "Project")
+        ("4anyRAM" . ?4)
+        ("web" . ?w)
+        (:endgroup . "S")
+        ))
 
 #+end_src
 

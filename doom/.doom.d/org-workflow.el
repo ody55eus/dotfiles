@@ -404,6 +404,12 @@ Returns file content as a string."
           holiday-other-holidays holiday-christian-holidays
           holiday-solar-holidays))
 
+(if (or
+     (eq system-type 'darwin)
+     (and (eq system-type 'gnu/linux) (string-suffix-p "fritz.box" system-name)))
+  (defvar jp/home t)
+  (defvar jp/home nil))
+
 (defun jp/org-roam-refresh-agenda-list ()
   (interactive)
   (setq org-agenda-files (jp/org-roam-list-notes-by-tag "Project"))
@@ -411,7 +417,13 @@ Returns file content as a string."
     (add-to-list 'org-agenda-files node))
   (add-to-list 'org-agenda-files (concat (getenv "HOME") "/tmp/outlook.org"))
   (add-to-list 'org-agenda-files (jp/org-path "Agenda.org"))
-  (add-to-list 'org-agenda-files (jp/org-path "Habits.org")))
+  (add-to-list 'org-agenda-files (jp/org-path "Habits.org"))
+  (if jp/home
+      (setq org-agenda-filter '("-@work" "-ACG")
+            org-agenda-tag-filter '("-@work" "-ACG"))
+      (setq org-agenda-filter '("-@home")
+            org-agenda-tag-filter '("-@home"))
+    ))
 
 (add-hook! 'org-roam-db-autosync-mode-hook #'jp/org-roam-refresh-agenda-list)
 
@@ -660,20 +672,32 @@ Returns file content as a string."
                 ((org-agenda-overriding-header "Next Tasks")))))))
 
 (setq org-tag-alist
-      '((:startgroup)
+      '((:startgrouptag . "Sys")
         ; Put mutually exclusive tags here
-        (:endgroup)
+        ("followup" . ?f)
+        ("recurring" . ?r)
+        ("batch" . ?b)
+        ("planning" . ?p)
+        ("publish" . ?P)
+        (:endgrouptag . "M")
+        (:startgroup . "Dev")
         ("@sys" . ?S)
         ("@home" . ?H)
         ("@work" . ?W)
-        ("planning" . ?p)
-        ("publish" . ?P)
-        ("batch" . ?b)
+        (:endgroup . "S")
+        (:startgroup "Basic")
+        ("@dev" . ?d)
         ("note" . ?n)
-        ("next" . ?n)
-        ("followup" . ?f)
-        ("recurring" . ?r)
-        ("idea" . ?i)))
+        ("idea" . ?i)
+        (:endgroup . "S")
+        (:startgroup . "Type")
+        ("ACG" . ?a)
+        (:endgroup . "S")
+        (:startgroup . "Project")
+        ("4anyRAM" . ?4)
+        ("web" . ?w)
+        (:endgroup . "S")
+        ))
 
 (setq org-lowest-priority ?E) ;; Priorities A to E
 
@@ -882,13 +906,14 @@ Returns file content as a string."
                                        "~/ZK/BibTeX/Master.bib"
                                        "~/Projects/Method-Paper/bibliography.bib")
       bibtex-completion-notes-template-multiple-files "* ${author-or-editor}, ${title}, ${journal}, (${year}) :${=type=}: \n\nSee [[cite:&${=key=}]]\n"
+
       bibtex-completion-additional-search-fields '(keywords)
       bibtex-completion-display-formats
-      '((article   . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${journal:40} ${title:* ")
-    (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} Chapter ${chapter:32} ${title:*} ")
-    (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${booktitle:40} ${title:*}")
-    (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
-    (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}"))
+      '((article       . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}")
+    (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} Ch ${chapter:16}")
+    (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:20}")
+    (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:20}")
+    (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${=type=:7}"))
       bibtex-completion-library-path '("~/nc/Library/BibTeX/")
       bibtex-completion-notes-path "~/ZK/References/")
 

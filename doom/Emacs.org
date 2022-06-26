@@ -659,13 +659,13 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 Changing some keybindings from their defaults to better fit with Doom Emacs, and to avoid conflicts with my window managers which sometimes use the control key in their keybindings.  By default, Doom Emacs does not use ~SPC-e~ for anything, so I choose to use the format ~SPC-e~ plus ~key~ for these (I also use ~SPC-e~ for ~eww~ keybindings).
 
-| COMMAND         | DESCRIPTION                                    | KEYBINDING |
-|-----------------+------------------------------------------------+------------|
-| eval-buffer     | /Evaluate elisp in buffer/                     | SPC e b    |
-| eval-defun      | /Evaluate the defun containing or after point/ | SPC e d    |
-| eval-expression | /Evaluate an elisp expression/                 | SPC e e    |
-| eval-last-sexp  | /Evaluate elisp expression before point/       | SPC e l    |
-| eval-region     | /Evaluate elisp in region/                     | SPC e r    |
+| COMMAND         | DESCRIPTION                                  | KEYBINDING |
+|-----------------+----------------------------------------------+------------|
+| eval-buffer     | /Evaluate elisp in buffer/                     | ~SPC e b~    |
+| eval-defun      | /Evaluate the defun containing or after point/ | ~SPC e d~    |
+| eval-expression | /Evaluate an elisp expression/                 | ~SPC e e~    |
+| eval-last-sexp  | /Evaluate elisp expression before point/       | ~SPC e l~    |
+| eval-region     | /Evaluate elisp in region/                     | ~SPC e r~    |
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -716,6 +716,12 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
       )
 #+end_src
 
+**** Hydra
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(define-key bibtex-mode-map (kbd "M-b") 'org-ref-bibtex-hydra/body)
+(define-key org-mode-map (kbd "C-c ]") 'org-ref-insert-link-hydra/body)
+
+#+end_src
 **** Embark (~C-:~)
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (require 'embark)
@@ -1704,8 +1710,8 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 | COMMAND    | DESCRIPTION                        | KEYBINDING |
 |------------+------------------------------------+------------|
-| dired      | /Open dired file manager/            | SPC d d    |
-| dired-jump | /Jump to current directory in dired/ | SPC d j    |
+| dired      | /Open dired file manager/            | ~SPC d d~    |
+| dired-jump | /Jump to current directory in dired/ | ~SPC d j~    |
 
 **** Keybinding Configuration (~SPC-<Key>~)
 
@@ -1726,13 +1732,13 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 | COMMAND             | DESCRIPTION                                 | KEYBINDING |
 |---------------------+---------------------------------------------+------------|
-| dired-view-file     | /View file in dired/                          | SPC d v    |
-| dired-up-directory  | /Go up in directory tree/                     | h          |
-| dired-find-file     | /Go down in directory tree (or open if file)/ | l          |
-| dired-next-line     | Move down to next line                      | j          |
-| dired-previous-line | Move up to previous line                    | k          |
-| dired-mark          | Mark file at point                          | m          |
-| dired-unmark        | Unmark file at point                        | u          |
+| dired-view-file     | /View file in dired/                          | ~SPC d v~    |
+| dired-up-directory  | /Go up in directory tree/                     | ~h~          |
+| dired-find-file     | /Go down in directory tree (or open if file)/ | ~l~          |
+| dired-next-line     | Move down to next line                      | ~j~          |
+| dired-previous-line | Move up to previous line                    | ~k~          |
+| dired-mark          | Mark file at point                          | ~m~          |
+| dired-unmark        | Unmark file at point                        | ~u~          |
 
 **** Dired-Mode-Mapping
 
@@ -2336,9 +2342,9 @@ Useful mu4e manual pages:
 *** Beancount
 [[https://beancount.github.io/docs/][Beancount]] is a CLI Tool written in Python to manage finances.
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(map! :map beancount-mode-map
-      :leader
+#+begin_src emacs-lisp
+(map!
+      :map beancount-mode-map
        (:prefix "m"
         :desc "Insert Date" :n "i" #'beancount-insert-date
         :desc "Query" :n "q" #'beancount-query
