@@ -56,6 +56,10 @@
 ;; Org Enhancements
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
 (package! org-roam)             ; Extended org-mode for Zettelkasten principle.
+(package! org-logseq
+    :recipe (:host github
+             :repo "llcc/org-logseq"
+             :files ("*")))
 (package! org-ref)              ; References and citations
 (package! org-super-agenda)
 (package! org-appear)           ; Display markup symbols (*=~ etc.) on cursor-over

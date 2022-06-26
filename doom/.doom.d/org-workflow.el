@@ -222,10 +222,13 @@
 (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
 
-(defun jp/org-roam-visit (node)
+(defun jp/org-roam-visit (node &optional other-window &key templates)
  (if (org-roam-node-file node)
-        (org-roam-node-visit node nil)
-      (org-roam-node-find)))
+        (org-roam-node-visit node other-window)
+   (org-roam-capture-
+       :node node
+       :templates templates
+       :props '(:finalize find-file))))
 
 (defun jp/org-roam-select-prefix (prefix)
   (org-roam-node-read
@@ -479,13 +482,13 @@ Returns file content as a string."
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n")
+                  "#+TITLE: ${title}\n")
          :unnarrowed t)
         ("j" "Projects" plain
          (function jp/read-newproject-template)
          :if-new (file+head
                   "Projects/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n")
+                  "#+TITLE: ${title}\n")
          :clock-in :clock-resume
          :unnarrowed t
          )
@@ -493,7 +496,7 @@ Returns file content as a string."
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "People/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n")
+                  "#+TITLE: ${title}\n")
          :unnarrowed t
          )
         ("l" "Literature")
@@ -501,21 +504,21 @@ Returns file content as a string."
          "%?\n\nSee also %a.\n* Links\n- %x\n* Notes\n"
          :if-new (file+head
                   "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n")
+                  "#+TITLE: ${title}\n")
          :unnarrowed t
          )
         ("lr" "Bibliography reference" plain
          "#+ROAM_KEY: %^{citekey}\n#+PROPERTY: type %^{entry-type}\n#+FILETAGS: %^{keywords}\n#+AUTHOR: %^{author}\n%?"
          :if-new (file+head
                   "References/${citekey}.org"
-                  "${title}\n")
+                  "#+TITLE: ${title}\n")
          :unnarrowed t
          )
         ("p" "PC" plain
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "PC/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n#+date: %U")
+                  "#+TITLE: ${title}\n#+date: %U")
          :unnarrowed t
          )
         )
@@ -526,20 +529,20 @@ Returns file content as a string."
                                         "%?\n\n* Citations\n#+begin_quote\n${body}\n#+end_quote"
                                         :if-new (file+head
                                                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "${title}\n#+date: %U\n")
+                                                 "#+TITLE: ${title}\n#+date: %U\n")
                                         :unnarrowed t
                                         )
                                        ("l" "Literature References" plain
                                         "%?\n\n* Abstract\n#+begin_quote\n${body}\n#+end_quote"
                                         :if-new (file+head
                                                  "References/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
+                                                 "#+TITLE: ${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
                                         :unnarrowed t
                                         :empty-lines 1)
                                        ("w" "Web site" entry
                                         :target (file+head
                                                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "${title}\n#+date: %U\n")
+                                                 "#+TITLE: ${title}\n#+date: %U\n")
                                         "* %a :website:\n\n%U %?\n\n#+begin_quote\n%:initial\n#+end_quote")
                                        )
       )
@@ -549,14 +552,14 @@ Returns file content as a string."
          "* %?"
          :if-new (file+head
                   "%<%Y-%m-%d>.org"
-                  "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
+                  "#+TITLE: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
          :kill-buffer t
          )
         ("j" "Journal entry" entry
          "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
-                  "%<%Y-%m-%d>\n"
+                  "#+TITLE: %<%Y-%m-%d>\n"
                   ("Journal"))
          :kill-buffer t
          )
@@ -564,7 +567,7 @@ Returns file content as a string."
          "* %?\n  %U\n  %a\n  %i"
          :if-new (file+head+olp
                   "%<%Y-%B>.org"
-                  "%<%Y-%B>\n"
+                  "#+TITLE: %<%Y-%B>\n"
                   ("Log"))
          :kill-buffer t
          )
@@ -572,19 +575,19 @@ Returns file content as a string."
          (file "~/.dotfiles/doom/.doom.d/templates/Meeting.org")
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
-                  "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
+                  "#+TITLE: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
                   ("Meetings")))
         ("r" "Review")
         ("rd" "Daily Review" entry
          (file "~/.dotfiles/doom/.doom.d/templates/daily-review.org")
          :target (file+head
           "%<%Y-%m-%d>.org"
-          "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"))
+          "#+TITLE: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"))
         ("rm" "Monthly Review" entry
          (file "~/.dotfiles/doom/.doom.d/templates/monthly-review.org")
          :if-new (file+head
                   "%<%Y-%B>.org"
-                  "%<%Y-%B>\n"))))
+                  "#+TITLE: %<%Y-%B>\n"))))
 
 (setq org-agenda-custom-commands
       '(("d" "Dashboard"

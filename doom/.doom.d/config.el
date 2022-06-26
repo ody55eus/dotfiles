@@ -47,6 +47,7 @@
 
 (add-to-list 'load-path (file-truename "~/.doom.d"))
 (require 'org-workflow)
+(setq org-logseq-dir "~/ZK/logseq")
 
 (map! :leader
       (:prefix ("b" . "buffer")
@@ -97,6 +98,8 @@
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
       (:prefix ("s" . "search")
+       :desc "counsel ag" "a" #'counsel-ag
+       :desc "helm ag" "A" #'helm-ag
        :desc "Search/Insert BibTeX Cite" "c" #'org-ref-cite-insert-helm
        )
       (:prefix ("t" . "toggle")
@@ -104,6 +107,7 @@
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle KeyCast Mode" "k" #'keycast-mode
        :desc "Toggle Menu Bar" "m" #'menu-bar-mode
+       :desc "Toggle writegood mode" "S" #'writegood-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        (:prefix ("SPC" . "Whitespaces")
