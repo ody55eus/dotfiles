@@ -103,6 +103,7 @@
        :desc "Search/Insert BibTeX Cite" "c" #'org-ref-cite-insert-helm
        )
       (:prefix ("t" . "toggle")
+       :desc "Toggle global debug on error" "d" #'toggle-debug-on-error
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle KeyCast Mode" "k" #'keycast-mode

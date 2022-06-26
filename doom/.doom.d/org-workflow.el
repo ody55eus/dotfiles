@@ -881,6 +881,14 @@ Returns file content as a string."
       bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib"
                                        "~/ZK/BibTeX/Master.bib"
                                        "~/Projects/Method-Paper/bibliography.bib")
+      bibtex-completion-notes-template-multiple-files "* ${author-or-editor}, ${title}, ${journal}, (${year}) :${=type=}: \n\nSee [[cite:&${=key=}]]\n"
+      bibtex-completion-additional-search-fields '(keywords)
+      bibtex-completion-display-formats
+      '((article   . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${journal:40} ${title:* ")
+    (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} Chapter ${chapter:32} ${title:*} ")
+    (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${booktitle:40} ${title:*}")
+    (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+    (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}"))
       bibtex-completion-library-path '("~/nc/Library/BibTeX/")
       bibtex-completion-notes-path "~/ZK/References/")
 
