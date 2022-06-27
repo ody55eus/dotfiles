@@ -6,11 +6,16 @@
 (getenv "HOME")
 #+end_src
 
+#+name: mygpg
+#+begin_src emacs-lisp
+(message epg-user-id)
+#+end_src
+
 #+begin_src conf :tangle .config/git/config :noweb yes
 [user]
 	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
-	signingkey = 2361DFC839413E7A84B2152B01B6FB927AAEC59B
+	signingkey = <<mygpg()>>
 [gpg]
 	program = gpg
 [init]

@@ -166,7 +166,7 @@ Just comment/uncomment some lines to disable/enable features.
        (magit            ; a git porcelain for Emacs
         +forge)          ; interface with git forges
        make              ; run make tasks from Emacs
-       ;;pass              ; password manager for nerds
+       (pass +auth)      ; password manager for nerds
        pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
        ;;rgb               ; creating color strings
@@ -343,6 +343,10 @@ Just comment/uncomment some lines to disable/enable features.
 ;; Org Enhancements
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
 (package! org-roam)             ; Extended org-mode for Zettelkasten principle.
+(package! org-logseq
+  :recipe (:host github
+           :repo "llcc/org-logseq"
+           :files ("*")))
 (package! org-ref)              ; References and citations
 (package! org-super-agenda)
 (package! org-appear)           ; Display markup symbols (*=~ etc.) on cursor-over
@@ -360,6 +364,10 @@ Just comment/uncomment some lines to disable/enable features.
 (package! org-special-block-extras
   :recipe (:host github
            :repo "alhassy/org-special-block-extras"))
+(package! helm-org-ql
+  :recipe (:host github
+           :repo "alphapapa/org-ql"
+           :files ("helm-org-ql.el")))
 
 ;; Org Roam
 (package! org-transclusion)
@@ -514,9 +522,20 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
  window-combination-resize t)       ; take new window space from all other windows (not just current)
 (setq tab-width 2                   ; Smaller width for tab characters
       undo-limit 80000000           ; Raise undo-limit to 80Mb
+      indent-tabs-mode nil          ; Do not use tabs to indent lines
       scroll-margin 2               ; Add a margin when scrolling vertically
       x-stretch-cursor t)           ; Stretch cursor to the glyph width
 (set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
+
+;;;; backups
+(setq backup-by-copying t
+      version-control t
+      vc-make-backup-files t
+      delete-old-versions 0
+      auto-save-include-big-deletions t
+      backup-directory-alist `((".*" . ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/backups")))
+      auto-save-file-name-transforms `((".*" ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/autosaves") t)))
+
 #+end_src
 
 * Workflow
@@ -526,6 +545,8 @@ See my [[file:Workflow.org][Org-Mode Workflow]] for more details.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (add-to-list 'load-path (file-truename "~/.doom.d"))
 (require 'org-workflow)
+(setq org-logseq-dir "~/ZK/logseq")
+
 #+end_src
 
 ** UI Configuration
@@ -584,13 +605,17 @@ See my [[file:Workflow.org][Org-Mode Workflow]] for more details.
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
       (:prefix ("s" . "search")
+       :desc "counsel ag" "a" #'counsel-ag
+       :desc "helm ag" "A" #'helm-ag
        :desc "Search/Insert BibTeX Cite" "c" #'org-ref-cite-insert-helm
        )
       (:prefix ("t" . "toggle")
+       :desc "Toggle global debug on error" "d" #'toggle-debug-on-error
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle KeyCast Mode" "k" #'keycast-mode
        :desc "Toggle Menu Bar" "m" #'menu-bar-mode
+       :desc "Toggle writegood mode" "S" #'writegood-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        (:prefix ("SPC" . "Whitespaces")
@@ -635,13 +660,13 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 Changing some keybindings from their defaults to better fit with Doom Emacs, and to avoid conflicts with my window managers which sometimes use the control key in their keybindings.  By default, Doom Emacs does not use ~SPC-e~ for anything, so I choose to use the format ~SPC-e~ plus ~key~ for these (I also use ~SPC-e~ for ~eww~ keybindings).
 
-| COMMAND         | DESCRIPTION                                    | KEYBINDING |
-|-----------------+------------------------------------------------+------------|
-| eval-buffer     | /Evaluate elisp in buffer/                     | SPC e b    |
-| eval-defun      | /Evaluate the defun containing or after point/ | SPC e d    |
-| eval-expression | /Evaluate an elisp expression/                 | SPC e e    |
-| eval-last-sexp  | /Evaluate elisp expression before point/       | SPC e l    |
-| eval-region     | /Evaluate elisp in region/                     | SPC e r    |
+| COMMAND         | DESCRIPTION                                  | KEYBINDING |
+|-----------------+----------------------------------------------+------------|
+| eval-buffer     | /Evaluate elisp in buffer/                     | ~SPC e b~    |
+| eval-defun      | /Evaluate the defun containing or after point/ | ~SPC e d~    |
+| eval-expression | /Evaluate an elisp expression/                 | ~SPC e e~    |
+| eval-last-sexp  | /Evaluate elisp expression before point/       | ~SPC e l~    |
+| eval-region     | /Evaluate elisp in region/                     | ~SPC e r~    |
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
@@ -692,6 +717,12 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
       )
 #+end_src
 
+**** Hydra
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(define-key bibtex-mode-map (kbd "M-b") 'org-ref-bibtex-hydra/body)
+(define-key org-mode-map (kbd "C-c ]") 'org-ref-insert-link-hydra/body)
+
+#+end_src
 **** Embark (~C-:~)
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (require 'embark)
@@ -756,6 +787,14 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 
 #+end_src
 
+*** Evil Mode Bindings
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(unbind-key "K" evil-normal-state-map)
+(unbind-key "K" evil-visual-state-map)
+(map! :nv "gK"  #'+lookup/documentation)
+#+end_src
+
+*** Doom Dashboard
 **** Other (~g~ / ~z~)
 #+begin_src emacs-lisp
 (map! :nv "gr" #'org-babel-tangle)
@@ -1672,8 +1711,8 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 | COMMAND    | DESCRIPTION                        | KEYBINDING |
 |------------+------------------------------------+------------|
-| dired      | /Open dired file manager/            | SPC d d    |
-| dired-jump | /Jump to current directory in dired/ | SPC d j    |
+| dired      | /Open dired file manager/            | ~SPC d d~    |
+| dired-jump | /Jump to current directory in dired/ | ~SPC d j~    |
 
 **** Keybinding Configuration (~SPC-<Key>~)
 
@@ -1694,13 +1733,13 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 
 | COMMAND             | DESCRIPTION                                 | KEYBINDING |
 |---------------------+---------------------------------------------+------------|
-| dired-view-file     | /View file in dired/                          | SPC d v    |
-| dired-up-directory  | /Go up in directory tree/                     | h          |
-| dired-find-file     | /Go down in directory tree (or open if file)/ | l          |
-| dired-next-line     | Move down to next line                      | j          |
-| dired-previous-line | Move up to previous line                    | k          |
-| dired-mark          | Mark file at point                          | m          |
-| dired-unmark        | Unmark file at point                        | u          |
+| dired-view-file     | /View file in dired/                          | ~SPC d v~    |
+| dired-up-directory  | /Go up in directory tree/                     | ~h~          |
+| dired-find-file     | /Go down in directory tree (or open if file)/ | ~l~          |
+| dired-next-line     | Move down to next line                      | ~j~          |
+| dired-previous-line | Move up to previous line                    | ~k~          |
+| dired-mark          | Mark file at point                          | ~m~          |
+| dired-unmark        | Unmark file at point                        | ~u~          |
 
 **** Dired-Mode-Mapping
 
@@ -2304,9 +2343,9 @@ Useful mu4e manual pages:
 *** Beancount
 [[https://beancount.github.io/docs/][Beancount]] is a CLI Tool written in Python to manage finances.
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(map! :map beancount-mode-map
-      :leader
+#+begin_src emacs-lisp
+(map!
+      :map beancount-mode-map
        (:prefix "m"
         :desc "Insert Date" :n "i" #'beancount-insert-date
         :desc "Query" :n "q" #'beancount-query

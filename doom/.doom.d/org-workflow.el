@@ -103,22 +103,22 @@
 
 (after! org
   (appendq! +ligatures-extra-symbols
-            `(:checkbox      "☐"
-              :pending       "◼"
-              :checkedbox    "☑"
+            `(:checkbox      ""
+              :pending       ""
+              :checkedbox    ""
               :list_property "∷"
-              :results       "🠶"
+              :results       ""
               :property      ""
               :properties    ""
               :end           ""
               :options       "⌥"
-              :title         "𝙏"
-              :subtitle      "𝙩"
-              :author        "𝘼"
-              :date          "𝘿"
-              :latex_header  "⇥"
+              :title         ""
+              :subtitle      ""
+              :author        ""
+              :date          ""
+              :latex_header  ""
               :latex_class   "🄲"
-              :beamer_header "↠"
+              :beamer_header ""
               :begin_quote   "❮"
               :end_quote     "❯"
               :begin_export  "⯮"
@@ -222,6 +222,14 @@
 (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-drawer nil :inherit 'fixed-pitch :foreground "SkyBlue4")
 
+(defun jp/org-roam-visit (node &optional other-window &key templates)
+ (if (org-roam-node-file node)
+        (org-roam-node-visit node other-window)
+   (org-roam-capture-
+       :node node
+       :templates templates
+       :props '(:finalize find-file))))
+
 (defun jp/org-roam-select-prefix (prefix)
   (org-roam-node-read
    nil
@@ -244,43 +252,39 @@
 
 (defun jp/org-roam-ignore-priv ()
   (interactive)
-  (jp/org-roam-ignore-prefix "/ZK"))
+  (jp/org-roam-visit (jp/org-roam-ignore-prefix "/ZK")))
 
 (defun jp/org-roam-ignore-acg ()
   (interactive)
-  (jp/org-roam-ignore-prefix "/acg"))
+  (jp/org-roam-visit (jp/org-roam-ignore-prefix "/acg")))
 
 (defun jp/org-roam-ignore-literature ()
   (interactive)
-  (jp/org-roam-ignore-prefix "/Literature"))
+  (jp/org-roam-visit (jp/org-roam-ignore-prefix "/Literature")))
 
 (defun jp/org-roam-select-literature ()
   (interactive)
-  (jp/org-roam-select-prefix "/Literature"))
+  (jp/org-roam-visit (jp/org-roam-select-prefix "/Literature")))
 
 (defun jp/org-roam-ignore-pc ()
   (interactive)
-  (jp/org-roam-ignore-prefix "/PC"))
+  (jp/org-roam-visit (jp/org-roam-ignore-prefix "/PC")))
 
 (defun jp/org-roam-select-pc ()
   (interactive)
-  (jp/org-roam-select-prefix "/PC"))
+  (jp/org-roam-visit (jp/org-roam-select-prefix "/PC")))
 
 (defun jp/org-roam-ignore-projects ()
   (interactive)
-  (jp/org-roam-ignore-prefix "/Projects"))
-
-(defun jp/org-roam-select-projects ()
-  (interactive)
-  (jp/org-roam-select-prefix "/Projects"))
+  (jp/org-roam-visit (jp/org-roam-ignore-prefix "/Projects")))
 
 (defun jp/org-roam-ignore-other ()
   (interactive)
-  (jp/org-roam-ignore-prefix "/20"))
+  (jp/org-roam-visit (jp/org-roam-ignore-prefix "/20")))
 
 (defun jp/org-roam-select-other ()
   (interactive)
-  (jp/org-roam-select-prefix "/20"))
+  (jp/org-roam-visit (jp/org-roam-select-prefix "/20")))
 
 (defun jp/org-roam-get-tagged (&optional tag)
   (mapcar
@@ -331,7 +335,7 @@ Returns file content as a string."
 
 (defun jp/daily-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "~/share/notes/daily/reviews.org")
+  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "daily/reviews.org")
                                   (file "~/.doom.d/templates/daily-review.org")))))
     (progn
       (org-capture nil "d")
@@ -342,8 +346,8 @@ Returns file content as a string."
 
 (defun jp/weekly-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "~/share/notes/daily/reviews.org")
-                                  (file "~/.doom.d/templates/weekly-review.org")))))
+  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "daily/reviews.org"))
+                                  (file "~/.doom.d/templates/weekly-review.org"))))
     (progn
       (org-capture nil "d")
       (org-capture-finalize t)
@@ -353,14 +357,17 @@ Returns file content as a string."
 
 (defun jp/monthly-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "~/share/notes/daily/reviews.org")
-                                  (file "~/.doom.d/templates/monthly-review.org")))))
+  (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "daily/reviews.org"))
+                                  (file "~/.doom.d/templates/monthly-review.org"))))
     (progn
       (org-capture nil "d")
       (org-capture-finalize t)
       (org-speed-move-safe 'outline-up-heading)
       (org-narrow-to-subtree)
       (org-clock-in))))
+
+(defun jp/org-roam-select-projects ()
+  (jp/org-roam-select-prefix "/Projects"))
 
 (defun jp/go-to-projects (&optional name head)
   ""
@@ -397,6 +404,12 @@ Returns file content as a string."
           holiday-other-holidays holiday-christian-holidays
           holiday-solar-holidays))
 
+(if (or
+     (eq system-type 'darwin)
+     (and (eq system-type 'gnu/linux) (string-suffix-p "fritz.box" system-name)))
+  (defvar jp/home t)
+  (defvar jp/home nil))
+
 (defun jp/org-roam-refresh-agenda-list ()
   (interactive)
   (setq org-agenda-files (jp/org-roam-list-notes-by-tag "Project"))
@@ -404,7 +417,13 @@ Returns file content as a string."
     (add-to-list 'org-agenda-files node))
   (add-to-list 'org-agenda-files (concat (getenv "HOME") "/tmp/outlook.org"))
   (add-to-list 'org-agenda-files (jp/org-path "Agenda.org"))
-  (add-to-list 'org-agenda-files (jp/org-path "Habits.org")))
+  (add-to-list 'org-agenda-files (jp/org-path "Habits.org"))
+  (if jp/home
+      (setq org-agenda-filter '("-@work" "-ACG")
+            org-agenda-tag-filter '("-@work" "-ACG"))
+      (setq org-agenda-filter '("-@home")
+            org-agenda-tag-filter '("-@home"))
+    ))
 
 (add-hook! 'org-roam-db-autosync-mode-hook #'jp/org-roam-refresh-agenda-list)
 
@@ -419,69 +438,69 @@ Returns file content as a string."
 
 (setq org-capture-templates '(
                               ("a" "Agenda")
-                              ("ah" "Programming" entry (file+headline "~/share/org/Agenda.org" "Programming")
+                              ("ah" "Programming" entry (file+headline (concat org-directory "/Agenda.org") "Programming")
                                "* TODO %?\n %i\n %a")
-                              ("ai" "Important" entry (file+headline "~/share/org/Agenda.org" "Important")
+                              ("ai" "Important" entry (file+headline (concat org-directory "/Agenda.org") "Important")
                                "* TODO %?\n %i\n %a")
-                              ("as" "Sys" entry (file+headline "~/share/org/Agenda.org" "Sys")
+                              ("as" "Sys" entry (file+headline (concat org-directory "/Agenda.org") "Sys")
                                "* TODO %?\n %i\n %a")
-                              ("f" "Fleeting Note" entry (file+headline "~/org/Notes.org" "Tasks")
+                              ("f" "Fleeting Note" entry (file+headline (concat org-directory "/Notes.org") "Tasks")
                                "* %?\n %x\n %i\n %a")
                               ("M" "Meeting" entry
-                               (file+olp+datetree "~/share/org/Meetings.org")
+                               (file+olp+datetree (concat org-directory "/Meetings.org")
                                (function jp/read-meeting-template)
                                :clock-in :clock-resume
                                :empty-lines 1)
                               ("m" "Email Workflow")
-                              ("mf" "Follow Up" entry (file+olp "~/share/org/Mail.org" "Follow Up")
+                              ("mf" "Follow Up" entry (file+olp (concat org-directory "/Mail.org") "Follow Up")
                                "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote")
-                              ("mr" "Read Later" entry (file+olp "~/share/org/Mail.org" "Read Later")
+                              ("mr" "Read Later" entry (file+olp (concat org-directory "/Mail.org") "Read Later")
                                "* TODO %a\n%?\n#+begin_quote\n%x\n#+end_quote%x")
                               ("l" "Logbook Entries")
                               ("ls" "Software" entry
-                               (file+olp+datetree "~/share/org/Logbook.org")
+                               (file+olp+datetree (concat org-directory "/Logbook.org"))
                                "\n* %U %a%? :Software:"
                                :clock-in :clock-resume)
                               ("lh" "Hardware" entry
-                               (file+olp+datetree "~/share/org/Logbook.org")
+                               (file+olp+datetree (concat org-directory "/Logbook.org"))
                                "\n* %U %a%? :Hardware:"
                                :clock-in :clock-resume)
                               ("lc" "Configuration" entry
-                               (file+olp+datetree "~/share/org/Logbook.org")
+                               (file+olp+datetree (concat org-directory "/Logbook.org"))
                                "\n* %U %a%? :Configuration:"
                                :clock-in :clock-resume)
                               ("s" "Create Scripts")
                               ("ss" "shell" entry
-                               (file+headline "~/share/org/scripts/%<%Y%m%d%H%M%S>.org" "Scripts")
+                               (file+headline (concat org-directory "/scripts/%<%Y%m%d%H%M%S>.org") "Scripts")
                                (function jp/read-script-template)
                                :clock-in :clock-resume
                                :empty-lines 1)
-                              ("f" "Fleeting Note" entry (file+headline "~/share/org/Notes.org" "Tasks")
+                              ("f" "Fleeting Note" entry (file+headline (concat org-directory "/Notes.org") "Tasks")
                                "* %?\n %x\n %i\n %a")
-                              ("p" "Privat" entry (file+datetree "privat.org.gpg")
-                               "* ~%<%H:%M>~ - %?\n"
+                              ("p" "Privat" entry (file+datetree (concat (getenv "HOME") "/privat.org.gpg")
+                               "* ~%<%H:%M>~ - %?\n")
                                :time-prompt t
                                :unnarrowed t)
                               ("t" "Task Entries")
-                              ("tt" "Todo Task" entry (file+headline "~/share/org/Notes.org" "Tasks")
+                              ("tt" "Todo Task" entry (file+headline (concat org-directory "/Notes.org") "Tasks")
                                "* TODO %?\n %i\n %a")
-                              ("te" "Epic Task" entry (file+headline "~/share/org/Notes.org" "Epic")
+                              ("te" "Epic Task" entry (file+headline (concat org-directory "/Notes.org") "Epic")
                                "* EPIC %?\n %i\n %a")
-                              ("ti" "New Idea" entry (file+headline "~/share/org/Notes.org" "Ideas")
-                               "* IDEA %?\n %i\n %a")))
+                              ("ti" "New Idea" entry (file+headline (concat org-directory "/Notes.org") "Ideas")
+                               "* IDEA %?\n %i\n %a"))))
 
 (setq org-roam-capture-templates
       '(("d" "default" plain
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n")
+                  "#+TITLE: ${title}\n")
          :unnarrowed t)
         ("j" "Projects" plain
          (function jp/read-newproject-template)
          :if-new (file+head
                   "Projects/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n")
+                  "#+TITLE: ${title}\n")
          :clock-in :clock-resume
          :unnarrowed t
          )
@@ -489,7 +508,7 @@ Returns file content as a string."
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "People/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n")
+                  "#+TITLE: ${title}\n")
          :unnarrowed t
          )
         ("l" "Literature")
@@ -497,21 +516,21 @@ Returns file content as a string."
          "%?\n\nSee also %a.\n* Links\n- %x\n* Notes\n"
          :if-new (file+head
                   "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n")
+                  "#+TITLE: ${title}\n")
          :unnarrowed t
          )
         ("lr" "Bibliography reference" plain
          "#+ROAM_KEY: %^{citekey}\n#+PROPERTY: type %^{entry-type}\n#+FILETAGS: %^{keywords}\n#+AUTHOR: %^{author}\n%?"
          :if-new (file+head
                   "References/${citekey}.org"
-                  "${title}\n")
+                  "#+TITLE: ${title}\n")
          :unnarrowed t
          )
         ("p" "PC" plain
          "%?\n\nSee also %a.\n"
          :if-new (file+head
                   "PC/%<%Y%m%d%H%M%S>-${slug}.org"
-                  "${title}\n#+date: %U")
+                  "#+TITLE: ${title}\n#+date: %U")
          :unnarrowed t
          )
         )
@@ -522,20 +541,20 @@ Returns file content as a string."
                                         "%?\n\n* Citations\n#+begin_quote\n${body}\n#+end_quote"
                                         :if-new (file+head
                                                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "${title}\n#+date: %U\n")
+                                                 "#+TITLE: ${title}\n#+date: %U\n")
                                         :unnarrowed t
                                         )
                                        ("l" "Literature References" plain
                                         "%?\n\n* Abstract\n#+begin_quote\n${body}\n#+end_quote"
                                         :if-new (file+head
                                                  "References/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
+                                                 "#+TITLE: ${title}\n#+date: %U\n#+ROAM_REF: ${ref}")
                                         :unnarrowed t
                                         :empty-lines 1)
                                        ("w" "Web site" entry
                                         :target (file+head
                                                  "Literature/%<%Y%m%d%H%M%S>-${slug}.org"
-                                                 "${title}\n#+date: %U\n")
+                                                 "#+TITLE: ${title}\n#+date: %U\n")
                                         "* %a :website:\n\n%U %?\n\n#+begin_quote\n%:initial\n#+end_quote")
                                        )
       )
@@ -545,14 +564,14 @@ Returns file content as a string."
          "* %?"
          :if-new (file+head
                   "%<%Y-%m-%d>.org"
-                  "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
+                  "#+TITLE: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n")
          :kill-buffer t
          )
         ("j" "Journal entry" entry
          "* ~%<%H:%M>~ - Journal  :journal:\n\n%?\n\n"
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
-                  "%<%Y-%m-%d>\n"
+                  "#+TITLE: %<%Y-%m-%d>\n"
                   ("Journal"))
          :kill-buffer t
          )
@@ -560,7 +579,7 @@ Returns file content as a string."
          "* %?\n  %U\n  %a\n  %i"
          :if-new (file+head+olp
                   "%<%Y-%B>.org"
-                  "%<%Y-%B>\n"
+                  "#+TITLE: %<%Y-%B>\n"
                   ("Log"))
          :kill-buffer t
          )
@@ -568,19 +587,19 @@ Returns file content as a string."
          (file "~/.dotfiles/doom/.doom.d/templates/Meeting.org")
          :if-new (file+head+olp
                   "%<%Y-%m-%d>.org"
-                  "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
+                  "#+TITLE: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"
                   ("Meetings")))
         ("r" "Review")
         ("rd" "Daily Review" entry
          (file "~/.dotfiles/doom/.doom.d/templates/daily-review.org")
          :target (file+head
           "%<%Y-%m-%d>.org"
-          "%<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"))
+          "#+TITLE: %<%Y-%m-%d>\n[[roam:%<%Y-%B>]]\n"))
         ("rm" "Monthly Review" entry
          (file "~/.dotfiles/doom/.doom.d/templates/monthly-review.org")
          :if-new (file+head
                   "%<%Y-%B>.org"
-                  "%<%Y-%B>\n"))))
+                  "#+TITLE: %<%Y-%B>\n"))))
 
 (setq org-agenda-custom-commands
       '(("d" "Dashboard"
@@ -653,20 +672,32 @@ Returns file content as a string."
                 ((org-agenda-overriding-header "Next Tasks")))))))
 
 (setq org-tag-alist
-      '((:startgroup)
+      '((:startgrouptag . "Sys")
         ; Put mutually exclusive tags here
-        (:endgroup)
+        ("followup" . ?f)
+        ("recurring" . ?r)
+        ("batch" . ?b)
+        ("planning" . ?p)
+        ("publish" . ?P)
+        (:endgrouptag . "M")
+        (:startgroup . "Dev")
         ("@sys" . ?S)
         ("@home" . ?H)
         ("@work" . ?W)
-        ("planning" . ?p)
-        ("publish" . ?P)
-        ("batch" . ?b)
+        (:endgroup . "S")
+        (:startgroup "Basic")
+        ("@dev" . ?d)
         ("note" . ?n)
-        ("next" . ?n)
-        ("followup" . ?f)
-        ("recurring" . ?r)
-        ("idea" . ?i)))
+        ("idea" . ?i)
+        (:endgroup . "S")
+        (:startgroup . "Type")
+        ("ACG" . ?a)
+        (:endgroup . "S")
+        (:startgroup . "Project")
+        ("4anyRAM" . ?4)
+        ("web" . ?w)
+        (:endgroup . "S")
+        ))
 
 (setq org-lowest-priority ?E) ;; Priorities A to E
 
@@ -874,6 +905,15 @@ Returns file content as a string."
       bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib"
                                        "~/ZK/BibTeX/Master.bib"
                                        "~/Projects/Method-Paper/bibliography.bib")
+      bibtex-completion-notes-template-multiple-files "* ${author-or-editor}, ${title}, ${journal}, (${year}) :${=type=}: \n\nSee [[cite:&${=key=}]]\n"
+
+      bibtex-completion-additional-search-fields '(keywords)
+      bibtex-completion-display-formats
+      '((article       . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}")
+    (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} Ch ${chapter:16}")
+    (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:20}")
+    (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:20}")
+    (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${=type=:7}"))
       bibtex-completion-library-path '("~/nc/Library/BibTeX/")
       bibtex-completion-notes-path "~/ZK/References/")
 

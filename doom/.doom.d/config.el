@@ -31,12 +31,23 @@
  window-combination-resize t)       ; take new window space from all other windows (not just current)
 (setq tab-width 2                   ; Smaller width for tab characters
       undo-limit 80000000           ; Raise undo-limit to 80Mb
+      indent-tabs-mode nil          ; Do not use tabs to indent lines
       scroll-margin 2               ; Add a margin when scrolling vertically
       x-stretch-cursor t)           ; Stretch cursor to the glyph width
 (set-default-coding-systems 'utf-8) ; Default to utf-8 encoding
 
+;;;; backups
+(setq backup-by-copying t
+      version-control t
+      vc-make-backup-files t
+      delete-old-versions 0
+      auto-save-include-big-deletions t
+      backup-directory-alist `((".*" . ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/backups")))
+      auto-save-file-name-transforms `((".*" ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/autosaves") t)))
+
 (add-to-list 'load-path (file-truename "~/.doom.d"))
 (require 'org-workflow)
+(setq org-logseq-dir "~/ZK/logseq")
 
 (map! :leader
       (:prefix ("b" . "buffer")
@@ -87,13 +98,17 @@
       ;; (:prefix-map ("p" . "projectile"))
       ;; (:prefix-map ("q" . "quit"))
       (:prefix ("s" . "search")
+       :desc "counsel ag" "a" #'counsel-ag
+       :desc "helm ag" "A" #'helm-ag
        :desc "Search/Insert BibTeX Cite" "c" #'org-ref-cite-insert-helm
        )
       (:prefix ("t" . "toggle")
+       :desc "Toggle global debug on error" "d" #'toggle-debug-on-error
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle KeyCast Mode" "k" #'keycast-mode
        :desc "Toggle Menu Bar" "m" #'menu-bar-mode
+       :desc "Toggle writegood mode" "S" #'writegood-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        (:prefix ("SPC" . "Whitespaces")
@@ -164,6 +179,9 @@
        )
       )
 
+(define-key bibtex-mode-map (kbd "M-b") 'org-ref-bibtex-hydra/body)
+(define-key org-mode-map (kbd "C-c ]") 'org-ref-insert-link-hydra/body)
+
 (require 'embark)
 (global-set-key (kbd "C-:") 'embark-act)
 
@@ -215,6 +233,10 @@
       "C-<up>"         #'+evil/window-move-up
       "C-<right>"      #'+evil/window-move-right
       )
+
+(unbind-key "K" evil-normal-state-map)
+(unbind-key "K" evil-visual-state-map)
+(map! :nv "gK"  #'+lookup/documentation)
 
 (map! "H-<end>" "<end>")
 (map! "H-<home>" "<home>")
@@ -926,10 +948,3 @@ argument, query for word to search."
       :ne "q" #'ledger-reconcile-quit
       :ne "a" #'ledger-reconcile-add
       :ne "d" #'ledger-reconcile-delete)
-
-(map! :map beancount-mode-map
-      :leader
-       (:prefix "m"
-        :desc "Insert Date" :n "i" #'beancount-insert-date
-        :desc "Query" :n "q" #'beancount-query
-        ))
