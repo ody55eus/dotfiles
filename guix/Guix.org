@@ -708,7 +708,7 @@ Default services for each machine:
 |-----------+-------------+--------------------------------------+------+--------------------------------------+---------|
 | eumolos   | /dev/sda    | tbd                                  | /    | tbd                                  | ext4    |
 | hera      | /dev/sdb    | b6879df0-45fc-49cb-a091-a64fdbba2115 | /    | c2051dff-a06b-42f9-aed4-86383c41db69 | ext4    |
-| nasserver | /dev/sda    | tbd                                  | /    | tbd                                  | ext4    |
+| nasserver | /dev/sda    | 5e3f3adf-c169-4e92-8265-2366f5b0aa3f | /    | 24936c30-c01d-4fe9-9160-9b2b11e9db0f | ext4    |
 
 #+NAME: get-fs
 #+begin_src sh :var fs=file-systems field=1
