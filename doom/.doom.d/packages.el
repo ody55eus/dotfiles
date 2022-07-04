@@ -179,6 +179,8 @@
   :recipe (:host github
            :repo "rougier/mu4e-dashboard"))
 
+(package! xkcd)
+
 ; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
 (package! keycast

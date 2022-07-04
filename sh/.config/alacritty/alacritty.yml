@@ -6,12 +6,6 @@ font:
   style: Regular
   size: 12
 
-cursor:
-  style:
-    shape: Beam
-  unfocused_hollow: false
-  thickness: 0.15
-
 window:
   padding:
     x: 13
