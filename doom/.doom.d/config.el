@@ -110,6 +110,7 @@
        :desc "Toggle Menu Bar" "m" #'menu-bar-mode
        :desc "Toggle writegood mode" "S" #'writegood-mode
        :desc "Toggle truncate lines" "t" #'toggle-truncate-lines
+       :desc "Toggle highlight TODOs" "T" #'hl-todo-mode
        :desc "Toggle visual fill column" "v" #'visual-fill-column-mode
        (:prefix ("SPC" . "Whitespaces")
         :desc "Toggle local whitespace option" "l" #'whitespace-toggle-options
@@ -155,6 +156,7 @@
       (:prefix ("l" . "lookup")
        :desc "helm-M-x" "c" #'helm-M-x
        :desc "helm-bibtex" "b" #'helm-bibtex
+       :desc "counsel-fonts" "f" #'counsel-fonts
        :desc "helm-occur" "o" #'helm-occur
        :desc "helm-imenu" "i" #'helm-imenu
        :desc "helm-imenu-in-all-buffers" "I" #'helm-imenu-in-all-buffers
@@ -266,11 +268,11 @@
   ;; '(mode-line-highlight :background "DarkBlue")
   )
 
-(setq doom-font (font-spec :family "JetBrains Mono" :size 16)
-      doom-big-font (font-spec :family "JetBrains Mono" :size 22)
+(setq doom-font (font-spec :family "JuliaMono" :size 16)
+      doom-big-font (font-spec :family "JuliaMono" :size 22)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
-      doom-unicode-font (font-spec :family "JetBrains Mono" :size 16)
-      doom-serif-font (font-spec :family "JetBrains Mono" :weight 'light :size 16))
+      doom-unicode-font (font-spec :family "JuliaMono" :size 16)
+      doom-serif-font (font-spec :family "JuliaMono" :weight 'light :size 16))
 
 (setq display-line-numbers-type 'relative)
 
