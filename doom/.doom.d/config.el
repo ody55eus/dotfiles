@@ -179,6 +179,9 @@
        )
       )
 
+(define-key bibtex-mode-map (kbd "M-b") 'org-ref-bibtex-hydra/body)
+(define-key org-mode-map (kbd "C-c ]") 'org-ref-insert-link-hydra/body)
+
 (require 'embark)
 (global-set-key (kbd "C-:") 'embark-act)
 
