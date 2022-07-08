@@ -664,7 +664,7 @@ Returns file content as a string."
          ((agenda "" ((org-deadline-warning-days 7)))
           (tags-todo "+PRIORITY=\"A\""
                      ((org-agenda-overriding-header "High Priority")))
-          (tags-todo "+followup" ((org-agenda-overriding-header "Needs Follow Up")))
+          (tags-todo "followup" ((org-agenda-overriding-header "Needs Follow Up")))
           (todo "NEXT"
                 ((org-agenda-overriding-header "Next Actions")
                  (org-agenda-max-todos nil)))
@@ -673,7 +673,8 @@ Returns file content as a string."
           (todo "BACKLOG"
                 ((org-agenda-overriding-header "Backlog")
                  (org-agenda-max-todos 99)))
-          (todo "REVIEW" ((org-agenda-overriding-header "Active Reviews")))))
+          (todo "REVIEW" ((org-agenda-overriding-header "Active Reviews")))
+          (todo "HOLD" ((org-agenda-overriding-header "On Hold")))))
 
         ("n" "Next Tasks"
          ((agenda "" ((org-deadline-warning-days 7)))
