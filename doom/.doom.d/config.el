@@ -673,11 +673,19 @@ argument, query for word to search."
 
 (defvar jp/guix/pythonpath (getenv "GUIX_PYTHONPATH")
   "Absolute Python Library Path (e.g. /usr/share/lib/python3.9/site-packages)")
+(defvar jp/conda/pythonpath (getenv "CONDA_PYTHON_EXE")
+  "Absolute Conda Python Exe Path (e.g. /opt/miniconda3/bin/python)")
+(defvar jp/conda/prefix (getenv "CONDA_PREFIX")
+  "Absolute Path to current Conda Prefix (e.g. /home/user/.conda/envs/my-environment)")
 (defvar jp/python
   (if jp/guix/pythonpath
       (concat (ivy--parent-dir (ivy--parent-dir (ivy--parent-dir jp/guix/pythonpath))) "bin/python3")
-    (executable-find "python3")
-    )
+    (if jp/conda/prefix
+        (concat jp/conda/prefix "/bin/python")
+      (if jp/conda/pythonpath
+          jp/conda/pythonpath
+        (executable-find "python3")
+        )))
   "Python binary path.")
 (setq python-shell-interpreter jp/python
       dap-python-executable jp/python
