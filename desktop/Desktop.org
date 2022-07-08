@@ -2,7 +2,7 @@
 #+AUTHOR: Jonathan Pieper
 
 * Qtile
-** Header and Imports
+** Header
 #+begin_src python :tangle .config/qtile/config.py
 # Copyright (c) 2010 Aldo Cortesi
 # Copyright (c) 2010, 2014 dequis
@@ -11,6 +11,7 @@
 # Copyright (c) 2012 Craig Barnes
 # Copyright (c) 2013 horsik
 # Copyright (c) 2013 Tao Sauvage
+# Copyright (c) 2022 Jonathan Pieper
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +30,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+#+end_src
 
+** Imports
+#+begin_src python :tangle .config/qtile/config.py
 from libqtile import bar, layout, widget, hook
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
@@ -105,15 +109,20 @@ def autostart():
     subprocess.Popen([home + '/.config/qtile/autostart.sh'])
 #+end_src
 *** Autostart Script
-- Set Screent-Resolution to =1920x1080=.
-- Start Emacs Daemon
+- Set Screen-Resolution to =1920x1080=.
+- Set Wallpaper.
+- Start Alacritty and execute the startup script.
 #+begin_src sh :tangle .config/qtile/autostart.sh :tangle-mode (identity #o755) :shebang #!/usr/bin/env zsh
 xrandr --output Virtual-1 --mode 1920x1080
-xwallpaper --center /usr/share/backgrounds/archlinux/archwave.png
+xwallpaper --maximize /usr/share/backgrounds/archlinux/wave.png
 alacritty -e ~/startup.sh
 #+end_src
 
 *** Startup Script
+- Mount Virtual Box Shared Folders
+- Listen on DHCP to get IP
+- Start Emacs Daemon
+- Start Tmux
 #+begin_src sh :tangle startup.sh :tangle-mode (identity #o755) :shebang #!/usr/bin/env zsh
 sudo mount -t vboxsf share /home/jp/share
 sudo dhclient
@@ -172,7 +181,7 @@ layouts = [
 ** Default Settings
 #+begin_src python :tangle .config/qtile/config.py
 widget_defaults = dict(
-    font="sans",
+    font="Overpass",
     fontsize=12,
     padding=3,
 )
