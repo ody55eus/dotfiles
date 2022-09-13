@@ -207,12 +207,16 @@ References:
 "bat"
 "zip"
 "unzip"
-"ripgrep"
-"the-silver-searcher" ; ag
 "trash-cli"
 "glibc-locales"
 "nss-certs"
 
+#+end_src
+
+***** Search Tools
+#+begin_src scheme :noweb-ref base-packages :noweb-sep ""
+"ripgrep"
+"the-silver-searcher" ; ag
 #+end_src
 
 **** Window Manager
@@ -222,6 +226,7 @@ References:
 #+begin_src scheme :noweb-ref base-packages :noweb-sep ""
 
 "awesome"
+"herbstluftwm"
 
 #+end_src
 
@@ -273,7 +278,7 @@ References:
 #+begin_src scheme :noweb-ref packages :noweb-sep ""
 
 "icecat"
-"nyxt"
+;; "nyxt"
 
 #+end_src
 
@@ -392,8 +397,8 @@ map <C-g> abort
 
 #+begin_src scheme :noweb-ref packages :noweb-sep ""
 
-"zathura"
-"zathura-pdf-mupdf"
+;; "zathura"
+;; "zathura-pdf-mupdf"
 
 #+end_src
 
@@ -948,6 +953,7 @@ Using virtualization services that need extra imports:
 ** Bash
 ** Zsh
 ** Guix Home
+*** Basic Home config
 #+begin_src scheme :tangle ./home/home.scm :noweb yes
 (use-modules (gnu home)
              (gnu home services)
@@ -1013,6 +1019,8 @@ Using virtualization services that need extra imports:
                           "0kj252ywhc0jw0j7mr3dwx4q5mi5rrlm4jlhc8mbx66ylfvxi9qg")))))
                  )))))))
 #+end_src
+*** Advanced Home config
+-
 
 * Makefile
 ** Create Makefile

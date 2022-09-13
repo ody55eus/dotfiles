@@ -63,9 +63,9 @@
         (simple-service 'some-useful-env-vars-service
                         home-environment-variables-service-type
                         `(("LESSHISTFILE" . "$XDG_CACHE_HOME/.lesshst")
-                          ("EDITOR" . "\"emacsclient -t -a nvim\"")
-                          ("VISUAL" . "\"emacsclient -c -a emacs\"")
-                          ("MANPAGER" . "\"nvim -c 'Man!' -o -\"")
+                          ("EDITOR" . "emacsclient -t -a nvim")
+                          ("VISUAL" . "emacsclient -c -a emacs")
+                          ("MANPAGER" . "nvim -c 'Man!' -o -")
                           ("ZDOTDIR" . "$HOME/.config/zsh")
                           ("ZSH" . "$HOME/.config/zsh/ohmyzsh")
                           ("HISTFILE" . "$ZDOTDIR/.zsh_history")
