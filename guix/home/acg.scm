@@ -10,57 +10,72 @@
 
 (home-environment
  (packages (specifications->packages (list
+                                      "emacs-next-pgtk-latest"
+                                      "neovim"
+                                      "tmux"
+
+                                      "mcron"
+                                      "unzip"
+                                      "fzf"
+                                      "ripgrep"
+                                      "bat"
+                                      "git"
+                                      "git-flow"
+                                      "stow"
+                                      "openssh"
+                                      "font-juliamono"
+                                      "font-jetbrains-mono"
+                                      "font-overpass"
+                                      "font-awesome"
 
                                       "redshift"
                                       "fontmanager"
                                       "xdg-utils"      ;; For xdg-open, etc
                                       "xdg-dbus-proxy" ;; For Flatpak
                                       "shared-mime-info"
+                                      "xrandr"
+                                      "aspell"
+                                      "aspell-dict-en"
+                                      "aspell-dict-de"
 
+                                      "alacritty"
                                       "icecat"
-
                                       "vlc"
-
                                       "mpv"
                                       "youtube-dl"
                                       "playerctl"
-
                                       "gimp"
 
                                       "flatpak"
+                                      "rofi"
 
                                       "pandoc"
-
-                                      "emacs-next-pgtk-latest"
                                       )))
  (services
-  (list (service
-         home-bash-service-type
-         (home-bash-configuration
-          (aliases
-           '(("l" . "ls -CF")
-             ("la" . "ls -A")
-             ("vi" . "nvim")
-             ("wget" . "wget -c")
-             ("lsd" . "ls -lAF | grep --color=never '^d'")
-             ("df" . "df -h")
-             ("psmem" . "ps aux | sort -nr -k 4 | head -5")
-             ("pscpu" . "ps aux | sort -nr -k 3 | head -5")
-             ("gpg-check" . "gpg --keyserver-options auto-key-retrieve --verify")
-             ("gpg-retrieve" . "gpg --keyserver-options auto-key-retrieve --receive-keys")
-             ("mergepdf" . "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=_merged.pdf")
-             ("path" . "echo -e ${PATH//:/\\n}")
-             ("ips" . "grep -o 'inet6\\? \\(addr:\\)\\?\\s\\?\\(\\(\\([0-9]\\+\\.\\)\\{3\\}[0-9]\\+\\)\\|[a-fA-F0-9:]\\+\\)' | awk '{ sub(/inet6? (addr:)? ?/, \\\"\\\"); print }'")
-             ("ll" . "ls -l")))
-          (bashrc
-           (list (local-file "./config/.bashrc" "bashrc")))))
+  (list
         (service
          home-zsh-service-type
          (home-zsh-configuration
           (zshrc
            (list (local-file "./config/.zshrc" "zshrc")
                  ))))
-        (simple-service 'some-useful-env-vars-service
+        (simple-service 'home-folder-service
+                        home-files-service-type
+                        (list `(".vimrc"
+                                ,(local-file "config/.vimrc" "vimrc-home"))
+                              `(".doom.d/packages.el"
+                                ,(local-file "../../doom/.doom.d/packages.el" "packages.el"))
+                              `(".doom.d/org-workflow.el"
+                                ,(local-file "../../doom/.doom.d/org-workflow.el" "org-workflow.el"))
+                              `(".doom.d/config.el"
+                                ,(local-file "../../doom/.doom.d/config.el" "config.el"))
+                              `(".doom.d/init.el"
+                                ,(local-file "../../doom/.doom.d/init.el" "init.el"))
+                              `(".vim/.vimrc"
+                                ,(local-file "config/.vim/vimrc" "vimrc"))
+                              `(".tmux.conf"
+                                ,(local-file "config/.tmux.conf" "tmux.conf"))))
+        (simple-service 'environment-variables-service
                         home-environment-variables-service-type
                         `(("LESSHISTFILE" . "$XDG_CACHE_HOME/.lesshst")
                           ("EDITOR" . "emacsclient -t -a nvim")
