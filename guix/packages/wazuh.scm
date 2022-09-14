@@ -1,0 +1,20 @@
+(use-modules ((guix licenses) #:prefix license:))
+(use-modules (gnu packages))
+(use-modules (gnu packages search))
+(use-modules (gnu packages shells))
+(use-modules (gnu packages ssh))
+(use-modules (gnu packages tls))
+(use-modules (gnu packages version-control))
+(use-modules (gnu packages video))
+(use-modules (gnu packages web))
+(use-modules (gnu packages base))
+(use-modules (gnu packages xml))
+(use-modules (guix packages))
+(use-modules (guix download))
+(use-modules (guix git-download))
+(use-modules (guix utils))
+(use-modules (guix build-system trivial))
+(use-modules (srfi srfi-1))
+
+
+guix shell  curl gcc make wget expect gnupg perl-test-base perl fakeroot python brotli go automake autoconf libtool gawk libsigsegv gcc-toolchain inetutils cmake node openssl clang
