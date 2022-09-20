@@ -1,5 +1,6 @@
 (use-modules ((guix licenses) #:prefix license:))
 (use-modules (gnu packages))
+(use-modules (gnu packages python))
 (use-modules (gnu packages algebra))
 (use-modules (gnu packages adns))
 (use-modules (gnu packages attr))
@@ -180,10 +181,15 @@ FILE-NAME found in %PATCH-PATH."
                                          ,file)))
                               (find-files out "\\.py$")))
                   (list '() '("-O") '("-OO")))
-                 #t)))))))
+                 #t)))
+           (delete 'check)
+           (delete 'remove-tests)
+           ))))
     (native-search-paths
      (list (search-path-specification
             (variable "PYTHONPATH")
             (files (list (string-append "lib/python"
                                         (version-major+minor version)
                                         "/site-packages"))))))))
+
+python-3.6
