@@ -61,7 +61,7 @@ extension, such as '.tar.gz'."
 
 (define %python-build-system-modules
   ;; Build-side modules imported by default.
-  `((guix build python-build-system)
+  `((guix packages python-build-system)
     ,@%gnu-build-system-modules))
 
 (define (default-python)
@@ -181,7 +181,7 @@ pre-defined variants."
                        (system (%current-system))
                        (guile #f)
                        (imported-modules %python-build-system-modules)
-                       (modules '((guix build python-build-system)
+                       (modules '((guix packages python-build-system)
                                   (guix build utils))))
   "Build SOURCE using PYTHON, and with INPUTS.  This assumes that SOURCE
 provides a 'setup.py' file as its build system."
