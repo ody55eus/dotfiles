@@ -13,6 +13,7 @@
   #:use-module (gnu packages bash)
   #:use-module (gnu packages check)
   #:use-module (gnu packages databases)
+  #:use-module (gnu packages multiprecision)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-build)
   #:use-module (gnu packages python-crypto)
@@ -765,7 +766,51 @@ under several distributions that's hard or impossible to figure out.")
      make common patterns shorter and easier.")
     (license license:bsd-2)))
 
-(list python
+(define-public python-pymysql
+  (package
+    (name "python-pymysql")
+    (version "0.9.3")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "PyMySQL" version))
+       (sha256
+        (base32 "1ry8lxgdc1p3k7gbw20r405jqi5lvhi5wk83kxdbiv8xv3f5kh6q"))))
+    (build-system python-build-system)
+    (inputs
+     (list python-cryptography))
+    (arguments
+     `(#:tests? #f))                    ; tests expect a running MySQL
+    (home-page "https://github.com/PyMySQL/PyMySQL/")
+    (synopsis "Pure-Python MySQL driver")
+    (description
+     "PyMySQL is a pure-Python MySQL client library, based on PEP 249.
+Most public APIs are compatible with @command{mysqlclient} and MySQLdb.")
+    (license license:expat)))
+
+(define-public python-pysimplesoap
+  (package
+    (name "python-pysimplesoap")
+    (version "1.16.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "PySimpleSOAP" version))
+       (sha256
+        (base32 "1qb7dn8m1cjwzql7vqj9i1hsscb7nyhimmlp45jrpzxds38g9fxi"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f))
+    (home-page "https://github.com/pysimplesoap/pysimplesoap/")
+    (synopsis "Python Simple SOAP Library")
+    (description
+     "Python simple and lightweight SOAP library for client and server webservices interfaces,
+      aimed to be as small and easy as possible, supporting most common functionality.
+      Initially it was inspired by PHP Soap Extension (mimicking its functionality, simplicity
+      and ease of use), with many advanced features added.")
+    (license license:lgpl3+)))
+
+(list python-3.6
       python-django
       python-six
       python-ldap3
@@ -774,10 +819,12 @@ under several distributions that's hard or impossible to figure out.")
       python-markupsafe
       python-mkdocs
       python-openpyxl
-      python-pycryptodomex
+      python-pycryptodome
       python-pyyaml
       python-requests
       python-selenium
       python-tornado
       python-tzlocal
+      python-pymysql
+      python-pysimplesoap
       python-utils)
