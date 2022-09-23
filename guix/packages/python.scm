@@ -1,74 +1,20 @@
-(use-modules ((guix licenses) #:prefix license:))
-(use-modules (gnu packages))
-(use-modules (gnu packages python))
-(use-modules (gnu packages algebra))
-(use-modules (gnu packages adns))
-(use-modules (gnu packages attr))
-(use-modules (gnu packages backup))
-(use-modules (gnu packages bash))
-(use-modules (gnu packages check))
-(use-modules (gnu packages compression))
-(use-modules (gnu packages crypto))
-(use-modules (gnu packages databases))
-(use-modules (gnu packages file))
-(use-modules (gnu packages fontutils))
-(use-modules (gnu packages gcc))
-(use-modules (gnu packages geo))
-(use-modules (gnu packages ghostscript))
-(use-modules (gnu packages gl))
-(use-modules (gnu packages glib))
-(use-modules (gnu packages graphviz))
-(use-modules (gnu packages graphics))
-(use-modules (gnu packages gstreamer))
-(use-modules (gnu packages gtk))
-(use-modules (gnu packages icu4c))
-(use-modules (gnu packages image))
-(use-modules (gnu packages imagemagick))
-(use-modules (gnu packages libevent))
-(use-modules (gnu packages libffi))
-(use-modules (gnu packages linux))
-(use-modules (gnu packages machine-learning))
-(use-modules (gnu packages man))
-(use-modules (gnu packages maths))
-(use-modules (gnu packages multiprecision))
-(use-modules (gnu packages networking))
-(use-modules (gnu packages ncurses))
-(use-modules (gnu packages openstack))
-(use-modules (gnu packages pcre))
-(use-modules (gnu packages perl))
-(use-modules (gnu packages pkg-config))
-(use-modules (gnu packages python-crypto))
-(use-modules (gnu packages python-web))
-(use-modules (gnu packages qt))
-(use-modules (gnu packages readline))
-(use-modules (gnu packages sdl))
-(use-modules (gnu packages search))
-(use-modules (gnu packages shells))
-(use-modules (gnu packages ssh))
-(use-modules (gnu packages statistics))
-(use-modules (gnu packages terminals))
-(use-modules (gnu packages tex))
-(use-modules (gnu packages texinfo))
-(use-modules (gnu packages time))
-(use-modules (gnu packages tls))
-(use-modules (gnu packages version-control))
-(use-modules (gnu packages video))
-(use-modules (gnu packages web))
-(use-modules (gnu packages base))
-(use-modules (gnu packages xml))
-(use-modules (gnu packages xorg))
-(use-modules (gnu packages xdisorg))
-(use-modules (gnu packages tcl))
-(use-modules (gnu packages bdw-gc))
-(use-modules (guix packages))
-(use-modules (guix download))
-(use-modules (guix git-download))
-(use-modules (guix utils))
-(use-modules (guix build-system gnu))
-(use-modules (guix build-system cmake))
-(use-modules (guix build-system python))
-(use-modules (guix build-system trivial))
-(use-modules (srfi srfi-1))
+(define-module (guix packages python)
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix utils)
+  #:use-module (guix packages)
+  #:use-module (guix download)
+  #:use-module (guix git-download)
+  #:use-module (guix build-system trivial)
+  #:use-module (guix packages python36-build-system)
+  #:use-module (gnu packages)
+  #:use-module (gnu packages base)
+  #:use-module (gnu packages bash)
+  #:use-module (gnu packages databases)
+  #:use-module (gnu packages python)
+  #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages python-crypto)
+  #:use-module (gnu packages python-web)
+  #:use-module (gnu packages time))
 
 
 (define (search-patch file-name)
@@ -161,6 +107,7 @@ FILE-NAME found in %PATCH-PATH."
            ;; FIXME: Without this phase we have close to 2000 files that
            ;; differ across different builds of this package.  With this phase
            ;; there are about 500 files left that differ.
+           (delete 'rebuild-bytecode)
            (add-after 'install 'rebuild-bytecode
              (lambda* (#:key outputs #:allow-other-keys)
                (setenv "DETERMINISTIC_BUILD" "1")
@@ -192,4 +139,134 @@ FILE-NAME found in %PATCH-PATH."
                                         (version-major+minor version)
                                         "/site-packages"))))))))
 
-python-3.6
+(define-public python-3 python-3.6)
+(define-public python python-3)
+
+(define* (wrap-python3 python
+                       #:optional
+                       (name (string-append (package-name python) "-wrapper")))
+  (package/inherit python
+    (name name)
+    (source #f)
+    (build-system trivial-build-system)
+    (outputs '("out"))
+    (inputs `(("bash" ,bash)))
+    (propagated-inputs `(("python" ,python)))
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+         (begin
+           (use-modules (guix build utils))
+           (let ((bin (string-append (assoc-ref %outputs "out") "/bin"))
+                 (python (string-append (assoc-ref %build-inputs "python") "/bin/")))
+                (mkdir-p bin)
+                (for-each
+                  (lambda (old new)
+                    (symlink (string-append python old)
+                             (string-append bin "/" new)))
+                  `("python3" ,"pydoc3" ,"pip3")
+                  `("python"  ,"pydoc"  ,"pip"))
+                ;; python-config outputs search paths based upon its location,
+                ;; use a bash wrapper to avoid changing its outputs.
+                (let ((bash (string-append (assoc-ref %build-inputs "bash")
+                                           "/bin/bash"))
+                      (old  (string-append python "python3-config"))
+                      (new  (string-append bin "/python-config")))
+                  (with-output-to-file new
+                    (lambda ()
+                      (format #t "#!~a~%" bash)
+                      (format #t "exec \"~a\" \"$@\"~%" old)
+                      (chmod new #o755))))))))
+    (synopsis "Wrapper for the Python 3 commands")
+    (description
+     "This package provides wrappers for the commands of Python@tie{}3.x such
+that they can also be invoked under their usual names---e.g., @command{python}
+instead of @command{python3} or @command{pip} instead of @command{pip3}.
+
+To function properly, this package should not be installed together with the
+@code{python} package: this package uses the @code{python} package as a
+propagated input, so installing this package already makes both the versioned
+and the unversioned commands available.")))
+
+(define-public python-wrapper (wrap-python3 python))
+(define-public python-minimal-wrapper (wrap-python3 python-minimal))
+
+(define-public python-django
+  (package
+    (name "python-django")
+    (version "1.11.29")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "Django" version))
+              (sha256
+               (base32
+                "171jsi54fbnxzi2n3l4hkdmmwfnfrwacs180rw59l0bqcvxsw022"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:modules ((srfi srfi-1)
+                  (guix build python-build-system)
+                  (guix build utils))
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'check 'set-tzdir
+           (lambda* (#:key inputs #:allow-other-keys)
+             ;; The test-suite tests timezone-dependent functions, thus tzdata
+             ;; needs to be available.
+             (setenv "TZDIR"
+                     (string-append (assoc-ref inputs "tzdata")
+                                    "/share/zoneinfo"))
+             #t))
+         (delete 'check)
+         (delete 'sanity-check)
+         (replace 'add-install-to-pythonpath
+           (lambda* (#:key outputs #:allow-other-keys)
+             (setenv "PYTHONPATH"
+                     (string-append (assoc-ref outputs "out")
+                                    "/lib/python3.6/site-packages:"
+                                    (getenv "PYTHONPATH"))))))))
+    ;; TODO: Install extras/django_bash_completion.
+    (native-inputs
+     `(("tzdata" ,tzdata-for-tests)
+       ;; Remaining packages are test requirements taken from
+       ;; tests/requirements/py3.txt
+       ("python-docutils" ,python-docutils)
+       ;; optional for tests: ("python-geoip2" ,python-geoip2)
+       ("python-jinja2" ,python-jinja2)           ; >= 2.7
+       ;; optional for tests: ("python-memcached" ,python-memcached)
+       ("python-numpy" ,python-numpy)
+       ("python-pillow" ,python-pillow)
+       ("python-pyyaml" ,python-pyyaml)
+       ;; optional for tests: ("python-selenium" ,python-selenium)
+       ("python-sqlparse" ,python-sqlparse)
+       ("python-tblib" ,python-tblib)))
+    (propagated-inputs
+     `(("python-argon2-cffi" ,python-argon2-cffi)
+       ("python-bcrypt" ,python-bcrypt)
+       ("python-pytz" ,python-pytz)))
+    (home-page "https://www.djangoproject.com/")
+    (synopsis "High-level Python Web framework")
+    (description
+     "Django is a high-level Python Web framework that encourages rapid
+development and clean, pragmatic design.  It provides many tools for building
+any Web site.  Django focuses on automating as much as possible and adhering
+to the @dfn{don't repeat yourself} (DRY) principle.")
+    (license license:bsd-3)
+    (properties `((cpe-name . "django")))))
+
+(list python
+      python-django
+      python-pytz
+      python-onetimepass
+      python-ldap3
+      python-markdown
+      python-markupsafe
+      python-mkdocs
+      python-openpyxl
+      python-pycryptodomex
+      python-pyyaml
+      python-requests
+      python-selenium
+      python-six
+      python-tornado
+      python-tzlocal
+      python-utils)

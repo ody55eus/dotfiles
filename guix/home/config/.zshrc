@@ -1761,3 +1761,8 @@ fi
 
 . $ZSH/oh-my-zsh.sh
 load_theme $ZSH_THEME
+
+if command -v neofetch &> /dev/null
+then
+  neofetch
+fi

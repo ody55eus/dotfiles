@@ -4,6 +4,7 @@
 (use-modules (gnu)
              (nongnu packages linux))
 (use-service-modules
+  databases
   desktop
   networking
   ssh
@@ -33,9 +34,10 @@
   (services
    (append
     (list
-          (set-xorg-configuration
-           (xorg-configuration
-            (keyboard-layout keyboard-layout))))
+     (service mysql-service-type)
+     (set-xorg-configuration
+      (xorg-configuration
+       (keyboard-layout keyboard-layout))))
     %desktop-services))
   (bootloader
    (bootloader-configuration

@@ -10,7 +10,7 @@
 
 (home-environment
  (packages (specifications->packages (list
-                                      "emacs-next-pgtk-latest"
+                                      ;;"emacs-next-pgtk-latest"
                                       "neovim"
                                       "tmux"
 
@@ -18,6 +18,7 @@
                                       "unzip"
                                       "fzf"
                                       "ripgrep"
+                                      "the-silver-searcher"
                                       "bat"
                                       "git"
                                       "git-flow"
