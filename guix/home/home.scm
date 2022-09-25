@@ -3,6 +3,7 @@
              (gnu home services shells)
              (gnu services)
              (gnu packages)
+             (gnu packages shells)
              (guix packages)
              (guix git-download)
              (guix gexp))
@@ -15,7 +16,7 @@
                                       "gucharmap"
                                       "fontmanager"
                                       "brightnessctl"
-                                      "xdg-utils"      ;; For xdg-open, etc
+                                      ; "xdg-utils"      ;; For xdg-open, etc
                                       "xdg-dbus-proxy" ;; For Flatpak
                                       "gtk+:bin"       ;; For gtk-launch
                                       "glib:bin"       ;; For gio-launch-desktop
@@ -43,12 +44,6 @@
                                       "gimp"
                                       "scrot"
 
-                                      "zathura"
-                                      "zathura-pdf-mupdf"
-
-                                      "flatpak"
-
-                                      "texlive"
                                       "pandoc"
 
                                       "isync"
@@ -88,9 +83,9 @@
              ("HISTSIZE" . "1000000")
              ("SAVEHIST" . "500000")
              ("MANWIDTH" . "999")
-             ("EDITOR" . "\"emacsclient -t -a nvim\"")
-             ("VISUAL" . "\"emacsclient -c -a emacs\"")
-             ("MANPAGER" . "\"nvim -c 'Man!' -o -\"")
+             ("EDITOR" . "emacsclient -t -a nvim")
+             ("VISUAL" . "emacsclient -c -a emacs")
+             ("MANPAGER" . "nvim -c 'Man!' -o -")
              ("PYTHONENCODING" . "UTF-8")
              ("LANG" . "en_US.UTF-8")
              ("LC_ALL" . "en_US.UTF-8")
@@ -104,9 +99,9 @@
         (simple-service 'some-useful-env-vars-service
                         home-environment-variables-service-type
                         `(("LESSHISTFILE" . "$XDG_CACHE_HOME/.lesshst")
-                          ("EDITOR" . "\"emacsclient -t -a nvim\"")
-                          ("VISUAL" . "\"emacsclient -c -a emacs\"")
-                          ("MANPAGER" . "\"nvim -c 'Man!' -o -\"")
+                          ("EDITOR" . "emacsclient -t -a nvim")
+                          ("VISUAL" . "emacsclient -c -a emacs")
+                          ("MANPAGER" . "nvim -c 'Man!' -o -")
                           ("PYTHONENCODING" . "UTF-8")
                           ("LANG" . "en_US.UTF-8")
                           ("LC_ALL" . "en_US.UTF-8")
