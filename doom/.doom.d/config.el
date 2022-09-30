@@ -45,6 +45,16 @@
       backup-directory-alist `((".*" . ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/backups")))
       auto-save-file-name-transforms `((".*" ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/autosaves") t)))
 
+(setq world-clock-list '(("UTC" "Universal")
+                         ("Europe/London" "London")
+                         ("America/Los_Angeles" "Seattle")
+                         ("America/New_York" "New York")
+                         ("Europe/Paris" "Paris")
+                         ("Europe/Athens" "Athen")
+                         ("Asia/Calcutta" "Bangalore")
+                         ("Asia/Singapore" "Singapur")
+                         ("Asia/Tokyo" "Tokyo")))
+
 (add-to-list 'load-path (file-truename "~/.doom.d"))
 (require 'org-workflow)
 (setq org-logseq-dir "~/ZK/logseq")
