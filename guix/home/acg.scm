@@ -5,12 +5,114 @@
              (gnu packages)
              (gnu packages shells)
              (guix packages)
+             (guix build-system copy)
              (guix git-download)
+             ((guix licenses) #:prefix license:)
              (guix gexp))
 
+(define-public emacs-doom
+  (let ((commit "285b460c80e455fabaf036f0eb48575637586a46")
+        (revision "1"))
+    (package
+     (name "emacs-doom")
+     (version (git-version "3.0.0" revision commit))
+     (home-page "https://github.com/doomemacs/doomemacs")
+     (source
+      (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit commit)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "0xh5fzhk8qr23sgv931va0mjfgnw9qwxy5z4dp4fdr4dvnavd6vz"))))
+     (build-system copy-build-system)
+     (inputs
+      (package-inputs zsh))
+     (license license:expat)
+     (synopsis "An Emacs framework for the stubborn martian hacker.")
+     (description "Doom is a configuration framework for GNU Emacs tailored for Emacs bankruptcy veterans who want less framework in their frameworks, a modicum of stability (and reproducibility) from their package manager, and the performance of a hand rolled config (or better). It can be a foundation for your own config or a resource for Emacs enthusiasts to learn more about our favorite operating system.
+
+Its design is guided by these mantras:
+
+Gotta go fast. Startup and run-time performance are priorities. Doom goes beyond by modifying packages to be snappier and load lazier.
+
+Close to metal. There's less between you and vanilla Emacs by design. That's less to grok and less to work around when you tinker. Internals ought to be written as if reading them were part of Doom's UX, and it is!
+
+Opinionated, but not stubborn. Doom is about reasonable defaults and curated opinions, but use as little or as much of it as you like.
+
+Your system, your rules. You know better. At least, Doom hopes so! It won't automatically install system dependencies (and will force plugins not to either). Rely on doom doctor to tell you what's missing.
+
+Nix/Guix is a great idea! The Emacs ecosystem is temperamental. Things break and they break often. Disaster recovery should be a priority! Doom's package management should be declarative and your private config reproducible, and comes with a means to roll back releases and updates (still a WIP).
+"))))
+
+(define-public zsh-powerlevel
+  (let ((commit "be3724bc806a2dd7fbcb281a153b11ab19d8923d")
+        (revision "1"))
+    (package
+     (name "zsh-powerlevel10k")
+     (version (git-version "1.16.1" revision commit))
+     (home-page "https://github.com/romkatv/powerlevel10k")
+     (source
+      (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit commit)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "095lk51yf3bmh11hv4lb019h77zv9m48cfkh8qd0w2rqrcl6p2sr"))))
+     (build-system copy-build-system)
+     (inputs
+      (package-inputs zsh))
+     (license license:expat)
+     (synopsis "A Zsh theme")
+     (description "Powerlevel10k is a theme for Zsh. It emphasizes speed, flexibility and out-of-the-box experience."))))
+
+(define-public zsh-ohmyzsh
+  (let ((commit "4c82a2eedf0c43d47601ffa8b0303ed1326fab8f")
+        (revision "1"))
+    (package
+     (name "zsh-ohmyzsh")
+     (version (git-version "1.0" revision commit))
+     (home-page "https://github.com/ohmyzsh/ohmyzsh")
+     (source
+      (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url home-page)
+             (commit commit)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "01gxpyinagaq7dqwjrdcbvdw5fb7ghfglb3spw85z90mjlwlrwbs"))))
+     (build-system copy-build-system)
+    ;; (arguments
+    ;;  `(#:phases
+    ;;    (modify-phases %standard-phases
+    ;;      (add-before 'install 'remove-custom-theme
+    ;;          (lambda _
+    ;;            (delete-file-recursively "/custom/themes")))
+    ;;    )))
+     (propagated-inputs
+      (list zsh-powerlevel))
+     (inputs
+      (package-inputs zsh))
+     (license license:expat)
+     (synopsis "Oh My Zsh is an open source, community-driven framework for managing your zsh configuration.")
+     (description "A delightful community-driven (with 2,000+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python, etc), 140+ themes to spice up your morning, and an auto-update tool so that makes it easy to keep up with the latest updates from the community."))))
+
 (home-environment
- (packages (specifications->packages (list
-                                      ;;"emacs-next-pgtk-latest"
+ (packages (append (map specification->package
+                        (list
+                                      "zsh"
+                                      "zsh-syntax-highlighting"
+                                      "zsh-autopair"
+                                      "zsh-autosuggestions"
+                                      "direnv"
+
                                       "neovim"
                                       "tmux"
 
@@ -51,7 +153,9 @@
                                       "rofi"
 
                                       "pandoc"
-                                      )))
+                                      ))
+                   (list zsh-ohmyzsh)
+           ))
  (services
   (list
         (service
@@ -64,16 +168,32 @@
                         home-files-service-type
                         (list `(".vimrc"
                                 ,(local-file "config/.vimrc" "vimrc-home"))
-                              `(".doom.d/packages.el"
+                              `(".config/doom/packages.el"
                                 ,(local-file "../../doom/.doom.d/packages.el" "packages.el"))
-                              `(".doom.d/org-workflow.el"
+                              `(".config/doom/org-workflow.el"
                                 ,(local-file "../../doom/.doom.d/org-workflow.el" "org-workflow.el"))
-                              `(".doom.d/config.el"
+                              `(".config/doom/config.el"
                                 ,(local-file "../../doom/.doom.d/config.el" "config.el"))
-                              `(".doom.d/init.el"
+                              `(".config/doom/init.el"
                                 ,(local-file "../../doom/.doom.d/init.el" "init.el"))
+                              ;; `(".config/doom/profiles.el"
+                              ;;   ,(local-file "../../doom/.doom.d/profiles.el" "profiles.el"))
                               `(".vim/.vimrc"
                                 ,(local-file "config/.vim/vimrc" "vimrc"))
+                              `(".config/bat/config"
+                                ,(local-file "config/bat.config"))
+                              `(".config/alacritty/alacritty.yml"
+                                ,(local-file "config/alacritty.yml"))
+                              `(".config/awesome/rc.lua"
+                                ,(local-file "config/awesome.rc.lua"))
+                              `(".config/emacs"
+                                ,(file-append emacs-doom "/."))
+                              `(".config/zsh/.p10k.zsh"
+                                ,(local-file "config/.p10k.zsh" "p10k.zsh"))
+                              `(".config/zsh/ohmyzsh"
+                                ,(file-append zsh-ohmyzsh "/."))
+                              `(".cache/zsh/ohmyzsh/custom/themes"
+                                ,(file-append zsh-powerlevel "/."))
                               `(".tmux.conf"
                                 ,(local-file "config/.tmux.conf" "tmux.conf"))))
         (simple-service 'environment-variables-service
@@ -83,7 +203,6 @@
                           ("VISUAL" . "emacsclient -c -a emacs")
                           ("MANPAGER" . "nvim -c 'Man!' -o -")
                           ("ZDOTDIR" . "$HOME/.config/zsh")
-                          ("ZSH" . "$HOME/.config/zsh/ohmyzsh")
                           ("HISTFILE" . "$ZDOTDIR/.zsh_history")
                           ("HISTSIZE" . "1000000")
                           ("SAVEHIST" . "500000")
@@ -93,4 +212,11 @@
                           ("PYTHONENCODING" . "UTF-8")
                           ("LANG" . "en_US.UTF-8")
                           ("LC_ALL" . "en_US.UTF-8")
+                          ("DOOMPROFILE" . "default")
+                          ("DOOMLOCALDIR" . "$XDG_CACHE_HOME/doom")
+                          ("DOOMPROFILELOADPATH" . "$DOOMLOCALDIR/profiles")
+                          ("DOOMPROFILELOADFILE" . "$DOOMLOCALDIR/profiles/load.el")
+                          ("PATH" . ,(file-append emacs-doom (string-append "/bin" ":" (getenv "PATH"))))
+                          ("ZSH" . ,(file-append zsh-ohmyzsh ""))
+                          ("ZSH_CUSTOM" . "$HOME/.cache/zsh/ohmyzsh/custom")
                           ("SHELL" . ,(file-append zsh "/bin/zsh")))))))

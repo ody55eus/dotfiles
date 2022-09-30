@@ -1,0 +1,271 @@
+" Set 256 color terminal support
+set t_Co=256
+" Set dark background
+" set background=dark
+" Set colorscheme
+autocmd vimenter * ++nested colorscheme material
+
+filetype off " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+" Adding Functionality
+Plugin 'tpope/vim-fugitive'  " Git
+Plugin 'dhabyx/riv.vim'      " reStructuredText
+Plugin 'vifm/vifm.vim'       " Vi File Manager
+Plugin 'tpope/vim-markdown'  " Markdown
+Plugin 'junegunn/fzf'        " Fuzzy Finder
+Plugin 'junegunn/fzf.vim'
+Plugin 'preservim/nerdtree'  " NERDtree
+Plugin 'vim-scripts/vim-lastplace'
+Plugin 'gerw/vim-latex-suite' " TODO <--- Change this into something useful
+Plugin 'honza/vim-snippets'
+
+" Visual Improvements / Color Schemes
+Plugin 'vim-airline/vim-airline'
+Plugin 'edkolev/tmuxline.vim'
+Plugin 'ap/vim-css-color'
+Plugin 'morhetz/gruvbox' 
+Plugin 'kaicataldo/material.vim'
+Plugin 'NLKNguyen/papercolor-theme'
+Plugin 'vim-airline/vim-airline-themes'
+" Syntax Highlighting / Code Completion
+Plugin 'Syntastic'
+Plugin 'vim-python/python-syntax'
+" Plugin 'ycm-core/YouCompleteMe'
+Plugin 'tell-k/vim-autopep8'
+" New Commands
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-surround'
+Plugin 'dyng/ctrlsf.vim'
+
+" All of your Plugins must be added before the following line
+call vundle#end()
+
+let g:syntastic_enable_signs=1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 1
+
+" Airline Statusbar
+let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+
+let g:airline_theme = 'luna'
+
+
+" Filebrowser (netrw) style
+let g:netrw_browse_spwit=4
+let g:netrw_altv=1
+let g:netrw_liststyle=3
+let g:netrw_list_hide=netrw_gitignore#Hide()
+
+" Load vim-latex on tex files
+let g:tex_flavor='latex'
+filetype plugin on
+
+" Make vim into an IDE (activate indentation)
+filetype plugin indent on
+" Enable syntax highlighting
+syntax enable
+
+" Find in subdirectories (recursive)
+set path+=**
+
+" Make Vim more useful
+set nocompatible
+" Use the OS clipboard by default (on versions compiled with `+clipboard`)
+set clipboard=unnamed
+" Enhance command-line completion
+set wildmenu
+" Allow cursor keys in insert mode
+" set esckeys
+" Allow backspace in insert mode
+set backspace=indent,eol,start
+" Optimize for fast terminal connections
+set ttyfast
+" Add the g flag to search/replace by default
+set gdefault
+" Use UTF-8 without BOM
+set encoding=utf-8 nobomb
+" Don’t add empty newlines at the end of files
+set binary
+set noeol
+" Centralize backups, swapfiles and undo history
+set backupdir=~/.vim/backups
+set directory=~/.vim/swaps
+if exists("&undodir")
+	set undodir=~/.vim/undo
+endif
+
+" Don’t create backups when editing files in certain directories
+set backupskip=/tmp/*,/private/tmp/*
+
+" Respect modeline in files
+set modeline
+set modelines=4
+" Enable per-directory .vimrc files and disable unsafe commands in them
+set exrc
+" Keep buffer of background files
+set hidden
+set secure
+" Enable line numbers
+set number
+" Enable syntax highlighting
+syntax on
+" Highlight current line
+set cursorline
+" Highlight the end of 80 char lines
+set colorcolumn=80
+" Make tabs as wide as four spaces
+set tabstop=4
+" Show “invisible” characters
+set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
+set list
+" Highlight searches
+set hlsearch
+" Ignore case of searches
+set ignorecase
+" Highlight dynamically as pattern is typed
+set incsearch
+" Always show status line
+set laststatus=2
+" Enable mouse in all modes
+set mouse=a
+" Disable error bells
+set noerrorbells
+" Don’t reset cursor to start of line when moving around.
+set nostartofline
+" Show the cursor position
+set ruler
+" Don’t show the intro message when starting Vim
+set shortmess=atI
+" Show the current mode
+set showmode
+" Show the filename in the window titlebar
+set title
+" Show the (partial) command as it’s being typed
+set showcmd
+" Use relative line numbers
+if exists("&relativenumber")
+	set relativenumber
+	au BufReadPost * set relativenumber
+endif
+" Start scrolling three lines before the horizontal window border
+set scrolloff=3
+
+" Strip trailing whitespace (,ss)
+function! StripWhitespace()
+	let save_cursor = getpos(".")
+	let old_query = getreg('/')
+	:%s/\s\+$//e
+	call setpos('.', save_cursor)
+	call setreg('/', old_query)
+endfunction
+
+""""""""""""""""
+" REMAP KEYS
+""""""""""""""""
+" Change mapleader
+let mapleader=","
+
+noremap <leader>ss :call StripWhitespace()<CR>
+" Save a file as root (,W)
+noremap <leader>W :w !sudo tee % > /dev/null<CR>
+
+" Navigate Tabs
+noremap <C-t><up> :tabr<CR>
+noremap <C-t><down> :tabl<CR>
+noremap <C-t><left> :tabp<CR>
+noremap <C-t><right> :tabn<CR>
+
+" Change Theme
+noremap <leader>tl :colorscheme calmar256-light<CR>:AirlineTheme light<CR>:set background=light<CR>
+noremap <leader>td :colorscheme material<CR>:AirlineTheme luna<CR>:set background=dark<CR>
+noremap <leader>tg :colorscheme gruvbox<CR>:AirlineTheme luna<CR>:set background=dark<CR>
+noremap <leader>tj :colorscheme jellybeans<CR>:AirlineTheme luna<CR>:set background=dark<CR>
+noremap <leader>tpl :set background=light<CR>:colorscheme PaperColor<CR>:AirlineTheme light<CR>
+noremap <leader>tpd :set background=dark<CR>:colorscheme PaperColor<CR>:AirlineTheme luna<CR>
+noremap <leader>tbd :set background=dark<CR>
+noremap <leader>tbl :set background=light<CR>
+
+
+" Automatic commands
+if has("autocmd")
+	" Enable file type detection
+	filetype on
+	" Treat .json files as .js
+	autocmd BufNewFile,BufRead *.json setfiletype json syntax=javascript
+	" Treat .md files as Markdown
+	autocmd BufNewFile,BufRead *.md setlocal filetype=markdown
+endif
+
+
+let g:airline_powerline_fonts = 1
+
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
+" unicode symbols for airline (statusline)
+" let g:airline_left_sep = '»'
+" let g:airline_left_sep = '▶'
+" let g:airline_right_sep = '«'
+" let g:airline_right_sep = '◀'
+let g:airline_symbols.colnr = ' ㏇:'
+" let g:airline_symbols.colnr = ' ℅:'
+let g:airline_symbols.crypt = '🔒'
+" let g:airline_symbols.linenr = '☰'
+" let g:airline_symbols.linenr = ' ␊:'
+" let g:airline_symbols.linenr = ' ␤:'
+" let g:airline_symbols.linenr = '¶'
+" let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.maxlinenr = '㏑'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+"0let g:airline_symbols.paste = 'Þ'
+" let g:airline_symbols.paste = '∥'
+let g:airline_symbols.spell = 'Ꞩ'
+let g:airline_symbols.notexists = 'Ɇ'
+let g:airline_symbols.whitespace = 'Ξ'
+
+" powerline symbols
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+" let g:airline_symbols.colnr = ' :'
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ' :'
+let g:airline_symbols.maxlinenr = '☰ '
+let g:airline_symbols.dirty='⚡'
+
+" old vim-powerline symbols
+" let g:airline_left_sep = '⮀'
+" let g:airline_left_alt_sep = '⮁'
+" let g:airline_right_sep = '⮂'
+" let g:airline_right_alt_sep = '⮃'
+" let g:airline_symbols.branch = '⭠'
+" let g:airline_symbols.linenr = '⭡'
+
+" Remap Numpad (see https://vim.fandom.com/wiki/PuTTY_numeric_keypad_mappings)
+noremap <Esc>Oq 1
+noremap <Esc>Or 2
+noremap <Esc>Os 3
+noremap <Esc>Ot 4
+noremap <Esc>Ou 5
+noremap <Esc>Ov 6
+noremap <Esc>Ow 7
+noremap <Esc>Ox 8
+noremap <Esc>Oy 9
+noremap <Esc>Op 0
+noremap <Esc>On .
+noremap <Esc>OR *
+noremap <Esc>OQ /
+noremap <Esc>Ol +
+noremap <Esc>OS -
