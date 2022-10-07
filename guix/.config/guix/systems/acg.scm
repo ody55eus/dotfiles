@@ -10,6 +10,36 @@
   ssh
   xorg)
 
+(define %my-base-services
+  (append
+   (cons*
+    (service openssh-service-type)
+    (service cups-service-type)
+    (modify-services %desktop-services
+                     (console-font-service-type
+                      config =>
+                      `(("tty1" . "LatGrkCyr-8x16")
+                        ("tty2" . ,(file-append
+                                    font-tamzen
+                                    "/share/kbd/consolefonts/TamzenForPowerline10x20.psf"))
+                        ("tty3" . ,(file-append
+                                    font-terminus
+                                    "/share/consolefonts/ter-132n")) ; for HDPI
+                        ("tty4" . ,(file-append
+                                    font-terminus
+                                    "/share/consolefonts/ter-132n"))
+                        ("tty5" . ,(file-append
+                                    font-terminus
+                                    "/share/consolefonts/ter-132n"))
+                        ("tty6" . ,(file-append
+                                    font-terminus
+                                    "/share/consolefonts/ter-132n"))))
+                     (network-manager-service-type
+                      config =>
+                      (network-manager-configuration
+                       (inherit config)
+                       (vpn-plugins (list network-manager-openvpn))))))))
+
 (operating-system
   (kernel linux)
   (firmware (list linux-firmware))
@@ -38,7 +68,7 @@
      (set-xorg-configuration
       (xorg-configuration
        (keyboard-layout keyboard-layout))))
-    %desktop-services))
+    %my-base-services))
   (bootloader
    (bootloader-configuration
     (bootloader grub-bootloader)

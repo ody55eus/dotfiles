@@ -978,6 +978,9 @@ Returns file content as a string."
 (setq org-log-done 'time)
 (setq org-log-into-drawer t)
 
+;; Only show my time spend today on a task
+(setq org-clock-mode-line-total 'today)
+
 (setq org-datetree-add-timestamp 'inactive)
 (setq org-habit-graph-column 60)
 (setq org-fontify-whole-heading-line t)
