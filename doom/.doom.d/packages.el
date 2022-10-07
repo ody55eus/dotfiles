@@ -154,8 +154,8 @@
 (package! helm-ag)              ; Ack and the_silver_searcher support
 
 ;; Dictionaries
-;;(package! synosaurus)           ; Thesaurus synonyms
-;;(package! powerthesaurus)
+(package! synosaurus)           ; Thesaurus synonyms
+(package! powerthesaurus)
 ;;(package! wordnut)
 
 ;; Language Server

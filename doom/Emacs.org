@@ -441,8 +441,8 @@ Just comment/uncomment some lines to disable/enable features.
 (package! helm-ag)              ; Ack and the_silver_searcher support
 
 ;; Dictionaries
-;;(package! synosaurus)           ; Thesaurus synonyms
-;;(package! powerthesaurus)
+(package! synosaurus)           ; Thesaurus synonyms
+(package! powerthesaurus)
 ;;(package! wordnut)
 
 ;; Language Server
@@ -454,9 +454,9 @@ Just comment/uncomment some lines to disable/enable features.
 (package! lsp-latex)
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
-;; (package! pomm
-;;   :recipe (:host github
-;;            :repo "SqrtMinusOne/pomm.el"))
+(package! pomm
+  :recipe (:host github
+           :repo "SqrtMinusOne/pomm.el"))
 
 (package! beancount-mode
   :recipe (:host github
@@ -546,7 +546,9 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
 See my [[file:Workflow.org][Org-Mode Workflow]] for more details.
 *** Additional Configuration Files
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(add-to-list 'load-path (file-truename "~/.doom.d"))
+(if (file-directory-p (file-truename "~/.config/doom"))
+  (add-to-list 'load-path (file-truename "~/.config/doom"))
+  (add-to-list 'load-path (file-truename "~/.doom.d")))
 (require 'org-workflow)
 (setq org-logseq-dir "~/ZK/logseq")
 
