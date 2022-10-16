@@ -375,6 +375,8 @@
                            ,(local-file "config/.vim/vimrc" "vimrc"))
                          `(".config/bat/config"
                            ,(local-file "config/bat.config"))
+                         `(".config/git/config"
+                           ,(local-file "config/git.config"))
                          `(".config/alacritty/alacritty.yml"
                            ,(local-file "config/alacritty.yml"))
                          `(".config/awesome/rc.lua"
