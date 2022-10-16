@@ -45,6 +45,7 @@
       backup-directory-alist `((".*" . ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/backups")))
       auto-save-file-name-transforms `((".*" ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/autosaves") t)))
 
+(add-to-list 'load-path (file-truename "~/.config/doom"))
 (add-to-list 'load-path (file-truename "~/.doom.d"))
 (require 'org-workflow)
 (setq org-logseq-dir "~/ZK/logseq")

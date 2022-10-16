@@ -31,8 +31,15 @@ export LS_COLORS
 unsetopt BEEP
 
 # Completions
-autoload -Uz compinit
+autoload -U compinit
+compinit
+zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
+setopt completealiases
 zstyle ':completion:*' menu select
+zstyle ':completion:*:*:kill:*' menu yes select
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+zstyle ':completion:*:*:kill:*:processes' command 'ps xo pid,user:10,cmd | grep -v "sshd:|-zsh$"'
+# zstyle ':completion:*' menu select
 # zstyle ':completion::complete:lsof:*' menu yes select
 zmodload zsh/complist
 _comp_options+=(globdots)		# Include hidden files.
@@ -52,20 +59,6 @@ alias mergepdf="gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=_merged.p
 alias path="echo -e ${PATH//:/\n}"
 alias ips="grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 alias ll="ls -l"
-
-## Functions
-function load_theme() {
-    # Load the theme
-    if [ ! "$ZSH_THEME" = ""  ]; then
-      if [ -f "$ZSH_CUSTOM/$ZSH_THEME.zsh-theme" ]; then
-        source "$ZSH_CUSTOM/$ZSH_THEME.zsh-theme"
-      elif [ -f "$ZSH_CUSTOM/themes/$ZSH_THEME.zsh-theme" ]; then
-        source "$ZSH_CUSTOM/themes/$ZSH_THEME.zsh-theme"
-      else
-        source "$ZSH/themes/$ZSH_THEME.zsh-theme"
-      fi
-    fi
-}
 
 # # ex = EXtractor for all kinds of archives
 # # usage: ex <file>
@@ -98,13 +91,13 @@ ex ()
 # bindkey -e will be emacs mode
 bindkey -v # VIM Mode
 bindkey -v '^?' backward-delete-char
-bindkey -s '^o' 'ranger^M'
+bindkey -s '^o' 'emacs -nw .^M'
 # bindkey -s '^f' 'zi^M'
 bindkey -s '^f' 'ncdu^M'
 bindkey -s '^n' 'nvim $(fzf)'
 # bindkey -s '^v' 'nvim\n'
 # bindkey -s '^z' 'zi^M'
-bindkey '^S' fzf-history-widget
+# bindkey '^S' fzf-history-widget
 # bindkey '^[[P' delete-char
 bindkey "^p" up-line-or-beginning-search # Up
 bindkey "^n" down-line-or-beginning-search # Down
@@ -112,6 +105,13 @@ bindkey "^k" up-line-or-beginning-search # Up
 bindkey "^j" down-line-or-beginning-search # Down
 bindkey -r "^u"
 bindkey -r "^d"
+
+SHAREDIR=$HOME/.guix-home/profile/share/zsh
+[ -e $SHAREDIR/plugins/zsh-syntax-highlighting ] && source $SHAREDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+[ -e $SHAREDIR/plugins/zsh-autopair ] && source $SHAREDIR/plugins/zsh-autopair/zsh-autopair.zsh
+[ -e $SHAREDIR/plugins/zsh-autosuggestions ] && source $SHAREDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+[ -e $HOME/.cache/zsh/ohmyzsh/custom/plugins/zsh-completions/src ] && fpath+="$HOME/.cache/zsh/ohmyzsh/custom/plugins/zsh-completions/src"
+[ -e $HOME/.config/guix/current/share/zsh/site-functions ] && fpath+="$HOME/.config/guix/current/share/zsh/site-functions"
 
 compinit
 
@@ -137,7 +137,7 @@ fi
 
 if [ -f "$ZSH/oh-my-zsh.sh" ]; then
   . $ZSH/oh-my-zsh.sh
-  load_theme $ZSH_THEME
+  # load_theme $ZSH_THEME
 fi
 
 if command -v neofetch &> /dev/null
