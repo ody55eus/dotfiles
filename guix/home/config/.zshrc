@@ -143,4 +143,6 @@ fi
 if command -v neofetch &> /dev/null
 then
   neofetch
+else if command -v guix &> /dev/null
+     guix shell neofetch -- neofetch
 fi

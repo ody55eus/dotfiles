@@ -539,6 +539,20 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
       backup-directory-alist `((".*" . ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/backups")))
       auto-save-file-name-transforms `((".*" ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/autosaves") t)))
 
+
+(setq world-clock-list '(("UTC" "Universal")
+                         ("America/Los_Angeles" "Seattle")
+                         ("America/New_York" "New York")
+                         ("Europe/London" "London")
+                         ("Europe/Paris" "Paris")
+                         ("Europe/Athens" "Athen")
+                         ("Asia/Dubai" "Dubai")
+                         ("Asia/Calcutta" "Bangalore")
+                         ;; ("Asia/Bangkok" "Bangkok")
+                         ("Asia/Singapore" "Singapur")
+                         ("Australia/Perth" "Perth")
+                         ("Asia/Tokyo" "Tokyo")
+                         ("Australia/Sydney" "Sydney")))
 #+end_src
 
 * Workflow

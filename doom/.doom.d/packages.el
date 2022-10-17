@@ -167,9 +167,9 @@
 (package! lsp-latex)
 (package! dap-mode)             ; Debugging Functions
 (package! company-box)          ; Auto-Completion
-;; (package! pomm
-;;   :recipe (:host github
-;;            :repo "SqrtMinusOne/pomm.el"))
+(package! pomm
+  :recipe (:host github
+           :repo "SqrtMinusOne/pomm.el"))
 
 (package! beancount-mode
   :recipe (:host github
