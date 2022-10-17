@@ -3,6 +3,9 @@
 
 (use-modules (gnu)
              (nongnu packages linux))
+(use-package-modules
+ fonts
+ gnome)
 (use-service-modules
   databases
   desktop
@@ -14,7 +17,6 @@
   (append
    (cons*
     (service openssh-service-type)
-    (service cups-service-type)
     (modify-services %desktop-services
                      (console-font-service-type
                       config =>
@@ -52,6 +54,13 @@
                   (comment "Jonathan Pieper")
                   (group "users")
                   (home-directory "/home/jpi")
+                  (supplementary-groups
+                    '("wheel" "netdev" "audio" "video")))
+                (user-account
+                  (name "jp")
+                  (comment "Jonathan Pieper")
+                  (group "users")
+                  (home-directory "/home/jp")
                   (supplementary-groups
                     '("wheel" "netdev" "audio" "video")))
                 %base-user-accounts))

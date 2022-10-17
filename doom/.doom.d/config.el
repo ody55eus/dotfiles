@@ -63,6 +63,7 @@
 (if (file-directory-p (file-truename "~/.config/doom"))
   (add-to-list 'load-path (file-truename "~/.config/doom"))
   (add-to-list 'load-path (file-truename "~/.doom.d")))
+
 (require 'org-workflow)
 (setq org-logseq-dir "~/ZK/logseq")
 
