@@ -838,6 +838,8 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 **** Hyper Key
 ***** Remapping Important Keys
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(map! "H-<next>" "<next>")
+(map! "H-<prior>" "<prior>")
 (map! "H-<end>" "<end>")
 (map! "H-<home>" "<home>")
 (map! "H-<escape>" "<escape>")
@@ -851,15 +853,15 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 (map! "H-<return>" "<return>")
 (dolist (i '(0 1 2 3 4 5 6 7 8 9))
         (general-define-key (format "H-<kp-%d>" i) (kbd (number-to-string i))))
-(global-set-key (kbd "H-<kp-1>") (kbd "1"))
-(global-set-key (kbd "H-<kp-2>") (kbd "2"))
 #+end_src
 
 ***** Custom Functions
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (map! "H-¿" #'counsel-ag) ; H-s
-(map! "H-¡" #'ivy-mode)   ; H-k
-(map! "H-;" #'org-agenda) ; H-j
+(map! "H-¡" #'jp/org-roam-jump-menu/body)   ; H-k
+(map! "H-;" #'hydra-ivy/body) ; H-j
+(map! "H-<insert>" #'ivy-mode) ; H-ä
+(map! "H-<tab>" #'org-agenda) ; H-ö
 (map! "H-:" #'embark-act) ; H-b
 (map! "H-<undo>" #'jp/org-roam-refresh-agenda-list) ; H-z
 #+end_src
@@ -869,6 +871,8 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (let ((theme-carusell '(
+                        doom-outrun-electric
+                        modus-vivendi
                         ef-bio
                         ef-dark
                         ef-deuteranopia-dark

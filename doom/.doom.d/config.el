@@ -267,6 +267,8 @@
 (unbind-key "K" evil-visual-state-map)
 (map! :nv "gK"  #'+lookup/documentation)
 
+(map! "H-<next>" "<next>")
+(map! "H-<prior>" "<prior>")
 (map! "H-<end>" "<end>")
 (map! "H-<home>" "<home>")
 (map! "H-<escape>" "<escape>")
@@ -281,13 +283,27 @@
 (dolist (i '(0 1 2 3 4 5 6 7 8 9))
         (general-define-key (format "H-<kp-%d>" i) (kbd (number-to-string i))))
 
-(map! "H-¿" #'counsel-ag)
-(map! "H-¡" #'ivy-mode)
-(map! "H-:" #'embark-act)
-(map! "H-;" #'org-agenda)
-(map! "H-<undo>" #'jp/org-roam-refresh-agenda-list)
+(map! "H-¿" #'counsel-ag) ; H-s
+(map! "H-¡" #'jp/org-roam-jump-menu/body)   ; H-k
+(map! "H-;" #'hydra-ivy/body) ; H-j
+(map! "H-<insert>" #'ivy-mode) ; H-ä
+(map! "H-<tab>" #'org-agenda) ; H-ö
+(map! "H-:" #'embark-act) ; H-b
+(map! "H-<undo>" #'jp/org-roam-refresh-agenda-list) ; H-z
 
-(setq doom-theme 'ef-night)
+(let ((theme-carusell '(
+                        doom-outrun-electric
+                        modus-vivendi
+                        ef-bio
+                        ef-dark
+                        ef-deuteranopia-dark
+                        ef-duo-dark
+                        ef-night
+                        ;; ef-autumn
+                        ;; ef-trio-dark
+                        ;; ef-tritanopia-dark
+                        ef-winter)))
+  (setq doom-theme (seq-random-elt theme-carusell)))
 
 (setq doom-font (font-spec :family "JuliaMono" :size 16)
       doom-big-font (font-spec :family "JuliaMono" :size 22)
@@ -584,6 +600,8 @@ argument, query for word to search."
 
 (after! guix
   (global-guix-prettify-mode 1))
+
+(setq undo-tree-visualizer-timestamps t) ; Display Timestamps
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired
