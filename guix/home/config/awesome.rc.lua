@@ -18,7 +18,7 @@ local wibox         = require("wibox")
 local beautiful     = require("beautiful")
 local naughty       = require("naughty")
 local lain          = require("lain")
---local menubar       = require("menubar")
+local menubar       = require("menubar")
 local freedesktop   = require("freedesktop")
 local hotkeys_popup = require("awful.hotkeys_popup")
                       require("awful.hotkeys_popup.keys")
@@ -68,7 +68,7 @@ local function run_once(cmd_arr)
     end
 end
 
-run_once({ "alacritty", "unclutter -root" }) -- comma-separated entries
+run_once({ "alacritty -e ~/startup-guix.sh", "unclutter -root", "icecat" }) -- comma-separated entries
 
 -- This function implements the XDG autostart specification
 --[[
@@ -219,7 +219,7 @@ end)
 --]]
 
 -- Set the Menubar terminal for applications that require it
---menubar.utils.terminal = terminal
+menubar.utils.terminal = terminal
 
 -- }}}
 
@@ -398,6 +398,8 @@ globalkeys = mytable.join(
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
+    awful.key({ modkey, "Shift"   }, "Return", function () awful.spawn(emacsclient_cmd) end,
+              {description = "open Emacs (client)", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit,
@@ -530,9 +532,9 @@ globalkeys = mytable.join(
 
     -- Default
     --[[ Menubar
+    --]]
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"}),
-    --]]
     --[[ dmenu
     --]]
     awful.key({ modkey }, "x", function ()

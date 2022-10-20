@@ -126,16 +126,19 @@
            :repo "seanfarley/emacs-bitwarden"
            :files ("bitwarden.el")))
 
-; Visual Enhancements
+                                        ; Visual Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
+(package! ef-themes)
 
 ;; Functional Enhancements
 (package! popper)
 (package! embark)
 
 ;; Other Software Integrations
-(package! guix)
+(package! guix
+  :recipe (:host gitlab
+           :repo "tarsiiformes/guix"))
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
@@ -182,7 +185,7 @@
 
 (package! xkcd)
 
-; Packages to share my keybindings when streaming
+                                        ; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
 (package! keycast
   :recipe (:host github

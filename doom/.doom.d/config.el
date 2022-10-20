@@ -63,7 +63,6 @@
 (if (file-directory-p (file-truename "~/.config/doom"))
   (add-to-list 'load-path (file-truename "~/.config/doom"))
   (add-to-list 'load-path (file-truename "~/.doom.d")))
-
 (require 'org-workflow)
 (setq org-logseq-dir "~/ZK/logseq")
 
@@ -119,6 +118,16 @@
        :desc "counsel ag" "a" #'counsel-ag
        :desc "helm ag" "A" #'helm-ag
        :desc "Search/Insert BibTeX Cite" "c" #'org-ref-cite-insert-helm
+       (:prefix ("g" . "GNU/Guix")
+        :desc "All Packages" "ap" #'guix-all-packages
+        :desc "All Services" "as" #'guix-all-services
+        :desc "Guix Command" "c" #'guix-command
+        :desc "Guix (Popup)" "g" #'guix-popup
+        :desc "Lint" "L" #'guix-lint
+        :desc "Find License Definition" "l" #'guix-find-license-definition
+        :desc "Find Package Definition" "p" #'guix-find-package-definition
+        :desc "Find Service Definition" "s" #'guix-find-service-definition
+        )
        )
       (:prefix ("t" . "toggle")
        :desc "Toggle global debug on error" "d" #'toggle-debug-on-error
@@ -144,21 +153,21 @@
        :desc "evil-window-down" :n "<down>" #'evil-window-down
        )
       (:prefix ("n" . "notes")
-       (:prefix ("r" . "roam")
-        :desc "Insert BibTeX Note Link" "b" #'orb-insert-link
-        :desc "BibTeX Note Actions" "B" #'orb-note-actions
-        :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
-        :desc "Delve" :n "D" #'delve
-        :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
-        :desc "Find org-roam Node" :n "F" #'org-roam-node-find
-        :desc "Find no priv Node" :n "f" #'jp/org-roam-ignore-priv
-        :desc "Find no acg Node" :n "q" #'jp/org-roam-ignore-acg
-        :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
-        :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
-        :desc "Org Roam UI" :n "u" #'org-roam-ui-open
-        :desc "Jump to Date" :n "j" #'jp/org-roam-jump-menu/body
-        )
-       )
+               (:prefix ("r" . "roam")
+                :desc "Insert BibTeX Note Link" "b" #'orb-insert-link
+                :desc "BibTeX Note Actions" "B" #'orb-note-actions
+                :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
+                :desc "Delve" :n "D" #'delve
+                :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
+                :desc "Find org-roam Node" :n "F" #'org-roam-node-find
+                :desc "Find no priv Node" :n "f" #'jp/org-roam-ignore-priv
+                :desc "Find no acg Node" :n "q" #'jp/org-roam-ignore-acg
+                :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
+                :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
+                :desc "Org Roam UI" :n "u" #'org-roam-ui-open
+                :desc "Jump to Date" :n "j" #'jp/org-roam-jump-menu/body
+                )
+               )
       ;; (:prefix-map ("TAB" . "workspace"))
       )
 
@@ -278,13 +287,7 @@
 (map! "H-;" #'org-agenda)
 (map! "H-<undo>" #'jp/org-roam-refresh-agenda-list)
 
-(setq doom-theme 'doom-outrun-electric)
-(custom-set-faces!
-  '(doom-modeline-buffer-modified :foreground "DarkOrange")
-  '(bold :inherit 'doom-modeline-highlight)
-  ;; '(highlight :background "DarkBlue")
-  ;; '(mode-line-highlight :background "DarkBlue")
-  )
+(setq doom-theme 'ef-night)
 
 (setq doom-font (font-spec :family "JuliaMono" :size 16)
       doom-big-font (font-spec :family "JuliaMono" :size 22)
@@ -578,6 +581,9 @@ argument, query for word to search."
   (global-set-key (kbd "M-`") 'popper-cycle)
   (global-set-key (kbd "C-M-`") 'popper-toggle-type)
   (popper-mode +1))
+
+(after! guix
+  (global-guix-prettify-mode 1))
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
 ;; Get file icons in dired

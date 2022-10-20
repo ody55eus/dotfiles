@@ -106,6 +106,13 @@ bindkey "^j" down-line-or-beginning-search # Down
 bindkey -r "^u"
 bindkey -r "^d"
 
+if command -v xset &> /dev/null
+then
+  # set the keyboard repeat rate (usage):
+  # xset r rate [delay] [speed] [b=bell [on/off]]
+   xset r rate 300 45 b off
+fi
+
 SHAREDIR=$HOME/.guix-home/profile/share/zsh
 [ -e $SHAREDIR/plugins/zsh-syntax-highlighting ] && source $SHAREDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 [ -e $SHAREDIR/plugins/zsh-autopair ] && source $SHAREDIR/plugins/zsh-autopair/zsh-autopair.zsh
@@ -129,20 +136,18 @@ then
     ZSH_THEME="random"
 else
     ZSH_THEME="powerlevel10k"
-fi
-
-if [ -f "$ZDOTDIR/.p10k.zsh" ]; then
-  source "$ZDOTDIR/.p10k.zsh"
+    if [ -f "$ZDOTDIR/.p10k.zsh" ]; then
+    source "$ZDOTDIR/.p10k.zsh"
+    fi
 fi
 
 if [ -f "$ZSH/oh-my-zsh.sh" ]; then
-  . $ZSH/oh-my-zsh.sh
-  # load_theme $ZSH_THEME
+    . $ZSH/oh-my-zsh.sh
 fi
 
 if command -v neofetch &> /dev/null
 then
-  neofetch
+    neofetch
 else if command -v guix &> /dev/null
-     guix shell neofetch -- neofetch
+    guix shell neofetch -- neofetch
 fi

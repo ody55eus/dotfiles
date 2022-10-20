@@ -1,4 +1,4 @@
-(define-module (guix packages python-django)
+(define-module (python-django)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix packages python)

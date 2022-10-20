@@ -413,16 +413,19 @@ Just comment/uncomment some lines to disable/enable features.
            :repo "seanfarley/emacs-bitwarden"
            :files ("bitwarden.el")))
 
-; Visual Enhancements
+                                        ; Visual Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
+(package! ef-themes)
 
 ;; Functional Enhancements
 (package! popper)
 (package! embark)
 
 ;; Other Software Integrations
-(package! guix)
+(package! guix
+  :recipe (:host gitlab
+           :repo "tarsiiformes/guix"))
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)
@@ -469,7 +472,7 @@ Just comment/uncomment some lines to disable/enable features.
 
 (package! xkcd)
 
-; Packages to share my keybindings when streaming
+                                        ; Packages to share my keybindings when streaming
 ;;(package! command-log-mode)
 (package! keycast
   :recipe (:host github
@@ -627,6 +630,16 @@ See my [[file:Workflow.org][Org-Mode Workflow]] for more details.
        :desc "counsel ag" "a" #'counsel-ag
        :desc "helm ag" "A" #'helm-ag
        :desc "Search/Insert BibTeX Cite" "c" #'org-ref-cite-insert-helm
+       (:prefix ("g" . "GNU/Guix")
+        :desc "All Packages" "ap" #'guix-all-packages
+        :desc "All Services" "as" #'guix-all-services
+        :desc "Guix Command" "c" #'guix-command
+        :desc "Guix (Popup)" "g" #'guix-popup
+        :desc "Lint" "L" #'guix-lint
+        :desc "Find License Definition" "l" #'guix-find-license-definition
+        :desc "Find Package Definition" "p" #'guix-find-package-definition
+        :desc "Find Service Definition" "s" #'guix-find-service-definition
+        )
        )
       (:prefix ("t" . "toggle")
        :desc "Toggle global debug on error" "d" #'toggle-debug-on-error
@@ -652,21 +665,21 @@ See my [[file:Workflow.org][Org-Mode Workflow]] for more details.
        :desc "evil-window-down" :n "<down>" #'evil-window-down
        )
       (:prefix ("n" . "notes")
-       (:prefix ("r" . "roam")
-        :desc "Insert BibTeX Note Link" "b" #'orb-insert-link
-        :desc "BibTeX Note Actions" "B" #'orb-note-actions
-        :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
-        :desc "Delve" :n "D" #'delve
-        :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
-        :desc "Find org-roam Node" :n "F" #'org-roam-node-find
-        :desc "Find no priv Node" :n "f" #'jp/org-roam-ignore-priv
-        :desc "Find no acg Node" :n "q" #'jp/org-roam-ignore-acg
-        :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
-        :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
-        :desc "Org Roam UI" :n "u" #'org-roam-ui-open
-        :desc "Jump to Date" :n "j" #'jp/org-roam-jump-menu/body
-        )
-       )
+               (:prefix ("r" . "roam")
+                :desc "Insert BibTeX Note Link" "b" #'orb-insert-link
+                :desc "BibTeX Note Actions" "B" #'orb-note-actions
+                :desc "Complete org-roam " :n "c" #'org-roam-complete-at-point
+                :desc "Delve" :n "D" #'delve
+                :desc "New Daily Node (today)" :n "t" #'org-roam-dailies-capture-today
+                :desc "Find org-roam Node" :n "F" #'org-roam-node-find
+                :desc "Find no priv Node" :n "f" #'jp/org-roam-ignore-priv
+                :desc "Find no acg Node" :n "q" #'jp/org-roam-ignore-acg
+                :desc "Insert org-roam Node" :n "i" #'org-roam-node-insert
+                :desc "Capture new org-roam Node" :n "n" #'org-roam-capture
+                :desc "Org Roam UI" :n "u" #'org-roam-ui-open
+                :desc "Jump to Date" :n "j" #'jp/org-roam-jump-menu/body
+                )
+               )
       ;; (:prefix-map ("TAB" . "workspace"))
       )
 
@@ -838,28 +851,34 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 (map! "H-<return>" "<return>")
 (dolist (i '(0 1 2 3 4 5 6 7 8 9))
         (general-define-key (format "H-<kp-%d>" i) (kbd (number-to-string i))))
+(global-set-key (kbd "H-<kp-1>") (kbd "1"))
+(global-set-key (kbd "H-<kp-2>") (kbd "2"))
 #+end_src
 
 ***** Custom Functions
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(map! "H-¿" #'counsel-ag)
-(map! "H-¡" #'ivy-mode)
-(map! "H-:" #'embark-act)
-(map! "H-;" #'org-agenda)
-(map! "H-<undo>" #'jp/org-roam-refresh-agenda-list)
+(map! "H-¿" #'counsel-ag) ; H-s
+(map! "H-¡" #'ivy-mode)   ; H-k
+(map! "H-;" #'org-agenda) ; H-j
+(map! "H-:" #'embark-act) ; H-b
+(map! "H-<undo>" #'jp/org-roam-refresh-agenda-list) ; H-z
 #+end_src
 
 *** Color Theme
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(setq doom-theme 'doom-outrun-electric)
-(custom-set-faces!
-  '(doom-modeline-buffer-modified :foreground "DarkOrange")
-  '(bold :inherit 'doom-modeline-highlight)
-  ;; '(highlight :background "DarkBlue")
-  ;; '(mode-line-highlight :background "DarkBlue")
-  )
+(let ((theme-carusell '(
+                        ef-bio
+                        ef-dark
+                        ef-deuteranopia-dark
+                        ef-duo-dark
+                        ef-night
+                        ;; ef-autumn
+                        ;; ef-trio-dark
+                        ;; ef-tritanopia-dark
+                        ef-winter)))
+  (setq doom-theme (seq-random-elt theme-carusell)))
 
 #+end_src
 
@@ -1046,6 +1065,7 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 (setq tab-bar-close-button-show nil
       tab-bar-new-button-show nil)
 #+end_src
+
 *** Doom Emacs Customization
 **** Confirm Leaving Emacs
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
@@ -1695,6 +1715,17 @@ argument, query for word to search."
   (global-set-key (kbd "M-`") 'popper-cycle)
   (global-set-key (kbd "C-M-`") 'popper-toggle-type)
   (popper-mode +1))
+#+end_src
+
+**** Guix
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(after! guix
+  (global-guix-prettify-mode 1))
+#+end_src
+
+**** Undo Tree
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+(setq undo-tree-visualizer-timestamps t) ; Display Timestamps
 #+end_src
 
 * TODO Additional Packages

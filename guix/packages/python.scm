@@ -1,4 +1,4 @@
-(define-module (guix packages python)
+(define-module (python)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix utils)
   #:use-module (guix gexp)
@@ -7,7 +7,7 @@
   #:use-module (guix git-download)
   #:use-module (guix hg-download)
   #:use-module (guix build-system trivial)
-  #:use-module (guix packages python36-build-system)
+  #:use-module (guix build-system python)
   #:use-module (gnu packages)
   #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
@@ -245,7 +245,7 @@ and the unversioned commands available.")))
 allows accurate and cross platform timezone calculations using Python 2.4 or
 higher.  It also solves the issue of ambiguous times at the end of daylight
 saving time.  Almost all of the Olson timezones are supported.")
-    (license expat)))
+    (license license:expat)))
 
 (define-public python-django
   (package
@@ -734,7 +734,7 @@ connection to each user.")
 This module attempts to fix a glaring hole in pytz, that there is no way to
 get the local timezone information, unless you know the zoneinfo name, and
 under several distributions that's hard or impossible to figure out.")
-    (license expat)))
+    (license license:expat)))
 
 (define-public python-utils
   (package
