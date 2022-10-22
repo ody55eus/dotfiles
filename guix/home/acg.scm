@@ -13,7 +13,7 @@
              (guix build-system go)
              (guix git-download)
              (awesome-xyz)
-             (emacs-doom)
+             (emacs-xyz)
              (nvim)
              (tmux)
              (zsh-xyz)
@@ -59,6 +59,9 @@
                          "font-jetbrains-mono"
                          "font-overpass"
                          "font-awesome"
+                         "font-nerd-ibm-plex-mono"
+                         "font-nerd-overpass"
+                         "font-nerd-terminus"
 
                          ;; X-Tools
                          "picom"   ; Compositor
@@ -91,6 +94,7 @@
                          "awesome-copycats"
                          "tmux-tpm"
                          "emacs-next-pgtk-latest"
+                         ;; "neovim-lunarvim"
                          "neovim-config"
                          )))
  (services
@@ -108,7 +112,7 @@
                          `(".config/nvim/init.lua"
                            ,(local-file "config/nvim-init.lua" "nvim-init.lua"))
                          `(".config/nvim/lua/user"
-                           ,(file-append neovim-config "/lua/user"))
+                           ,(file-append neovim-config "/share/lua/user"))
                          `(".config/doom/packages.el"
                            ,(local-file "../../doom/.doom.d/packages.el" "packages.el"))
                          `(".config/doom/org-workflow.el"
@@ -117,8 +121,6 @@
                            ,(local-file "../../doom/.doom.d/config.el" "config.el"))
                          `(".config/doom/init.el"
                            ,(local-file "../../doom/.doom.d/init.el" "init.el"))
-                         ;; `(".config/doom/profiles.el"
-                         ;;   ,(local-file "../../doom/.doom.d/profiles.el" "profiles.el"))
                          `(".vim/.vimrc"
                            ,(local-file "config/.vim/vimrc" "vimrc"))
                          `(".config/bat/config"
@@ -134,23 +136,23 @@
                          `(".config/awesome/rc.lua"
                            ,(local-file "config/awesome.rc.lua"))
                          `(".config/awesome/themes"
-                           ,(file-append awesome-copycats "/themes"))
+                           ,(file-append awesome-copycats "/share/awesome/copycats/themes"))
                          `(".config/awesome/lain"
-                           ,(file-append awesome-lain ""))
+                           ,(file-append awesome-lain "/share/awesome/lain"))
                          `(".config/awesome/freedesktop"
-                           ,(file-append awesome-freedesktop ""))
+                           ,(file-append awesome-freedesktop "/share/awesome/freedesktop"))
                          `(".config/emacs"
-                           ,(file-append emacs-doom ""))
+                           ,(file-append emacs-doom "/share/doom"))
                          `(".config/zsh/.p10k.zsh"
                            ,(local-file "config/.p10k.zsh" "p10k.zsh"))
                          `(".config/zsh/ohmyzsh"
-                           ,(file-append zsh-ohmyzsh ""))
+                           ,(file-append zsh-ohmyzsh "/share/ohmyzsh"))
                          `(".cache/zsh/ohmyzsh/custom/themes"
-                           ,(file-append zsh-powerlevel ""))
+                           ,(file-append zsh-powerlevel "/share/zsh/plugins/p10k"))
                          `(".cache/zsh/ohmyzsh/custom/plugins/zsh-completions"
-                           ,(file-append zsh-completions ""))
+                           ,(file-append zsh-completions "/share/zsh/plugins/zsh-completion"))
                          `(".tmux/plugins/tpm"
-                           ,(file-append tmux-tpm ""))
+                           ,(file-append tmux-tpm "/share/tmux/plugins/tpm"))
                          `(".tmux/themes/jp.sh"
                            ,(local-file "config/tmux/jp.theme" "tmux-jp.theme"))
                          `(".tmux-powerlinerc"
@@ -176,10 +178,9 @@
                      ("LC_ALL" . "en_US.UTF-8")
                      ("GUIX_LOCPATH" . "$HOME/.guix-home/profile/lib/locale")
                      ("GUIX_PACKAGE_PATH" . "$HOME/.dotfiles/guix/packages")
-                     ("DOOMLOCALDIR" . "$XDG_CACHE_HOME/doom")
-                     ("DOOMPROFILELOADPATH" . "$DOOMLOCALDIR/profiles")
+                     ("DOOMLOCALDIR" . "$XDG_DATA_HOME/doom")
+                     ("DOOMPROFILELOADPATH" . "$XDG_CACHE_HOME/doom-profiles")
                      ("DOOMPROFILELOADFILE" . "$DOOMLOCALDIR/profiles/load.el")
-                     ("PATH" . ,(file-append emacs-doom (string-append "/bin" ":" (getenv "PATH"))))
-                     ("ZSH" . ,(file-append zsh-ohmyzsh ""))
+                     ("ZSH" . "$ZDOTDIR/ohmyzsh")
                      ("ZSH_CUSTOM" . "$HOME/.cache/zsh/ohmyzsh/custom")
                      ("SHELL" . ,(file-append zsh "/bin/zsh")))))))

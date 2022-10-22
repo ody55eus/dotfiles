@@ -103,11 +103,12 @@ local altkey       = "Mod1"
 local terminal     = "alacritty"
 local vi_focus     = false -- vi-like client focus https://github.com/lcpz/awesome-copycats/issues/275
 local cycle_prev   = true  -- cycle with only the previously focused client or all https://github.com/lcpz/awesome-copycats/issues/274
-local editor       = os.getenv("EDITOR") or "nvim"
 local browser      = "icecat"
+local rofi_cmd = "rofi -show drun"
 local emacs_cmd = "emacs"
 local emacsclient_cmd = "emacsclient -c"
-local rofi_cmd = "rofi -show drun"
+local emacs_runner = string.format("%s || %s", emacsclient_cmd, emacs_cmd)
+local editor       = os.getenv("EDITOR") or emacs_runner
 
 awful.util.terminal = terminal
 awful.util.tagnames = { "1", "2", "3", "4", "5" }
@@ -196,6 +197,7 @@ awful.util.mymainmenu = freedesktop.menu.build {
     },
     after = {
         { "Open terminal", terminal },
+        { "Open emacs", emacs_runner },
         -- other triads can be put here
     }
 }
@@ -398,7 +400,7 @@ globalkeys = mytable.join(
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey, "Shift"   }, "Return", function () awful.spawn(emacsclient_cmd) end,
+    awful.key({ modkey, "Shift"   }, "Return", function () awful.spawn(emacs_runner) end,
               {description = "open Emacs (client)", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),

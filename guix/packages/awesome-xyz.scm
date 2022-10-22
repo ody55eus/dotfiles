@@ -27,6 +27,9 @@
         (base32
          "0jw0p8hl4f5jdcjpafhyg0z2p9ypj2629h0wwqnqalfgqh4js2wm"))))
      (build-system copy-build-system)
+     (arguments
+      '(#:install-plan
+        '(("." "share/awesome/freedesktop"))))
      (license license:gpl2)
      (synopsis "")
      (description ""))))
@@ -49,6 +52,9 @@
         (base32
          "1mw2b7jlvz04xsl9a835rgndpj3z2vy931fzjiwq8bpbw2p27kdk"))))
      (build-system copy-build-system)
+     (arguments
+      '(#:install-plan
+        '(("." "share/awesome/lain"))))
      (license license:gpl2)
      (synopsis "")
      (description ""))))
@@ -71,6 +77,9 @@
         (base32
          "1xihddnk5kv184rx26qachckljk4q2sg7xnf1kvz2s96z5bycm0j"))))
      (build-system copy-build-system)
+     (arguments
+      '(#:install-plan
+        '(("." "share/awesome/copycats"))))
      (propagated-inputs
       (list awesome-lain
             awesome-freedesktop))

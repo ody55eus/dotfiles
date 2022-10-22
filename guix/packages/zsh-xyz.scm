@@ -28,8 +28,9 @@
         (base32
          "14waa2zc66ywcdz6dkcgisg1axjp13cqh0piwixhla2iwy5aq4zy"))))
      (build-system copy-build-system)
-     ;; (arguments
-     ;;  `(#:phases
+     (arguments
+      '(#:install-plan
+        '(("." "share/ohmyzsh"))))
      ;;    (modify-phases %standard-phases
      ;;      (add-before 'install 'remove-custom-theme
      ;;          (lambda _
@@ -59,6 +60,9 @@
         (base32
          "18djyiq2i3qcamdk9v3dn7cczxwx7hdmfk64vbb9gar0kx9vg66n"))))
      (build-system copy-build-system)
+     (arguments
+      '(#:install-plan
+        '(("." "share/zsh/plugins/zsh-completion"))))
      ;; (arguments
      ;;  `(#:phases
      ;;    (modify-phases %standard-phases
@@ -90,6 +94,9 @@
         (base32
          "1pm7471gxczclrdkf3269qj3bkq2a7kfcig4apw21sd41x7jyiy6"))))
      (build-system copy-build-system)
+     (arguments
+      '(#:install-plan
+        '(("." "share/zsh/plugins/p10k"))))
      (license license:expat)
      (synopsis "A Zsh theme")
      (description "Powerlevel10k is a theme for Zsh. It emphasizes speed, flexibility and out-of-the-box experience."))))

@@ -24,6 +24,9 @@
         (base32
          "1395fv70gxkpqswnraw50fcaawnjn91j4a44yzz1c3vmm3jp4r38"))))
      (build-system copy-build-system)
+     (arguments
+      '(#:install-plan
+        '(("." "share/tmux/plugins/tpm"))))
      (license license:gpl3)
      (synopsis "")
      (description ""))))

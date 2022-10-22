@@ -69,6 +69,161 @@ FILE-NAME found in %PATCH-PATH."
     (list (string-append (getenv "HOME") "/.dotfiles/guix/packages/patches"))
     (%patch-path))))
 
+(define-public python-3.9
+  (package
+    (inherit python-2)
+    (name "python")
+    (version "3.9.9")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://www.python.org/ftp/python/"
+                                  version "/Python-" version ".tar.xz"))
+              (patches (search-patches
+                        "python-3-arm-alignment.patch"
+                        "python-3-deterministic-build-info.patch"
+                        "python-3-fix-tests.patch"
+                        "python-3-hurd-configure.patch"
+                        "python-3-search-paths.patch"
+                        "python-3-no-static-lib.patch"))
+              (sha256
+               (base32
+                "09vd7g71i11iz5ydqghwc8kaxr0vgji94hhwwnj77h3kll28r0h6"))
+              (modules '((guix build utils)))
+              (snippet
+               '(begin
+                  ;; Delete the bundled copy of libexpat.
+                  (delete-file-recursively "Modules/expat")
+                  (substitute* "Modules/Setup"
+                    ;; Link Expat instead of embedding the bundled one.
+                    (("^#pyexpat.*") "pyexpat pyexpat.c -lexpat\n"))
+                  ;; Delete windows binaries
+                  (for-each delete-file
+                            (find-files "Lib/distutils/command" "\\.exe$"))))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments python-2)
+       ((#:make-flags _)
+        `(list (string-append
+                (format #f "TESTOPTS=-j~d" (parallel-job-count))
+                ;; test_mmap fails on low-memory systems
+                " --exclude test_mmap test_socket"
+                ,@(if (hurd-target?)
+                      '(" test_posix"      ;multiple errors
+                        " test_time"
+                        " test_pty"
+                        " test_shutil"
+                        " test_tempfile"   ;chflags: invalid argument:
+                                           ;  tbv14c9t/dir0/dir0/dir0/test0.txt
+                        " test_asyncio"    ;runs over 10min
+                        " test_os"         ;stty: 'standard input':
+                                           ;  Inappropriate ioctl for device
+                        " test_openpty"    ;No such file or directory
+                        " test_selectors"  ;assertEqual(NUM_FDS // 2, len(fds))
+                                           ;  32752 != 4
+                        " test_compileall" ;multiple errors
+                        " test_poll"       ;list index out of range
+                        " test_subprocess" ;runs over 10min
+                        " test_asyncore"   ;multiple errors
+                        " test_threadsignals"
+                        " test_eintr"      ;Process return code is -14
+                        " test_io"         ;multiple errors
+                        " test_logging"
+                        " test_signal"
+                        " test_threading"  ;runs over 10min
+                        " test_flags"      ;ERROR
+                        " test_bidirectional_pty"
+                        " test_create_unix_connection"
+                        " test_unix_sock_client_ops"
+                        " test_open_unix_connection"
+                        " test_open_unix_connection_error"
+                        " test_read_pty_output"
+                        " test_write_pty")
+                      '()))))
+       ((#:phases phases)
+        `(modify-phases ,phases
+           ,@(if (hurd-system?)
+                 `((delete 'patch-regen-for-hurd)) ;regen was removed after 3.5.9
+                 '())
+           (add-after 'unpack 'remove-windows-binaries
+             (lambda _
+               ;; Delete .exe from embedded .whl (zip) files
+               (for-each
+                (lambda (whl)
+                  (let ((dir "whl-content")
+                        (circa-1980 (* 10 366 24 60 60)))
+                    (mkdir-p dir)
+                    (with-directory-excursion dir
+                      (let ((whl (string-append "../" whl)))
+                        (invoke "unzip" whl)
+                        (for-each delete-file
+                                  (find-files "." "\\.exe$"))
+                        (delete-file whl)
+                        ;; Reset timestamps to prevent them from ending
+                        ;; up in the Zip archive.
+                        (ftw "." (lambda (file stat flag)
+                                   (utime file circa-1980 circa-1980)
+                                   #t))
+                        (apply invoke "zip" "-X" whl
+                               (find-files "." #:directories? #t))))
+                    (delete-file-recursively dir)))
+                (find-files "Lib/ensurepip" "\\.whl$"))))
+           (add-before 'check 'set-TZDIR
+             (lambda* (#:key inputs native-inputs #:allow-other-keys)
+               ;; test_email requires the Olson time zone database.
+               (setenv "TZDIR"
+                       (string-append (assoc-ref
+                                       (or native-inputs inputs) "tzdata")
+                                      "/share/zoneinfo"))))
+           (replace 'rebuild-bytecode
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((out (assoc-ref outputs "out")))
+                 ;; Disable hash randomization to ensure the generated .pycs
+                 ;; are reproducible.
+                 (setenv "PYTHONHASHSEED" "0")
+
+                 (for-each (lambda (output)
+                             ;; XXX: Delete existing pycs generated by the build
+                             ;; system beforehand because the -f argument does
+                             ;; not necessarily overwrite all files, leading to
+                             ;; indeterministic results.
+                             (for-each (lambda (pyc)
+                                         (delete-file pyc))
+                                       (find-files output "\\.pyc$"))
+
+                             (apply invoke
+                                    `(,,(if (%current-target-system)
+                                            "python3"
+                                            '(string-append out
+                                                            "/bin/python3"))
+                                      "-m" "compileall"
+                                      "-o" "0" "-o" "1" "-o" "2"
+                                      "-f" ; force rebuild
+                                      "--invalidation-mode=unchecked-hash"
+                                      ;; Don't build lib2to3, because it's
+                                      ;; Python 2 code.
+                                      "-x" "lib2to3/.*"
+                                      ,output)))
+                           (map cdr outputs)))))
+           (replace 'install-sitecustomize.py
+             ,(customize-site version))))))
+    (inputs
+     (modify-inputs (package-inputs python-2.7)
+       (replace "openssl" openssl)))
+    (native-inputs
+     `(("tzdata" ,tzdata-for-tests)
+       ("unzip" ,unzip)
+       ("zip" ,(@ (gnu packages compression) zip))
+       ,@(if (%current-target-system)
+             `(("python3" ,this-package))
+             '())
+       ,@(package-native-inputs python-2)))
+    (native-search-paths
+     (list (guix-pythonpath-search-path version)
+           ;; Used to locate tzdata by the zoneinfo module introduced in
+           ;; Python 3.9.
+           (search-path-specification
+            (variable "PYTHONTZPATH")
+            (files (list "share/zoneinfo")))))))
+
 ;; From guix repository commit:
 ;; d66146073def03d1a3d61607bc6b77997284904b
 (define-public python-3.6
@@ -810,21 +965,21 @@ Most public APIs are compatible with @command{mysqlclient} and MySQLdb.")
       and ease of use), with many advanced features added.")
     (license license:lgpl3+)))
 
-(list python-3.6
-      python-django
-      python-six
-      python-ldap3
-      python-markdown
-      python-onetimepass
-      python-markupsafe
-      python-mkdocs
-      python-openpyxl
-      python-pycryptodome
-      python-pyyaml
-      python-requests
-      python-selenium
-      python-tornado
-      python-tzlocal
-      python-pymysql
-      python-pysimplesoap
-      python-utils)
+;; (list python-3.6
+;;       python-django
+;;       python-six
+;;       python-ldap3
+;;       python-markdown
+;;       python-onetimepass
+;;       python-markupsafe
+;;       python-mkdocs
+;;       python-openpyxl
+;;       python-pycryptodome
+;;       python-pyyaml
+;;       python-requests
+;;       python-selenium
+;;       python-tornado
+;;       python-tzlocal
+;;       python-pymysql
+;;       python-pysimplesoap
+;;       python-utils)

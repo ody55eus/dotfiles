@@ -1,7 +1,6 @@
 (define-module (python-django)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
-  #:use-module (guix packages python)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system python)
@@ -73,5 +72,3 @@ any Web site.  Django focuses on automating as much as possible and adhering
 to the @dfn{don't repeat yourself} (DRY) principle.")
     (license license:bsd-3)
     (properties `((cpe-name . "django")))))
-
-python-django
