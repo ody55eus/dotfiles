@@ -161,26 +161,26 @@ Using the following star symbols:
 |       10047 | 273f | ✿      |
 
 #+begin_src emacs-lisp
-(after! org
-  (setq org-modern-todo nil      ; Don't update TODO Tags
-      org-modern-block nil     ; #+BEGIN block/src/example etc.
-      org-modern-keyword nil   ; #+AUTHOR / #+TITLE / #+PROPERTIES etc.
-      org-modern-priority nil  ; Don't update task priorities
-      org-modern-star ["◉" "○" "✸" "✿"]  ; use pretty stars
-      )
-  )
+;; (after! org
+;;   (setq org-modern-todo nil      ; Don't update TODO Tags
+;;       org-modern-block nil     ; #+BEGIN block/src/example etc.
+;;       org-modern-keyword nil   ; #+AUTHOR / #+TITLE / #+PROPERTIES etc.
+;;       org-modern-priority nil  ; Don't update task priorities
+;;       org-modern-star ["◉" "○" "✸" "✿"]  ; use pretty stars
+;;       )
+;;   )
 #+end_src
 
 To activate globally in all org buffers, execute =global-org-modern-mode=:
 
 #+begin_src emacs-lisp :tangle no
-(global-org-modern-mode 1)
+;; (global-org-modern-mode 1)
 #+end_src
 
 We don't want it activated in ~org-agenda-mode~, so we only trigger it after ~org-mode~:
 #+begin_src emacs-lisp :tangle no :noweb-ref org-activations
 
-  (org-modern-mode 1)
+  (org-superstar-mode 1)
 #+end_src
 
 *** Set pretty code symbols

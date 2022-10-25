@@ -92,14 +92,14 @@
   ("e" jp/org-roam-goto-year)
   ("c" nil "cancel"))
 
-(after! org
-  (setq org-modern-todo nil      ; Don't update TODO Tags
-      org-modern-block nil     ; #+BEGIN block/src/example etc.
-      org-modern-keyword nil   ; #+AUTHOR / #+TITLE / #+PROPERTIES etc.
-      org-modern-priority nil  ; Don't update task priorities
-      org-modern-star ["◉" "○" "✸" "✿"]  ; use pretty stars
-      )
-  )
+;; (after! org
+;;   (setq org-modern-todo nil      ; Don't update TODO Tags
+;;       org-modern-block nil     ; #+BEGIN block/src/example etc.
+;;       org-modern-keyword nil   ; #+AUTHOR / #+TITLE / #+PROPERTIES etc.
+;;       org-modern-priority nil  ; Don't update task priorities
+;;       org-modern-star ["◉" "○" "✸" "✿"]  ; use pretty stars
+;;       )
+;;   )
 
 (after! org
   (appendq! +ligatures-extra-symbols
@@ -201,7 +201,7 @@
   (emojify-mode 1)    ; Enable Emojis
   (org-appear-mode 1) ; re-appear markup signs =*~
   
-    (org-modern-mode 1)
+    (org-superstar-mode 1)
   )
 (add-hook 'org-mode-hook #'jp/org-mode-setup)
 
