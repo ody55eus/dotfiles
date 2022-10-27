@@ -12,3 +12,4 @@
 /doom/.doom.d/custom.el
 /doom/.doom.d/misc/
 *.pyc
+/tmux/.tmux/plugins/*
