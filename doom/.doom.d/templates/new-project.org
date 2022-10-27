@@ -9,7 +9,6 @@ DEADLINE: %^t
 - [ ] Add project tags for context (e.g. work, personal)
 - [ ] List specific tasks
 - [ ] Schedule next actions from generated tasks
-- [ ] Create an Evernote notebook matching project name
 
   #+name: headline
   #+BEGIN_SRC emacs-lisp
@@ -22,10 +21,11 @@ DEADLINE: %^t
     mkdir -p ~/Projects/Code/<<headline()>>
     cd ~/Projects/Code/<<headline()>>
     git init .
+    git remote add origin ssh://git@gitlab.ody5.de:223/ody55eus/<<headline()>>
     #+end_src
 
   + [ ] Ody5 Git Repository
     #+begin_src shell :noweb t
     cd ~/Projects/Code/
-    git clone ssh://git@gitlab.ody5.de/ody55eus/<<headline()>>.git
+    git clone ssh://git@gitlab.ody5.de:223/ody55eus/<<headline()>>.git
     #+end_src

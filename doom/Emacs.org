@@ -483,6 +483,9 @@ Just comment/uncomment some lines to disable/enable features.
            :repo "daichirata/emacs-rotate"))
 #+end_src
 
+*** MacOS Only Packages
+- [[https://github.com/benmaughan/spotlight.el][Spotlight]] uses MacOS system's search engine to find files.
+
 #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "./.doom.d/packages.el" "no")
 ;; MacOS Only
 (package! spotlight)
@@ -490,12 +493,16 @@ Just comment/uncomment some lines to disable/enable features.
 
 ** Emacs Startup
 *** Improve Startup Performance
+**** Garbage Collection
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
+#+end_src
 
+**** Startup Time
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (defun jp/display-startup-time ()
   (message "Emacs loaded in %s with %d garbage collections."
            (format "%.2f seconds"
@@ -504,7 +511,6 @@ Just comment/uncomment some lines to disable/enable features.
            gcs-done))
 
 (add-hook 'emacs-startup-hook #'jp/display-startup-time)
-
 #+end_src
 
 *** Start Emacs as Server!
@@ -755,8 +761,8 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (define-key bibtex-mode-map (kbd "M-b") 'org-ref-bibtex-hydra/body)
 (define-key org-mode-map (kbd "C-c ]") 'org-ref-insert-link-hydra/body)
-
 #+end_src
+
 **** Embark (~C-:~)
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (require 'embark)
