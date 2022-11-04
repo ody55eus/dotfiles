@@ -10,7 +10,7 @@
   #:use-module (guix gexp))
 
 (define-public emacs-doom
-  (let ((commit "7e50f239c46ea17429f159fb543c0d793543c06e")
+  (let ((commit "ceb985673ccd2be869bdde2ea4f41c84e9354f1e")
         (revision "1"))
     (package
      (name "emacs-doom")
@@ -25,7 +25,7 @@
        (file-name (git-file-name name version))
        (sha256
         (base32
-         "1zl2zqs0921f15k2a9f647qxnb6vvqyw3f81wiwhg3njc4lzc0yx"))))
+         "0axs8rqaaryc2xzhcvlg7x180jn19gj8h7s8srx67l1w6p20h08s"))))
      (build-system copy-build-system)
      (arguments
       '(#:install-plan
