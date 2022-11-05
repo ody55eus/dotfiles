@@ -122,9 +122,12 @@
 ;;            :files (:defaults "contrib" "etc" "server" "Makefile")))
 
 (package! emacs-bitwarden       ; Password Manager
-  :recipe (:host github
-           :repo "seanfarley/emacs-bitwarden"
-           :files ("bitwarden.el")))
+  :recipe (:host nil
+           :build t
+           :type git
+           :repo "https://labs.phundrak.com/phundrak/bitwarden.el"
+           ;; :files ("bitwarden.el")
+           ))
 
                                         ; Visual Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.

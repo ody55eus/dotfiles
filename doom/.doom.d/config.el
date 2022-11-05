@@ -181,6 +181,14 @@
 
 (map! :leader
       (:prefix ("l" . "lookup")
+       (:prefix ("p" . "passwords")
+        :desc "list-all" "a" #'bitwarden-list-all
+        :desc "jp/enable-bitwarden" "e" #'jp/enable-bitwarden
+        :desc "getpass" "g" #'bitwarden-getpass
+        :desc "login" "l" #'bitwarden-login
+        :desc "unlock" "u" #'bitwarden-unlock
+        :desc "remove from kill-ring" "x" #'embark-kill-ring-remove
+                 )
        :desc "helm-M-x" "c" #'helm-M-x
        :desc "helm-bibtex" "b" #'helm-bibtex
        :desc "counsel-fonts" "f" #'counsel-fonts

@@ -409,9 +409,12 @@ Just comment/uncomment some lines to disable/enable features.
 ;;            :files (:defaults "contrib" "etc" "server" "Makefile")))
 
 (package! emacs-bitwarden       ; Password Manager
-  :recipe (:host github
-           :repo "seanfarley/emacs-bitwarden"
-           :files ("bitwarden.el")))
+  :recipe (:host nil
+           :build t
+           :type git
+           :repo "https://labs.phundrak.com/phundrak/bitwarden.el"
+           ;; :files ("bitwarden.el")
+           ))
 
                                         ; Visual Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
@@ -724,6 +727,14 @@ Changing some keybindings from their defaults to better fit with Doom Emacs, and
 
 (map! :leader
       (:prefix ("l" . "lookup")
+       (:prefix ("p" . "passwords")
+        :desc "list-all" "a" #'bitwarden-list-all
+        :desc "jp/enable-bitwarden" "e" #'jp/enable-bitwarden
+        :desc "getpass" "g" #'bitwarden-getpass
+        :desc "login" "l" #'bitwarden-login
+        :desc "unlock" "u" #'bitwarden-unlock
+        :desc "remove from kill-ring" "x" #'embark-kill-ring-remove
+                 )
        :desc "helm-M-x" "c" #'helm-M-x
        :desc "helm-bibtex" "b" #'helm-bibtex
        :desc "counsel-fonts" "f" #'counsel-fonts
