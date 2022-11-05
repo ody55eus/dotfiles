@@ -147,6 +147,7 @@
         )
        )
       (:prefix ("w" . "window")
+       :desc "hydra" "e" #'jp/hydra/windows/body
        :desc "evil-window-left" :n "<left>" #'evil-window-left
        :desc "evil-window-right" :n "<right>" #'evil-window-right
        :desc "evil-window-up" :n "<up>" #'evil-window-up
@@ -220,7 +221,7 @@
 (define-key org-mode-map (kbd "C-c ]") 'org-ref-insert-link-hydra/body)
 
 (require 'embark)
-(global-set-key (kbd "C-:") 'embark-act)
+(global-set-key (kbd "C-@") 'embark-act)
 
 (eval-when-compile
   (defmacro my/embark-ace-action (fn)
@@ -255,6 +256,7 @@
 
 (map! :map evil-window-map
       "SPC" #'rotate-layout
+      "e" #'jp/hydra/windows/body
       ;; Navigation
       "<left>"     #'evil-window-left
       "<down>"     #'evil-window-down
@@ -593,6 +595,48 @@ argument, query for word to search."
   t)
 
 (setf (alist-get ?x avy-dispatch-alist) 'avy-action-embark)
+
+(defhydra jp/hydra/windows (:hint nil)
+  "
+          Split: _v_ert  _s_:horz
+         Delete: _c_lose  _o_nly
+  Switch Window: _h_:left  _j_:down  _k_:up  _l_:right  _u_:undo  _r_:redo
+        Buffers: _p_revious  _n_ext  _b_:select  _f_ind-file
+         Resize: _H_:splitter left  _J_:splitter down  _K_:splitter up  _L_:splitter right
+           Move: _a_:up  _z_:down  _i_menu
+"
+  ("z" scroll-up-line)
+  ("a" scroll-down-line)
+  ("i" consult-imenu)
+
+  ("h" windmove-left)
+  ("<left>" windmove-left)
+  ("j" windmove-down)
+  ("<down>" windmove-down)
+  ("k" windmove-up)
+  ("<up>" windmove-up)
+  ("l" windmove-right)
+  ("<right>" windmove-right)
+  ("u" winner-undo)
+  ("r" winner-redo)
+
+  ("p" previous-buffer)
+  ("n" next-buffer)
+  ("b" switch-to-buffer)
+  ("f" find-file)
+
+  ("s" split-window-below)
+  ("v" split-window-right)
+
+  ("c" delete-window)
+  ("o" delete-other-windows)
+
+  ("H" hydra-move-splitter-left)
+  ("J" hydra-move-splitter-down)
+  ("K" hydra-move-splitter-up)
+  ("L" hydra-move-splitter-right)
+
+  ("q" nil))
 
 (after! popper
   (setq popper-reference-buffers
