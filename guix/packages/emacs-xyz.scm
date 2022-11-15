@@ -6,36 +6,35 @@
   #:use-module (guix build-system copy)
   #:use-module (guix build-system go)
   #:use-module (guix git-download)
-  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module ((guix licenses)
+                #:prefix license:)
   #:use-module (guix gexp))
 
 (define-public emacs-doom
-  (let ((commit "ceb985673ccd2be869bdde2ea4f41c84e9354f1e")
-        (revision "1"))
+  (let ((commit "9d4d5b756a8598c4b5c842e9f1f33148af2af8fd")
+        (revision "2"))
     (package
-     (name "emacs-doom")
-     (version (git-version "3.0.0" revision commit))
-     (home-page "https://github.com/doomemacs/doomemacs")
-     (source
-      (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url home-page)
-             (commit commit)))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32
-         "0axs8rqaaryc2xzhcvlg7x180jn19gj8h7s8srx67l1w6p20h08s"))))
-     (build-system copy-build-system)
-     (arguments
-      '(#:install-plan
-            '(("bin" "bin")
-              ("." "share/doom/"))))
-     (propagated-inputs
-      (list binutils))
-     (license license:expat)
-     (synopsis "An Emacs framework for the stubborn martian hacker.")
-     (description "Doom is a configuration framework for GNU Emacs tailored for
+      (name "emacs-doom")
+      (version (git-version "3.0.0" revision commit))
+      (home-page "https://github.com/doomemacs/doomemacs")
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url home-page)
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "1j9768sp7823z6fz4jikapgyh1x2230xacslgvj2p5svpcb40i29"))))
+      (build-system copy-build-system)
+      (arguments
+       '(#:install-plan '(("bin" "bin")
+                          ("." "share/doom/"))))
+      (propagated-inputs (list binutils))
+      (license license:expat)
+      (synopsis "An Emacs framework for the stubborn martian hacker.")
+      (description
+       "Doom is a configuration framework for GNU Emacs tailored for
                    Emacs bankruptcy veterans who want less framework in their
                    frameworks, a modicum of stability (and reproducibility) from
                    their package manager, and the performance of a hand rolled config
