@@ -196,7 +196,7 @@
   (org-indent-mode 1)  ; Indent text following current headline
   (mixed-pitch-mode 1) ; Enable different Fonts
   ;;(org-roam-setup) ; Enable org-roam-db-autosync
-  (setq org-image-actual-width nil) ; Set optional images
+  (setq org-image-actual-width 1800) ; Set optional images
   (rainbow-mode 1)    ; Enable rainbow mode
   (emojify-mode 1)    ; Enable Emojis
   (org-appear-mode 1) ; re-appear markup signs =*~
