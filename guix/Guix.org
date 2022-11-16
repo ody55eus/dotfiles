@@ -16,10 +16,11 @@ A profile is a way to group Guix packages. Amongst its advantages, profiles can 
 References:
 - [[https://guix.gnu.org/en/cookbook/en/html_node/Guix-Profiles-in-Practice.html][Guix Profiles in Practice]]
 
-** Activate Profiles
+** Scripts
 :Source:
 [[https://github.com/daviwil/dotfiles/blob/master/Systems.org#activating-profiles][David Wilson's config]]
 :END:
+*** Activate Profiles
 
 A script to activate guix profiles. Usage:
 
@@ -55,8 +56,9 @@ for profile in $profiles; do
 
     # Source the new profile
     GUIX_PROFILE="$profilePath/$profileName"
+    export GUIX_PROFILE="$profilePath/$profileName"
     if [ -f $GUIX_PROFILE/etc/profile ]; then
-        . "$GUIX_PROFILE"/etc/profile
+        GUIX_PROFILE="$profilePath/$profileName" . "$GUIX_PROFILE"/etc/profile
     else
         echo -e "${RED}Couldn't find profile:" $GUIX_PROFILE/etc/profile "${NC}"
     fi
@@ -66,7 +68,7 @@ for profile in $profiles; do
 done
 #+end_src
 
-** Update profiles
+*** Update profiles
 A script to update Guix profiles. Usage:
 
 #+begin_example
@@ -99,7 +101,7 @@ for profile in $profiles; do
 done
 #+end_src
 
-** Run =guix package= in profile
+*** Run =guix package= in profile
 #+begin_src bash :tangle ./bin/scripts/pp
 GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
 
@@ -113,6 +115,55 @@ else
     echo -e "No profile found at path: " $profilePath
 fi
 
+#+end_src
+
+** Custom Profiles
+*** Doom Emacs
+#+begin_src scheme :tangle .config/guix/manifests/doom.scm
+(specifications->manifest
+ (list "file"                   ; Guessing Filetypes
+       "git"
+       "the-silver-searcher"    ; ag: Better and Faster grep/awk
+       "ripgrep"                ; rg: Better than ag?
+
+       ;; Spell Checking
+       "aspell"
+       "aspell-dict-en"
+       "aspell-dict-de"
+
+       ;; Programming
+       "node"           ; npm: To install lsp server
+       "icedtea"        ; jre: Java Runtime Environment (alternative: openjdk)
+       "python"         ; What else?
+       "python-scipy"   ; Includes numpy
+       "python-pandas"  ; DataFrames
+       "python-seaborn" ; Includes matplotlib
+
+       ;; Visualization Tools
+       "plantuml"       ; UML Diagrams
+       "graphviz"       ; Convert Graphs
+
+       ;; GUI Tools
+       "xdot"           ; Display Graphs
+       "xsel"           ; Manipulate Selections
+
+       ;; Converting Files
+       "pandoc"         ; Swiss-Army-Knife
+       "texlive"        ; LaTeX
+       "texlive-latex-moderncv"
+       "texlive-latex-fontawesome"
+
+       ;; GUI Fonts
+       "font-nerd-fonts"
+       "font-font-awesome"
+       "font-juliamono"
+       "font-jetbrains-mono"
+       "font-overpass"
+
+       ;; Encryption
+       "gnupg"          ; GnuPG
+       "sshfs"          ; SSH file systems
+       "pinentry"))     ; GUI Password Entry
 #+end_src
 
 * Channels
