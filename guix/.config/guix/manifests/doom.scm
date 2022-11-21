@@ -1,5 +1,6 @@
 (specifications->manifest
  (list "file"                   ; Guessing Filetypes
+       "git"
        "the-silver-searcher"    ; ag: Better and Faster grep/awk
        "ripgrep"                ; rg: Better than ag?
 
@@ -27,6 +28,12 @@
        ;; Converting Files
        "pandoc"         ; Swiss-Army-Knife
        "texlive"        ; LaTeX
+       "texlive-latex-moderncv"
+       "texlive-latex-fontawesome"
+
+       ;; GUI Themes
+       "arc-theme"
+       "arc-icon-theme"
 
        ;; GUI Fonts
        "font-nerd-fonts"
