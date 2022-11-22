@@ -413,7 +413,7 @@ Just comment/uncomment some lines to disable/enable features.
            :repo "seanfarley/emacs-bitwarden"
            :files ("bitwarden.el")))
 
-                                        ; Visual Enhancements
+;; Visual Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
 (package! ef-themes)
@@ -421,6 +421,7 @@ Just comment/uncomment some lines to disable/enable features.
 ;; Functional Enhancements
 (package! popper)
 (package! embark)
+(package! helm-ag)              ; Ack and the_silver_searcher support
 
 ;; Other Software Integrations
 (package! guix
@@ -438,10 +439,13 @@ Just comment/uncomment some lines to disable/enable features.
 (package! elfeed)
 (package! elfeed-score)
 
-                                        ;(package! synosaurus)
+;; Calendar
 (package! calfw)
 (package! calfw-org)
-(package! helm-ag)              ; Ack and the_silver_searcher support
+(package! german-holidays
+  :recipe (:host github
+           :repo "rudolfochrist/german-holidays"
+           :files ("german-holidays.el")))
 
 ;; Dictionaries
 (package! synosaurus)           ; Thesaurus synonyms
@@ -907,52 +911,11 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 :END:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq doom-font (font-spec :family "JuliaMono" :size 16)
-      doom-big-font (font-spec :family "JuliaMono" :size 22)
+(setq doom-font (font-spec :family "JetBrainsMono NL" :size 16)
+      doom-big-font (font-spec :family "JetBrainsMono NL" :size 22)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
-      doom-unicode-font (font-spec :family "JuliaMono" :size 16)
-      doom-serif-font (font-spec :family "JuliaMono" :weight 'light :size 16))
-#+end_src
-
-**** Old System Dependent
-#+begin_src emacs-lisp
-
-;; Set the font face based on platform
-(pcase system-type
-  ((or 'gnu/linux 'windows-nt 'cygwin)
-   (set-face-attribute 'default nil
-                       :font "Source Code Pro"
-                       :weight 'regular
-                       :height 140)
-   )
-  ('darwin
-   (set-face-attribute 'default nil :font "Source Code Pro for Powerline" :height 140)
-   ))
-
-;; Set the fixed pitch face
-(pcase system-type
-  ((or 'gnu/linux 'windows-nt 'cygwin)
-   (set-face-attribute 'fixed-pitch nil
-                       :font "Source Code Pro"
-                       :weight 'regular
-                       :height 140))
-  ('darwin (set-face-attribute 'fixed-pitch nil :font "Source Code Pro for Powerline" :height 140)))
-
-;; Set the variable pitch face
-(pcase system-type
-  ((or 'gnu/linux 'windows-nt 'cygwin)
-   (set-face-attribute 'variable-pitch nil
-                       ;; :font "Cantarell"
-                       :font "Roboto"
-                       :height 175
-                       :weight 'light)
-   )
-  ('darwin (set-face-attribute 'variable-pitch nil
-                               :font "Helvetica"
-                               :height 175
-                               :weight 'light)
-           ))
-
+      doom-unicode-font (font-spec :family "JetBrainsMono NL" :size 16)
+      doom-serif-font (font-spec :family "JetBrainsMono NL" :weight 'light :size 16))
 #+end_src
 
 *** Basic Emacs UI Enhancements
@@ -1073,6 +1036,10 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq calendar-week-start-day 1) ; Start the Week on Monday
+
+(after! german-holidays
+  (require 'german-holidays)
+  (setq calendar-holidays holiday-german-HE-holidays)) ; Set holidays (german)
 
 #+end_src
 
