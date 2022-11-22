@@ -891,9 +891,6 @@ Returns file content as a string."
    (guile . t)
    (emacs-lisp . t)))
 
-(setq org-babel-tangle-comment-format-beg ""
-      org-babel-tangle-comment-format-end "")
-
 (use-package! org-roam-bibtex
   :after org-roam
   :config
@@ -920,12 +917,14 @@ Returns file content as a string."
       bibtex-completion-additional-search-fields '(keywords)
       bibtex-completion-display-formats
       '((article       . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}")
-    (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} Ch ${chapter:16}")
-    (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:20}")
-    (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:20}")
-    (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${=type=:7}"))
+        (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} Ch ${chapter:16}")
+        (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:20}")
+        (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:20}")
+        (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${=type=:7}"))
       bibtex-completion-library-path '("~/nc/Library/BibTeX/")
-      bibtex-completion-notes-path "~/ZK/References/")
+      bibtex-completion-notes-path "~/ZK/References/"
+      citar-library-paths bibtex-completion-library-path
+      citar-notes-paths bibtex-completion-notes-path)
 
 (require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
 (require 'org-roam-protocol)

@@ -132,6 +132,7 @@
        )
       (:prefix ("t" . "toggle")
        :desc "Toggle global debug on error" "d" #'toggle-debug-on-error
+       :desc "Org Present" "p"  #'org-present
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle KeyCast Mode" "k" #'keycast-mode
@@ -203,6 +204,7 @@
        :desc "avy-goto-char-2" "O" #'avy-goto-char-2
        :desc "avy-imenu" "I" #'avy-imenu
        :desc "evil-avy-goto-line" "l" #'evil-avy-goto-line
+       :desc "helm-mark-ring" "m" #'helm-mark-ring
        :desc "pomm" "p" #'pomm
        :desc "evil-avy-goto-word-0" "w" #'evil-avy-goto-word-0
        :desc "evil-avy-goto-subword-0" "W" #'evil-avy-goto-subword-0

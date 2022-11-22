@@ -64,7 +64,7 @@
 (package! org-super-agenda)
 (package! org-appear)           ; Display markup symbols (*=~ etc.) on cursor-over
 (package! org-alert)            ; Enable org-mode notifications.
-(package! org-tree-slide)       ; Enable org-mode presentations.
+;; (package! org-tree-slide)       ; Enable org-mode presentations.
 (package! org-present)
 (package! org-superstar)           ; Alternative for org-bullets and org-superstar.
 (package! org-pdfview)          ; Allows to annotate pdf in org-mode.
