@@ -294,7 +294,7 @@ We don't want it activated in ~org-agenda-mode~, so we only trigger it after ~or
   (org-indent-mode 1)  ; Indent text following current headline
   (mixed-pitch-mode 1) ; Enable different Fonts
   ;;(org-roam-setup) ; Enable org-roam-db-autosync
-  (setq org-image-actual-width nil) ; Set optional images
+  (setq org-image-actual-width 1800) ; Set optional images
   (rainbow-mode 1)    ; Enable rainbow mode
   (emojify-mode 1)    ; Enable Emojis
   (org-appear-mode 1) ; re-appear markup signs =*~
@@ -1247,13 +1247,6 @@ This Configuration runs on start end finish of presentations:
    (emacs-lisp . t)))
 #+end_src
 
-*** Turn Tangle Comments off
-Since Emacs 28 OrgBabel tangle creates comments like ="[[%link][%source-name]]"= to indicate the source of tangled code. The following lines deactivate this behavior:
-#+begin_src emacs-lisp
-(setq org-babel-tangle-comment-format-beg ""
-      org-babel-tangle-comment-format-end "")
-#+end_src
-
 ** TODO BibTeX (Literature Management)
 
 My BibTeX configuration is based on [[https://github.com/org-roam/org-roam-bibtex/blob/master/README.md#doom-emacs][Org Roam BibTeX README]].
@@ -1287,12 +1280,16 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
       bibtex-completion-additional-search-fields '(keywords)
       bibtex-completion-display-formats
       '((article       . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}")
-    (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} Ch ${chapter:16}")
-    (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:20}")
-    (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:20}")
-    (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${=type=:7}"))
+        (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} Ch ${chapter:16}")
+        (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:20}")
+        (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:20}")
+        (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${=type=:7}"))
       bibtex-completion-library-path '("~/nc/Library/BibTeX/")
-      bibtex-completion-notes-path "~/ZK/References/")
+      bibtex-completion-notes-path "~/ZK/References/"
+      org-cite-global-bibliography bibtex-completion-bibliography
+      citar-bibliography bibtex-completion-bibliography
+      citar-library-paths bibtex-completion-library-path
+      citar-notes-paths `(,bibtex-completion-notes-path))
 #+end_src
 
 * Org-Roam (Zettelkasten)
@@ -1308,7 +1305,7 @@ The [[https://github.com/org-roam/org-roam-bibtex/blob/master/doc/orb-manual.org
 
 *** Note from <2022-06-03 Fri>
 Doom Emacs has some problems with ~org-protocol~ on Emacs version > 28.
-To ignore this error, remove the following lines from [[file:~/.emacs.d/modules/lang/org/config.el]]
+To ignore this error, remove the following lines from [[file:~/.dotfiles/doom/.emacs.d/modules/lang/org/config.el]]
 
 #+begin_src emacs-lisp :tangle no
   ;; Disable built-in, clumsy advice

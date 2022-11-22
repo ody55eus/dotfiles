@@ -118,6 +118,7 @@
        :desc "counsel ag" "a" #'counsel-ag
        :desc "helm ag" "A" #'helm-ag
        :desc "Search/Insert BibTeX Cite" "c" #'org-ref-cite-insert-helm
+       :desc "Consult Ripgrep" :n "R" #'consult-ripgrep
        (:prefix ("g" . "GNU/Guix")
         :desc "All Packages" "ap" #'guix-all-packages
         :desc "All Services" "as" #'guix-all-services
@@ -131,6 +132,7 @@
        )
       (:prefix ("t" . "toggle")
        :desc "Toggle global debug on error" "d" #'toggle-debug-on-error
+       :desc "Org Present" "p"  #'org-present
        :desc "Toggle line highlight local" "h" #'hl-line-mode
        :desc "Toggle line highlight globally" "H" #'global-hl-line-mode
        :desc "Toggle KeyCast Mode" "k" #'keycast-mode
@@ -211,6 +213,7 @@
        :desc "avy-goto-char-2" "O" #'avy-goto-char-2
        :desc "avy-imenu" "I" #'avy-imenu
        :desc "evil-avy-goto-line" "l" #'evil-avy-goto-line
+       :desc "helm-mark-ring" "m" #'helm-mark-ring
        :desc "pomm" "p" #'pomm
        :desc "evil-avy-goto-word-0" "w" #'evil-avy-goto-word-0
        :desc "evil-avy-goto-subword-0" "W" #'evil-avy-goto-subword-0
@@ -277,29 +280,32 @@
 (unbind-key "K" evil-visual-state-map)
 (map! :nv "gK"  #'+lookup/documentation)
 
-(map! "H-<next>" "<next>")
-(map! "H-<prior>" "<prior>")
-(map! "H-<end>" "<end>")
-(map! "H-<home>" "<home>")
-(map! "H-<escape>" "<escape>")
-(map! "H-ü" "<escape>")
-(map! "H-<left>" "<left>")
-(map! "H-<right>" "<right>")
-(map! "H-<up>" "<up>")
-(map! "H-<down>" "<down>")
-(map! "H-<backspace>" "<backspace>")
-(map! "H-<delete>" "<delete>")
-(map! "H-<return>" "<return>")
-(dolist (i '(0 1 2 3 4 5 6 7 8 9))
-        (general-define-key (format "H-<kp-%d>" i) (kbd (number-to-string i))))
+(progn
+  (define-key key-translation-map (kbd "H-<next>") (kbd "<next>"))
+  (define-key key-translation-map (kbd "H-<prior>") (kbd "<prior>"))
+  (define-key key-translation-map (kbd "H-<end>") (kbd "<end>"))
+  (define-key key-translation-map (kbd "H-<home>") (kbd "<home>"))
+  (define-key key-translation-map (kbd "H-<escape>") (kbd "<escape>"))
+  (define-key key-translation-map (kbd "H-ü") (kbd "<escape>"))
+  (define-key key-translation-map (kbd "H-<left>") (kbd "<left>"))
+  (define-key key-translation-map (kbd "H-<right>") (kbd "<right>"))
+  (define-key key-translation-map (kbd "H-<up>") (kbd "<up>"))
+  (define-key key-translation-map (kbd "H-<down>") (kbd "<down>"))
+  (define-key key-translation-map (kbd "H-<backspace>") (kbd "<DEL>"))
+  (define-key key-translation-map (kbd "H-<delete>") (kbd "<deletechar>"))
+  (define-key key-translation-map (kbd "H-<return>") (kbd "<RET>"))
+  (dolist (i '(0 1 2 3 4 5 6 7 8 9))
+    (define-key key-translation-map
+                (kbd (format "H-<kp-%d>" i)) (kbd (number-to-string i)))))
 
-(map! "H-¿" #'counsel-ag) ; H-s
-(map! "H-¡" #'jp/org-roam-jump-menu/body)   ; H-k
-(map! "H-;" #'hydra-ivy/body) ; H-j
-(map! "H-<insert>" #'ivy-mode) ; H-ä
-(map! "H-<tab>" #'org-agenda) ; H-ö
-(map! "H-:" #'embark-act) ; H-b
-(map! "H-<undo>" #'jp/org-roam-refresh-agenda-list) ; H-z
+(map! "H-¿" #'counsel-ag)                               ; H-s
+(map! "H-<kp-add>" #'jp/org-roam-jump-menu/body)        ; H-q
+(map! "H-¡" #'+hydra/window-nav/body)                   ; H-k
+(map! "H-;" #'hydra-ivy/body)                           ; H-j
+(map! "H-<insert>" #'ivy-mode)                          ; H-ä
+(map! "H-<tab>" #'org-agenda)                           ; H-ö
+(map! "H-<kp-separator>" #'embark-act)                  ; H-d
+(map! "H-<undo>" #'jp/org-roam-refresh-agenda-list)     ; H-z
 
 (let ((theme-carusell '(
                         doom-outrun-electric
