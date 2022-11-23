@@ -297,19 +297,19 @@
 (map! "H-<kp-separator>" #'embark-act)                  ; H-d
 (map! "H-<undo>" #'jp/org-roam-refresh-agenda-list)     ; H-z
 
-(let ((theme-carusell '(
-                        doom-outrun-electric
-                        modus-vivendi
-                        ef-bio
-                        ef-dark
-                        ef-deuteranopia-dark
-                        ef-duo-dark
-                        ef-night
-                        ;; ef-autumn
-                        ;; ef-trio-dark
-                        ;; ef-tritanopia-dark
-                        ef-winter)))
-  (setq doom-theme (seq-random-elt theme-carusell)))
+;; (let ((theme-carusell '(
+;;                         doom-outrun-electric
+;;                         modus-vivendi
+;;                         ef-bio
+;;                         ef-dark
+;;                         ef-deuteranopia-dark
+;;                         ef-duo-dark
+;;                         ef-night
+;;                         ;; ef-autumn
+;;                         ;; ef-trio-dark
+;;                         ;; ef-tritanopia-dark
+;;                         ef-winter)))
+(setq doom-theme 'modus-vivendi)
 
 (setq doom-font (font-spec :family "JetBrainsMono NL" :size 16)
       doom-big-font (font-spec :family "JetBrainsMono NL" :size 22)

@@ -886,19 +886,19 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(let ((theme-carusell '(
-                        doom-outrun-electric
-                        modus-vivendi
-                        ef-bio
-                        ef-dark
-                        ef-deuteranopia-dark
-                        ef-duo-dark
-                        ef-night
-                        ;; ef-autumn
-                        ;; ef-trio-dark
-                        ;; ef-tritanopia-dark
-                        ef-winter)))
-  (setq doom-theme (seq-random-elt theme-carusell)))
+;; (let ((theme-carusell '(
+;;                         doom-outrun-electric
+;;                         modus-vivendi
+;;                         ef-bio
+;;                         ef-dark
+;;                         ef-deuteranopia-dark
+;;                         ef-duo-dark
+;;                         ef-night
+;;                         ;; ef-autumn
+;;                         ;; ef-trio-dark
+;;                         ;; ef-tritanopia-dark
+;;                         ef-winter)))
+(setq doom-theme 'modus-vivendi)
 
 #+end_src
 
