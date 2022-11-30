@@ -12,11 +12,11 @@
              (guix build-system copy)
              (guix build-system go)
              (guix git-download)
-             (awesome-xyz)
-             (emacs-xyz)
-             (nvim)
-             (tmux)
-             (zsh-xyz)
+             (dinos packages awesome-xyz)
+             (dinos packages emacs-xyz)
+             (dinos packages nvim)
+             (dinos packages tmux)
+             (dinos packages zsh-xyz)
              ((guix licenses) #:prefix license:)
              (guix gexp))
 
@@ -44,24 +44,16 @@
                          "bat"                  ; Better cat
                          "git"                  ; Version Control
                          "git-flow"             ; Code Workflow
-                         "stow"                 ; Symbolic Links
                          "openssh"              ; SSH Connections
                          "nss-certs"            ; Internet Certificates
+                         "gnupg"                ; Encryption
                          "glibc-locales"        ; important on foreign distro
-
-                         ;; Spell Checking
-                         "aspell"
-                         "aspell-dict-en"
-                         "aspell-dict-de"
 
                          ;; Fonts
                          "font-juliamono"
                          "font-jetbrains-mono"
-                         "font-overpass"
-                         "font-awesome"
-                         "font-nerd-ibm-plex-mono"
-                         "font-nerd-overpass"
-                         "font-nerd-terminus"
+                         "font-font-awesome"
+                         "font-nerd-fonts"
 
                          ;; X-Tools
                          "picom"   ; Compositor
@@ -77,6 +69,7 @@
                          "slock"          ; Screen Locker
                          "dmenu"          ; Menu Launcher
                          "rofi"           ; Application Launcher
+                         "pinentry"       ; X11-Password Entry
 
                          ;; Applications
                          "alacritty"
@@ -177,10 +170,9 @@
                      ("LANG" . "en_US.UTF-8")
                      ("LC_ALL" . "en_US.UTF-8")
                      ("GUIX_LOCPATH" . "$HOME/.guix-home/profile/lib/locale")
-                     ("GUIX_PACKAGE_PATH" . "$HOME/.dotfiles/guix/packages")
                      ("DOOMLOCALDIR" . "$XDG_DATA_HOME/doom")
                      ("DOOMPROFILELOADPATH" . "$XDG_CACHE_HOME/doom-profiles")
-                     ("DOOMPROFILELOADFILE" . "$DOOMLOCALDIR/profiles/load.el")
+                     ("DOOMPROFILELOADFILE" . "$XDG_CACHE_HOME/doom/profiles/load.el")
                      ("ZSH" . "$ZDOTDIR/ohmyzsh")
                      ("ZSH_CUSTOM" . "$HOME/.cache/zsh/ohmyzsh/custom")
                      ("SHELL" . ,(file-append zsh "/bin/zsh")))))))
