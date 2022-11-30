@@ -16,6 +16,8 @@
 	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
 	signingkey = <<mygpg()>>
+[commit]
+	gpgsign = true
 [gpg]
 	program = gpg
 [init]
