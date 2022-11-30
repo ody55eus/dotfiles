@@ -8,6 +8,7 @@
        "aspell"
        "aspell-dict-en"
        "aspell-dict-de"
+       "wordnet"
 
        ;; Programming
        "node"           ; npm: To install lsp server
@@ -30,10 +31,6 @@
        "texlive"        ; LaTeX
        "texlive-latex-moderncv"
        "texlive-latex-fontawesome"
-
-       ;; GUI Themes
-       "arc-theme"
-       "arc-icon-theme"
 
        ;; GUI Fonts
        "font-nerd-fonts"
