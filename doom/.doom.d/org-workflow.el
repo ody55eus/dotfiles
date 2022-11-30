@@ -910,8 +910,7 @@ Returns file content as a string."
 
 (setq bibtex-file-path (concat org-roam-directory "/BibTeX/")
       bibtex-completion-bibliography '("~/ZK/BibTeX/Library.bib"
-                                       "~/ZK/BibTeX/Master.bib"
-                                       "~/Projects/Method-Paper/bibliography.bib")
+                                       "~/ZK/BibTeX/Master.bib")
       bibtex-completion-notes-template-multiple-files "* ${author-or-editor}, ${title}, ${journal}, (${year}) :${=type=}: \n\nSee [[cite:&${=key=}]]\n"
 
       bibtex-completion-additional-search-fields '(keywords)

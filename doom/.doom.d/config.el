@@ -4,10 +4,10 @@
 ;; This Configuration File is managed by ~/Emacs.org. See additional comments there.
 
 (setq user-full-name "Jonathan Pieper"
-      user-mail-address "ody55eus@mailbox.org"
+      user-mail-address "jpieper@acg-gmbh.de"
       calendar-longitude +8.8   ; 8.8  East
       calendar-latitude  +50.1  ; 50.1 Nord
-      epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
+      epg-user-id "885B941B822133216D960E4CDE2AD6CF2474B880")
 
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))

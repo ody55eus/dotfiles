@@ -113,12 +113,13 @@ then
    xset r rate 300 45 b off
 fi
 
+[ -e $HOME/.dotfiles/guix/home/config/completion ] && fpath+="$HOME/.dotfiles/guix/home/config/completion"
 SHAREDIR=$HOME/.guix-home/profile/share/zsh
 [ -e $SHAREDIR/plugins/zsh-syntax-highlighting ] && source $SHAREDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 [ -e $SHAREDIR/plugins/zsh-autopair ] && source $SHAREDIR/plugins/zsh-autopair/zsh-autopair.zsh
 [ -e $SHAREDIR/plugins/zsh-autosuggestions ] && source $SHAREDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 [ -e $HOME/.cache/zsh/ohmyzsh/custom/plugins/zsh-completions/src ] && fpath+="$HOME/.cache/zsh/ohmyzsh/custom/plugins/zsh-completions/src"
-[ -e $HOME/.config/guix/current/share/zsh/site-functions ] && fpath+="$HOME/.config/guix/current/share/zsh/site-functions"
+# [ -e $HOME/.config/guix/current/share/zsh/site-functions ] && fpath+="$HOME/.config/guix/current/share/zsh/site-functions"
 
 compinit
 
