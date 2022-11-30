@@ -104,7 +104,7 @@
 (after! org
   (appendq! +ligatures-extra-symbols
             `(:checkbox      ""
-              :pending       ""
+              :pending       ""
               :checkedbox    ""
               :list_property "∷"
               :results       ""
@@ -117,19 +117,19 @@
               :title         ""
               :subtitle      ""
               :author        ""
-              :date          "𝘿"
+              :date          ""
               :latex_header  "⇥"
-              :latex_class   "🄲"
+              :latex_class   ""
               :beamer_header ""
               :begin_quote   "❮"
               :end_quote     "❯"
               :begin_export  "⯮"
               :end_export    "⯬"
               :priority_a   ,(propertize "⚑" 'face 'all-the-icons-red)
-              :priority_b   ,(propertize "⬆" 'face 'all-the-icons-orange)
+              :priority_b   ,(propertize "" 'face 'all-the-icons-orange)
               :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
-              :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
-              :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)
+              :priority_d   ,(propertize "" 'face 'all-the-icons-green)
+              :priority_e   ,(propertize "" 'face 'all-the-icons-blue)
               ;; :em_dash       "—"
               ))
   (set-pretty-symbols! 'org-mode
@@ -923,8 +923,10 @@ Returns file content as a string."
         (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${=type=:7}"))
       bibtex-completion-library-path '("~/nc/Library/BibTeX/")
       bibtex-completion-notes-path "~/ZK/References/"
+      org-cite-global-bibliography bibtex-completion-bibliography
+      citar-bibliography bibtex-completion-bibliography
       citar-library-paths bibtex-completion-library-path
-      citar-notes-paths bibtex-completion-notes-path)
+      citar-notes-paths `(,bibtex-completion-notes-path))
 
 (require 'org-protocol)    ; Enable org protocol for links (org-roam://...)
 (require 'org-roam-protocol)
