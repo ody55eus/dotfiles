@@ -41,6 +41,10 @@
 	xfuncname = "^(\\(.*)$"
 [diff "org"]
 	xfuncname = "^(\\*+ +.*)$"
+[diff "scheme"]
+	xfuncname = "^(\\(define.*)$"
+[diff "texinfo"]
+	xfuncname = "^@node[[:space:]]+([^,]+).*$"
 [difftool "ediff"]
     cmd = ~/.local/bin/ediff.sh $LOCAL $REMOTE $MERGED
 [merge]
@@ -57,6 +61,7 @@
 	directory = <<myhome()>>/share/Projects/Code/01_2fa_demo
 	directory = <<myhome()>>/share/Projects/Doc/frontdesk-documentation
 	directory = <<myhome()>>/share/Projects/Code/frontdesk
+	directory = <<myhome()>>/share/Projects/Code/guix
 	directory = <<myhome()>>/share/Projects/Code/control-panel
 #+end_src
 
@@ -66,6 +71,7 @@
 *.el	diff=lisp
 *.org	diff=org
 #+end_src
+
 * Diff - Tool (ediff.sh)
 :SOURCE:
 Original from [[https://github.com/paulotome/emacstool][Paulotome/Emacstool]].
