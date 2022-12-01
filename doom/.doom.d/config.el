@@ -45,7 +45,16 @@
       backup-directory-alist `((".*" . ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/backups")))
       auto-save-file-name-transforms `((".*" ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/autosaves") t)))
 
+;; Frame Transparency
+(defun jp/toggle-window-transparency ()
+  "Toggle transparency."
+  (interactive)
+  (let ((alpha-transparency 75))
+    (pcase (frame-parameter nil 'alpha-background)
+      (alpha-transparency (set-frame-parameter nil 'alpha-background 100))
+      (t (set-frame-parameter nil 'alpha-background alpha-transparency)))))
 
+;; World Clock
 (setq world-clock-list '(("UTC" "Universal")
                          ("America/Los_Angeles" "Seattle")
                          ("America/New_York" "New York")
@@ -131,6 +140,7 @@
         )
        )
       (:prefix ("t" . "toggle")
+       :desc "Toggle alpha/transparency" "a" #'jp/toggle-window-transparency
        :desc "Toggle global debug on error" "d" #'toggle-debug-on-error
        :desc "Org Present" "p"  #'org-present
        :desc "Toggle line highlight local" "h" #'hl-line-mode
