@@ -44,7 +44,7 @@ gpg --list-secret-keys | head -n4 | tail -n1 | cut -d' ' -f7
 
 #+name: mymail
 #+begin_src sh
-gpg --list-secret-keys | head -n5 | tail -n1 | cut -d'<' -f2 | cut -d'>' -f1
+gpg --list-secret-keys | head -n6 | tail -n1 | cut -d'<' -f2 | cut -d'>' -f1
 #+end_src
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el :noweb yes
@@ -934,11 +934,11 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 :END:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq doom-font (font-spec :family "JetBrainsMono NL" :size 16)
-      doom-big-font (font-spec :family "JetBrainsMono NL" :size 22)
+(setq doom-font (font-spec :family "JetBrainsMono" :size 16)
+      doom-big-font (font-spec :family "JetBrainsMono" :size 22)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
-      doom-unicode-font (font-spec :family "JetBrainsMono NL" :size 16)
-      doom-serif-font (font-spec :family "JetBrainsMono NL" :weight 'light :size 16))
+      doom-unicode-font (font-spec :family "JetBrainsMono" :size 16)
+      doom-serif-font (font-spec :family "JetBrainsMono" :weight 'light :size 16)
 #+end_src
 
 *** Basic Emacs UI Enhancements
