@@ -354,6 +354,8 @@
 ;; Set up the visible bell
 (setq visible-bell t)
 
+(setq alert-default-style 'osx-notifier)
+
 (menu-bar-mode -1)
 
 (map! :n [mouse-8] #'better-jumper-jump-backward
@@ -788,14 +790,13 @@ argument, query for word to search."
         (concat jp/conda/prefix "/bin/python")
       (if jp/conda/pythonpath
           jp/conda/pythonpath
-        (executable-find "python3")
+        "/opt/homebrew/conda/bin/python"
         )))
   "Python binary path.")
 (setq python-shell-interpreter jp/python
       dap-python-executable jp/python
       treemacs-python-executable jp/python
-      lsp-pyright-python-executable-cmd jp/python
-      python-check-command (file-truename "~/.local/bin/epylint"))
+      lsp-pyright-python-executable-cmd jp/python)
 
 ;; Anaconda Path
 (setq conda-env-home-directory "/opt/homebrew/Caskroom/miniforge/base"
