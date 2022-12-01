@@ -307,25 +307,25 @@
 (map! "H-<kp-separator>" #'embark-act)                  ; H-d
 (map! "H-<undo>" #'jp/org-roam-refresh-agenda-list)     ; H-z
 
-(let ((theme-carusell '(
-                        doom-outrun-electric
-                        modus-vivendi
-                        ef-bio
-                        ef-dark
-                        ef-deuteranopia-dark
-                        ef-duo-dark
-                        ef-night
-                        ;; ef-autumn
-                        ;; ef-trio-dark
-                        ;; ef-tritanopia-dark
-                        ef-winter)))
-  (setq doom-theme (seq-random-elt theme-carusell)))
+;; (let ((theme-carusell '(
+;;                         doom-outrun-electric
+;;                         modus-vivendi
+;;                         ef-bio
+;;                         ef-dark
+;;                         ef-deuteranopia-dark
+;;                         ef-duo-dark
+;;                         ef-night
+;;                         ;; ef-autumn
+;;                         ;; ef-trio-dark
+;;                         ;; ef-tritanopia-dark
+;;                         ef-winter)))
+(setq doom-theme 'modus-vivendi)
 
-(setq doom-font (font-spec :family "JuliaMono" :size 16)
-      doom-big-font (font-spec :family "JuliaMono" :size 22)
+(setq doom-font (font-spec :family "JetBrainsMono NL" :size 16)
+      doom-big-font (font-spec :family "JetBrainsMono NL" :size 22)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
-      doom-unicode-font (font-spec :family "JuliaMono" :size 16)
-      doom-serif-font (font-spec :family "JuliaMono" :weight 'light :size 16))
+      doom-unicode-font (font-spec :family "JetBrainsMono NL" :size 16)
+      doom-serif-font (font-spec :family "JetBrainsMono NL" :weight 'light :size 16))
 
 (setq display-line-numbers-type 'relative)
 
@@ -360,6 +360,10 @@
       :n [mouse-9] #'better-jumper-jump-forward)
 
 (setq calendar-week-start-day 1) ; Start the Week on Monday
+
+(after! german-holidays
+  (require 'german-holidays)
+  (setq calendar-holidays holiday-german-HE-holidays)) ; Set holidays (german)
 
 (setq tab-bar-close-button-show nil
       tab-bar-new-button-show nil)

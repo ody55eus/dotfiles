@@ -1,12 +1,3 @@
-[submodule "sh/.config/zsh/ohmyzsh"]
-	path = sh/.config/zsh/ohmyzsh
-	url = https://github.com/ohmyzsh/ohmyzsh.git
-[submodule "vundle"]
-	path = vim/.vim/bundle/Vundle.vim
-	url = https://github.com/VundleVim/Vundle.vim.git
-[submodule "doom/.emacs.d"]
-	path = doom/.emacs.d
-	url = https://github.com/hlissner/doom-emacs.git
 [submodule "keyboard/neo2-layout-osx"]
 	path = keyboard/Library/Keyboard Layouts
 	url = https://github.com/jgosmann/neo2-layout-osx.git

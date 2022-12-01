@@ -56,7 +56,7 @@ alias pscpu="ps aux | sort -nr -k 3 | head -5"
 alias gpg-check="gpg --keyserver-options auto-key-retrieve --verify"
 alias gpg-retrieve="gpg --keyserver-options auto-key-retrieve --receive-keys"
 alias mergepdf="gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=_merged.pdf"
-alias path="echo -e ${PATH//:/\n}"
+alias path='echo -e "${PATH//:/\n}"'
 alias ips="grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 alias ll="ls -l"
 

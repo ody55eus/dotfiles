@@ -2,6 +2,8 @@
 	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
 	signingkey = 2361DFC839413E7A84B2152B01B6FB927AAEC59B
+[commit]
+	gpgsign = true
 [gpg]
 	program = gpg
 [init]
@@ -25,6 +27,10 @@
 	xfuncname = "^(\\(.*)$"
 [diff "org"]
 	xfuncname = "^(\\*+ +.*)$"
+[diff "scheme"]
+	xfuncname = "^(\\(define.*)$"
+[diff "texinfo"]
+	xfuncname = "^@node[[:space:]]+([^,]+).*$"
 [difftool "ediff"]
     cmd = ~/.local/bin/ediff.sh $LOCAL $REMOTE $MERGED
 [merge]

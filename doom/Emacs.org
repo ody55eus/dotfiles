@@ -37,13 +37,23 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
 
 ** About Me
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+name: mygpg
+#+begin_src sh
+gpg --list-secret-keys | head -n4 | tail -n1 | cut -d' ' -f7
+#+end_src
+
+#+name: mymail
+#+begin_src sh
+gpg --list-secret-keys | head -n5 | tail -n1 | cut -d'<' -f2 | cut -d'>' -f1
+#+end_src
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el :noweb yes
 
 (setq user-full-name "Jonathan Pieper"
-      user-mail-address "ody55eus@mailbox.org"
+      user-mail-address "<<mymail()>>"
       calendar-longitude +8.8   ; 8.8  East
       calendar-latitude  +50.1  ; 50.1 Nord
-      epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
+      epg-user-id "<<mygpg()>>")
 
 #+end_src
 
@@ -416,7 +426,7 @@ Just comment/uncomment some lines to disable/enable features.
            ;; :files ("bitwarden.el")
            ))
 
-                                        ; Visual Enhancements
+;; Visual Enhancements
 (package! rainbow-mode)         ; Converts #0000FF and (nested (parethesis)) into colored cues.
 (package! emojify)              ; Convert ☺ into emoji's.
 (package! ef-themes)
@@ -424,6 +434,7 @@ Just comment/uncomment some lines to disable/enable features.
 ;; Functional Enhancements
 (package! popper)
 (package! embark)
+(package! helm-ag)              ; Ack and the_silver_searcher support
 
 ;; Other Software Integrations
 (package! guix
@@ -441,10 +452,13 @@ Just comment/uncomment some lines to disable/enable features.
 (package! elfeed)
 (package! elfeed-score)
 
-                                        ;(package! synosaurus)
+;; Calendar
 (package! calfw)
 (package! calfw-org)
-(package! helm-ag)              ; Ack and the_silver_searcher support
+(package! german-holidays
+  :recipe (:host github
+           :repo "rudolfochrist/german-holidays"
+           :files ("german-holidays.el")))
 
 ;; Dictionaries
 (package! synosaurus)           ; Thesaurus synonyms
@@ -895,19 +909,19 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
-(let ((theme-carusell '(
-                        doom-outrun-electric
-                        modus-vivendi
-                        ef-bio
-                        ef-dark
-                        ef-deuteranopia-dark
-                        ef-duo-dark
-                        ef-night
-                        ;; ef-autumn
-                        ;; ef-trio-dark
-                        ;; ef-tritanopia-dark
-                        ef-winter)))
-  (setq doom-theme (seq-random-elt theme-carusell)))
+;; (let ((theme-carusell '(
+;;                         doom-outrun-electric
+;;                         modus-vivendi
+;;                         ef-bio
+;;                         ef-dark
+;;                         ef-deuteranopia-dark
+;;                         ef-duo-dark
+;;                         ef-night
+;;                         ;; ef-autumn
+;;                         ;; ef-trio-dark
+;;                         ;; ef-tritanopia-dark
+;;                         ef-winter)))
+(setq doom-theme 'modus-vivendi)
 
 #+end_src
 
@@ -920,52 +934,11 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 :END:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq doom-font (font-spec :family "JuliaMono" :size 16)
-      doom-big-font (font-spec :family "JuliaMono" :size 22)
+(setq doom-font (font-spec :family "JetBrainsMono NL" :size 16)
+      doom-big-font (font-spec :family "JetBrainsMono NL" :size 22)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
-      doom-unicode-font (font-spec :family "JuliaMono" :size 16)
-      doom-serif-font (font-spec :family "JuliaMono" :weight 'light :size 16))
-#+end_src
-
-**** Old System Dependent
-#+begin_src emacs-lisp
-
-;; Set the font face based on platform
-(pcase system-type
-  ((or 'gnu/linux 'windows-nt 'cygwin)
-   (set-face-attribute 'default nil
-                       :font "Source Code Pro"
-                       :weight 'regular
-                       :height 140)
-   )
-  ('darwin
-   (set-face-attribute 'default nil :font "Source Code Pro for Powerline" :height 140)
-   ))
-
-;; Set the fixed pitch face
-(pcase system-type
-  ((or 'gnu/linux 'windows-nt 'cygwin)
-   (set-face-attribute 'fixed-pitch nil
-                       :font "Source Code Pro"
-                       :weight 'regular
-                       :height 140))
-  ('darwin (set-face-attribute 'fixed-pitch nil :font "Source Code Pro for Powerline" :height 140)))
-
-;; Set the variable pitch face
-(pcase system-type
-  ((or 'gnu/linux 'windows-nt 'cygwin)
-   (set-face-attribute 'variable-pitch nil
-                       ;; :font "Cantarell"
-                       :font "Roboto"
-                       :height 175
-                       :weight 'light)
-   )
-  ('darwin (set-face-attribute 'variable-pitch nil
-                               :font "Helvetica"
-                               :height 175
-                               :weight 'light)
-           ))
-
+      doom-unicode-font (font-spec :family "JetBrainsMono NL" :size 16)
+      doom-serif-font (font-spec :family "JetBrainsMono NL" :weight 'light :size 16))
 #+end_src
 
 *** Basic Emacs UI Enhancements
@@ -1086,6 +1059,10 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (setq calendar-week-start-day 1) ; Start the Week on Monday
+
+(after! german-holidays
+  (require 'german-holidays)
+  (setq calendar-holidays holiday-german-HE-holidays)) ; Set holidays (german)
 
 #+end_src
 
@@ -1245,7 +1222,7 @@ Possible Values (as stored in =doom-modeline-fn-alist=):
       :ne "B" #'counsel-switch-buffer)
 #+end_src
 
-*****  Menu Sections
+***** Menu Sections
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 (setq +doom-dashboard-menu-sections '(("Reload last session" :icon
                                        (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
