@@ -37,13 +37,23 @@ Make this file run (slightly) faster with lexical binding (see [[https://nullpro
 
 ** About Me
 
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+#+name: mygpg
+#+begin_src sh
+gpg --list-secret-keys | head -n4 | tail -n1 | cut -d' ' -f7
+#+end_src
+
+#+name: mymail
+#+begin_src sh
+gpg --list-secret-keys | head -n5 | tail -n1 | cut -d'<' -f2 | cut -d'>' -f1
+#+end_src
+
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el :noweb yes
 
 (setq user-full-name "Jonathan Pieper"
-      user-mail-address "jpieper@acg-gmbh.de"
+      user-mail-address "<<mymail()>>"
       calendar-longitude +8.8   ; 8.8  East
       calendar-latitude  +50.1  ; 50.1 Nord
-      epg-user-id "885B941B822133216D960E4CDE2AD6CF2474B880")
+      epg-user-id "<<mygpg()>>")
 
 #+end_src
 
