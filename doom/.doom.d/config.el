@@ -321,11 +321,11 @@
 ;;                         ef-winter)))
 (setq doom-theme 'modus-vivendi)
 
-(setq doom-font (font-spec :family "JetBrainsMono" :size 16)
-      doom-big-font (font-spec :family "JetBrainsMono" :size 22)
-      doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
-      doom-unicode-font (font-spec :family "JetBrainsMono" :size 16)
-      doom-serif-font (font-spec :family "JetBrainsMono" :weight 'light :size 16)
+(setq doom-font (font-spec :family "JetBrains Mono" :size 14)
+      doom-big-font (font-spec :family "JetBrains Mono" :size 22)
+      doom-variable-pitch-font (font-spec :family "Overpass" :size 16)
+      doom-unicode-font (font-spec :family "JetBrains Mono" :size 14)
+      doom-serif-font (font-spec :family "JetBrains Mono" :weight 'light :size 14))
 
 (setq display-line-numbers-type 'relative)
 
