@@ -44,7 +44,7 @@ gpg --list-secret-keys | head -n4 | tail -n1 | cut -d' ' -f7
 
 #+name: mymail
 #+begin_src sh
-gpg --list-secret-keys | head -n5 | tail -n1 | cut -d'<' -f2 | cut -d'>' -f1
+gpg --list-secret-keys | head -n6 | tail -n1 | cut -d'<' -f2 | cut -d'>' -f1
 #+end_src
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el :noweb yes
@@ -163,7 +163,7 @@ Just comment/uncomment some lines to disable/enable features.
        ;;ansible
        debugger          ; FIXME stepping through code, to help you add bugs
        direnv
-       docker
+       ;; docker
        ;;editorconfig      ; let someone else argue about tabs vs spaces
        ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
@@ -269,7 +269,7 @@ Just comment/uncomment some lines to disable/enable features.
        ;;zig               ; C, but simpler
 
        :email
-       (mu4e +org +gmail)
+       (mu4e +org) ;; +gmail
        ;;notmuch
        ;;(wanderlust +gmail)
 
@@ -921,11 +921,11 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#windows][Tecos
 Inspired by [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]].
 :END:
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq doom-font (font-spec :family "JetBrainsMono NL" :size 16)
-      doom-big-font (font-spec :family "JetBrainsMono NL" :size 22)
-      doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
-      doom-unicode-font (font-spec :family "JetBrainsMono NL" :size 16)
-      doom-serif-font (font-spec :family "JetBrainsMono NL" :weight 'light :size 16))
+(setq doom-font (font-spec :family "JetBrains Mono" :size 14)
+      doom-big-font (font-spec :family "JetBrains Mono" :size 22)
+      doom-variable-pitch-font (font-spec :family "Overpass" :size 16)
+      doom-unicode-font (font-spec :family "JetBrains Mono" :size 14)
+      doom-serif-font (font-spec :family "JetBrains Mono" :weight 'light :size 14))
 #+end_src
 
 *** Basic Emacs UI Enhancements
@@ -959,11 +959,12 @@ Sometimes I need some additional whitespace information. This function enables a
   (setq whitespace-display-mappings
         ;; all numbers are unicode codepoint in decimal. e.g. (insert-char 182 1)
         '(
-          (space-mark 32 [183] [46]) ; SPACE 32 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
-          (newline-mark 10 [182 10]) ; LINE FEED,
-          (tab-mark 9 [8677 9] [92 9]) ; tab
+          ;; (space-mark 32 [183] [46]) ; SPACE 32 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」, 2FD MODIFIER LETTER SHELF 「˽」
+          (newline-mark 10 [182 10]) ; LINE FEED ¶
+          (tab-mark 9 [8677 9] [92 9]) ; tab ⇥
           ))
   (whitespace-mode 1))
+
 #+end_src
 
 Other useful codes:
@@ -2295,22 +2296,6 @@ Useful mu4e manual pages:
           ("/Mailbox/INBOX/*"     . ?l)
           ("/Mailbox/Sent"        . ?s)
           ("/Mailbox/Trash"       . ?t)))
-
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "All Inboxes"
-                :query "maildir:/Mailbox/INBOX OR maildir:/Personal/Inbox"
-                :key ?i))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Uni-Frankfurt"
-                :query "from:/.*@uni-frankfurt/ OR maildir:/Personal/Uni"
-                :key ?g))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Family"
-                :query "from:baerbel OR from:pieper OR from:kaiser OR from:kessler OR from:thewake35 OR maildir:/Mailbox/familie"
-                :key ?m))
 
   ;; don't keep message buffers around
   (setq message-kill-buffer-on-exit t)
