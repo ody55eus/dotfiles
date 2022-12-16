@@ -44,7 +44,7 @@ gpg --list-secret-keys | head -n4 | tail -n1 | cut -d' ' -f7
 
 #+name: mymail
 #+begin_src sh
-gpg --list-secret-keys | head -n6 | tail -n1 | cut -d'<' -f2 | cut -d'>' -f1
+gpg --list-secret-keys | head -n5 | tail -n1 | cut -d'<' -f2 | cut -d'>' -f1
 #+end_src
 
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el :noweb yes
