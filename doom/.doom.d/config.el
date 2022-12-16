@@ -45,7 +45,16 @@
       backup-directory-alist `((".*" . ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/backups")))
       auto-save-file-name-transforms `((".*" ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/autosaves") t)))
 
+;; Frame Transparency
+(defun jp/toggle-window-transparency ()
+  "Toggle transparency."
+  (interactive)
+  (let ((alpha-transparency 85))
+    (if (eq (frame-parameter nil 'alpha-background) alpha-transparency)
+        (set-frame-parameter nil 'alpha-background 100)
+      (set-frame-parameter nil 'alpha-background alpha-transparency))))
 
+;; World Clock
 (setq world-clock-list '(("UTC" "Universal")
                          ("America/Los_Angeles" "Seattle")
                          ("America/New_York" "New York")
@@ -131,6 +140,7 @@
         )
        )
       (:prefix ("t" . "toggle")
+       :desc "Toggle alpha/transparency" "a" #'jp/toggle-window-transparency
        :desc "Toggle global debug on error" "d" #'toggle-debug-on-error
        :desc "Org Present" "p"  #'org-present
        :desc "Toggle line highlight local" "h" #'hl-line-mode
@@ -345,9 +355,9 @@
   (setq whitespace-display-mappings
         ;; all numbers are unicode codepoint in decimal. e.g. (insert-char 182 1)
         '(
-          (space-mark 32 [183] [46]) ; SPACE 32 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
-          (newline-mark 10 [182 10]) ; LINE FEED,
-          (tab-mark 9 [8677 9] [92 9]) ; tab
+          ;; (space-mark 32 [183] [46]) ; SPACE 32 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」, 2FD MODIFIER LETTER SHELF 「˽」
+          (newline-mark 10 [182 10]) ; LINE FEED ¶
+          (tab-mark 9 [8677 9] [92 9]) ; tab ⇥
           ))
   (whitespace-mode 1))
 
