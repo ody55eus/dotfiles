@@ -49,10 +49,10 @@
 (defun jp/toggle-window-transparency ()
   "Toggle transparency."
   (interactive)
-  (let ((alpha-transparency 75))
-    (pcase (frame-parameter nil 'alpha-background)
-      (alpha-transparency (set-frame-parameter nil 'alpha-background 100))
-      (t (set-frame-parameter nil 'alpha-background alpha-transparency)))))
+  (let ((alpha-transparency 85))
+    (if (eq (frame-parameter nil 'alpha-background) alpha-transparency)
+        (set-frame-parameter nil 'alpha-background 100)
+      (set-frame-parameter nil 'alpha-background alpha-transparency))))
 
 ;; World Clock
 (setq world-clock-list '(("UTC" "Universal")
