@@ -321,11 +321,11 @@
 ;;                         ef-winter)))
 (setq doom-theme 'modus-vivendi)
 
-(setq doom-font (font-spec :family "JetBrainsMono NL" :size 16)
-      doom-big-font (font-spec :family "JetBrainsMono NL" :size 22)
-      doom-variable-pitch-font (font-spec :family "Overpass" :size 24)
-      doom-unicode-font (font-spec :family "JetBrainsMono NL" :size 16)
-      doom-serif-font (font-spec :family "JetBrainsMono NL" :weight 'light :size 16))
+(setq doom-font (font-spec :family "JetBrains Mono" :size 14)
+      doom-big-font (font-spec :family "JetBrains Mono" :size 22)
+      doom-variable-pitch-font (font-spec :family "Overpass" :size 16)
+      doom-unicode-font (font-spec :family "JetBrains Mono" :size 14)
+      doom-serif-font (font-spec :family "JetBrains Mono" :weight 'light :size 14))
 
 (setq display-line-numbers-type 'relative)
 
@@ -932,22 +932,6 @@ argument, query for word to search."
           ("/Mailbox/INBOX/*"     . ?l)
           ("/Mailbox/Sent"        . ?s)
           ("/Mailbox/Trash"       . ?t)))
-
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "All Inboxes"
-                :query "maildir:/Mailbox/INBOX OR maildir:/Personal/Inbox"
-                :key ?i))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Uni-Frankfurt"
-                :query "from:/.*@uni-frankfurt/ OR maildir:/Personal/Uni"
-                :key ?g))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Family"
-                :query "from:baerbel OR from:pieper OR from:kaiser OR from:kessler OR from:thewake35 OR maildir:/Mailbox/familie"
-                :key ?m))
 
   ;; don't keep message buffers around
   (setq message-kill-buffer-on-exit t)
