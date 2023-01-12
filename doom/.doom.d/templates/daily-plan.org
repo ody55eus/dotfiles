@@ -1,0 +1,11 @@
+* Daily Plan
+** Planning
+- [ ] Schedule today's tasks (immersive -> process, deep -> shallow):
+    #+BEGIN_SRC emacs-lisp
+        (progn
+        (org-agenda nil "a")
+        (org-agenda-day-view))
+    #+END_SRC
+- [ ] Schedule todays tasks: [[elisp:(org-agenda nil "t")][Task List]].
+** Meetings
+** Actions [/]

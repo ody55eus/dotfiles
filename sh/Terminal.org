@@ -36,6 +36,7 @@ cursor:
   thickness: 0.15
 
 window:
+  opacity: 0.8
   padding:
     x: 13
 
