@@ -1,71 +1,72 @@
-  ;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; -*-
 
-  (setq org-directory
-          (file-truename "~/ZK"))
+(setq org-directory
+      (file-truename "~/ZK"))
 
-  ;; (setq org-agenda-files `(,org-directory))
-  (defun jp/org-path (path)
-    (expand-file-name path org-directory))
+;; (setq org-agenda-files `(,org-directory))
+(defun jp/org-path (path)
+  (expand-file-name path org-directory))
 
-  (setq org-default-notes-file (jp/org-path "Notes.org"))
+(setq org-default-notes-file (jp/org-path "Notes.org")
+      diary-file (jp/org-path "diary"))
 
-  (with-eval-after-load 'org-roam
-    (defun jp/org-roam-project-finalize-hook ()
-      "Adds the captured project file to `org-agenda-files' if the
+(with-eval-after-load 'org-roam
+  (defun jp/org-roam-project-finalize-hook ()
+    "Adds the captured project file to `org-agenda-files' if the
   capture was not aborted."
-      ;; Remove the hook since it was added temporarily
-      (remove-hook 'org-capture-after-finalize-hook #'jp/org-roam-project-finalize-hook)
+    ;; Remove the hook since it was added temporarily
+    (remove-hook 'org-capture-after-finalize-hook #'jp/org-roam-project-finalize-hook)
 
-      ;; Add project file to the agenda list if the capture was confirmed
-      (unless org-note-abort
-        (with-current-buffer (org-capture-get :buffer)
-          (add-to-list 'org-agenda-files (buffer-file-name)))))
+    ;; Add project file to the agenda list if the capture was confirmed
+    (unless org-note-abort
+      (with-current-buffer (org-capture-get :buffer)
+        (add-to-list 'org-agenda-files (buffer-file-name)))))
 
-    (defun jp/org-roam-find-project ()
-      (interactive)
-      ;; Add the project file to the agenda after capture is finished
-      (add-hook 'org-capture-after-finalize-hook #'jp/org-roam-project-finalize-hook)
+  (defun jp/org-roam-find-project ()
+    (interactive)
+    ;; Add the project file to the agenda after capture is finished
+    (add-hook 'org-capture-after-finalize-hook #'jp/org-roam-project-finalize-hook)
 
-      ;; Select a project file to open, creating it if necessary
-      (org-roam-node-find
-       nil
-       nil
-       (jp/org-roam-filter-by-tag "Project")
-       :templates
-       '(("p" "project" plain "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
-          :unnarrowed t))))
+    ;; Select a project file to open, creating it if necessary
+    (org-roam-node-find
+     nil
+     nil
+     (jp/org-roam-filter-by-tag "Project")
+     :templates
+     '(("p" "project" plain "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
+        :unnarrowed t))))
 
-    (defun jp/org-roam-capture-inbox ()
-      (interactive)
-      (org-roam-capture- :node (org-roam-node-create)
-                         :templates '(("i" "inbox" plain "* %?"
-                                       :if-new (file+head "Inbox.org" "#+title: Inbox\n")))))
+  (defun jp/org-roam-capture-inbox ()
+    (interactive)
+    (org-roam-capture- :node (org-roam-node-create)
+                       :templates '(("i" "inbox" plain "* %?"
+                                     :if-new (file+head "Inbox.org" "#+title: Inbox\n")))))
 
-    (defun jp/org-roam-copy-todo-to-today ()
-      (interactive)
-      (let ((org-refile-keep t) ;; Set this to nil to delete the original!
-            (org-roam-dailies-capture-templates
-             '(("t" "tasks" entry "%?"
-                :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
-            (org-after-refile-insert-hook #'save-buffer)
-            today-file
-            pos)
-        (save-window-excursion
-          (org-roam-dailies--capture (current-time) t)
-          (setq today-file (buffer-file-name))
-          (setq pos (point)))
+  (defun jp/org-roam-copy-todo-to-today ()
+    (interactive)
+    (let ((org-refile-keep t) ;; Set this to nil to delete the original!
+          (org-roam-dailies-capture-templates
+           '(("t" "tasks" entry "%?"
+              :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
+          (org-after-refile-insert-hook #'save-buffer)
+          today-file
+          pos)
+      (save-window-excursion
+        (org-roam-dailies--capture (current-time) t)
+        (setq today-file (buffer-file-name))
+        (setq pos (point)))
 
-        ;; Only refile if the target file is different than the current file
-        (unless (equal (file-truename today-file)
-                       (file-truename (buffer-file-name)))
-          (org-refile nil nil (list "Tasks" today-file nil pos)))))
+      ;; Only refile if the target file is different than the current file
+      (unless (equal (file-truename today-file)
+                     (file-truename (buffer-file-name)))
+        (org-refile nil nil (list "Tasks" today-file nil pos)))))
 
-    ;; (add-to-list 'org-after-todo-state-change-hook
-    ;;              (lambda ()
-    ;;                (when (equal org-state "DONE")
-    ;;                  (jp/org-roam-copy-todo-to-today))))
-    )
+  ;; (add-to-list 'org-after-todo-state-change-hook
+  ;;              (lambda ()
+  ;;                (when (equal org-state "DONE")
+  ;;                  (jp/org-roam-copy-todo-to-today))))
+  )
 
 (setq org-roam-v2-ack t  ; Disable Warning for org-roam v2
       org-default-notes-file (jp/org-path "Notes.org"))
@@ -322,7 +323,7 @@
   (let ((org-agenda-files (jp/org-roam-list-notes-by-tag "Project")))
     (org-agenda)))
 
-(setq org-templates-directory (concat doom-private-dir "/templates/"))
+(setq org-templates-directory (concat doom-private-dir "templates/"))
 (defun jp/read-template (template)
   "Reading TEMPLATE as a file from org-templates-directory.
 Returns file content as a string."
@@ -333,6 +334,8 @@ Returns file content as a string."
   (jp/read-template "new-project.org"))
 (defun jp/read-dailyreview-template ()
   (jp/read-template "daily-review.org"))
+(defun jp/read-dailyplan-template ()
+  (jp/read-template "daily-plan.org"))
 (defun jp/read-weekly-template ()
   (jp/read-template "weekly-review.org"))
 (defun jp/read-monthly-template ()
@@ -344,19 +347,34 @@ Returns file content as a string."
 
 (defun jp/daily-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Daily Review" entry (file+olp+datetree "daily/reviews.org")
-                                  (file "~/.doom.d/templates/daily-review.org")))))
+  (let ((org-capture-templates '(("d" "Review: Daily Review" entry
+                                  (file+olp+datetree "daily/reviews.org")
+                                  (function jp/read-dailyreview-template)
+                                  ))))
     (progn
       (org-capture nil "d")
       (org-capture-finalize t)
-      (org-speed-move-safe 'outline-up-heading)
+      ;; (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-clock-in))))
+
+(defun jp/daily-plan ()
+  (interactive)
+  (let ((org-capture-templates '(("d" "Review: Daily Plan" entry
+                                  (file+olp+datetree "daily/reviews.org")
+                                  (function jp/read-dailyplan-template)
+                                  ))))
+    (progn
+      (org-capture nil "d")
+      (org-capture-finalize t)
+      ;; (org-speed-move-safe 'outline-up-heading)
       (org-narrow-to-subtree)
       (org-clock-in))))
 
 (defun jp/weekly-review ()
   (interactive)
   (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "daily/reviews.org"))
-                                  (file "~/.doom.d/templates/weekly-review.org"))))
+                                 (file (concat org-templates-directory "weekly-review.org")))))
     (progn
       (org-capture nil "d")
       (org-capture-finalize t)
@@ -367,7 +385,7 @@ Returns file content as a string."
 (defun jp/monthly-review ()
   (interactive)
   (let ((org-capture-templates '(("d" "Review: Monthly Review" entry (file+olp+datetree "daily/reviews.org"))
-                                  (file "~/.doom.d/templates/monthly-review.org"))))
+                                 (file (concat org-templates-directory "monthly-review.org")))))
     (progn
       (org-capture nil "d")
       (org-capture-finalize t)

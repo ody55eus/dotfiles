@@ -189,8 +189,7 @@
 
 (package! xkcd)
 
-                                        ; Packages to share my keybindings when streaming
-;;(package! command-log-mode)
+;; Packages to share my keybindings when streaming
 (package! keycast
   :recipe (:host github
            :repo "tarsius/keycast"))

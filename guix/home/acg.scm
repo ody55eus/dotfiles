@@ -37,7 +37,7 @@
 
                          ;; CLI Apps
                          "mcron"                ; Cron Automation
-                         "unzip"                ; Archive unzacker
+                         "unzip"                ; Archive unpacker
                          "fzf"                  ; Fuzzy Finder
                          "ripgrep"              ; Better Grep
                          "the-silver-searcher"  ; Better Ripgrep
@@ -55,11 +55,15 @@
                          "font-font-awesome"
                          "font-nerd-fonts"
 
+                         ;; Themes
+                         "adwaita-icon-theme"
+                         "hicolor-icon-theme"
+
                          ;; X-Tools
-                         "picom"   ; Compositor
+                         "picom"          ; Compositor (transparent windows, fading, etc.)
                          "fontmanager"
-                         "xdg-utils"      ;; For xdg-open, etc
-                         "xdg-dbus-proxy" ;; For Flatpak
+                         "xdg-utils"      ; For xdg-open, etc
+                         "xdg-dbus-proxy" ; For Flatpak
                          "shared-mime-info"
                          "xset"
                          "xrandr"         ; Screen-Resolution
@@ -70,9 +74,10 @@
                          "dmenu"          ; Menu Launcher
                          "rofi"           ; Application Launcher
                          "pinentry"       ; X11-Password Entry
+                         "conky"          ; Status-Display
 
                          ;; Applications
-                         "alacritty"
+                         "alacritty-next"
                          "icecat"
                          "vlc"
                          "mpv"
@@ -89,6 +94,7 @@
                          "emacs-next-pgtk-latest"
                          ;; "neovim-lunarvim"
                          "neovim-config"
+                         "dotfiles-ody55eus"
                          )))
  (services
   (list
@@ -106,6 +112,8 @@
                            ,(local-file "config/nvim-init.lua" "nvim-init.lua"))
                          `(".config/nvim/lua/user"
                            ,(file-append neovim-config "/share/lua/user"))
+                         `(".config/doom/templates"
+                           ,(local-file "../../doom/.doom.d/templates" "doom-templates" #:recursive? #t))
                          `(".config/doom/packages.el"
                            ,(local-file "../../doom/.doom.d/packages.el" "packages.el"))
                          `(".config/doom/org-workflow.el"
@@ -126,6 +134,8 @@
                            ,(local-file "config/git.ignore"))
                          `(".config/alacritty/alacritty.yml"
                            ,(local-file "config/alacritty.yml"))
+                         `(".config/picom/picom.conf"
+                           ,(local-file "config/picom.conf"))
                          `(".config/awesome/rc.lua"
                            ,(local-file "config/awesome.rc.lua"))
                          `(".config/awesome/themes"
@@ -138,6 +148,8 @@
                            ,(file-append emacs-doom "/share/doom"))
                          `(".config/zsh/.p10k.zsh"
                            ,(local-file "config/.p10k.zsh" "p10k.zsh"))
+                         `(".bin/zsh"
+                           ,(file-append zsh "/bin/zsh"))
                          `(".config/zsh/ohmyzsh"
                            ,(file-append zsh-ohmyzsh "/share/ohmyzsh"))
                          `(".cache/zsh/ohmyzsh/custom/themes"
@@ -175,4 +187,4 @@
                      ("DOOMPROFILELOADFILE" . "$XDG_CACHE_HOME/doom/profiles/load.el")
                      ("ZSH" . "$ZDOTDIR/ohmyzsh")
                      ("ZSH_CUSTOM" . "$HOME/.cache/zsh/ohmyzsh/custom")
-                     ("SHELL" . ,(file-append zsh "/bin/zsh")))))))
+                     ("SHELL" . "$HOME/.bin/zsh"))))))
