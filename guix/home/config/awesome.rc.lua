@@ -105,6 +105,7 @@ local vi_focus     = false -- vi-like client focus https://github.com/lcpz/aweso
 local cycle_prev   = true  -- cycle with only the previously focused client or all https://github.com/lcpz/awesome-copycats/issues/274
 local browser      = "icecat"
 local rofi_cmd = "rofi -show drun"
+local scrlocker = "xlock"
 local emacs_cmd = "emacs"
 local emacsclient_cmd = "emacsclient -c"
 local emacs_runner = string.format("%s || %s", emacsclient_cmd, emacs_cmd)
@@ -281,6 +282,8 @@ globalkeys = mytable.join(
     -- X screen locker
     awful.key({ altkey, "Control" }, "l", function () os.execute(scrlocker) end,
               {description = "lock screen", group = "hotkeys"}),
+    awful.key({ modkey, "Shift"   }, "l", function () os.execute(scrlocker) end,
+              {description = "Lock Screen", group = "hotkeys"}),
 
     -- Show help
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
