@@ -39,7 +39,6 @@
                                       "dotfiles-ody55eus"
                                       "zsh-ohmyzsh"
                                       "zsh-completions"
-                                      "awesome-copycats"
                                       "tmux-tpm"
 
                                       ;; Emacs
@@ -66,7 +65,7 @@
              ("gpg-check" . "gpg --keyserver-options auto-key-retrieve --verify")
              ("gpg-retrieve" . "gpg --keyserver-options auto-key-retrieve --receive-keys")
              ("mergepdf" . "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=_merged.pdf")
-             ("path" . "echo -e ${PATH//:/\\n}")
+             ("path" . "echo -e \"${PATH//:/\\n}\"")
              ("ips" . "grep -o 'inet6\\? \\(addr:\\)\\?\\s\\?\\(\\(\\([0-9]\\+\\.\\)\\{3\\}[0-9]\\+\\)\\|[a-fA-F0-9:]\\+\\)' | awk '{ sub(/inet6? (addr:)? ?/, \\\"\\\"); print }'")
              ("ll" . "ls -l")))
           (bashrc
@@ -105,18 +104,6 @@
                                 ,(local-file "config/git.attr"))
                               `(".config/git/ignore"
                                 ,(local-file "config/git.ignore"))
-                              `(".config/alacritty/alacritty.yml"
-                                ,(local-file "config/alacritty.yml"))
-                              `(".config/picom/picom.conf"
-                                ,(local-file "config/picom.conf"))
-                              `(".config/awesome/rc.lua"
-                                ,(local-file "config/awesome.rc.lua"))
-                              `(".config/awesome/themes"
-                                ,(file-append awesome-copycats "/share/awesome/copycats/themes"))
-                              `(".config/awesome/lain"
-                                ,(file-append awesome-lain "/share/awesome/lain"))
-                              `(".config/awesome/freedesktop"
-                                ,(file-append awesome-freedesktop "/share/awesome/freedesktop"))
                               `(".config/emacs"
                                 ,(file-append emacs-doom "/share/doom"))
                               `(".bin/doom"
