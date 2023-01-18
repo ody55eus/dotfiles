@@ -49,9 +49,11 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
-;; Use latest version!
+;; Use latest versions!
 (unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
+
+(package! f.el :pin "3737e7d4ab2775391e5173da1d593dc9e7355d98") ; Important for older Emacs 29.0.50 versions
 
 ;; Org Enhancements
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
@@ -138,8 +140,8 @@
 
 ;; Other Software Integrations
 (package! guix
-  :recipe (:host gitlab
-           :repo "tarsiiformes/guix"))
+  :recipe (:host nil
+           :repo "https://git.savannah.gnu.org/git/guix/emacs-guix.git"))
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)

@@ -132,7 +132,39 @@
               :priority_d   ,(propertize "" 'face 'all-the-icons-green)
               :priority_e   ,(propertize "" 'face 'all-the-icons-blue)
               ;; :em_dash       "—"
+              ;; Functional
+              :lambda        "λ"
+              :def           "ƒ"
+              :composition   "∘"
+              :map           "↦"
+              ;; Types
+              :null          "∅"
+              :true          "𝕋"
+              :false         "𝔽"
+              :int           "ℤ"
+              :float         "ℝ"
+              :str           "𝕊"
+              :bool          "𝔹"
+              :list          "𝕃"
+              ;; Flow
+              :not           "￢"
+              :in            "∈"
+              :not-in        "∉"
+              :and           "∧"
+              :or            "∨"
+              :for           "∀"
+              :some          "∃"
+              :return        "⟼"
+              :yield         "⟻"
+              ;; Other
+              :union         "⋃"
+              :intersect     "∩"
+              :diff          "∖"
+              :tuple         "⨂"
+              :pipe          "ǁ" ;; FIXME: find a non-private char
+              :dot           "•"  ;; you could also add your own if you want
               ))
+
   (set-pretty-symbols! 'org-mode
     :merge t
     :name           "⁍"
@@ -373,8 +405,10 @@ Returns file content as a string."
 
 (defun jp/weekly-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "daily/reviews.org"))
-                                 (file (concat org-templates-directory "weekly-review.org")))))
+  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry
+                                  (file+olp+datetree "daily/reviews.org")
+                                  (function jp/read-weekly-template)
+                                  ))))
     (progn
       (org-capture nil "d")
       (org-capture-finalize t)
