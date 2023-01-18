@@ -71,6 +71,8 @@
                          ("Asia/Tokyo" "Tokyo")
                          ("Australia/Sydney" "Sydney")))
 
+(defvar jp/guix? (if (getenv "GUIX_LOCPATH") t nil)) ; Are we running GNU/GUIX?
+
 (if (file-directory-p (file-truename "~/.config/doom"))
   (add-to-list 'load-path (file-truename "~/.config/doom"))
   (add-to-list 'load-path (file-truename "~/.doom.d")))
@@ -735,7 +737,9 @@ argument, query for word to search."
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
 (setq dap-python-debugger 'debugpy)
 
-(defvar jp/guix/pythonpath (getenv "GUIX_PYTHONPATH")
+(defvar jp/guix/pythonpath (if (getenv "GUIX_PYTHONPATH")
+                               (getenv "GUIX_PYTHONPATH")
+                             (getenv "PYTHONPATH"))
   "Absolute Python Library Path (e.g. /usr/share/lib/python3.9/site-packages)")
 (defvar jp/conda/pythonpath (getenv "CONDA_PYTHON_EXE")
   "Absolute Conda Python Exe Path (e.g. /opt/miniconda3/bin/python)")
@@ -814,16 +818,19 @@ argument, query for word to search."
 
 (after! magit
   (remove-hook 'server-switch-hook 'magit-commit-diff)
-)
+  )
 
 ;; Magit Configuration to enable gpg to sign keys
-(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
-(setq exec-path (append exec-path '("/usr/local/bin")))
+(unless jp/guix?
+  (progn
+    (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+    (setq exec-path (append exec-path '("/usr/local/bin")))))
 
 ;; Tell Emacs where to find mu4e (only necessary if manual compiled)
 (pcase system-type
   ((or 'gnu/linux 'windows-nt 'cygwin)
-   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e"))
+   (unless jp/guix?
+     (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")))
   ('darwin
    (use-package mu4e
      :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/")))
