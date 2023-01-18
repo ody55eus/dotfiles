@@ -69,47 +69,9 @@
  (keyboard-layout (keyboard-layout "de" "neo"))
  (packages (append (map specification->package
                         '(
-                          
-                          "alsa-utils"
-                          "pavucontrol"
-                          
-                          "system-config-printer"
-                          
-                          "font-ibm-plex"        ;; The fonts have been designed to work well in user interface (UI) environments as well as other mediums.
-                          "font-overpass"        ;; Overpass is a sans-serif typeface based on the U.S.  interstate highway road signage typefaces
-                          "font-juliamono"       ;; JuliaMono is a monospaced font for scientific and technical computing
-                          "font-jetbrains-mono"  ;; JetBrains Mono is a font family dedicated to developers
-                          
-                          "alacritty"
-                          "direnv"
-                          "zsh"
-                          "tmux"
-                          "openssh"
-                          "git"
-                          "pinentry"
-                          "bat"
-                          "zip"
-                          "unzip"
-                          "ripgrep"
-                          "the-silver-searcher" ; ag
-                          "trash-cli"
-                          "glibc-locales"
-                          "nss-certs"
-                          
                           "awesome"
-                          
-                          "xev"
-                          "xset"
-                          "xrdb"
-                          "xhost"
-                          "xmodmap"
                           "setxkbmap"
-                          "xrandr"
-                          "arandr"
-                          "xss-lock"
-                          "libinput"
-                          "xinput"
-                          
+						  "nss-certs"
                           ))
                    %base-packages))
  (users (cons* (user-account

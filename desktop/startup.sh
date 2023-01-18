@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-sudo mount -t vboxsf share /home/jp/share
-sudo dhclient
+setxkbmap
 emacs --daemon
+picom -b
 tmux
