@@ -4,20 +4,35 @@
 (use-modules (gnu)
              (nongnu packages linux))
 (use-package-modules
+ xdisorg
  fonts
  gnome)
 (use-service-modules
-  databases
-  desktop
-  networking
-  ssh
-  xorg)
+ admin
+ databases
+ desktop
+ networking
+ ssh
+ xorg)
 
 (define %my-base-services
   (append
    (cons*
+    (screen-locker-service xlockmore "xlock")
+    (service guix-publish-service-type)
+    (service unattended-upgrade-service-type
+             (unattended-upgrade-configuration
+              (schedule "30 01 * * 0")
+              (operating-system-file
+               (file-append
+                (local-file (string-append (getenv "HOME")
+                                           "/.dotfiles/guix/.config/guix/systems")
+                            "guix-systems"
+                            #:recursive? #t)
+                "/acg.scm"))))
     (service openssh-service-type)
     (modify-services %desktop-services
+                     (delete gdm-service-type)
                      (console-font-service-type
                       config =>
                       `(("tty1" . "LatGrkCyr-8x16")
@@ -73,10 +88,18 @@
   (services
    (append
     (list
-     (service mysql-service-type)
-     (set-xorg-configuration
-      (xorg-configuration
-       (keyboard-layout keyboard-layout))))
+     (service slim-service-type (slim-configuration
+                                 (display ":0")
+                                 (vt "vt7")
+                                 (gnupg? #t)
+                                 (allow-empty-passwords? #t)
+                                 (auto-login? #t)
+                                 (default-user "jpi")
+                                 (xorg-configuration
+                                  (xorg-configuration
+                                   (keyboard-layout keyboard-layout)))
+                                 ))
+     (service mysql-service-type))
     %my-base-services))
   (bootloader
    (bootloader-configuration
@@ -89,9 +112,9 @@
            (uuid "aa4b5be5-e260-45bf-8bdd-c9df6478e963")))))
   (file-systems
    (cons* (file-system
-           (mount-point "/")
-           (device
-            (uuid "0cce4a5f-deda-4877-b628-4188d944dbbb"
-                  'ext4))
-           (type "ext4"))
+            (mount-point "/")
+            (device
+             (uuid "0cce4a5f-deda-4877-b628-4188d944dbbb"
+                   'ext4))
+            (type "ext4"))
           %base-file-systems)))
