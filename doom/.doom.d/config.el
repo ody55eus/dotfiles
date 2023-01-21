@@ -53,7 +53,8 @@
     (if (eq (frame-parameter nil 'alpha-background) alpha-transparency)
         (set-frame-parameter nil 'alpha-background 100)
       (set-frame-parameter nil 'alpha-background alpha-transparency))))
-(set-frame-parameter nil 'alpha-background 80)
+(add-hook 'emacs-startup-hook #'jp/toggle-window-transparency)
+
 
 ;; World Clock
 (setq world-clock-list '(("UTC" "Universal")
