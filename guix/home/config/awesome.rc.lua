@@ -68,7 +68,7 @@ local function run_once(cmd_arr)
     end
 end
 
-run_once({ "alacritty -e ~/startup-guix.sh" }) -- comma-separated entries
+run_once({ "alacritty -e ~/startup.sh" }) -- comma-separated entries
 
 -- This function implements the XDG autostart specification
 --[[

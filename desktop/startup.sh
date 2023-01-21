@@ -2,4 +2,5 @@
 setxkbmap
 emacs --daemon
 picom -b
+emacsclient -c &
 tmux
