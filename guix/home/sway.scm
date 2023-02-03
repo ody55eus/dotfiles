@@ -36,6 +36,11 @@
                                       "neovim"
                                       "python-pynvim"
 
+                                      ;; GUI
+                                      "sway"
+                                      "waybar"
+                                      "fuzzel"
+
                                       ;; X-Tools
                                       "picom"
                                       "redshift"

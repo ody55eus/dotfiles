@@ -618,10 +618,10 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
 
 #+begin_src emacs-lisp
 
-(if (or
-     (eq system-type 'darwin)
-     (and (eq system-type 'gnu/linux) (string-suffix-p "fritz.box" system-name)))
-  (defvar jp/home t)
+(if (or (eq system-type 'darwin)
+        (and (eq system-type 'gnu/linux)
+             (file-directory-p "~/priv")))
+    (defvar jp/home t)
   (defvar jp/home nil))
 
 #+end_src

@@ -465,10 +465,10 @@ Returns file content as a string."
           holiday-other-holidays holiday-christian-holidays
           holiday-solar-holidays))
 
-(if (or
-     (eq system-type 'darwin)
-     (and (eq system-type 'gnu/linux) (string-suffix-p "fritz.box" system-name)))
-  (defvar jp/home t)
+(if (or (eq system-type 'darwin)
+        (and (eq system-type 'gnu/linux)
+             (file-directory-p "~/priv")))
+    (defvar jp/home t)
   (defvar jp/home nil))
 
 (defun jp/org-roam-refresh-agenda-list ()

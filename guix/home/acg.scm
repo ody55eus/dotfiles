@@ -54,7 +54,6 @@
 
                  ;; Fonts
                  "font-juliamono"
-                 ;; "font-jetbrains-mono"
                  "font-font-awesome"
                  "font-nerd-fonts"
 
