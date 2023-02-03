@@ -23,4 +23,8 @@ export GPG_TTY=$(tty);
 # Hide the “default interactive shell is now zsh” warning on macOS.
 export BASH_SILENCE_DEPRECATION_WARNING=1;
 
+# MacPorts
+export PATH=/opt/local/bin${PATH:+:}$PATH
+export MANPATH=/opt/local/share/man:$MANPATH
+
 # zsh_add_file '/opt/homebrew/Cellar/docker/20.10.8/share/zsh/site-functions/_docker'
