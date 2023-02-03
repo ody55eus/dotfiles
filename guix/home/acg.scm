@@ -22,74 +22,81 @@
 
 (home-environment
  (packages (map specification->package
-                        (list
-                         ;; Terminal
-                         "zsh"
-                         "zsh-syntax-highlighting"
-                         "zsh-autopair"
-                         "zsh-autosuggestions"
-                         "tmux"
-                         "direnv"
+                (list
+                 ;; Terminal
+                 "zsh"
+                 "zsh-syntax-highlighting"
+                 "zsh-autopair"
+                 "zsh-autosuggestions"
+                 "tmux"
+                 "direnv"
+                 "gwl"                  ; Guix Workflow Language
 
-                         ;; Editors
-                         "neovim"
-                         "python-pynvim"
+                 ;; Editors
+                 "neovim"
+                 "python-pynvim"
 
-                         ;; CLI Apps
-                         "mcron"                ; Cron Automation
-                         "unzip"                ; Archive unzacker
-                         "fzf"                  ; Fuzzy Finder
-                         "ripgrep"              ; Better Grep
-                         "the-silver-searcher"  ; Better Ripgrep
-                         "bat"                  ; Better cat
-                         "git"                  ; Version Control
-                         "git-flow"             ; Code Workflow
-                         "openssh"              ; SSH Connections
-                         "nss-certs"            ; Internet Certificates
-                         "gnupg"                ; Encryption
-                         "glibc-locales"        ; important on foreign distro
+                 ;; CLI Apps
+                 "mcron"                ; Cron Automation
+                 "unzip"                ; Archive unpacker
+                 "fzf"                  ; Fuzzy Finder
+                 "ripgrep"              ; Better Grep
+                 "the-silver-searcher"  ; Better Ripgrep
+                 "bat"                  ; Better cat
+                 "git"                  ; Version Control
+                 "git-flow"             ; Code Workflow
+                 "openssh"              ; SSH Connections
+                 "nss-certs"            ; Internet Certificates
+                 "gnupg"                ; Encryption
+                 "glibc-locales"        ; important on foreign distro
 
-                         ;; Fonts
-                         "font-juliamono"
-                         "font-jetbrains-mono"
-                         "font-font-awesome"
-                         "font-nerd-fonts"
+                 ;; Fonts
+                 "font-juliamono"
+                 "font-jetbrains-mono"
+                 "font-font-awesome"
+                 "font-nerd-fonts"
 
-                         ;; X-Tools
-                         "picom"   ; Compositor
-                         "fontmanager"
-                         "xdg-utils"      ;; For xdg-open, etc
-                         "xdg-dbus-proxy" ;; For Flatpak
-                         "shared-mime-info"
-                         "xset"
-                         "xrandr"         ; Screen-Resolution
-                         "redshift"       ; Day/Night - Red-Shift
-                         "scrot"          ; CLI Screenshots
-                         "xsel"           ; Manipulate Selections
-                         "slock"          ; Screen Locker
-                         "dmenu"          ; Menu Launcher
-                         "rofi"           ; Application Launcher
-                         "pinentry"       ; X11-Password Entry
+                 ;; Themes
+                 "adwaita-icon-theme"
+                 "hicolor-icon-theme"
 
-                         ;; Applications
-                         "alacritty"
-                         "icecat"
-                         "vlc"
-                         "mpv"
-                         "playerctl"
-                         "gimp"
-                         "flatpak"
-                         "thunar"
+                 ;; X-Tools
+                 "picom"          ; Compositor (transparent windows, fading, etc.)
+                 "fontmanager"
+                 "xdg-utils"      ; For xdg-open, etc
+                 "xdg-dbus-proxy" ; For Flatpak
+                 "shared-mime-info"
+                 "xset"
+                 "xrandr"         ; Screen-Resolution
+                 "redshift"       ; Day/Night - Red-Shift
+                 "scrot"          ; CLI Screenshots
+                 "xsel"           ; Manipulate Selections
+                 "slock"          ; Screen Locker
+                 "dmenu"          ; Menu Launcher
+                 "rofi"           ; Application Launcher
+                 "pinentry"       ; X11-Password Entry
+                 "conky"          ; Status-Display
 
-                         ;; Self Defined
-                         "zsh-ohmyzsh"
-                         "zsh-completions"
-                         "awesome-copycats"
-                         "tmux-tpm"
-                         "emacs-next-pgtk-latest"
-                         ;; "neovim-lunarvim"
-                         "neovim-config"
-                         )))
+                 ;; Applications
+                 "alacritty-next"
+                 "icecat"
+                 "vlc"
+                 "mpv"
+                 "playerctl"
+                 "gimp"
+                 "flatpak"
+                 "thunar"
+
+                 ;; Self Defined
+                 "zsh-ohmyzsh"
+                 "zsh-completions"
+                 "awesome-copycats"
+                 "tmux-tpm"
+                 "emacs-next-pgtk-latest"
+                 ;; "neovim-lunarvim"
+                 "neovim-config"
+                 "dotfiles-ody55eus"
+                 )))
  (services
   (list
    (service
@@ -106,6 +113,8 @@
                            ,(local-file "config/nvim-init.lua" "nvim-init.lua"))
                          `(".config/nvim/lua/user"
                            ,(file-append neovim-config "/share/lua/user"))
+                         `(".config/doom/templates"
+                           ,(local-file "../../doom/.doom.d/templates" "doom-templates" #:recursive? #t))
                          `(".config/doom/packages.el"
                            ,(local-file "../../doom/.doom.d/packages.el" "packages.el"))
                          `(".config/doom/org-workflow.el"
@@ -126,6 +135,8 @@
                            ,(local-file "config/git.ignore"))
                          `(".config/alacritty/alacritty.yml"
                            ,(local-file "config/alacritty.yml"))
+                         `(".config/picom/picom.conf"
+                           ,(local-file "config/picom.conf"))
                          `(".config/awesome/rc.lua"
                            ,(local-file "config/awesome.rc.lua"))
                          `(".config/awesome/themes"
@@ -138,6 +149,8 @@
                            ,(file-append emacs-doom "/share/doom"))
                          `(".config/zsh/.p10k.zsh"
                            ,(local-file "config/.p10k.zsh" "p10k.zsh"))
+                         `(".bin/zsh"
+                           ,(file-append zsh "/bin/zsh"))
                          `(".config/zsh/ohmyzsh"
                            ,(file-append zsh-ohmyzsh "/share/ohmyzsh"))
                          `(".cache/zsh/ohmyzsh/custom/themes"
@@ -152,7 +165,6 @@
                            ,(local-file "config/tmux/.tmux-powerlinerc" "tmux-powerlinerc"))
                          `(".tmux.conf"
                            ,(local-file "config/tmux/.tmux.conf" "tmux.conf"))))
-
    (simple-service 'environment-variables-service
                    home-environment-variables-service-type
                    `(("LESSHISTFILE" . "$XDG_CACHE_HOME/.lesshst")
@@ -170,9 +182,10 @@
                      ("LANG" . "en_US.UTF-8")
                      ("LC_ALL" . "en_US.UTF-8")
                      ("GUIX_LOCPATH" . "$HOME/.guix-home/profile/lib/locale")
+                     ("GUIX_EXTENSIONS_PATH" . "$HOME/.guix-home/profile/share/guix/extensions")
                      ("DOOMLOCALDIR" . "$XDG_DATA_HOME/doom")
                      ("DOOMPROFILELOADPATH" . "$XDG_CACHE_HOME/doom-profiles")
                      ("DOOMPROFILELOADFILE" . "$XDG_CACHE_HOME/doom/profiles/load.el")
                      ("ZSH" . "$ZDOTDIR/ohmyzsh")
                      ("ZSH_CUSTOM" . "$HOME/.cache/zsh/ohmyzsh/custom")
-                     ("SHELL" . ,(file-append zsh "/bin/zsh")))))))
+                     ("SHELL" . "$HOME/.bin/zsh"))))))

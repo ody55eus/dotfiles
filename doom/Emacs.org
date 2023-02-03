@@ -247,9 +247,9 @@ Just comment/uncomment some lines to disable/enable features.
        plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        (python            ; beautiful is better than ugly
-        +lsp               ; language server protocol
-        +pyright           ;
-        +conda)            ; Anaconda environment / package manager
+        +lsp)             ; language server protocol
+        ;; +pyright           ;
+        ;; +conda)            ; Anaconda environment / package manager
        qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6
@@ -349,6 +349,8 @@ Just comment/uncomment some lines to disable/enable features.
 ;; Use latest version!
 (unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
+
+(package! f.el :pin "3737e7d4ab2775391e5173da1d593dc9e7355d98") ; Important for older Emacs 29.0.50 versions
 
 ;; Org Enhancements
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
@@ -489,8 +491,7 @@ Just comment/uncomment some lines to disable/enable features.
 
 (package! xkcd)
 
-                                        ; Packages to share my keybindings when streaming
-;;(package! command-log-mode)
+;; Packages to share my keybindings when streaming
 (package! keycast
   :recipe (:host github
            :repo "tarsius/keycast"))
@@ -573,21 +574,26 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
     (if (eq (frame-parameter nil 'alpha-background) alpha-transparency)
         (set-frame-parameter nil 'alpha-background 100)
       (set-frame-parameter nil 'alpha-background alpha-transparency))))
+(add-hook 'emacs-startup-hook #'jp/toggle-window-transparency)
+
 
 ;; World Clock
 (setq world-clock-list '(("UTC" "Universal")
                          ("America/Los_Angeles" "Seattle")
+                         ("America/Chicago" "Chicago")
                          ("America/New_York" "New York")
                          ("Europe/London" "London")
                          ("Europe/Paris" "Paris")
                          ("Europe/Athens" "Athen")
                          ("Asia/Dubai" "Dubai")
-                         ("Asia/Calcutta" "Bangalore")
-                         ;; ("Asia/Bangkok" "Bangkok")
+                         ("Asia/Calcutta" "Calcutta")
+                         ("Asia/Bangkok" "Bangkok")
                          ("Asia/Singapore" "Singapur")
                          ("Australia/Perth" "Perth")
                          ("Asia/Tokyo" "Tokyo")
                          ("Australia/Sydney" "Sydney")))
+
+(defvar jp/guix? (if (getenv "GUIX_LOCPATH") t nil)) ; Are we running GNU/GUIX?
 #+end_src
 
 * Workflow
@@ -2050,7 +2056,9 @@ MacOS has different location thanks to Anaconda:
 Linux uses Miniconda3:
 
 #+begin_src emacs-lisp :tangle (if (eq system-type 'gnu/linux) "./.doom.d/config.el" "no")
-(defvar jp/guix/pythonpath (getenv "GUIX_PYTHONPATH")
+(defvar jp/guix/pythonpath (if (getenv "GUIX_PYTHONPATH")
+                               (getenv "GUIX_PYTHONPATH")
+                             (getenv "PYTHONPATH"))
   "Absolute Python Library Path (e.g. /usr/share/lib/python3.9/site-packages)")
 (defvar jp/conda/pythonpath (getenv "CONDA_PYTHON_EXE")
   "Absolute Conda Python Exe Path (e.g. /opt/miniconda3/bin/python)")
@@ -2220,11 +2228,13 @@ For more thoughts on Eshell, check out these articles by Pierre Neidhardt:
 
 (after! magit
   (remove-hook 'server-switch-hook 'magit-commit-diff)
-)
+  )
 
 ;; Magit Configuration to enable gpg to sign keys
-(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
-(setq exec-path (append exec-path '("/usr/local/bin")))
+(unless jp/guix?
+  (progn
+    (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+    (setq exec-path (append exec-path '("/usr/local/bin")))))
 
 #+end_src
 
@@ -2246,7 +2256,8 @@ Useful mu4e manual pages:
 ;; Tell Emacs where to find mu4e (only necessary if manual compiled)
 (pcase system-type
   ((or 'gnu/linux 'windows-nt 'cygwin)
-   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e"))
+   (unless jp/guix?
+     (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")))
   ('darwin
    (use-package mu4e
      :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e/")))

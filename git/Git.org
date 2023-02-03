@@ -3,7 +3,24 @@
 * Gitconfig
 #+name: myhome
 #+begin_src emacs-lisp
-(getenv "HOME")
+(setq ret "")
+(defun get-code ()
+  (let ((dir (concat (getenv "HOME") "/share/Projects/Code/"))
+        (ret ""))
+    (cl-loop for element in (compat-directory-files dir)
+             do (setq ret (concat ret "\tdirectory = \"" dir element "\"\n"))
+             finally return ret)))
+(defun get-doc ()
+  (let ((dir (concat (getenv "HOME") "/share/Projects/Doc/"))
+        (ret ""))
+    (cl-loop for element in (compat-directory-files dir)
+             do (setq ret (concat ret "\tdirectory = \"" dir element "\"\n"))
+             finally return ret)))
+(concat (get-code)
+        (get-doc)
+        (cl-loop for element in '("/share/org" "/share/notes" "/share/notes/ZK")
+                 do (setq ret (concat ret "\tdirectory = \"" (getenv "HOME") element "\"\n"))
+                 finally return ret))
 #+end_src
 
 #+name: mygpg
@@ -60,14 +77,7 @@
 [color]
 	pager = no
 [safe]
-	directory = <<myhome()>>/share/org
-	directory = <<myhome()>>/share/notes
-	directory = <<myhome()>>/share/notes/ZK
-	directory = <<myhome()>>/share/Projects/Code/01_2fa_demo
-	directory = <<myhome()>>/share/Projects/Doc/frontdesk-documentation
-	directory = <<myhome()>>/share/Projects/Code/frontdesk
-	directory = <<myhome()>>/share/Projects/Code/guix
-	directory = <<myhome()>>/share/Projects/Code/control-panel
+<<myhome()>>
 #+end_src
 
 * Git Attributes

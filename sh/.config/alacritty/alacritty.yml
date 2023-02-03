@@ -6,13 +6,25 @@ font:
   style: Regular
   size: 12
 
+cursor:
+  style:
+    shape: Beam
+  unfocused_hollow: false
+  thickness: 0.15
+
 window:
+  opacity: 0.8
   padding:
     x: 13
 
 key_bindings:
   - {key: Right, mods: Alt, chars: "\x1BF"}
   - {key: Left, mods: Alt, chars: "\x1BB"}
+
+shell:
+  program: /home/jpi/.guix-home/profile/bin/zsh
+  args:
+    - -l
 
 colors:
   # Default colors

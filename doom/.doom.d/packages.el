@@ -53,6 +53,8 @@
 (unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
 
+(package! f.el :pin "3737e7d4ab2775391e5173da1d593dc9e7355d98") ; Important for older Emacs 29.0.50 versions
+
 ;; Org Enhancements
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
 (package! org-roam)             ; Extended org-mode for Zettelkasten principle.
@@ -192,8 +194,7 @@
 
 (package! xkcd)
 
-                                        ; Packages to share my keybindings when streaming
-;;(package! command-log-mode)
+;; Packages to share my keybindings when streaming
 (package! keycast
   :recipe (:host github
            :repo "tarsius/keycast"))
