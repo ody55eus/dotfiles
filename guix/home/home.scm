@@ -15,7 +15,7 @@
 
 (home-environment
  (packages (specifications->packages (list
-                                      ;; Terminal
+                                      ;; Default Terminal Tools
                                       "zsh"
                                       "zsh-syntax-highlighting"
                                       "zsh-autopair"
@@ -29,12 +29,15 @@
                                       "fzf"
                                       "gnupg"
                                       "openssh"
+                                      "net-tools"
+                                      "make"
                                       "glibc-locales"
+
+                                      ;; Virtualization
                                       "docker-compose"
 
                                       ;; Editors
                                       "neovim"
-                                      "python-pynvim"
 
                                       ;; X-Tools
                                       "picom"
