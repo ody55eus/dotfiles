@@ -3,4 +3,4 @@ setxkbmap
 emacs --daemon
 picom -b
 emacsclient -c &
-tmux
+tmux -l new-session -s "Main" -n "Dev" $(which zsh)

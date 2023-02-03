@@ -69,6 +69,7 @@ local function run_once(cmd_arr)
 end
 
 run_once({ "alacritty -e ~/startup.sh" }) -- comma-separated entries
+run_once({ "icecat" }) -- comma-separated entries
 
 -- This function implements the XDG autostart specification
 --[[
@@ -197,6 +198,7 @@ awful.util.mymainmenu = freedesktop.menu.build {
         -- other triads can be put here
     },
     after = {
+        { "Open browser", browser },
         { "Open terminal", terminal },
         { "Open emacs", emacs_runner },
         -- other triads can be put here
@@ -747,8 +749,8 @@ awful.rules.rules = {
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = "2" } },
+    { rule = { class = {"Firefox", "IceCat"} },
+      properties = { screen = 1, tag = "3" } },
 }
 
 -- }}}
