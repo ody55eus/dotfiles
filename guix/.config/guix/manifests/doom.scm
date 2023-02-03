@@ -17,6 +17,9 @@
        "python-scipy"   ; Includes numpy
        "python-pandas"  ; DataFrames
        "python-seaborn" ; Includes matplotlib
+       "python-sphinx"
+       "python-numpydoc"
+       "python-pynvim"
 
        ;; Visualization Tools
        "plantuml"       ; UML Diagrams

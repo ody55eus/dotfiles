@@ -84,10 +84,18 @@
   ;;(firmware (list linux-firmware))
   (locale "en_US.utf8")
   (timezone "Europe/Berlin")
-  (keyboard-layout (keyboard-layout "de,us" "neo"
+  (keyboard-layout (keyboard-layout "de" "neo"
                                     #:options '("grp:shifts_toggle")))
   (packages (append (map specification->package
                          '(
+                           "awesome"
+                           "gvfs"
+                           "ntfs-3g"
+                           "exfat-utils"
+                           "fuse-exfat"
+                           "alacritty-next"
+                           "bluez"
+                           "bluez-alsa"
                            "nss-certs"
                            ))
                     %base-packages))
@@ -149,7 +157,8 @@
                                           (xorg-configuration
                                            (xorg-configuration
                                             (keyboard-layout keyboard-layout)))
-                                          )))
+                                          ))
+              )
              %my-base-services))
   (bootloader
    (bootloader-configuration
