@@ -55,21 +55,21 @@
   (bootloader
     (bootloader-configuration
       (bootloader grub-bootloader)
-      (targets '(""))
+      (targets '("/dev/sda"))
       (keyboard-layout keyboard-layout)))
   (swap-devices
-    (list (swap-space (target (uuid "")))))
+    (list (swap-space (target (uuid "5e3f3adf-c169-4e92-8265-2366f5b0aa3f")))))
   (file-systems
     (append (list
              (file-system
                (mount-point "/")
                (device
-                 (uuid ""
+                 (uuid "24936c30-c01d-4fe9-9160-9b2b11e9db0f"
                        'ext4))
                (type "ext4"))
              (file-system
                (mount-point "/data")
-               (device "")
+               (device "f22fb592-ac5b-4ffe-af63-16deeed3caff")
                (type "ext4")))
             %base-file-systems))
 
@@ -201,45 +201,45 @@ COMMIT
                           "proxy_send_timeout 2s;"
                           "proxy_pass_header Cache-Control;"
                           "proxy_ignore_client_abort on;")))))
-                   (ssl-certificate "/etc/letsencrypt/live/nonguix.org/fullchain.pem")
-                   (ssl-certificate-key "/etc/letsencrypt/live/nonguix.org/privkey.pem"))))))
-
-      (service ntp-service-type)
+                   (ssl-certificate "/etc/letsencrypt/live/ody55eus.de/fullchain.pem")
+                   (ssl-certificate-key "/etc/letsencrypt/live/ody55eus.de/privkey.pem"))))))
 
             (service openssh-service-type
               (openssh-configuration
                 (authorized-keys
-                 `(("jp" ,(local-file "keys/ssh/jonathan.pub"))))
+                 `(("jp" ,(local-file "jp.pub"))))
                 (password-authentication? #f)
                 (port-number 2123)))
 
-      (service static-networking-service-type
-        (list (static-networking
-          (addresses
-            (list (network-address
-                    (device "enp9s0")
-                    (value "144.76.7.123/27"))
-                  (network-address
-                    (device "enp9s0")
-                    (ipv6? #t)
-                    (value "2a01:4f8:190:8242::1/64"))))
-          (routes
-            (list (network-route
-                    (destination "default")
-                    (device "enp9s0")
-                    (gateway "144.76.7.97"))
-                  (network-route
-                    (destination "default")
-                    (device "enp9s0")
-                    (ipv6? #t)
-                    (gateway "fe80::1"))))
-          (name-servers '("185.12.64.1" "185.12.64.2"
-                          "2001:4860:4860::8888"
-                          "2001:4860:4860::8844")))))
+            (service ntp-service-type)
+            (service dhcp-service-type)
+      ;; (service static-networking-service-type
+      ;;   (list (static-networking
+      ;;     (addresses
+      ;;       (list (network-address
+      ;;               (device "enp9s0")
+      ;;               (value "144.76.7.123/27"))
+      ;;             (network-address
+      ;;               (device "enp9s0")
+      ;;               (ipv6? #t)
+      ;;               (value "2a01:4f8:190:8242::1/64"))))
+      ;;     (routes
+      ;;       (list (network-route
+      ;;               (destination "default")
+      ;;               (device "enp9s0")
+      ;;               (gateway "144.76.7.97"))
+      ;;             (network-route
+      ;;               (destination "default")
+      ;;               (device "enp9s0")
+      ;;               (ipv6? #t)
+      ;;               (gateway "fe80::1"))))
+      ;;     (name-servers '("185.12.64.1" "185.12.64.2"
+      ;;                     "2001:4860:4860::8888"
+      ;;                     "2001:4860:4860::8844")))))
 
-      (simple-service 'cron-jobs
-                      mcron-service-type
-                      (list garbage-collector-job))
+            (simple-service 'cron-jobs
+                            mcron-service-type
+                            (list garbage-collector-job))
 
             ;; Browse through bash history via PageUp/PageDown
             (simple-service 'inputrc etc-service-type
@@ -248,10 +248,11 @@ COMMIT
                                "\"\\e[5~\": history-search-backward\n"
                                "\"\\e[6~\": history-search-forward\n")))))
 
-      (modify-services %base-services
-        (guix-service-type config =>
-          (guix-configuration
-            (inherit config)
-            (authorized-keys (append
-                               %default-authorized-guix-keys
-                               (list (local-file "keys/guix/worker-vm.pub"))))))))))
+            (modify-services %base-services
+             (guix-service-type
+              config => (guix-configuration
+                         (inherit config)
+                         (authorized-keys ;;(append
+                                           %default-authorized-guix-keys
+                                           ;; (list (local-file "keys/guix/worker-vm.pub")))
+                                           )))))))
