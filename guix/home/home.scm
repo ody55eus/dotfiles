@@ -30,6 +30,7 @@
                                       "gnupg"
                                       "openssh"
                                       "glibc-locales"
+                                      "docker-compose"
 
                                       ;; Editors
                                       "neovim"
@@ -120,7 +121,7 @@
              ("gpg-check" . "gpg --keyserver-options auto-key-retrieve --verify")
              ("gpg-retrieve" . "gpg --keyserver-options auto-key-retrieve --receive-keys")
              ("mergepdf" . "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=_merged.pdf")
-             ("path" . "echo -e ${PATH//:/\\n}")
+             ("path" . "echo -e \"${PATH//:/\\n}\"")
              ("ips" . "grep -o 'inet6\\? \\(addr:\\)\\?\\s\\?\\(\\(\\([0-9]\\+\\.\\)\\{3\\}[0-9]\\+\\)\\|[a-fA-F0-9:]\\+\\)' | awk '{ sub(/inet6? (addr:)? ?/, \\\"\\\"); print }'")
              ("ll" . "ls -l")))
           (bashrc

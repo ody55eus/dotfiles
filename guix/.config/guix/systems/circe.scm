@@ -20,8 +20,8 @@
  xorg)
 (use-package-modules
  xdisorg
- linux
  gnome
+ linux
  fonts)
 
 (define %my-base-services
@@ -88,6 +88,7 @@
                                     #:options '("grp:shifts_toggle")))
   (packages (append (map specification->package
                          '(
+                           "awesome"
                            "nss-certs"
                            ))
                     %base-packages))
@@ -154,16 +155,16 @@
   (bootloader
    (bootloader-configuration
     (bootloader grub-bootloader)
-    (targets (list "/dev/sdb"))
+    (targets (list "/dev/sda"))
     (keyboard-layout keyboard-layout)))
   (swap-devices
    (list (swap-space
-          (target (uuid "b6879df0-45fc-49cb-a091-a64fdbba2115")))))
+          (target (uuid "a83baefd-4b8b-4e07-bf3a-82e9320829d5")))))
   (file-systems
    (cons* (file-system
             (mount-point "/")
             (device
-             (uuid "c2051dff-a06b-42f9-aed4-86383c41db69"
+             (uuid "15b71b18-3f64-4778-80ed-f590eb6ea01e"
                    'ext4))
             (type "ext4"))
           %base-file-systems)))

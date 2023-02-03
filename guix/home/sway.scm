@@ -30,15 +30,76 @@
                                       "gnupg"
                                       "openssh"
                                       "glibc-locales"
+                                      "docker-compose"
 
                                       ;; Editors
                                       "neovim"
                                       "python-pynvim"
 
+                                      ;; GUI
+                                      "sway"
+                                      "waybar"
+                                      "fuzzel"
+
+                                      ;; X-Tools
+                                      "picom"
+                                      "redshift"
+                                      "brightnessctl"
+                                      "xdg-utils"      ;; For xdg-open, etc
+                                      "xdg-dbus-proxy" ;; For Flatpak
+                                      "gtk+:bin"       ;; For gtk-launch
+                                      "glib:bin"       ;; For gio-launch-desktop
+                                      "shared-mime-info"
+                                      "xset"
+                                      "xrandr"         ; Screen-Resolution
+                                      "xsel"           ; Manipulate Selections
+                                      "dmenu"          ; Menu Launcher
+                                      "rofi"           ; Application Launcher
+                                      "pinentry"       ; X11-Password Entry
+
+                                      "alacritty-next"
+                                      "icecat"
+                                      "vlc"
+                                      "mpv"
+                                      "youtube-dl"
+                                      "playerctl"
+                                      "gimp"
+                                      "gucharmap"
+                                      "fontmanager"
+
+                                      "gstreamer"
+                                      "gst-plugins-base"
+                                      "gst-plugins-good"
+                                      "gst-plugins-bad"
+                                      "gst-plugins-ugly"
+                                      "gst-libav"
+                                      "intel-vaapi-driver"
+                                      "libva-utils"
+
+                                      "feh"
+                                      "gimp"
+                                      "scrot"          ; CLI Screenshots
+                                      "ghostscript"
+
+                                      ;; Themes
+                                      "adwaita-icon-theme"
+                                      "hicolor-icon-theme"
+
+                                      ;; Fonts
+                                      "font-juliamono"
+                                      "font-jetbrains-mono"
+                                      "font-font-awesome"
+                                      "font-nerd-fonts"
+
+                                      ;; E-Mail
+                                      "isync"
+                                      "mu"
+
                                       ;; Self Defined
                                       "dotfiles-ody55eus"
                                       "zsh-ohmyzsh"
                                       "zsh-completions"
+                                      "awesome-copycats"
                                       "tmux-tpm"
 
                                       ;; Emacs
@@ -104,6 +165,18 @@
                                 ,(local-file "config/git.attr"))
                               `(".config/git/ignore"
                                 ,(local-file "config/git.ignore"))
+                              `(".config/alacritty/alacritty.yml"
+                                ,(local-file "config/alacritty.yml"))
+                              `(".config/picom/picom.conf"
+                                ,(local-file "config/picom.conf"))
+                              `(".config/awesome/rc.lua"
+                                ,(local-file "config/awesome.rc.lua"))
+                              `(".config/awesome/themes"
+                                ,(file-append awesome-copycats "/share/awesome/copycats/themes"))
+                              `(".config/awesome/lain"
+                                ,(file-append awesome-lain "/share/awesome/lain"))
+                              `(".config/awesome/freedesktop"
+                                ,(file-append awesome-freedesktop "/share/awesome/freedesktop"))
                               `(".config/emacs"
                                 ,(file-append emacs-doom "/share/doom"))
                               `(".bin/doom"
