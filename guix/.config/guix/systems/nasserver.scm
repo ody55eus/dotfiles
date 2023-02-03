@@ -10,6 +10,7 @@
 
 (use-service-modules
  admin
+ cuirass
  cups
  desktop
  networking
@@ -20,54 +21,80 @@
  virtualization
  xorg)
 (use-package-modules
+ shells
  xdisorg
  gnome
  fonts)
 
 (define %my-base-services
   (append
-   (cons*
-    (screen-locker-service xlockmore "xlock")
-    (service guix-publish-service-type)
-    (service unattended-upgrade-service-type
-             (unattended-upgrade-configuration
-              (schedule "30 01 * * 0")
-              (operating-system-file
-               (file-append
-                (local-file (string-append (getenv "HOME")
-                                           "/.dotfiles/guix/.config/guix/systems")
-                            "guix-systems"
-                            #:recursive? #t)
-                "/hera.scm"))))
-    (service openssh-service-type)
-    (extra-special-file "/usr/bin/env"
-                        (file-append coreutils "/bin/env"))
-    (service cups-service-type)
-    (modify-services %desktop-services
-                     (delete gdm-service-type)
-                     (console-font-service-type
-                      config =>
-                      `(("tty1" . "LatGrkCyr-8x16")
-                        ("tty2" . ,(file-append
-                                    font-tamzen
-                                    "/share/kbd/consolefonts/TamzenForPowerline10x20.psf"))
-                        ("tty3" . ,(file-append
-                                    font-terminus
-                                    "/share/consolefonts/ter-132n")) ; for HDPI
-                        ("tty4" . ,(file-append
-                                    font-terminus
-                                    "/share/consolefonts/ter-132n"))
-                        ("tty5" . ,(file-append
-                                    font-terminus
-                                    "/share/consolefonts/ter-132n"))
-                        ("tty6" . ,(file-append
-                                    font-terminus
-                                    "/share/consolefonts/ter-132n"))))
-                     (network-manager-service-type
-                      config =>
-                      (network-manager-configuration
-                       (inherit config)
-                       (vpn-plugins (list network-manager-openvpn))))))))
+    (cons*
+      (service docker-service-type)
+      (service nix-service-type)
+      (service cuirass-service-type
+               (cuirass-configuration
+                 (specifications
+                   #~(list
+                       (specification
+                         (name "dinos")
+                         (build '(channels dinos))
+                         (channels
+                           (cons (channel
+                                   (name dinos)
+                                   (url "https://gitlab.ody5.de/ody55eus/dinos.git"))
+                                 %default-channels)))))
+                 (host "0.0.0.0")))
+      (service guix-publish-service-type
+               (guix-publish-configuration
+                 (host "0.0.0.0")
+                 (advertise? #t)))
+      (service unattended-upgrade-service-type
+               (unattended-upgrade-configuration
+                 (schedule "30 01 * * 0")
+                 (operating-system-file
+                   (file-append
+                     (local-file (string-append (getenv "HOME")
+                                                "/.dotfiles/guix/.config/guix/systems")
+                                 "guix-systems"
+                                 #:recursive? #t)
+                     "/nasserver.scm"))))
+      (service openssh-service-type
+               (openssh-configuration
+                 (x11-forwarding? #t)
+                 (permit-root-login 'prohibit-password)
+                 (authorized-keys
+                   `(("root" ,(local-file "root.pub"))
+                      ("jp" ,(local-file "jp.pub"))))))
+      (extra-special-file "/usr/bin/zsh"
+                          (file-append zsh "/bin/zsh"))
+      (extra-special-file "/usr/bin/env"
+                          (file-append coreutils "/bin/env"))
+      (service cups-service-type)
+      (modify-services %desktop-services
+                       (delete gdm-service-type)
+                       (console-font-service-type
+                         config =>
+                         `(("tty1" . "LatGrkCyr-8x16")
+                           ("tty2" . ,(file-append
+                                        font-tamzen
+                                        "/share/kbd/consolefonts/TamzenForPowerline10x20.psf"))
+                           ("tty3" . ,(file-append
+                                        font-terminus
+                                        "/share/consolefonts/ter-132n")) ; for HDPI
+                           ("tty4" . ,(file-append
+                                        font-terminus
+                                        "/share/consolefonts/ter-132n"))
+                           ("tty5" . ,(file-append
+                                        font-terminus
+                                        "/share/consolefonts/ter-132n"))
+                           ("tty6" . ,(file-append
+                                        font-terminus
+                                        "/share/consolefonts/ter-132n"))))
+                       (network-manager-service-type
+                         config =>
+                         (network-manager-configuration
+                           (inherit config)
+                           (vpn-plugins (list network-manager-openvpn))))))))
 
 (operating-system
   ;; Non-Free Kernel

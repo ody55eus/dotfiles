@@ -1,15 +1,7 @@
 (cons*
  (channel
-  (name 'acg)
-  (url (string-append "file://"
-                      (getenv "HOME")
-                      "/build/acg-guix"))
-  (branch "main"))
- (channel
   (name 'dinos)
-  (url (string-append "file://"
-                      (getenv "HOME")
-                      "/build/dinos"))
+  (url "https://gitlab.ody5.de/ody55eus/dinos.git")
   (branch "main")
   (introduction
    (make-channel-introduction
