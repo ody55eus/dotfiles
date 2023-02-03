@@ -408,10 +408,16 @@ Returns file content as a string."
                                                       "#+title: %<%Y>\n#+filetags: Project\n")
                                    :unnarrowed t))))
 
-(setq calendar-holidays
-  (append holiday-general-holidays holiday-local-holidays
-          holiday-other-holidays holiday-christian-holidays
-          holiday-solar-holidays))
+(setq calendar-week-start-day 1) ; Start the Week on Monday
+
+(after! german-holidays
+  (require 'german-holidays)
+  (setq calendar-holidays holiday-german-HE-holidays)) ; Set holidays (german)
+
+;; (setq calendar-holidays
+;;   (append holiday-general-holidays holiday-local-holidays
+;;           holiday-other-holidays holiday-christian-holidays
+;;           holiday-solar-holidays))
 
 (if (or
      (eq system-type 'darwin)

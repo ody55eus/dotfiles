@@ -456,8 +456,8 @@ Just comment/uncomment some lines to disable/enable features.
 (package! calfw)
 (package! calfw-org)
 (package! german-holidays
-  :recipe (:host github
-           :repo "rudolfochrist/german-holidays"
+  :recipe (:host nil
+           :repo "https://gitlab.ody5.de/ody55eus/german-holidays.git"
            :files ("german-holidays.el")))
 
 ;; Dictionaries
@@ -1062,18 +1062,6 @@ This allows you to see some basic actions (activates dropdown menus File, Edit, 
                                       (frame-char-height)))))))
 
 (jp/set-frame-size-according-to-resolution)
-
-#+end_src
-
-**** Configure Calendar
-
-#+begin_src emacs-lisp :tangle ./.doom.d/config.el
-
-(setq calendar-week-start-day 1) ; Start the Week on Monday
-
-(after! german-holidays
-  (require 'german-holidays)
-  (setq calendar-holidays holiday-german-HE-holidays)) ; Set holidays (german)
 
 #+end_src
 
@@ -2373,7 +2361,7 @@ Useful mu4e manual pages:
   ;; (add-to-list 'mu4e-bookmarks
   (mu4e-bookmark-define
     "All Inboxes"
-    "maildir:/Mailbox/INBOX OR maildir:/Personal/Inbox"
+    "maildir:/Mailbox/INBOX OR maildir:/Personal/Inbox AND NOT flag:trashed"
     ?i)
 
   ;; (add-to-list 'mu4e-bookmarks
@@ -2386,7 +2374,7 @@ Useful mu4e manual pages:
   (setq message-kill-buffer-on-exit t)
 
   (setq jp/mu4e-inbox-query
-        "(maildir:/Personal/Inbox OR maildir:/Mailbox/INBOX) AND flag:unread")
+        "(maildir:/Personal/Inbox OR maildir:/Mailbox/INBOX) AND flag:unread AND NOT flag:trashed")
 
   (defun jp/go-to-inbox ()
     (interactive)

@@ -159,8 +159,8 @@
 (package! calfw)
 (package! calfw-org)
 (package! german-holidays
-  :recipe (:host github
-           :repo "rudolfochrist/german-holidays"
+  :recipe (:host nil
+           :repo "https://gitlab.ody5.de/ody55eus/german-holidays.git"
            :files ("german-holidays.el")))
 
 ;; Dictionaries
