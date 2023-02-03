@@ -31,6 +31,8 @@
                  "tmux"
                  "direnv"
                  "gwl"                  ; Guix Workflow Language
+                 "make"
+                 "file"
 
                  ;; Editors
                  "neovim"
@@ -52,7 +54,7 @@
 
                  ;; Fonts
                  "font-juliamono"
-                 "font-jetbrains-mono"
+                 ;; "font-jetbrains-mono"
                  "font-font-awesome"
                  "font-nerd-fonts"
 
@@ -76,6 +78,7 @@
                  "rofi"           ; Application Launcher
                  "pinentry"       ; X11-Password Entry
                  "conky"          ; Status-Display
+                 "keepassxc"      ; Password Manager
 
                  ;; Applications
                  "alacritty-next"

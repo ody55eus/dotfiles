@@ -28,16 +28,16 @@
 
        ;; Converting Files
        "pandoc"         ; Swiss-Army-Knife
-       "texlive"        ; LaTeX
-       "texlive-latex-moderncv"
-       "texlive-latex-fontawesome"
+       ;; "texlive"        ; LaTeX
+       ;; "texlive-latex-moderncv"
+       ;; "texlive-latex-fontawesome"
 
        ;; GUI Fonts
        "font-nerd-fonts"
        "font-font-awesome"
        "font-juliamono"
-       "font-jetbrains-mono"
-       "font-overpass"
+       ;; "font-jetbrains-mono"
+       ;; "font-overpass"
 
        ;; Encryption
        "gnupg"          ; GnuPG

@@ -145,6 +145,15 @@ if [ -f "$ZSH/oh-my-zsh.sh" ]; then
     . $ZSH/oh-my-zsh.sh
 fi
 
+# Start the SSH Agent and set environment
+if command -v ssh-agent &> /dev/null
+then
+    ssh-agent > ./ssh-agent-tmp
+    source ./ssh-agent-tmp && rm ssh-agent-tmp
+    ssh-add
+fi
+
+# Display system info
 if command -v neofetch &> /dev/null
 then
     neofetch

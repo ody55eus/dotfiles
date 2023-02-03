@@ -13,13 +13,17 @@
  desktop
  networking
  ssh
+ docker
+ nix
+ virtualization
  xorg)
 
 (define %my-base-services
   (append
    (cons*
     (screen-locker-service xlockmore "xlock")
-    (service guix-publish-service-type)
+    (service nix-service-type)
+    (service docker-service-type)
     (service unattended-upgrade-service-type
              (unattended-upgrade-configuration
               (schedule "30 01 * * 0")
@@ -79,11 +83,9 @@
                   (supplementary-groups
                     '("wheel" "netdev" "audio" "video")))
                 %base-user-accounts))
-  (packages
-    (append
-      (list
-       (specification->package "awesome")
-       (specification->package "nss-certs"))
+  (packages (append (map specification->package
+                         "awesome"
+                         "nss-certs")
       %base-packages))
   (services
    (append
