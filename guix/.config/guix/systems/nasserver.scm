@@ -106,7 +106,8 @@
  (keyboard-layout (keyboard-layout "de" "neo"))
  (packages
   (append
-      (list ;; (specification->package "awesome")
+      (list (specification->package "awesome")
+            (specification->package "zsh")
             (specification->package "nss-certs"))
    %base-packages))
  (host-name "nasserver")

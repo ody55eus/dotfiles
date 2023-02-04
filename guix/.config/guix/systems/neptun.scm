@@ -51,6 +51,15 @@
                   (home-directory "/home/jp")
                   (supplementary-groups
                     '("wheel" "netdev" "kvm")))
+                (user-account
+                  (name "bkp")
+                  (comment "Backup User")
+                  (group "users")
+                  (home-directory "/home/bkp")
+                  (supplementary-groups
+                    '(
+                      "netdev" ;; network devices
+                      )))
                 %base-user-accounts))
   (bootloader
     (bootloader-configuration
@@ -68,8 +77,8 @@
                        'ext4))
                (type "ext4"))
              (file-system
-               (mount-point "/data")
-               (device "f22fb592-ac5b-4ffe-af63-16deeed3caff")
+               (mount-point "/mnt")
+               (device "/dev/sdb1")
                (type "ext4")))
             %base-file-systems))
 
@@ -88,6 +97,7 @@
        "screen"
        "smartmontools"
        "wget"
+       "zsh"
        "zstd"))
     %base-packages))
 
@@ -127,14 +137,14 @@
                 (port 8080)))
 
             ;; TODO: base on http://issues.guix.gnu.org/48975
-            (service iptables-service-type
-              (iptables-configuration
-                (ipv4-rules (plain-file "iptables.rules" "*filter
--A INPUT -p tcp --dport 5522 ! -s 127.0.0.1 -j REJECT
--A INPUT -p tcp --dport 5555:5558 ! -s 127.0.0.1 -j REJECT
--A INPUT -p tcp --dport 8080:8081 ! -s 127.0.0.1 -j REJECT
-COMMIT
-"))))
+;;             (service iptables-service-type
+;;               (iptables-configuration
+;;                 (ipv4-rules (plain-file "iptables.rules" "*filter
+;; -A INPUT -p tcp --dport 5522 ! -s 127.0.0.1 -j REJECT
+;; -A INPUT -p tcp --dport 5555:5558 ! -s 127.0.0.1 -j REJECT
+;; -A INPUT -p tcp --dport 8080:8081 ! -s 127.0.0.1 -j REJECT
+;; COMMIT
+;; "))))
 
             (service nginx-service-type
               (nginx-configuration
@@ -160,8 +170,8 @@ COMMIT
                      (nginx-location-configuration
                        (uri "/")
                        (body '("proxy_pass http://guix-cuirass;")))))
-                   (ssl-certificate "/etc/letsencrypt/live/ody55eus.de/fullchain.pem")
-                   (ssl-certificate-key "/etc/letsencrypt/live/ody55eus.de/privkey.pem"))
+                   (ssl-certificate "/etc/letsencrypt/live/p.ody55eus.de/fullchain.pem")
+                   (ssl-certificate-key "/etc/letsencrypt/live/p.ody55eus.de/privkey.pem"))
                  (nginx-server-configuration
                    (server-name '("p.ody55eus.de"))
                    (listen '("443 ssl" "[::]:443 ssl"))
@@ -201,8 +211,8 @@ COMMIT
                           "proxy_send_timeout 2s;"
                           "proxy_pass_header Cache-Control;"
                           "proxy_ignore_client_abort on;")))))
-                   (ssl-certificate "/etc/letsencrypt/live/ody55eus.de/fullchain.pem")
-                   (ssl-certificate-key "/etc/letsencrypt/live/ody55eus.de/privkey.pem"))))))
+                   (ssl-certificate "/etc/letsencrypt/live/p.ody55eus.de/fullchain.pem")
+                   (ssl-certificate-key "/etc/letsencrypt/live/p.ody55eus.de/privkey.pem"))))))
 
             (service openssh-service-type
               (openssh-configuration
@@ -212,30 +222,29 @@ COMMIT
                 (port-number 2123)))
 
             (service ntp-service-type)
-            (service dhcp-service-type)
-      ;; (service static-networking-service-type
-      ;;   (list (static-networking
-      ;;     (addresses
-      ;;       (list (network-address
-      ;;               (device "enp9s0")
-      ;;               (value "144.76.7.123/27"))
-      ;;             (network-address
-      ;;               (device "enp9s0")
-      ;;               (ipv6? #t)
-      ;;               (value "2a01:4f8:190:8242::1/64"))))
-      ;;     (routes
-      ;;       (list (network-route
-      ;;               (destination "default")
-      ;;               (device "enp9s0")
-      ;;               (gateway "144.76.7.97"))
-      ;;             (network-route
-      ;;               (destination "default")
-      ;;               (device "enp9s0")
-      ;;               (ipv6? #t)
-      ;;               (gateway "fe80::1"))))
-      ;;     (name-servers '("185.12.64.1" "185.12.64.2"
-      ;;                     "2001:4860:4860::8888"
-      ;;                     "2001:4860:4860::8844")))))
+       (service static-networking-service-type
+         (list (static-networking
+           (addresses
+             (list (network-address
+                     (device "enp2s0")
+                     (value "192.168.20.20/8"))
+                   (network-address
+                     (device "enp2s0")
+                     (ipv6? #t)
+                     (value "2a02:2455:cea:eb00:1dd1::1/64"))))
+           (routes
+             (list (network-route
+                     (destination "default")
+                     (device "enp2s0")
+                     (gateway "192.168.20.1"))
+                   (network-route
+                     (destination "default")
+                     (device "enp2s0")
+                     (ipv6? #t)
+                     (gateway "fe80::1"))))
+           (name-servers '("192.168.20.1" "1.1.1.1"
+                           "2001:4860:4860::8888"
+                           "2001:4860:4860::8844")))))
 
             (simple-service 'cron-jobs
                             mcron-service-type
