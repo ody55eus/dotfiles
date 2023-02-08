@@ -55,6 +55,14 @@
                         ("tty6" . ,(file-append
                                     font-terminus
                                     "/share/consolefonts/ter-132n"))))
+              (guix-service-type config => (guix-configuration
+               (inherit config)
+               (substitute-urls
+                (append (list "https://substitutes.nonguix.org")
+                  %default-substitute-urls))
+               (authorized-keys
+                (append (list (local-file "./nonguix.pub"))
+                  %default-authorized-guix-keys))))
                      (network-manager-service-type
                       config =>
                       (network-manager-configuration
@@ -83,10 +91,11 @@
                   (supplementary-groups
                     '("wheel" "netdev" "audio" "video")))
                 %base-user-accounts))
-  (packages (append (map specification->package
-                         "awesome"
-                         "nss-certs")
-      %base-packages))
+  (packages (append (specifications->packages
+                      (list 
+                        "awesome"
+                        "nss-certs"))
+                    %base-packages))
   (services
    (append
     (list

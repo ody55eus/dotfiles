@@ -36,7 +36,6 @@
 
                  ;; Editors
                  "neovim"
-                 "python-pynvim"
 
                  ;; CLI Apps
                  "mcron"                ; Cron Automation
@@ -51,6 +50,9 @@
                  "nss-certs"            ; Internet Certificates
                  "gnupg"                ; Encryption
                  "glibc-locales"        ; important on foreign distro
+
+                 "ghostscript"
+                 "pandoc"
 
                  ;; Fonts
                  "font-juliamono"
