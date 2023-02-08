@@ -728,10 +728,40 @@ Returns file content as a string."
           (todo "REVIEW" ((org-agenda-overriding-header "Active Reviews")))
           (todo "HOLD" ((org-agenda-overriding-header "On Hold")))))
 
+        ("O" "Output"
+         ((agenda "" ((org-deadline-warning-days 0)
+                      (org-agenda-show-log 'clockcheck)
+                      (org-agenda-start-with-clockreport-mode t)
+                      (org-agenda-clockreport-parameter-plist '(:link nil
+                                                                :lang "de"
+                                                                :formular '%
+                                                                :narrow nil
+                                                                :filetitle t
+                                                                :maxlevel 3))
+                      (org-agenda-start-day "01")
+                      (org-agenda-span 'month)
+                      (org-agenda-use-time-grid nil)
+                      (org-agenda-show-current-time-in-grid nil)
+                      (org-agenda-log-mode-items '(clock status))
+                      ))
+          (todo "ACTIVE" ((org-agenda-overriding-header "Current Tasks")
+                          (org-agenda-max-todos 5)))
+          (todo "NEXT" ((org-agenda-overriding-header "Upcoming Tasks")
+                        (org-agenda-max-todos 5)))))
+
         ("n" "Next Tasks"
          ((agenda "" ((org-deadline-warning-days 7)))
           (todo "NEXT"
                 ((org-agenda-overriding-header "Next Tasks")))))))
+
+(setq org-agenda-exporter-settings
+      '((ps-number-of-columns 1)
+        (ps-landscape-mode nil)
+        (ps-print-color-p 'black-white)
+        (org-agenda-with-colors nil)
+        (org-agenda-add-entry-text-maxlines 0)
+        (org-agenda-remove-tags '("Project"))
+        (htmlize-output-type 'css)))
 
 (setq org-tag-alist
       '((:startgrouptag . "Sys")
