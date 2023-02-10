@@ -136,9 +136,9 @@
                    )))
                %base-user-accounts))
  (services (cons*
-            ;; (set-xorg-configuration
-            ;;  (xorg-configuration
-            ;;   (keyboard-layout keyboard-layout)))
+            (set-xorg-configuration
+             (xorg-configuration
+              (keyboard-layout keyboard-layout)))
             %my-base-services))
  (bootloader
   (bootloader-configuration

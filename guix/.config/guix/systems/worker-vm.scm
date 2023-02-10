@@ -24,7 +24,7 @@
   (host-name "worker1")
   (timezone "Etc/UTC")
   (locale "en_US.utf8")
-  (keyboard-layout (keyboard-layout "us" "altgr-intl"))
+  (keyboard-layout (keyboard-layout "de" "neo"))
 
   ;; Label for the GRUB boot menu.
   (label (string-append "GNU Guix " (package-version guix)))
@@ -104,4 +104,4 @@ root ALL=(ALL) ALL
 )"))))
             (extra-options
              ;; TODO: set "correct" values
-             '("--max-jobs=2" "--cores=8"))))))))
+             '("--max-jobs=2" "--cores=4"))))))))

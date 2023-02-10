@@ -1,13 +1,20 @@
 ;; This is the configuration for nonguix build server.
 
 (use-modules (gnu))
+(use-package-modules cups printers)
 (use-service-modules admin
                      avahi
                      certbot
                      cuirass
+                     cups
+                     desktop
                      mcron
                      networking
                      ssh
+                     xorg
+                     virtualization
+                     nix
+                     docker
                      web)
 
 (define %cuirass-specs
@@ -86,6 +93,7 @@
    (append
     (map (compose list specification->package+output)
      (list
+       "awesome"
        "curl"
        "git"
        "htop"
@@ -104,6 +112,20 @@
   (services
     (cons*
       (service avahi-service-type)
+      (service cups-service-type
+               (cups-configuration
+                 (extensions
+                   (list cups-filters
+                         epson-inkjet-printer-escpr ;; Epson
+                         ; brlaser                  ;; Brother
+                         ; hplip-minimal            ;; HP
+                         ; splix                    ;; Samsung, Xerox, Lexmark, Toshiba, Dell
+                         ; (specification->package+output "splix:ppd")
+                         ))
+                 (listen '("*:631"))
+                 (browsing? #t)
+                 (browse-web-if? #t)
+                 (web-interface? #t)))
 
             (service certbot-service-type
               (certbot-configuration
@@ -149,76 +171,87 @@
             (service nginx-service-type
               (nginx-configuration
                (upstream-blocks
-                (list
-                 (nginx-upstream-configuration
-                   (name "guix-cuirass")
-                   (servers (list "localhost:8081")))
-                 (nginx-upstream-configuration
-                   (name "guix-publish")
-                   (servers (list "localhost:8080")))))
+                 (list
+                   (nginx-upstream-configuration
+                     (name "guix-cuirass")
+                     (servers (list "localhost:8081")))
+                   (nginx-upstream-configuration
+                     (name "guix-publish")
+                     (servers (list "localhost:8080")))
+                   (nginx-upstream-configuration
+                     (name "guix-cups")
+                     (servers (list "localhost:631")))))
                (server-blocks
-                (list
-                 (nginx-server-configuration
-                   (server-name '("guix.ody55eus.de"))
-                   (listen '("443 ssl" "[::]:443 ssl"))
-                   (locations
-                    (list
-                     (nginx-location-configuration
-                       (uri "~ ^/admin")
-                       (body
-                        (list "if ($ssl_client_verify != SUCCESS) { return 403; } proxy_pass http://guix-cuirass;")))
-                     (nginx-location-configuration
-                       (uri "/")
-                       (body '("proxy_pass http://guix-cuirass;")))))
-                   (ssl-certificate "/etc/letsencrypt/live/p.ody55eus.de/fullchain.pem")
-                   (ssl-certificate-key "/etc/letsencrypt/live/p.ody55eus.de/privkey.pem"))
-                 (nginx-server-configuration
-                   (server-name '("p.ody55eus.de"))
-                   (listen '("443 ssl" "[::]:443 ssl"))
-                   (raw-content '("rewrite ^//(.*)$ /$1 redirect;"))
-                   (locations
-                    (list
-                     (nginx-location-configuration
-                       (uri "/signing-key.pub")
-                       (body '("proxy_pass http://guix-publish;")))
-                     (nginx-location-configuration
-                       (uri "/file/")
-                       (body '("proxy_pass http://guix-publish;")))
-                     (nginx-location-configuration
-                       (uri "/log/")
-                       (body '("proxy_pass http://guix-publish;")))
-                     (nginx-location-configuration
-                       (uri "/nix-cache-info")
-                       (body (list
-                         "proxy_pass http://guix-publish;"
-                         "proxy_hide_header Set-Cookie;")))
-                     (nginx-location-configuration
-                       (uri "/nar/")
-                       (body (list
-                         "proxy_pass http://guix-publish;"
-                         "client_body_buffer_size 256k;"
-                         ;; Nars are already compressed. -> no perf change
-                         "gzip off;"
-                         "proxy_pass_header Cache-Control;")))
-                     (nginx-location-configuration
-                       (uri "~ \\.narinfo$")
-                       (body
-                        (list
-                          "proxy_pass http://guix-publish;"
-                          "client_body_buffer_size 128k;"
-                          "proxy_connect_timeout 2s;"
-                          "proxy_read_timeout 2s;"
-                          "proxy_send_timeout 2s;"
-                          "proxy_pass_header Cache-Control;"
-                          "proxy_ignore_client_abort on;")))))
-                   (ssl-certificate "/etc/letsencrypt/live/p.ody55eus.de/fullchain.pem")
-                   (ssl-certificate-key "/etc/letsencrypt/live/p.ody55eus.de/privkey.pem"))))))
+                 (list
+                   (nginx-server-configuration
+                     (server-name '("cups.ody55eus.de"))
+                     (listen '("443 ssl" "[::]:443 ssl"))
+                     (locations
+                       (list
+                         (nginx-location-configuration
+                           (uri "/")
+                           (body '("proxy_pass http://guix-cups;")))))
+                     (ssl-certificate "/etc/letsencrypt/live/p.ody55eus.de/fullchain.pem")
+                     (ssl-certificate-key "/etc/letsencrypt/live/p.ody55eus.de/privkey.pem"))
+                   (nginx-server-configuration
+                     (server-name '("guix.ody55eus.de"))
+                     (listen '("443 ssl" "[::]:443 ssl"))
+                     (locations
+                       (list
+                         (nginx-location-configuration
+                           (uri "/")
+                           (body '("proxy_pass http://guix-cuirass;")))))
+                     (ssl-certificate "/etc/letsencrypt/live/p.ody55eus.de/fullchain.pem")
+                     (ssl-certificate-key "/etc/letsencrypt/live/p.ody55eus.de/privkey.pem"))
+                   (nginx-server-configuration
+                     (server-name '("p.ody55eus.de"))
+                     (listen '("443 ssl" "[::]:443 ssl"))
+                     (raw-content '("rewrite ^//(.*)$ /$1 redirect;"))
+                     (locations
+                       (list
+                         (nginx-location-configuration
+                           (uri "/signing-key.pub")
+                           (body '("proxy_pass http://guix-publish;")))
+                         (nginx-location-configuration
+                           (uri "/file/")
+                           (body '("proxy_pass http://guix-publish;")))
+                         (nginx-location-configuration
+                           (uri "/log/")
+                           (body '("proxy_pass http://guix-publish;")))
+                         (nginx-location-configuration
+                           (uri "/nix-cache-info")
+                           (body (list
+                                   "proxy_pass http://guix-publish;"
+                                   "proxy_hide_header Set-Cookie;")))
+                         (nginx-location-configuration
+                           (uri "/nar/")
+                           (body (list
+                                   "proxy_pass http://guix-publish;"
+                                   "client_body_buffer_size 256k;"
+                                   ;; Nars are already compressed. -> no perf change
+                                   "gzip off;"
+                                   "proxy_pass_header Cache-Control;")))
+                         (nginx-location-configuration
+                           (uri "~ \\.narinfo$")
+                           (body
+                             (list
+                               "proxy_pass http://guix-publish;"
+                               "client_body_buffer_size 128k;"
+                               "proxy_connect_timeout 2s;"
+                               "proxy_read_timeout 2s;"
+                               "proxy_send_timeout 2s;"
+                               "proxy_pass_header Cache-Control;"
+                               "proxy_ignore_client_abort on;")))))
+                     (ssl-certificate "/etc/letsencrypt/live/p.ody55eus.de/fullchain.pem")
+                     (ssl-certificate-key "/etc/letsencrypt/live/p.ody55eus.de/privkey.pem"))))))
 
             (service openssh-service-type
               (openssh-configuration
                 (authorized-keys
-                 `(("jp" ,(local-file "jp.pub"))))
-                (password-authentication? #f)
+                 `(("jp" ,(local-file "jp.pub"))  
+                   ("bkp" ,(local-file "bkp.pub"))))
+                (password-authentication? #t)
+                (permit-root-login #f)
                 (port-number 2123)))
 
             (service ntp-service-type)
@@ -227,11 +260,11 @@
            (addresses
              (list (network-address
                      (device "enp2s0")
-                     (value "192.168.20.20/8"))
+                     (value "192.168.20.20/24"))
                    (network-address
                      (device "enp2s0")
                      (ipv6? #t)
-                     (value "2a02:2455:cea:eb00:1dd1::1/64"))))
+                     (value "2a02:2455:cea:eb00::1/64"))))
            (routes
              (list (network-route
                      (destination "default")
@@ -257,11 +290,33 @@
                                "\"\\e[5~\": history-search-backward\n"
                                "\"\\e[6~\": history-search-forward\n")))))
 
-            (modify-services %base-services
+                (service nix-service-type)
+                (service docker-service-type)
+                (service slim-service-type (slim-configuration
+                                             (display ":0")
+                                             (vt "vt7")
+                                             (allow-empty-passwords? #f)
+                                             (auto-login? #t)
+                                             (default-user "jp")
+                                             (xorg-configuration
+                                               (xorg-configuration
+                                                 (keyboard-layout keyboard-layout)))
+                                             ))
+
+    (modify-services %desktop-services
+                     (delete avahi-service-type)
+                     (delete network-manager-service-type)
+                     (delete ntp-service-type)
+                     (delete gdm-service-type)
              (guix-service-type
               config => (guix-configuration
                          (inherit config)
-                         (authorized-keys ;;(append
-                                           %default-authorized-guix-keys
-                                           ;; (list (local-file "keys/guix/worker-vm.pub")))
-                                           )))))))
+                         (substitute-urls (append 
+                                            %default-substitute-urls
+                                            (list "https://substitutes.nonguix.org")))
+                         (authorized-keys (append
+                                            (list 
+                                              (local-file "keys/guix/nonguix.pub")
+                                              (local-file "keys/guix/neptun.pub"))
+                                            %default-authorized-guix-keys))))))))
+
