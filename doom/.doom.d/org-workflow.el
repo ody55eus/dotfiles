@@ -763,6 +763,8 @@ Returns file content as a string."
         (org-agenda-remove-tags '("Project"))
         (htmlize-output-type 'css)))
 
+(setq org-duration-format '((special . h:mm)))
+
 (setq org-tag-alist
       '((:startgrouptag . "Sys")
         ; Put mutually exclusive tags here

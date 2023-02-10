@@ -1004,6 +1004,10 @@ The daily / monthly review templates are inspired by [[https://github.com/benoit
         (org-agenda-remove-tags '("Project"))
         (htmlize-output-type 'css)))
 #+end_src
+** Clocktable
+#+begin_src emacs-lisp
+(setq org-duration-format '((special . h:mm)))
+#+end_src
 
 ** Tasks
 *** Task Tags
