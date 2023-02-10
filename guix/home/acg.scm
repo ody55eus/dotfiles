@@ -118,9 +118,9 @@
                  ;; Converting Files
                  "pandoc"         ; Swiss-Army-Knife
                  "ghostscript"
-                 "texlive"        ; LaTeX
-                 "texlive-latex-moderncv"
-                 "texlive-latex-fontawesome"
+                 ;; "texlive"        ; LaTeX
+                 ;; "texlive-latex-moderncv"
+                 ;; "texlive-latex-fontawesome"
 
                  ;; GUI Fonts
                  "font-nerd-fonts"
@@ -140,9 +140,10 @@
                  "awesome-copycats"
                  "tmux-tpm"
                  "emacs-next-pgtk-latest"
-                 ;; "neovim-lunarvim"
+                 ;; "neovim"
                  "neovim-config"
-                 "dotfiles-ody55eus"
+                 "emacs-doom"
+                 ;;"dotfiles-ody55eus"
                  )))
  (services
   (list

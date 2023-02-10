@@ -4,6 +4,7 @@
 (use-modules (gnu)
              (nongnu packages linux))
 (use-package-modules
+ linux
  xdisorg
  fonts
  gnome)

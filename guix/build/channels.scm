@@ -2,22 +2,11 @@
        (name 'guix)
        (url "https://git.savannah.gnu.org/git/guix.git")
        (branch "master")
-       ;; (commit "007e69756087234de4d9ea896e013e5d0232bd25")
-       ;; (commit "14323edcc37d9efaae2491cf5f57ea0621412d7e")
        (introduction
         (make-channel-introduction
          "9edb3f66fd807b096b48283debdcddccfea34bad"
          (openpgp-fingerprint
           "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA"))))
-      (channel
-       (name 'acg)
-       (url "ssh://git@gitlab.ody5.de:223/acg/guix.git")
-       (branch "main")
-       (introduction
-        (make-channel-introduction
-         "83fe1e90f7db4f61b1390fcbffba3bf418c588c3"
-         (openpgp-fingerprint
-          "885B 941B 8221 3321 6D96 0E4C DE2A D6CF 2474 B880"))))
       (channel
        (name 'dinos)
        (url "https://gitlab.ody5.de/ody55eus/dinos.git")
@@ -31,7 +20,6 @@
        (name 'nonguix)
        (url "https://gitlab.com/nonguix/nonguix")
        (branch "master")
-       ;; Enable signature verification:
        (introduction
         (make-channel-introduction
          "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
