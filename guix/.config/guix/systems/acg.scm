@@ -25,16 +25,6 @@
     (screen-locker-service xlockmore "xlock")
     (service nix-service-type)
     (service docker-service-type)
-    (service unattended-upgrade-service-type
-             (unattended-upgrade-configuration
-              (schedule "30 01 * * 0")
-              (operating-system-file
-               (file-append
-                (local-file (string-append (getenv "HOME")
-                                           "/.dotfiles/guix/.config/guix/systems")
-                            "guix-systems"
-                            #:recursive? #t)
-                "/acg.scm"))))
     (service openssh-service-type)
     (modify-services %desktop-services
                      (delete gdm-service-type)
@@ -91,6 +81,13 @@
                   (home-directory "/home/jp")
                   (supplementary-groups
                     '("wheel" "netdev" "audio" "video")))
+                (user-account
+                  (name "guest")
+                  (comment "Guest User")
+                  (group "users")
+                  (home-directory "/home/guest")
+                  (supplementary-groups
+                    '("netdev" "audio" "video")))
                 %base-user-accounts))
   (packages (append (specifications->packages
                       (list 

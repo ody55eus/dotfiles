@@ -70,27 +70,30 @@
                  "xrandr"         ; Screen-Resolution
                  "redshift"       ; Day/Night - Red-Shift
                  "scrot"          ; CLI Screenshots
-                 "xsel"           ; Manipulate Selections
                  "slock"          ; Screen Locker
                  "dmenu"          ; Menu Launcher
                  "rofi"           ; Application Launcher
-                 "pinentry"       ; X11-Password Entry
                  "conky"          ; Status-Display
-                 "keepassxc"      ; Password Manager
 
                  ;; Applications
-                 "alacritty-next"
+                 "keepassxc"      ; Password Manager
                  "icecat"
                  "vlc"
                  "mpv"
                  "playerctl"
                  "gimp"
-                 "flatpak"
                  "thunar"
+
+                 ;; CLI Tools
                  "file"                   ; Guessing Filetypes
                  "git"
                  "the-silver-searcher"    ; ag: Better and Faster grep/awk
                  "ripgrep"                ; rg: Better than ag?
+                 "duplicity"              ; Backup
+
+                 ;; Virtualization
+                 "flatpak"
+                 "docker-compose"
 
                  ;; Spell Checking
                  "aspell"
@@ -99,13 +102,16 @@
                  "wordnet"
 
                  ;; Programming
-                 "node"           ; npm: To install lsp server
+                 "perl"           ; perl
+                 "node"           ; npm: To install pyright
                  "icedtea"        ; jre: Java Runtime Environment (alternative: openjdk)
+
                  "python"         ; What else?
                  "python-scipy"   ; Includes numpy
                  "python-pandas"  ; DataFrames
                  "python-seaborn" ; Includes matplotlib
                  "python-pynvim"  ; Neovim
+                 "python-tldr"    ; Too-Long, Didn't Read
 
                  ;; Visualization Tools
                  "plantuml"       ; UML Diagrams
@@ -135,6 +141,7 @@
                  "pinentry"       ; GUI Password Entry
 
                  ;; Self Defined
+                 "alacritty-next" ; Terminal Emulator
                  "zsh-ohmyzsh"
                  "zsh-completions"
                  "awesome-copycats"

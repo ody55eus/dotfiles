@@ -5,11 +5,12 @@
 # @version 0.1
 
 GUIX_PROFILE=build/profiles/guix
-GUIX=${GUIX_PROFILE}/bin/guix
+GUIX=./pre-inst-env ${GUIX_PROFILE}/bin/guix
 PULL_EXTRA_OPTIONS=
 # --allow-downgrades
 BUILD_OPTIONS=--keep-failed
 HOME_DIR=home
+#SYS_DIR=home
 SYS_DIR=.config/guix/systems
 
 
@@ -39,10 +40,19 @@ home/build: guix
 home/install: home/build
 	${GUIX} home reconfigure ${BUILD_OPTIONS} ${HOME_DIR}/acg.scm
 
+live/build: guix
+	${GUIX} system build ${BUILD_OPTIONS} ${SYS_DIR}/acg.scm
+
 system/build: guix
 	${GUIX} system build ${BUILD_OPTIONS} ${SYS_DIR}/acg.scm
 
 system/install: system/build
 	sudo -E ${GUIX} system reconfigure ${BUILD_OPTIONS} ${SYS_DIR}/acg.scm
+
+rde/sys/build: guix
+	TARGET=ixy-system ${GUIX} system build ${BUILD_OPTIONS} ${HOME_DIR}/rde.scm
+
+rde/sys/vm: system/build
+	TARGET=ixy-system sudo -E ${GUIX} system vm ${BUILD_OPTIONS} ${HOME_DIR}/rde.scm
 
 # end
