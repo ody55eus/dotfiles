@@ -49,7 +49,7 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
-;; Use latest version!
+;; Use latest versions!
 (unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
 
@@ -140,8 +140,8 @@
 
 ;; Other Software Integrations
 (package! guix
-  :recipe (:host gitlab
-           :repo "tarsiiformes/guix"))
+  :recipe (:host nil
+           :repo "https://git.savannah.gnu.org/git/guix/emacs-guix.git"))
 (package! dmenu)                ; Dmenu Plugin.
 (package! tldr)                 ; Too long; Didn't read (short man pages).
 (package! forge)                ; Additional git features (linking issues from github etc.)

@@ -4,6 +4,7 @@
 (use-modules (gnu)
              (nongnu packages linux))
 (use-package-modules
+ linux
  xdisorg
  fonts
  gnome)
@@ -13,13 +14,17 @@
  desktop
  networking
  ssh
+ docker
+ nix
+ virtualization
  xorg)
 
 (define %my-base-services
   (append
    (cons*
     (screen-locker-service xlockmore "xlock")
-    (service guix-publish-service-type)
+    (service nix-service-type)
+    (service docker-service-type)
     (service unattended-upgrade-service-type
              (unattended-upgrade-configuration
               (schedule "30 01 * * 0")
@@ -51,6 +56,14 @@
                         ("tty6" . ,(file-append
                                     font-terminus
                                     "/share/consolefonts/ter-132n"))))
+              (guix-service-type config => (guix-configuration
+               (inherit config)
+               (substitute-urls
+                (append (list "https://substitutes.nonguix.org")
+                  %default-substitute-urls))
+               (authorized-keys
+                (append (list (local-file "./nonguix.pub"))
+                  %default-authorized-guix-keys))))
                      (network-manager-service-type
                       config =>
                       (network-manager-configuration
@@ -79,12 +92,11 @@
                   (supplementary-groups
                     '("wheel" "netdev" "audio" "video")))
                 %base-user-accounts))
-  (packages
-    (append
-      (list
-       (specification->package "awesome")
-       (specification->package "nss-certs"))
-      %base-packages))
+  (packages (append (specifications->packages
+                      (list 
+                        "awesome"
+                        "nss-certs"))
+                    %base-packages))
   (services
    (append
     (list

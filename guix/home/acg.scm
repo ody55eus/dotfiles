@@ -31,10 +31,11 @@
                  "tmux"
                  "direnv"
                  "gwl"                  ; Guix Workflow Language
+                 "make"
+                 "file"
 
                  ;; Editors
                  "neovim"
-                 "python-pynvim"
 
                  ;; CLI Apps
                  "mcron"                ; Cron Automation
@@ -52,7 +53,6 @@
 
                  ;; Fonts
                  "font-juliamono"
-                 "font-jetbrains-mono"
                  "font-font-awesome"
                  "font-nerd-fonts"
 
@@ -76,6 +76,7 @@
                  "rofi"           ; Application Launcher
                  "pinentry"       ; X11-Password Entry
                  "conky"          ; Status-Display
+                 "keepassxc"      ; Password Manager
 
                  ;; Applications
                  "alacritty-next"
@@ -86,6 +87,52 @@
                  "gimp"
                  "flatpak"
                  "thunar"
+                 "file"                   ; Guessing Filetypes
+                 "git"
+                 "the-silver-searcher"    ; ag: Better and Faster grep/awk
+                 "ripgrep"                ; rg: Better than ag?
+
+                 ;; Spell Checking
+                 "aspell"
+                 "aspell-dict-en"
+                 "aspell-dict-de"
+                 "wordnet"
+
+                 ;; Programming
+                 "node"           ; npm: To install lsp server
+                 "icedtea"        ; jre: Java Runtime Environment (alternative: openjdk)
+                 "python"         ; What else?
+                 "python-scipy"   ; Includes numpy
+                 "python-pandas"  ; DataFrames
+                 "python-seaborn" ; Includes matplotlib
+                 "python-pynvim"  ; Neovim
+
+                 ;; Visualization Tools
+                 "plantuml"       ; UML Diagrams
+                 "graphviz"       ; Convert Graphs
+
+                 ;; GUI Tools
+                 "xdot"           ; Display Graphs
+                 "xsel"           ; Manipulate Selections
+
+                 ;; Converting Files
+                 "pandoc"         ; Swiss-Army-Knife
+                 "ghostscript"
+                 ;; "texlive"        ; LaTeX
+                 ;; "texlive-latex-moderncv"
+                 ;; "texlive-latex-fontawesome"
+
+                 ;; GUI Fonts
+                 "font-nerd-fonts"
+                 "font-font-awesome"
+                 "font-juliamono"
+                 ;; "font-jetbrains-mono"
+                 ;; "font-overpass"
+
+                 ;; Encryption
+                 "gnupg"          ; GnuPG
+                 "sshfs"          ; SSH file systems
+                 "pinentry"       ; GUI Password Entry
 
                  ;; Self Defined
                  "zsh-ohmyzsh"
@@ -93,9 +140,10 @@
                  "awesome-copycats"
                  "tmux-tpm"
                  "emacs-next-pgtk-latest"
-                 ;; "neovim-lunarvim"
+                 ;; "neovim"
                  "neovim-config"
-                 "dotfiles-ody55eus"
+                 "emacs-doom"
+                 ;;"dotfiles-ody55eus"
                  )))
  (services
   (list

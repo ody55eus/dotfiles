@@ -217,7 +217,39 @@ We don't want it activated in ~org-agenda-mode~, so we only trigger it after ~or
               :priority_d   ,(propertize "" 'face 'all-the-icons-green)
               :priority_e   ,(propertize "" 'face 'all-the-icons-blue)
               ;; :em_dash       "—"
+              ;; Functional
+              :lambda        "λ"
+              :def           "ƒ"
+              :composition   "∘"
+              :map           "↦"
+              ;; Types
+              :null          "∅"
+              :true          "𝕋"
+              :false         "𝔽"
+              :int           "ℤ"
+              :float         "ℝ"
+              :str           "𝕊"
+              :bool          "𝔹"
+              :list          "𝕃"
+              ;; Flow
+              :not           "￢"
+              :in            "∈"
+              :not-in        "∉"
+              :and           "∧"
+              :or            "∨"
+              :for           "∀"
+              :some          "∃"
+              :return        "⟼"
+              :yield         "⟻"
+              ;; Other
+              :union         "⋃"
+              :intersect     "∩"
+              :diff          "∖"
+              :tuple         "⨂"
+              :pipe          "ǁ" ;; FIXME: find a non-private char
+              :dot           "•"  ;; you could also add your own if you want
               ))
+
   (set-pretty-symbols! 'org-mode
     :merge t
     :name           "⁍"
@@ -510,8 +542,10 @@ Inspired from [[https://github.com/benoitj/dotfiles][benoitj/dotfiles]].
 
 (defun jp/weekly-review ()
   (interactive)
-  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry (file+olp+datetree "daily/reviews.org"))
-                                 (file (concat org-templates-directory "weekly-review.org")))))
+  (let ((org-capture-templates '(("d" "Review: Weekly Review" entry
+                                  (file+olp+datetree "daily/reviews.org")
+                                  (function jp/read-weekly-template)
+                                  ))))
     (progn
       (org-capture nil "d")
       (org-capture-finalize t)
@@ -932,10 +966,47 @@ The daily / monthly review templates are inspired by [[https://github.com/benoit
           (todo "REVIEW" ((org-agenda-overriding-header "Active Reviews")))
           (todo "HOLD" ((org-agenda-overriding-header "On Hold")))))
 
+        ("O" "Output"
+         ((agenda "" ((org-deadline-warning-days 0)
+                      (org-agenda-show-log 'clockcheck)
+                      (org-agenda-start-with-clockreport-mode t)
+                      (org-agenda-clockreport-parameter-plist '(:link nil
+                                                                :lang "de"
+                                                                :formular '%
+                                                                :narrow nil
+                                                                :filetitle t
+                                                                :maxlevel 3))
+                      (org-agenda-start-day "01")
+                      (org-agenda-span 'month)
+                      (org-agenda-use-time-grid nil)
+                      (org-agenda-show-current-time-in-grid nil)
+                      (org-agenda-log-mode-items '(clock status))
+                      ))
+          (todo "ACTIVE" ((org-agenda-overriding-header "Current Tasks")
+                          (org-agenda-max-todos 5)))
+          (todo "NEXT" ((org-agenda-overriding-header "Upcoming Tasks")
+                        (org-agenda-max-todos 5)))))
+
         ("n" "Next Tasks"
          ((agenda "" ((org-deadline-warning-days 7)))
           (todo "NEXT"
                 ((org-agenda-overriding-header "Next Tasks")))))))
+#+end_src
+
+*** Custom Exports
+#+begin_src emacs-lisp
+(setq org-agenda-exporter-settings
+      '((ps-number-of-columns 1)
+        (ps-landscape-mode nil)
+        (ps-print-color-p 'black-white)
+        (org-agenda-with-colors nil)
+        (org-agenda-add-entry-text-maxlines 0)
+        (org-agenda-remove-tags '("Project"))
+        (htmlize-output-type 'css)))
+#+end_src
+** Clocktable
+#+begin_src emacs-lisp
+(setq org-duration-format '((special . h:mm)))
 #+end_src
 
 ** Tasks
