@@ -197,6 +197,11 @@
 ;; Initial user's password hash will be available in store, so use this
 ;; feature with care (display (crypt "hi" "$6$abc"))
 
+(define %keyboard-layout
+  (keyboard-layout
+     "de" "neo"
+     #:options '("grp:shifts_toggle")))
+
 (define %ody-features
   (list
    (feature-user-info

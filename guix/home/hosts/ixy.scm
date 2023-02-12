@@ -2,9 +2,13 @@
   #:use-module (rde features base)
   #:use-module (rde features system)
   #:use-module (rde features wm)
+  #:use-module (gnu bootloader)
+  #:use-module (gnu bootloader grub)
+  #:use-module (gnu system keyboard)
   #:use-module (gnu system file-systems)
   #:use-module (gnu system mapped-devices)
   #:use-module (ice-9 match))
+
 
 ;;; Hardware/host specifis features
 
@@ -15,10 +19,12 @@
   (list
    (file-system
      (mount-point "/")
-     (device
-      (uuid "0cce4a5f-deda-4877-b628-4188d944dbbb"
-            'ext4))
+     (device (file-system-label "guix-root"))
      (type "ext4"))
+   ;; (file-system
+   ;;   (mount-point "/boot/efi")
+   ;;   (type "vfat")
+   ;;   (device (file-system-label "EFI")))
    ))
 
 (define-public %ixy-features
@@ -29,7 +35,13 @@
     #:timezone  "Europe/Berlin")
    ;;; Allows to declare specific bootloader configuration,
    ;;; grub-efi-bootloader used by default
-   (feature-bootloader)
+   (feature-bootloader
+    #:bootloader-configuration (bootloader-configuration
+                                (bootloader grub-bootloader)
+                                (targets (list (file-system-label "boot")))
+                                (keyboard-layout (keyboard-layout
+                                                  "de" "neo"
+                                                  #:options '("grp:shifts_toggle")))))
    (feature-file-systems
     ;; #:mapped-devices ixy-mapped-devices
     #:file-systems   ixy-file-systems)

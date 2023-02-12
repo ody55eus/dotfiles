@@ -52,7 +52,10 @@ system/install: system/build
 rde/sys/build: guix
 	TARGET=ixy-system ${GUIX} system build ${BUILD_OPTIONS} ${HOME_DIR}/rde.scm
 
-rde/sys/vm: system/build
-	TARGET=ixy-system sudo -E ${GUIX} system vm ${BUILD_OPTIONS} ${HOME_DIR}/rde.scm
+rde/sys/vm: rde/sys/build
+	TARGET=ixy-system ./image.sh ${HOME_DIR}/rde.scm
+
+worker/vm: guix
+	./image.sh ${SYS_DIR}/worker-vm.scm
 
 # end
