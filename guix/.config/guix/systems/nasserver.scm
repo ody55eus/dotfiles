@@ -106,7 +106,8 @@
  (keyboard-layout (keyboard-layout "de" "neo"))
  (packages
   (append
-      (list ;; (specification->package "awesome")
+      (list (specification->package "awesome")
+            (specification->package "zsh")
             (specification->package "nss-certs"))
    %base-packages))
  (host-name "nasserver")
@@ -135,9 +136,9 @@
                    )))
                %base-user-accounts))
  (services (cons*
-            ;; (set-xorg-configuration
-            ;;  (xorg-configuration
-            ;;   (keyboard-layout keyboard-layout)))
+            (set-xorg-configuration
+             (xorg-configuration
+              (keyboard-layout keyboard-layout)))
             %my-base-services))
  (bootloader
   (bootloader-configuration

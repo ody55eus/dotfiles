@@ -13,3 +13,4 @@
 /doom/.doom.d/misc/
 *.pyc
 /tmux/.tmux/plugins/*
+/guix/build/profiles/

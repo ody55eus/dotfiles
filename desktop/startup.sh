@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
-setxkbmap
+sudo mount -t vboxsf share /home/jp/share
+sudo dhclient
 emacs --daemon
 picom -b
-emacsclient -c &
 tmux -l new-session -s "Main" -n "Dev" $(which zsh)

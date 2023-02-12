@@ -31,10 +31,11 @@
                  "tmux"
                  "direnv"
                  "gwl"                  ; Guix Workflow Language
+                 "make"
+                 "file"
 
                  ;; Editors
                  "neovim"
-                 "python-pynvim"
 
                  ;; CLI Apps
                  "mcron"                ; Cron Automation
@@ -52,7 +53,6 @@
 
                  ;; Fonts
                  "font-juliamono"
-                 "font-jetbrains-mono"
                  "font-font-awesome"
                  "font-nerd-fonts"
 
@@ -70,32 +70,87 @@
                  "xrandr"         ; Screen-Resolution
                  "redshift"       ; Day/Night - Red-Shift
                  "scrot"          ; CLI Screenshots
-                 "xsel"           ; Manipulate Selections
                  "slock"          ; Screen Locker
                  "dmenu"          ; Menu Launcher
                  "rofi"           ; Application Launcher
-                 "pinentry"       ; X11-Password Entry
                  "conky"          ; Status-Display
 
                  ;; Applications
-                 "alacritty-next"
+                 "keepassxc"      ; Password Manager
                  "icecat"
                  "vlc"
                  "mpv"
                  "playerctl"
                  "gimp"
-                 "flatpak"
                  "thunar"
 
+                 ;; CLI Tools
+                 "file"                   ; Guessing Filetypes
+                 "git"
+                 "the-silver-searcher"    ; ag: Better and Faster grep/awk
+                 "ripgrep"                ; rg: Better than ag?
+                 "duplicity"              ; Backup
+
+                 ;; Virtualization
+                 "flatpak"
+                 "docker-compose"
+
+                 ;; Spell Checking
+                 "aspell"
+                 "aspell-dict-en"
+                 "aspell-dict-de"
+                 "wordnet"
+
+                 ;; Programming
+                 "perl"           ; perl
+                 "node"           ; npm: To install pyright
+                 "icedtea"        ; jre: Java Runtime Environment (alternative: openjdk)
+
+                 "python"         ; What else?
+                 "python-scipy"   ; Includes numpy
+                 "python-pandas"  ; DataFrames
+                 "python-seaborn" ; Includes matplotlib
+                 "python-pynvim"  ; Neovim
+                 "python-tldr"    ; Too-Long, Didn't Read
+
+                 ;; Visualization Tools
+                 "plantuml"       ; UML Diagrams
+                 "graphviz"       ; Convert Graphs
+
+                 ;; GUI Tools
+                 "xdot"           ; Display Graphs
+                 "xsel"           ; Manipulate Selections
+
+                 ;; Converting Files
+                 "pandoc"         ; Swiss-Army-Knife
+                 "ghostscript"
+                 ;; "texlive"        ; LaTeX
+                 ;; "texlive-latex-moderncv"
+                 ;; "texlive-latex-fontawesome"
+
+                 ;; GUI Fonts
+                 "font-nerd-fonts"
+                 "font-font-awesome"
+                 "font-juliamono"
+                 ;; "font-jetbrains-mono"
+                 ;; "font-overpass"
+
+                 ;; Encryption
+                 "gnupg"          ; GnuPG
+                 "sshfs"          ; SSH file systems
+                 "pinentry"       ; GUI Password Entry
+
                  ;; Self Defined
+                 "alacritty-next" ; Terminal Emulator
                  "zsh-ohmyzsh"
                  "zsh-completions"
                  "awesome-copycats"
                  "tmux-tpm"
                  "emacs-next-pgtk-latest"
-                 ;; "neovim-lunarvim"
+                 ;; "neovim"
                  "neovim-config"
-                 "dotfiles-ody55eus"
+                 "emacs-doom"
+                 ;;"dotfiles-ody55eus"
                  )))
  (services
   (list
