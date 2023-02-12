@@ -566,16 +566,6 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
       backup-directory-alist `((".*" . ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/backups")))
       auto-save-file-name-transforms `((".*" ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/autosaves") t)))
 
-;; Frame Transparency
-(defun jp/toggle-window-transparency ()
-  "Toggle transparency."
-  (interactive)
-  (let ((alpha-transparency 85))
-    (if (eq (frame-parameter nil 'alpha-background) alpha-transparency)
-        (set-frame-parameter nil 'alpha-background 100)
-      (set-frame-parameter nil 'alpha-background alpha-transparency))))
-(add-hook 'emacs-startup-hook #'jp/toggle-window-transparency)
-
 
 ;; World Clock
 (setq world-clock-list '(("UTC" "Universal")
@@ -594,6 +584,19 @@ Inspired by [[https://tecosaur.github.io/emacs-config/config.html#simple-setting
                          ("Australia/Sydney" "Sydney")))
 
 (defvar jp/guix? (if (getenv "GUIX_LOCPATH") t nil)) ; Are we running GNU/GUIX?
+#+end_src
+
+*** Frame Transparency
+#+begin_src emacs-lisp :tangle ./.doom.d/config.el
+;; Frame Transparency
+(defun jp/toggle-window-transparency ()
+  "Toggle transparency."
+  (interactive)
+  (let ((alpha-transparency 85))
+    (if (eq (frame-parameter nil 'alpha-background) alpha-transparency)
+        (set-frame-parameter nil 'alpha-background 100)
+      (set-frame-parameter nil 'alpha-background alpha-transparency))))
+(add-hook 'emacs-startup-hook #'jp/toggle-window-transparency)
 #+end_src
 
 * Workflow
@@ -1535,6 +1538,7 @@ Configuration from https://github.com/tarsius/keycast/issues/7#issuecomment-6276
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (after! keycast
+  (require 'keycast)
   (define-minor-mode keycast-mode
     "Show current command and its key binding in the mode line."
     :global t

@@ -1,7 +1,7 @@
 [user]
-	email = jpieper@acg-gmbh.de
+	email = ody55eus@mailbox.org
 	name = Jonathan Pieper
-	signingkey = 885B941B822133216D960E4CDE2AD6CF2474B880
+	signingkey = 2361DFC839413E7A84B2152B01B6FB927AAEC59B
 [commit]
 	gpgsign = true
 [gpg]
@@ -41,22 +41,6 @@
 [color]
 	pager = no
 [safe]
-	directory = "/home/jpi/share/Projects/Code/01_2fa_demo"
-	directory = "/home/jpi/share/Projects/Code/acg-guix"
-	directory = "/home/jpi/share/Projects/Code/chamilo-lms"
-	directory = "/home/jpi/share/Projects/Code/control-panel"
-	directory = "/home/jpi/share/Projects/Code/frontdesk"
-	directory = "/home/jpi/share/Projects/Code/frontdesk-devprepare"
-	directory = "/home/jpi/share/Projects/Code/frontdesk-testing"
-	directory = "/home/jpi/share/Projects/Code/guix"
-	directory = "/home/jpi/share/Projects/Code/haproxy-acmesh-alpn"
-	directory = "/home/jpi/share/Projects/Code/ncurses"
-	directory = "/home/jpi/share/Projects/Code/scripts"
-	directory = "/home/jpi/share/Projects/Code/twofasi"
-	directory = "/home/jpi/share/Projects/Code/urwid"
-	directory = "/home/jpi/share/Projects/Code/wazuh"
-	directory = "/home/jpi/share/Projects/Doc/BA"
-	directory = "/home/jpi/share/Projects/Doc/frontdesk-documentation"
-	directory = "/home/jpi/share/org"
-	directory = "/home/jpi/share/notes"
-	directory = "/home/jpi/share/notes/ZK"
+	directory = "/Users/jp/share/org"
+	directory = "/Users/jp/share/notes"
+	directory = "/Users/jp/share/notes/ZK"

@@ -4,10 +4,10 @@
 ;; This Configuration File is managed by ~/Emacs.org. See additional comments there.
 
 (setq user-full-name "Jonathan Pieper"
-      user-mail-address "jpieper@acg-gmbh.de"
+      user-mail-address "jpieper@mailbox.org"
       calendar-longitude +8.8   ; 8.8  East
       calendar-latitude  +50.1  ; 50.1 Nord
-      epg-user-id "885B941B822133216D960E4CDE2AD6CF2474B880")
+      epg-user-id "2361DFC839413E7A84B2152B01B6FB927AAEC59B")
 
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
@@ -45,16 +45,6 @@
       backup-directory-alist `((".*" . ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/backups")))
       auto-save-file-name-transforms `((".*" ,(concat (or (getenv "XDG_CACHE_HOME") doom-cache-dir) "/emacs/autosaves") t)))
 
-;; Frame Transparency
-(defun jp/toggle-window-transparency ()
-  "Toggle transparency."
-  (interactive)
-  (let ((alpha-transparency 85))
-    (if (eq (frame-parameter nil 'alpha-background) alpha-transparency)
-        (set-frame-parameter nil 'alpha-background 100)
-      (set-frame-parameter nil 'alpha-background alpha-transparency))))
-(add-hook 'emacs-startup-hook #'jp/toggle-window-transparency)
-
 
 ;; World Clock
 (setq world-clock-list '(("UTC" "Universal")
@@ -73,6 +63,16 @@
                          ("Australia/Sydney" "Sydney")))
 
 (defvar jp/guix? (if (getenv "GUIX_LOCPATH") t nil)) ; Are we running GNU/GUIX?
+
+;; Frame Transparency
+(defun jp/toggle-window-transparency ()
+  "Toggle transparency."
+  (interactive)
+  (let ((alpha-transparency 85))
+    (if (eq (frame-parameter nil 'alpha-background) alpha-transparency)
+        (set-frame-parameter nil 'alpha-background 100)
+      (set-frame-parameter nil 'alpha-background alpha-transparency))))
+(add-hook 'emacs-startup-hook #'jp/toggle-window-transparency)
 
 (if (file-directory-p (file-truename "~/.config/doom"))
   (add-to-list 'load-path (file-truename "~/.config/doom"))
@@ -376,12 +376,6 @@
 (map! :n [mouse-8] #'better-jumper-jump-backward
       :n [mouse-9] #'better-jumper-jump-forward)
 
-(setq calendar-week-start-day 1) ; Start the Week on Monday
-
-(after! german-holidays
-  (require 'german-holidays)
-  (setq calendar-holidays holiday-german-HE-holidays)) ; Set holidays (german)
-
 (setq tab-bar-close-button-show nil
       tab-bar-new-button-show nil)
 
@@ -520,6 +514,7 @@
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 
 (after! keycast
+  (require 'keycast)
   (define-minor-mode keycast-mode
     "Show current command and its key binding in the mode line."
     :global t
@@ -792,9 +787,7 @@ argument, query for word to search."
 ;; NOTE: Set these if Python 3 is called "python3" on your system!
 (setq dap-python-debugger 'debugpy)
 
-(defvar jp/guix/pythonpath (if (getenv "GUIX_PYTHONPATH")
-                               (getenv "GUIX_PYTHONPATH")
-                             (getenv "PYTHONPATH"))
+(defvar jp/guix/pythonpath (getenv "GUIX_PYTHONPATH")
   "Absolute Python Library Path (e.g. /usr/share/lib/python3.9/site-packages)")
 (defvar jp/conda/pythonpath (getenv "CONDA_PYTHON_EXE")
   "Absolute Conda Python Exe Path (e.g. /opt/miniconda3/bin/python)")
@@ -999,7 +992,7 @@ argument, query for word to search."
   ;; (add-to-list 'mu4e-bookmarks
   (mu4e-bookmark-define
     "All Inboxes"
-    "maildir:/Mailbox/INBOX OR maildir:/Personal/Inbox"
+    "maildir:/Mailbox/INBOX OR maildir:/Personal/Inbox AND NOT flag:trashed"
     ?i)
 
   ;; (add-to-list 'mu4e-bookmarks
@@ -1012,7 +1005,7 @@ argument, query for word to search."
   (setq message-kill-buffer-on-exit t)
 
   (setq jp/mu4e-inbox-query
-        "(maildir:/Personal/Inbox OR maildir:/Mailbox/INBOX) AND flag:unread")
+        "(maildir:/Personal/Inbox OR maildir:/Mailbox/INBOX) AND flag:unread AND NOT flag:trashed")
 
   (defun jp/go-to-inbox ()
     (interactive)
