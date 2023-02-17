@@ -5,7 +5,7 @@
         (url "https://git.sr.ht/~abcdw/rde")
         (branch "master")
         (commit
-          "f88d8e26b1dca922a457aad9c2c14b4afd589340")
+          "ce138d8cb8c02154a86b7ffb76ff932ca9cb802f")
         (introduction
           (make-channel-introduction
             "257cebd587b66e4d865b3537a9a88cccd7107c95"
@@ -16,7 +16,7 @@
         (url "https://gitlab.com/nonguix/nonguix")
         (branch "master")
         (commit
-          "29d63cbac7b1e652932595adb583fcffe59bfaee")
+          "63145a63fb40f92a8162eb2c1853e8b953f2ee79")
         (introduction
           (make-channel-introduction
             "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
@@ -27,7 +27,7 @@
         (url "https://gitlab.ody5.de/ody55eus/dinos.git")
         (branch "main")
         (commit
-          "157a43deba12a81f0094ba7830d39eb5f0fcf8f1")
+          "3910fa01d1d9b3d837f7989906d6f1a7aeca7b70")
         (introduction
           (make-channel-introduction
             "e802e65a76e49435ded5ef909120b2b84f2e262b"
@@ -38,7 +38,7 @@
         (url "https://git.savannah.gnu.org/git/guix.git")
         (branch "master")
         (commit
-          "fe554337de7fa739165958e655fa6fb9dc73cf06")
+          "246a3d90eac82966b691bdca4660ab9c5d802631")
         (introduction
           (make-channel-introduction
             "9edb3f66fd807b096b48283debdcddccfea34bad"

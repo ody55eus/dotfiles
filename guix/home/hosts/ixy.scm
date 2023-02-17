@@ -19,7 +19,7 @@
   (list
    (file-system
      (mount-point "/")
-     (device (file-system-label "guix-root"))
+     (device "/dev/sda3")
      (type "ext4"))
    ;; (file-system
    ;;   (mount-point "/boot/efi")
@@ -31,6 +31,7 @@
   (list
    (feature-host-info
     #:host-name "ixy"
+    #:locale "en_US.utf8"
     ;; ls `guix build tzdata`/share/zoneinfo
     #:timezone  "Europe/Berlin")
    ;;; Allows to declare specific bootloader configuration,
@@ -38,16 +39,30 @@
    (feature-bootloader
     #:bootloader-configuration (bootloader-configuration
                                 (bootloader grub-bootloader)
-                                (targets (list (file-system-label "boot")))
+                                (targets (list "/dev/sda"))
+                                (menu-entries (list (menu-entry
+                                                     (label "Guix Circe")
+                                                     (device "/dev/sda4")
+                                                     (linux "/gnu/store/s1c6qbvabrkijz6byg5ach40c0ncgkv6-linux-libre-6.1.8/bzImage")
+                                                     (linux-arguments '("root=ccfdb723-4ce7-4edd-a2f1-8518af456e1f"
+                                                                        "gnu.system=/gnu/store/mjhd3abb8g3l4ax1ipbh5kl47cnsadq5-system"
+                                                                        "gnu.load=/gnu/store/mjhd3abb8g3l4ax1ipbh5kl47cnsadq5-system/boot"
+                                                                        "modprobe.blacklist=usbmouse,usbkbd"
+                                                                        "quiet"))
+                                                     (initrd "/gnu/store/9xsp59aifw73j5pfvnn5njvr6c74w4v9-combined-initrd/initrd.img"))))
                                 (keyboard-layout (keyboard-layout
                                                   "de" "neo"
                                                   #:options '("grp:shifts_toggle")))))
    (feature-file-systems
     ;; #:mapped-devices ixy-mapped-devices
     #:file-systems   ixy-file-systems)
+   (feature kernel
+            #:kernel linux
+            #:initrd microcode-intel
+            #:firmware (list linux-firmware))
    (feature-kanshi
     #:extra-config
-    `((profile laptop ((output eDP-1 enable)))
-      (profile docked ((output eDP-1 enable)
+    `((profile laptop ((output HDMI-A-1 enable)))
+      (profile docked ((output HDMI-A-1 enable)
                        (output DP-2 scale 2)))))
    (feature-hidpi)))

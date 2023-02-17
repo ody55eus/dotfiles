@@ -64,6 +64,7 @@
      (append
       (strings->packages
        ;; "emacs-dirvish"
+       "emacs-evil"
        "emacs-hl-todo"
        "emacs-yasnippet"
        "emacs-company"
@@ -85,13 +86,14 @@
    home-profile-service-type
    (append
     (strings->packages
+      "neovim"
      ;; "alacritty-next"
      "figlet" ;; TODO: Move to emacs-artist-mode
      ;; "calibre"
      "icecat" ; "nyxt"
-     "ungoogled-chromium-wayland" "ublock-origin-chromium"
+     ;;"ungoogled-chromium-wayland" "ublock-origin-chromium"
 
-     "utox" "qtox" "jami"
+     "utox" "qtox" ;"jami"
 
      "alsa-utils" "youtube-dl" "imv" "cozy"
      "pavucontrol" "wev"
@@ -107,41 +109,41 @@
 
      ;; "libreoffice"
      "ffmpeg"
-     "ripgrep" "curl"))))
+     "the-silver-searcher" "ripgrep" "curl"))))
 
-;; (define sway-extra-config-service
-;;   (simple-service
-;;    'sway-extra-config
-;;    home-sway-service-type
-;;    `((output DP-2 scale 2)
-;;      ;; (output eDP-1 disable)
-;;      ,@(map (lambda (x) `(workspace ,x output DP-2)) (iota 8 1))
+(define sway-extra-config-service
+   (simple-service
+    'sway-extra-config
+    home-sway-service-type
+    `((output HDMI-A-2 scale 2)
+      ;; (output eDP-1 disable)
+      ,@(map (lambda (x) `(workspace ,x output HDMI-A-2)) (iota 8 1))
 
-;;      ;; (workspace 9 output DP-2)
-;;      ;; (workspace 10 output DP-2)
+      ;; (workspace 9 output DP-2)
+      ;; (workspace 10 output DP-2)
 
-;;      ;; (bindswitch --reload --locked lid:on exec /run/setuid-programs/swaylock)
+      ;; (bindswitch --reload --locked lid:on exec /run/setuid-programs/swaylock)
 
-;;      (bindsym
-;;       --locked $mod+Shift+t exec
-;;       ,(file-append (@ (gnu packages music) playerctl) "/bin/playerctl")
-;;       play-pause)
+      (bindsym
+       --locked $mod+Shift+t exec
+       ,(file-append (@ (gnu packages music) playerctl) "/bin/playerctl")
+       play-pause)
 
-;;      (bindsym
-;;       --locked $mod+Shift+n exec
-;;       ,(file-append (@ (gnu packages music) playerctl) "/bin/playerctl")
-;;       next)
+      (bindsym
+       --locked $mod+Shift+n exec
+       ,(file-append (@ (gnu packages music) playerctl) "/bin/playerctl")
+       next)
 
-;;      (bindsym $mod+Shift+o move workspace to output left)
-;;      (bindsym $mod+Ctrl+o focus output left)
-;;      (input type:touchpad
-;;             ;; TODO: Move it to feature-sway or feature-mouse?
-;;             (;; (natural_scroll enabled)
-;;              (tap enabled)))
+      (bindsym $mod+Shift+o move workspace to output left)
+      (bindsym $mod+Ctrl+o focus output left)
+      (input type:touchpad
+             ;; TODO: Move it to feature-sway or feature-mouse?
+             (;; (natural_scroll enabled)
+              (tap enabled)))
 
-;;      ;; (xwayland disable)
-;;      (bindsym $mod+Return exec alacritty)
-;;      (bindsym $mod+Shift+Return exec emacs))))
+      ;; (xwayland disable)
+      ;; (bindsym $mod+Return exec alacritty)
+      (bindsym $mod+Shift+Return exec emacs))))
 
 ;; (define i2pd-add-ilita-irc-service
 ;;   (simple-service
@@ -193,6 +195,13 @@
        (pubkey-accepted-key-types . "+ssh-rsa"))))))
 
 ;;; User-specific features with personal preferences
+(define sway-wayland-settings-service
+  (simple-service
+   'sway-wlr-settings
+   home-environment-variables-service-type
+   ;; Make sway work on virtual gpu in qemu
+   `(("WLR_RENDERER_ALLOW_SOFTWARE" . "1")
+     ("WLR_NO_HARDWARE_CURSORS" . "1"))))
 
 ;; Initial user's password hash will be available in store, so use this
 ;; feature with care (display (crypt "hi" "$6$abc"))
@@ -212,7 +221,7 @@
     "$6$c8P$kB/4pLdnv4.9DR8n6LdLf5a9qaSyyqmX3GW1hP4y42gnaIgfcqetYe91YZerZbYVG/Nr.FLM6ZNhJ7iOyyNfo0"
     ;; (crypt "YOURPASSWD" "$6$SALT")
 
-    ;; WARNING: This option can reduce the explorability by hiding
+
     ;; some helpful messages and parts of the interface for the sake
     ;; of minimalistic, less distractive and clean look.  Generally
     ;; it's not recommended to use it.
@@ -250,9 +259,10 @@
     #:feature-name-prefix 'ody
     #:home-services
     (list
+     sway-wayland-settings-service
      emacs-extra-packages-service
      home-extra-packages-service
-     ;; sway-extra-config-service
+     sway-extra-config-service
      ssh-extra-config-service
      ;;i2pd-add-ilita-irc-service
      ))
@@ -295,11 +305,11 @@
       ;;                 (@ (gnu packages package-management) guix))
       ;;                "/etc/snippets/tempel/text-mode"))
       ))
-   ;; (feature-emacs-spelling
-   ;;  #:spelling-program (@ (gnu packages hunspell) hunspell)
-   ;;  #:spelling-dictionaries (strings->packages
-   ;;                           "hunspell-dict-en"
-   ;;                           "hunspell-dict-de"))
+    (feature-emacs-spelling
+     #:spelling-program (@ (gnu packages hunspell) hunspell)
+     #:spelling-dictionaries (strings->packages
+                              "hunspell-dict-en"
+                              "hunspell-dict-de"))
    (feature-emacs-git
     #:project-directory "~/share/Projects/Code")
    (feature-emacs-org
