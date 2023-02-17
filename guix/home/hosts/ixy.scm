@@ -7,6 +7,8 @@
   #:use-module (gnu system keyboard)
   #:use-module (gnu system file-systems)
   #:use-module (gnu system mapped-devices)
+  #:use-module (nongnu system linux-initrd)
+  #:use-module (nongnu packages linux)
   #:use-module (ice-9 match))
 
 
