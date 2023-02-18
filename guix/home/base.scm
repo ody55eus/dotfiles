@@ -29,7 +29,13 @@
 (define-public %base-features
   (list
    ;; TODO: merge them into feature-base
-   (feature-base-services)
+   (feature-base-services
+    #:guix-substitute-urls (list
+                            "https://substitutes.nonguix.org/"
+                            "https://p.ody55eus.de/")
+    #:guix-authorized-keys (list
+                            (local-file "keys/nonguix.pub")
+                            (local-file "keys/ody.pub")))
    (feature-base-packages)
    (feature-desktop-services)
 
