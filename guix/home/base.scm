@@ -113,12 +113,9 @@
     #:default-application-launcher? #t)
 
    (feature-emacs-appearance)
-    ;; #:extra-elisp
-    ;; `((setq modus-themes-syntax '(faint))
-    ;;   ;; (setq modus-themes-region '(bg-only))
-    ;;   ;; (setq modus-themes-paren-match '(underline))
-    ;;   (setq modus-themes-org-blocks 'tinted-background)))
    (feature-emacs-faces)
+   (feature-emacs-modus-themes
+    #:dark? #t)
 
    (feature-emacs-completion
     #:mini-frame? #f

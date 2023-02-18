@@ -12,7 +12,8 @@ BUILD_OPTIONS=--keep-failed
 HOME_DIR=home
 #SYS_DIR=home
 SYS_DIR=.config/guix/systems
-
+CNF=${SYS_DIR}/circe.scm
+MOUNT_PATH=/mnt
 
 all: build install
 
@@ -41,18 +42,36 @@ home/install: home/build
 	${GUIX} home reconfigure ${BUILD_OPTIONS} ${HOME_DIR}/acg.scm
 
 live/build: guix
-	${GUIX} system build ${BUILD_OPTIONS} ${SYS_DIR}/acg.scm
+	TARGET=ixy-live ${GUIX} system build ${BUILD_OPTIONS} ${CNF}
+
+live/iso: guix
+	TARGET=ixy-live ${GUIX} system image -t iso900 ${BUILD_OPTIONS} ${CNF}
+
+system/init: guix
+	TARGET=ixy-system sudo -E ${GUIX} system init ${BUILD_OPTIONS} ${CNF} ${MOUNT_PATH}
 
 system/build: guix
-	${GUIX} system build ${BUILD_OPTIONS} ${SYS_DIR}/acg.scm
+	${GUIX} system build ${BUILD_OPTIONS} ${CNF}
 
 system/install: system/build
-	sudo -E ${GUIX} system reconfigure ${BUILD_OPTIONS} ${SYS_DIR}/acg.scm
+	sudo -E ${GUIX} system reconfigure ${BUILD_OPTIONS} ${CNF}
+
+rde/home/build: guix
+	TARGET=ixy-home ${GUIX} home build ${BUILD_OPTIONS} ${HOME_DIR}/rde.scm
+
+rde/home/install: guix
+	TARGET=ixy-home ${GUIX} home reconfigure ${BUILD_OPTIONS} ${HOME_DIR}/rde.scm
 
 rde/sys/build: guix
 	TARGET=ixy-system ${GUIX} system build ${BUILD_OPTIONS} ${HOME_DIR}/rde.scm
 
-rde/sys/vm: system/build
-	TARGET=ixy-system sudo -E ${GUIX} system vm ${BUILD_OPTIONS} ${HOME_DIR}/rde.scm
+rde/sys/install: guix
+	TARGET=ixy-system sudo -E ${GUIX} system reconfigure ${BUILD_OPTIONS} ${HOME_DIR}/rde.scm
+
+rde/sys/vm: rde/sys/build
+	TARGET=ixy-system ./image.sh ${HOME_DIR}/rde.scm
+
+worker/vm: guix
+	./image.sh ${SYS_DIR}/worker-vm.scm
 
 # end
