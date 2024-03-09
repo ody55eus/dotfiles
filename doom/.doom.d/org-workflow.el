@@ -486,10 +486,8 @@ Returns file content as a string."
   (add-to-list 'org-agenda-files (jp/org-path "Agenda.org"))
   (add-to-list 'org-agenda-files (jp/org-path "Habits.org"))
   (if jp/home
-      (setq org-agenda-filter '("-@work" "-ACG")
-            org-agenda-tag-filter '("-@work" "-ACG"))
-      (setq org-agenda-filter '("-@home")
-            org-agenda-tag-filter '("-@home"))
+      (setq org-agenda-tag-filter '("-@work" "-ACG"))
+      (setq org-agenda-tag-filter '("-@home"))
     ))
 
 (add-hook! 'org-roam-db-autosync-mode-hook #'jp/org-roam-refresh-agenda-list)
@@ -557,11 +555,8 @@ Returns file content as a string."
                                "* IDEA %?\n %i\n %a"))))
 
 (setq org-roam-capture-templates
-      '(("d" "default" plain
-         "%?\n\nSee also %a.\n"
-         :if-new (file+head
-                  "%<%Y%m%d%H%M%S>-${slug}.org"
-                  "#+TITLE: ${title}\n")
+      '(("d" "default" plain "%?" :target
+         (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
          :unnarrowed t)
         ("j" "Projects" plain
          (function jp/read-newproject-template)
@@ -593,10 +588,9 @@ Returns file content as a string."
                   "#+TITLE: ${title}\n")
          :unnarrowed t
          )
-        ("p" "PC" plain
-         "%?\n\nSee also %a.\n"
-         :if-new (file+head
-                  "PC/%<%Y%m%d%H%M%S>-${slug}.org"
+        ("p" "PC" plain "%?"
+         :target (file+head
+                  "PC/${slug}.org"
                   "#+TITLE: ${title}\n#+date: %U")
          :unnarrowed t
          )

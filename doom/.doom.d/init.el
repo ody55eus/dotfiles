@@ -21,15 +21,15 @@
 
        :completion
        (company
-        +childframe
+       ;; +childframe
         )           ; the ultimate code completion backend
-       ;;helm              ; the *other* search engine for love and life
-       ;;ido               ; the other *other* search engine...
-       (ivy
+       ;; helm              ; the *other* search engine for love and life
+       ;; ido               ; the other *other* search engine...
+       ;; (ivy
         ;; +fuzzy              ; Enables fuzzy completion for Ivy searches
-        +prescient            ; Enables prescient filtering and sorting for Ivy searches.
+        ;; +prescient            ; Enables prescient filtering and sorting for Ivy searches.
         ;; +childframe         ; display in a floating window
-        +icons)               ; a search engine for love and life
+        ;; +icons)               ; a search engine for love and life
        (vertico +icons)           ; the search engine of the future
 
        :ui
@@ -37,8 +37,8 @@
        doom               ; what makes DOOM look the way it does
        doom-dashboard     ; a nifty splash screen for Emacs
        ;;doom-quit        ; DOOM quit-message prompts when you quit Emacs
-       ;;(emoji +unicode)   ; 🙂
-       ;;hl-todo            ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
+       (emoji +unicode)   ; 🙂
+       hl-todo            ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        hydra
        indent-guides      ; highlighted indent columns
        (ligatures +extra) ; ligatures and symbols to make your code pretty again

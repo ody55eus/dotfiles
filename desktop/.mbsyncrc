@@ -5,6 +5,7 @@ User jpieper@mailbox.org
 PassCmd "emacsclient -e \"(jp/lookup-password :host \\\"imap.mailbox.org\\\" :user \\\"jpieper@mailbox.org\\\")\" | cut -d '\"' -f2"
 SSLType IMAPS
 SSLVersions TLSv1.2
+AuthMechs PLAIN
 CertificateFile /etc/ssl/cert.pem
 
 # Define the remote from which mail will be synced

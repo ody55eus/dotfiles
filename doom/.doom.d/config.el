@@ -429,55 +429,56 @@
       :ne "b" #'+vertico/switch-workspace-buffer
       :ne "B" #'counsel-switch-buffer)
 
-(setq +doom-dashboard-menu-sections '(("Reload last session" :icon
-                                       (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
-                                       :when
-                                       (cond
-                                        ((featurep! :ui workspaces)
-                                         (file-exists-p
-                                          (expand-file-name persp-auto-save-fname persp-save-dir)))
-                                        ((require 'desktop nil t)
-                                         (file-exists-p
-                                          (desktop-full-file-name))))
-                                       :face
-                                       (:inherit
-                                        (doom-dashboard-menu-title bold))
-                                       :action doom/quickload-session)
-                                      ("Open org-agenda" :icon
-                                       (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
-                                       :action org-agenda)
-                                      ("Open Roam Notes" :icon
-                                       (all-the-icons-octicon "search"
-                                                              :face 'doom-dashboard-menu-title)
-                                       :action org-roam-node-find)
-                                      ("Open IBuffer" :icon
-                                       (all-the-icons-octicon "list-unordered"
-                                                              :face 'doom-dashboard-menu-title)
-                                       :action ibuffer)
-                                      ("Refresh Agenda Files" :icon
-                                       (all-the-icons-octicon "database"
-                                                              :face 'doom-dashboard-menu-title)
-                                       :action jp/org-roam-refresh-agenda-list)
-                                      ("Recently opened files" :icon
-                                       (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
-                                       :action recentf-open-files)
-                                      ("Open project" :icon
-                                       (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
-                                       :action projectile-switch-project)
-                                      ("Jump to bookmark" :icon
-                                       (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
-                                       :action bookmark-jump)
-                                      ("Open private configuration" :icon
-                                       (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
-                                       :when
-                                       (file-directory-p doom-private-dir)
-                                       :action doom/open-private-config)
-                                      ("Switch Workspace Buffer" :icon
-                                       (all-the-icons-octicon "file-symlink-file" :face 'doom-dashboard-menu-title)
-                                       :action +vertico/switch-workspace-buffer)
-                                      ("Switch Buffer" :icon
-                                       (all-the-icons-octicon "file-symlink-directory" :face 'doom-dashboard-menu-title)
-                                       :action counsel-switch-buffer)))
+(after! all-the-icons
+  (setq +doom-dashboard-menu-sections '(("Reload last session" :icon
+                                         (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
+                                         :when
+                                         (cond
+                                          ((featurep! :ui workspaces)
+                                           (file-exists-p
+                                            (expand-file-name persp-auto-save-fname persp-save-dir)))
+                                          ((require 'desktop nil t)
+                                           (file-exists-p
+                                            (desktop-full-file-name))))
+                                         :face
+                                         (:inherit
+                                          (doom-dashboard-menu-title bold))
+                                         :action doom/quickload-session)
+                                        ("Open org-agenda" :icon
+                                         (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+                                         :action org-agenda)
+                                        ("Open Roam Notes" :icon
+                                         (all-the-icons-octicon "search"
+                                                                :face 'doom-dashboard-menu-title)
+                                         :action org-roam-node-find)
+                                        ("Open IBuffer" :icon
+                                         (all-the-icons-octicon "list-unordered"
+                                                                :face 'doom-dashboard-menu-title)
+                                         :action ibuffer)
+                                        ("Refresh Agenda Files" :icon
+                                         (all-the-icons-octicon "database"
+                                                                :face 'doom-dashboard-menu-title)
+                                         :action jp/org-roam-refresh-agenda-list)
+                                        ("Recently opened files" :icon
+                                         (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
+                                         :action recentf-open-files)
+                                        ("Open project" :icon
+                                         (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+                                         :action projectile-switch-project)
+                                        ("Jump to bookmark" :icon
+                                         (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
+                                         :action bookmark-jump)
+                                        ("Open private configuration" :icon
+                                         (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+                                         :when
+                                         (file-directory-p doom-private-dir)
+                                         :action doom/open-private-config)
+                                        ("Switch Workspace Buffer" :icon
+                                         (all-the-icons-octicon "file-symlink-file" :face 'doom-dashboard-menu-title)
+                                         :action +vertico/switch-workspace-buffer)
+                                        ("Switch Buffer" :icon
+                                         (all-the-icons-octicon "file-symlink-directory" :face 'doom-dashboard-menu-title)
+                                         :action counsel-switch-buffer))))
 
 (setq hl-todo-keyword-faces
       '(("TODO"   . "#cc00cc")     ;; TODO
@@ -678,8 +679,6 @@ argument, query for word to search."
 (setq undo-tree-visualizer-timestamps t) ; Display Timestamps
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
-;; Get file icons in dired
-(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
 
 
 ;; With dired-open plugin, you can launch external programs for certain extensions
@@ -831,7 +830,7 @@ argument, query for word to search."
   (setq projectile-project-search-path '("~/Projects/Code")))
 (setq projectile-switch-project-action #'projectile-dired)
 
-(setq projectile-completion-system 'vertico)
+(setq projectile-completion-system 'auto)
 
   (defun jp/configure-eshell ()
     ;; Save command history when commands are entered

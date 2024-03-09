@@ -53,7 +53,8 @@
 (unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
 
-(package! f.el :pin "3737e7d4ab2775391e5173da1d593dc9e7355d98") ; Important for older Emacs 29.0.50 versions
+;; (package! f.el :pin "3737e7d4ab2775391e5173da1d593dc9e7355d98") ; Important for older Emacs 29.0.50 versions
+(package! all-the-icons)
 
 ;; Org Enhancements
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
@@ -162,13 +163,14 @@
 (package! calfw-org)
 (package! german-holidays
   :recipe (:host nil
-           :repo "https://gitlab.ody5.de/ody55eus/german-holidays.git"
+           :repo "https://gitlab.ody5.eu/ody55eus/german-holidays.git"
            :files ("german-holidays.el")))
 
 ;; Dictionaries
 (package! synosaurus)           ; Thesaurus synonyms
 (package! powerthesaurus)
 ;;(package! wordnut)
+;;(package! ement.el)
 
 ;; Language Server
 (package! lsp-mode)

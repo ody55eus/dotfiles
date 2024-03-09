@@ -91,15 +91,15 @@ Just comment/uncomment some lines to disable/enable features.
 
        :completion
        (company
-        +childframe
+       ;; +childframe
         )           ; the ultimate code completion backend
-       ;;helm              ; the *other* search engine for love and life
-       ;;ido               ; the other *other* search engine...
-       (ivy
+       ;; helm              ; the *other* search engine for love and life
+       ;; ido               ; the other *other* search engine...
+       ;; (ivy
         ;; +fuzzy              ; Enables fuzzy completion for Ivy searches
-        +prescient            ; Enables prescient filtering and sorting for Ivy searches.
+        ;; +prescient            ; Enables prescient filtering and sorting for Ivy searches.
         ;; +childframe         ; display in a floating window
-        +icons)               ; a search engine for love and life
+        ;; +icons)               ; a search engine for love and life
        (vertico +icons)           ; the search engine of the future
 
        :ui
@@ -107,8 +107,8 @@ Just comment/uncomment some lines to disable/enable features.
        doom               ; what makes DOOM look the way it does
        doom-dashboard     ; a nifty splash screen for Emacs
        ;;doom-quit        ; DOOM quit-message prompts when you quit Emacs
-       ;;(emoji +unicode)   ; 🙂
-       ;;hl-todo            ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
+       (emoji +unicode)   ; 🙂
+       hl-todo            ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        hydra
        indent-guides      ; highlighted indent columns
        (ligatures +extra) ; ligatures and symbols to make your code pretty again
@@ -350,7 +350,8 @@ Just comment/uncomment some lines to disable/enable features.
 (unpin! org-roam org)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
 
-(package! f.el :pin "3737e7d4ab2775391e5173da1d593dc9e7355d98") ; Important for older Emacs 29.0.50 versions
+;; (package! f.el :pin "3737e7d4ab2775391e5173da1d593dc9e7355d98") ; Important for older Emacs 29.0.50 versions
+(package! all-the-icons)
 
 ;; Org Enhancements
 (package! evil-tutor)           ; Tutor to get familiar with doom emacs (and evil vi keybindings).
@@ -459,13 +460,14 @@ Just comment/uncomment some lines to disable/enable features.
 (package! calfw-org)
 (package! german-holidays
   :recipe (:host nil
-           :repo "https://gitlab.ody5.de/ody55eus/german-holidays.git"
+           :repo "https://gitlab.ody5.eu/ody55eus/german-holidays.git"
            :files ("german-holidays.el")))
 
 ;; Dictionaries
 (package! synosaurus)           ; Thesaurus synonyms
 (package! powerthesaurus)
 ;;(package! wordnut)
+;;(package! ement.el)
 
 ;; Language Server
 (package! lsp-mode)
@@ -1232,55 +1234,56 @@ Possible Values (as stored in =doom-modeline-fn-alist=):
 
 ***** Menu Sections
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
-(setq +doom-dashboard-menu-sections '(("Reload last session" :icon
-                                       (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
-                                       :when
-                                       (cond
-                                        ((featurep! :ui workspaces)
-                                         (file-exists-p
-                                          (expand-file-name persp-auto-save-fname persp-save-dir)))
-                                        ((require 'desktop nil t)
-                                         (file-exists-p
-                                          (desktop-full-file-name))))
-                                       :face
-                                       (:inherit
-                                        (doom-dashboard-menu-title bold))
-                                       :action doom/quickload-session)
-                                      ("Open org-agenda" :icon
-                                       (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
-                                       :action org-agenda)
-                                      ("Open Roam Notes" :icon
-                                       (all-the-icons-octicon "search"
-                                                              :face 'doom-dashboard-menu-title)
-                                       :action org-roam-node-find)
-                                      ("Open IBuffer" :icon
-                                       (all-the-icons-octicon "list-unordered"
-                                                              :face 'doom-dashboard-menu-title)
-                                       :action ibuffer)
-                                      ("Refresh Agenda Files" :icon
-                                       (all-the-icons-octicon "database"
-                                                              :face 'doom-dashboard-menu-title)
-                                       :action jp/org-roam-refresh-agenda-list)
-                                      ("Recently opened files" :icon
-                                       (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
-                                       :action recentf-open-files)
-                                      ("Open project" :icon
-                                       (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
-                                       :action projectile-switch-project)
-                                      ("Jump to bookmark" :icon
-                                       (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
-                                       :action bookmark-jump)
-                                      ("Open private configuration" :icon
-                                       (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
-                                       :when
-                                       (file-directory-p doom-private-dir)
-                                       :action doom/open-private-config)
-                                      ("Switch Workspace Buffer" :icon
-                                       (all-the-icons-octicon "file-symlink-file" :face 'doom-dashboard-menu-title)
-                                       :action +vertico/switch-workspace-buffer)
-                                      ("Switch Buffer" :icon
-                                       (all-the-icons-octicon "file-symlink-directory" :face 'doom-dashboard-menu-title)
-                                       :action counsel-switch-buffer)))
+(after! all-the-icons
+  (setq +doom-dashboard-menu-sections '(("Reload last session" :icon
+                                         (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
+                                         :when
+                                         (cond
+                                          ((featurep! :ui workspaces)
+                                           (file-exists-p
+                                            (expand-file-name persp-auto-save-fname persp-save-dir)))
+                                          ((require 'desktop nil t)
+                                           (file-exists-p
+                                            (desktop-full-file-name))))
+                                         :face
+                                         (:inherit
+                                          (doom-dashboard-menu-title bold))
+                                         :action doom/quickload-session)
+                                        ("Open org-agenda" :icon
+                                         (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+                                         :action org-agenda)
+                                        ("Open Roam Notes" :icon
+                                         (all-the-icons-octicon "search"
+                                                                :face 'doom-dashboard-menu-title)
+                                         :action org-roam-node-find)
+                                        ("Open IBuffer" :icon
+                                         (all-the-icons-octicon "list-unordered"
+                                                                :face 'doom-dashboard-menu-title)
+                                         :action ibuffer)
+                                        ("Refresh Agenda Files" :icon
+                                         (all-the-icons-octicon "database"
+                                                                :face 'doom-dashboard-menu-title)
+                                         :action jp/org-roam-refresh-agenda-list)
+                                        ("Recently opened files" :icon
+                                         (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
+                                         :action recentf-open-files)
+                                        ("Open project" :icon
+                                         (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+                                         :action projectile-switch-project)
+                                        ("Jump to bookmark" :icon
+                                         (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
+                                         :action bookmark-jump)
+                                        ("Open private configuration" :icon
+                                         (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+                                         :when
+                                         (file-directory-p doom-private-dir)
+                                         :action doom/open-private-config)
+                                        ("Switch Workspace Buffer" :icon
+                                         (all-the-icons-octicon "file-symlink-file" :face 'doom-dashboard-menu-title)
+                                         :action +vertico/switch-workspace-buffer)
+                                        ("Switch Buffer" :icon
+                                         (all-the-icons-octicon "file-symlink-directory" :face 'doom-dashboard-menu-title)
+                                         :action counsel-switch-buffer))))
 
 #+end_src
 
@@ -1807,8 +1810,6 @@ Original by [[https://www.distrotube.com/][Derek Taylor]] (see [[https://gitlab.
 #+begin_src emacs-lisp :tangle ./.doom.d/config.el
 
 (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
-;; Get file icons in dired
-(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
 
 
 ;; With dired-open plugin, you can launch external programs for certain extensions
@@ -2164,7 +2165,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
   (setq projectile-project-search-path '("~/Projects/Code")))
 (setq projectile-switch-project-action #'projectile-dired)
 
-(setq projectile-completion-system 'vertico)
+(setq projectile-completion-system 'auto)
 
 #+end_src
 
